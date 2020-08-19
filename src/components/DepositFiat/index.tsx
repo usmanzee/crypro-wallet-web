@@ -12,31 +12,9 @@ export interface DepositFiatProps {
      */
     title: string;
     uid: string;
+    currency: string;
 }
 
-
-const bankData = uid => [
-    {
-        key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />,
-        value: 'Diamant Bank',
-    },
-    {
-        key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />,
-        value: '10120212',
-    },
-    {
-        key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />,
-        value: 'name',
-    },
-    {
-        key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.phoneNumber" />,
-        value: '+3 8093 1212 12 12',
-    },
-    {
-        key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />,
-        value: uid,
-    },
-];
 
 /**
  * Component to display bank account details which can be used for a
@@ -47,7 +25,76 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
         description,
         title,
         uid,
+        currency,
     } = props;
+//@ts-ignore
+    const bank_account = (id) =>{
+
+        if(id === 'usd'){
+          return  '831-061-555-0'
+        }
+        if (id === 'myr'){
+          return '704-128-334-9'
+        }
+        if (id === 'eur'){
+          return 'BE79-9670-5851-7133'
+        }
+        if(id ==='sgd'){
+          return '704-128-335-7'
+        }
+      }
+      //@ts-ignore
+      const bank_name = (id) =>{
+        if(id === 'usd'){
+         return  "Bank Cod(Swift/Bic): CMFGUS33"
+        }
+        if (id === 'myr'){
+          return "OCBC Bank"
+        }
+        if (id === 'eur'){
+          return "Bank Cod(Swift/Bic): TRWIBEB1XXX"
+        }
+        if(id ==='sgd'){
+          return "OCBC Bank"
+        }
+    
+      }
+      //@ts-ignore
+      const bank_title = (id) =>{
+        if(id === 'usd'){
+         return  "B4U Group of Companies, S.L"
+        }
+        if (id === 'myr'){
+          return "BRAVO Tech Trading"
+        }
+        if (id === 'eur'){
+          return "B4U Group of Companies, S.L"
+        }
+        if(id ==='sgd'){
+          return "BRAVO Tech Trading"
+        }
+    
+      }
+    
+    
+    const bankData = uid => [
+        {
+            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />,
+            value: bank_name(currency),
+        },
+        {
+            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />,
+            value: bank_account(currency),
+        },
+        {
+            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />,
+            value: bank_title(currency),
+        },
+        {
+            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />,
+            value: uid,
+        },
+    ];
 
     const renderDetails = (detail, index: number) => {
         return (
@@ -60,8 +107,8 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 
     return (
         <div className="cr-deposit-fiat">
-            <p className="cr-deposit-fiat__title">{title}</p>
-            <p className="cr-deposit-fiat__description">{description}</p>
+            <p className="cr-deposit-fiat__title">{currency==='usd'|| 'eur'?'Deposit using TransferWise':title}</p>
+            <p className="cr-deposit-fiat__description">{currency==='usd'|| 'eur'?'Please using following to deposit using TrasferWise':description}</p>
             <div className="cr-deposit-fiat-credentials">{bankData(uid).map(renderDetails)}</div>
         </div>
     );

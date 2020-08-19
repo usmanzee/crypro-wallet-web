@@ -411,7 +411,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                             text={this.translate('page.body.wallets.tabs.deposit.disabled.message')}
                         />
                     ) : null}
-                    <DepositFiat title={this.title} description={this.description} uid={user ? user.uid : ''}/>
+                    <DepositFiat title={this.title} description={this.description} uid={user ? user.uid : ''} currency={currency}/>
                     {currency && <WalletHistory label="deposit" type="deposits" currency={currency} />}
                 </React.Fragment>
             );
