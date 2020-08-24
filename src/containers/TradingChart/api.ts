@@ -50,7 +50,7 @@ export const dataFeedObject = (tradingChart: TradingChartComponent, markets: Mar
                 symbol: m.id,
                 full_name: m.name,
                 description: m.name,
-                exchange: 'Cryptobase',
+                exchange: 'B4UWallet',
                 ticker: m.id,
                 type: 'bitcoin',
                 currency_code: m.quote_unit.toUpperCase(),

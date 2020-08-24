@@ -98,7 +98,7 @@ class FeeScreen extends React.Component<[],any> {
         return (
           <div className="container pg-layout">
             <AppBar position="static" style={{backgroundColor: "white", color: "black"}}>
-              <Tabs value={this.state.tabValue} onChange={handleChange} aria-label="simple tabs example">
+              <Tabs value={this.state.tabValue} onChange={handleChange} indicatorColor={'primary'} scrollButtons={'auto'}>
                 <Tab label="Trading Fee" {...a11yProps(0)} />
                 <Tab label="Deposit & Withdrawl Fees" {...a11yProps(1)} />
               </Tabs>
@@ -140,11 +140,11 @@ class FeeScreen extends React.Component<[],any> {
                           <TableCell>Coin/Token</TableCell>
                           <TableCell>Name</TableCell>
                           <TableCell>Withdraw Fee</TableCell>
-                          <TableCell>Min Withdraw Fee</TableCell>
+                          <TableCell>Min Withdraw min_withdraw_amount</TableCell>
                           <TableCell>Withdraw Limit 24h</TableCell>
                           <TableCell>Withdraw Limit 72h</TableCell>
                           <TableCell>Deposit Fee</TableCell>
-                          <TableCell>Min Deposit Fee</TableCell>
+                          <TableCell>Min Deposit Amount</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>

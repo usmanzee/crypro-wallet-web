@@ -89,6 +89,7 @@ export class SignUpForm extends React.Component<SignUpFormProps> {
         const refIdGroupClass = cr('cr-sign-up-form__group', {
             'cr-sign-up-form__group--focused': refIdFocused,
         });
+        const tos = <a href="https://b4uwallet.com/terms-and-conditions/">Click to read terms of service</a>;
         const logo = image ? (
             <h1 className="cr-sign-up-form__title">
                 <img className="cr-sign-up-form__image" src={image} alt="logo" />
@@ -164,8 +165,9 @@ export class SignUpForm extends React.Component<SignUpFormProps> {
                                 id="agreeWithTerms"
                                 checked={hasConfirmed}
                                 onChange={this.props.clickCheckBox}
-                                label={termsMessage ? termsMessage : 'I  agree all statements in terms of service'}
+                                label={termsMessage ? termsMessage : `I  agree all statements in`}
                             />
+                            {tos}
                         </Form>
                         {this.props.renderCaptcha}
                         <div className="cr-sign-up-form__button-wrapper">

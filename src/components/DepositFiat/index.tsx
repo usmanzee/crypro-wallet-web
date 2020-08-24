@@ -107,8 +107,8 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 
     return (
         <div className="cr-deposit-fiat">
-            <p className="cr-deposit-fiat__title">{currency==='usd'|| 'eur'?'Deposit using TransferWise':title}</p>
-            <p className="cr-deposit-fiat__description">{currency==='usd'|| 'eur'?'Please using following to deposit using TrasferWise':description}</p>
+            <p className="cr-deposit-fiat__title">{currency=='usd'|| 'eur'?'Deposit using TransferWise':title}</p>
+            <p className="cr-deposit-fiat__description">{currency=='usd'|| 'eur'?'Please using following to deposit using TrasferWise':description}</p>
             <div className="cr-deposit-fiat-credentials">{bankData(uid).map(renderDetails)}</div>
         </div>
     );
