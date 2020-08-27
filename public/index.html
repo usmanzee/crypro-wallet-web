@@ -9,6 +9,51 @@
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" async>
     <link rel="preload" href="https://fonts.googleapis.com/css?family=Roboto:400" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,700" as="font" type="font/woff2" crossorigin>
+    <style>
+      body {
+        margin: 0;
+      }
+  
+      .loader-container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
+  
+      .loader {
+        margin: auto;
+        border: 5px dotted #dadada;
+        border-top: 5px solid #833b73;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+  
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+  
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+  
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+  
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+  
+    </style>
+    
     <!-- <script>(function(d,t,u,s,e){e=d.getElementsByTagName(t)[0];s=d.createElement(t);s.src=u;s.async=1;e.parentNode.insertBefore(s,e);})(document,'script','//support.b4uwallet.com/livechat/php/app.php?widget-init.js');</script> -->
     <title>B4U Wallet & Exchange</title>
   </head>
@@ -17,6 +62,18 @@
     <noscript>
         You need to enable JavaScript to run this app.
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loader-container">
+        <div class="loader"></div>
+      </div>
+    </div>
   </body>
+  <script>var LHC_API = LHC_API||{};
+    LHC_API.args = {mode:'widget',lhc_base_url:'//support.b4uwallet.com/lhc/lhc_web/index.php/',wheight:450,wwidth:350,pheight:520,pwidth:500,leaveamessage:true,theme:2,check_messages:false};
+    (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.setAttribute('crossorigin','anonymous'); po.async = true;
+    var date = new Date();po.src = '//support.b4uwallet.com/lhc/lhc_web/design/defaulttheme/js/widgetv2/index.js?'+(""+date.getFullYear() + date.getMonth() + date.getDate());
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+    </script>
 </html>
