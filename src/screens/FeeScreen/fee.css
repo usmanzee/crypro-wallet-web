@@ -1,0 +1,5 @@
+.MuiButtonBase-root {
+    font-size: 14px !important;
+}
+
+.MuiButtonBase-root:focus {outline:0;}

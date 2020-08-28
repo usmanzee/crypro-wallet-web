@@ -1,4 +1,5 @@
 import * as React from 'react';
+import "./fee.css";
 
 //Table Imports
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -55,7 +56,7 @@ function a11yProps(index: any) {
 const AntTabs = withStyles({
   root: {
     backgroundColor: "white",
-    borderBottom: '1px solid #580e38',
+    borderBottom: '0.1rem solid rgb(170, 170, 170)',
     fontSize: "14px !important",
     boxShadow: "none"
   },
