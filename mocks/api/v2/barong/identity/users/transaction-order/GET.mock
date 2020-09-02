@@ -1,0 +1,19 @@
+HTTP/2 200
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, DELETE, PUT, PATCH, OPTIONS, HEAD
+Access-Control-Max-Age: 3600
+Access-Control-Allow-Credentials: true
+
+{
+
+	"transId": "this is id",
+	"status": "done",
+	"currencyFrom": "ltc",
+	"currencyTo": "btc",
+	"payinAddress": "0x8449a9486",
+	"payoutAddress": "1KFzzGtDdnq5hr",
+	"amountExpectedFrom": "1",
+	"amountExpectedTo": "0.03901855"
+
+}
