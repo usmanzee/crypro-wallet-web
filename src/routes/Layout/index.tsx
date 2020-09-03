@@ -46,7 +46,8 @@ import {
     TradingScreen,
     VerificationScreen,
     WalletsScreen,
-    FeeScreen
+    FeeScreen,
+    CreateMerchantScreen,
 } from '../../screens';
 
 // const ChangeForgottenPasswordScreen = loadable(() => import('../../screens/ChangeForgottenPasswordScreen'));
@@ -216,6 +217,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                     <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/masspay" component={MassPage} />
                     <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/security/2fa" component={ProfileTwoFactorAuthScreen} />
                     <Route exact path="/fee" component={FeeScreen}/>
+                    <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/create-merchant" component={CreateMerchantScreen}/>
                     <Route path="**"><Redirect to="/trading/" /></Route>
                 </Switch>
                 {isLoggedIn && <WalletsFetch/>}
