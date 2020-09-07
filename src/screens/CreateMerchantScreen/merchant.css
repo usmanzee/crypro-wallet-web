@@ -1,10 +1,10 @@
-.page {
-    color: black;
-    box-shadow: 3px 3px 10px 3px rgb(8 1 1 / 12%);
-    margin-top: 10px;
+.MuiContainer-root {
+    max-width: 1100px !important;
 }
-.page-header {
-    
-    border-bottom: 1px solid rgb(8 1 1 / 12%);
-    padding: 10px 10px 10px 20px;
+.MuiInputLabel-root {
+    font-size: large !important;
+}
+
+.MuiInputBase-root {
+    font-size: 1.2rem !important
 }
