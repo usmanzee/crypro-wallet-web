@@ -1,8 +1,9 @@
 import * as React from 'react';
 import "./fee.css";
 
-//Table Imports
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
+
+//Table Imports
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';

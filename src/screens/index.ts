@@ -15,4 +15,4 @@ export * from './VerificationScreen';
 export * from './WalletsScreen';
 export * from './MassPage';
 export * from "./FeeScreen";
-export * from "./CreateMerchantScreen";
+export * from "./MerchantScreen";

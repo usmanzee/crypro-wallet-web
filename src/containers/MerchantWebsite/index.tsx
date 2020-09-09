@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
@@ -19,23 +20,27 @@ import * as MerchantApi from "../../apis/merchant";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1,
-      marginTop: "20px"
-    },
-    header: {
-        fontSize: "20px",
-        lineHeight: "1.5",
-        color: "rgb(111 33 88)",
-        padding: "20px 0px",
-        margin: "0px 20px",
-        borderBottom: "1px solid rgb(233, 236, 240);"
-    },
-    body: {
-        fontSize: "16px",
-    },
-    bodyEmpty: {
-        padding: "50px 20px",
-    },
+        flexGrow: 1,
+        // marginTop: "10px"
+      },
+      paper: {
+        
+      },
+      header: {
+          fontSize: "20px",
+          lineHeight: "1.5",
+          color: "rgb(111 33 88)",
+          padding: "20px 0px",
+          margin: "0px 20px",
+          borderBottom: "1px solid rgb(233, 236, 240)"
+      },
+      body: {
+          fontSize: "16px",
+          padding: "30px 20px",
+      },
+      bodyEmpty: {
+          textAlign: "center"
+      },
     footer: {
         borderTop: "1px solid rgb(233, 236, 240)",
         textAlign: "right",
@@ -53,8 +58,8 @@ const useStyles = makeStyles((theme: Theme) =>
         fontSize: "1.5rem",
         marginBottom: "5px"
     },
-    button: {
-        margin: theme.spacing(1),
+    saveWebsiteButton: {
+        marginTop: "15px",
         backgroundColor: "rgb(111 33 88)",
         '&:hover': {
             backgroundColor: "rgb(111 33 88)",
@@ -63,20 +68,35 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface State {
-    url: string;
-    hook: string;
-  }
+interface WebsiteState {
+    url?: string;
+    hook?: string;
+}
 
 const MerchantWebsite = () => {
     const classes = useStyles();
 
+    const [website, setWebsite] = React.useState<WebsiteState>({});
     const [open, setOpen] = React.useState(false);
 
-    const [values, setValues] = React.useState<State>({
+    const [values, setValues] = React.useState<WebsiteState>({
         url: '',
         hook: ''
     });
+
+    React.useEffect(() => {
+        MerchantApi.getMerchantWebsiteDetail().then((response) => {
+            if(response.status == 200) {
+                setWebsite(response.data);
+
+                setValues((preValues) => ({
+                    ...preValues,
+                    url: response.data.url,
+                    hook: response.data.hook
+                }));
+            }
+        });
+    }, []);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -86,7 +106,7 @@ const MerchantWebsite = () => {
         setOpen(false);
     };
 
-    const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (prop: keyof WebsiteState) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setValues({ ...values, [prop]: event.target.value });
     };
 
@@ -98,27 +118,38 @@ const MerchantWebsite = () => {
     }
     return (
         <>
-            <Paper className={classes.root}>
-                <div className={classes.header}>
-                    <h3>Whitelisted Domain</h3>
-                </div>
-                <Grid container className={classes.root} spacing={1}>
-                    <Grid item xs={6} sm={12} container>
-                        <div className={classes.body}>
-                           <div className={classes.bodyEmpty}>
-                               <p>If you prefer to control where your payment buttons are allowed to be embedded, add your domains and subdomains here.</p>
-                           </div>
-                        </div>
+            <Box className={classes.root}>
+                <Paper elevation={5} className={classes.paper}>
+                    <div className={classes.header}>
+                        <h3>Website Details</h3>
+                    </div>
+                    <Grid>
+                        <Grid item xs={6} sm={12} container>
+                            <div className={classes.body}>
+                                {website ? (
+                                    <>
+                                        <p><strong>URL: </strong>{website.url}</p>
+                                        <small><strong>Hook: </strong>{website.hook}</small>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className={classes.bodyEmpty}>
+                                            <p>If you prefer to control where your payment buttons are allowed to be embedded, add your domains and subdomains here.</p>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </Grid>
                     </Grid>
-                </Grid>
-                <div className={classes.footer}>
-                    <div className={classes.footerLink} onClick={handleClickOpen}>Whitelist a domain</div>
-                </div>
-            </Paper>
+                    <div className={classes.footer}>
+                                <div className={classes.footerLink} onClick={handleClickOpen}>{website ? "Update" : "Enter"} Website Details</div>
+                    </div>
+                </Paper>
 
+            </Box>
 
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Whitelist a domain</DialogTitle>
+                <DialogTitle id="form-dialog-title">Website Details</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                            The domain on which you plan to host a checkout widget. Be sure to include https://.
@@ -139,7 +170,7 @@ const MerchantWebsite = () => {
 
                         <TextField
                             id="website-hook"
-                            label="Website URl:"
+                            label="WebHook:"
                             placeholder="EndPoint (Https://...)"
                             fullWidth
                             margin="normal"
@@ -150,21 +181,19 @@ const MerchantWebsite = () => {
                             value={values.hook}
                             onChange={handleChange('hook')}
                         />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            fullWidth={true}
+                            className={classes.saveWebsiteButton}
+                            startIcon={<SaveIcon />}
+                            onClick={submitForm}
+                        >
+                        {website ? "Update" : "Save"}
+                    </Button>
                     </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        className={classes.button}
-                        startIcon={<SaveIcon />}
-                        onClick={submitForm}
-                    >
-                    Save
-                  </Button>
                 </DialogActions>
             </Dialog>
         </>
