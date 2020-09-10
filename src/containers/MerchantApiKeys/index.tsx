@@ -64,9 +64,6 @@ const MerchantApiKeys = () => {
 
     const [key, setKey] = React.useState("");
     const [copyTooltipText, setCopyTooltipText] = React.useState("Copy");
-    const [copySuccess, setCopySuccess] = React.useState('');
-
-    const textAreaRef = React.useRef(null);
 
     function copyToClipboard(text) {
         var textField = document.createElement('textarea')

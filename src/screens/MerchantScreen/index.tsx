@@ -73,10 +73,6 @@ const MerchantScreen = () => {
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-
-  const handleChangeIndex = (index: number) => {
-    setValue(index);
-  };
   return (
     <>
       <Box className={classes.root}>
