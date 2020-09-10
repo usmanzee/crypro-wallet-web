@@ -15,6 +15,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import { connect } from "react-redux";
+
+import {
+    RootState,
+    selectUserInfo,
+    User,
+} from '../../modules';
+
 import * as MerchantApi from "../../apis/merchant";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -79,6 +87,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+interface ReduxProps {
+    user: User;
+    passwordChangeSuccess?: boolean;
+    toggle2FASuccess?: boolean;
+}
 
 interface PasswordState {
     currentPassword: string;
@@ -86,8 +99,10 @@ interface PasswordState {
     confirmPassword: string;
 }
 
-const MerchantProfile = () => {
+const MerchantProfileComponent = (props) => {
     const classes = useStyles();
+
+    const { user } = props;
 
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [passwordValues, setPasswordValues] = React.useState<PasswordState>({
@@ -139,7 +154,7 @@ const MerchantProfile = () => {
                                         <h5>Account Email Address</h5>
                                         <p className={classes.emailMessage}>Used to sign in to your account and notify you when payments have been received.</p>
                                         <p className={classes.email}>
-                                            <strong>usman@gmail.com</strong>
+                                            <strong>{user.email}</strong>
                                         </p>
                                     </div>
                                 </div>
@@ -148,7 +163,7 @@ const MerchantProfile = () => {
                                     <h5>Support Email Address</h5>
                                         <p className={classes.emailMessage}>Your support email is used on receipts to allow customers to contact you about their purchases and payment.</p>
                                         <p className={classes.email}>
-                                            <strong>usman@gmail.com</strong>
+                                            <strong>{user.email}</strong>
                                         </p>
                                     </div>
                                 </div>
@@ -227,6 +242,10 @@ const MerchantProfile = () => {
     );
 }
 
+const mapStateToProps = (state: RootState): ReduxProps => ({
+    user: selectUserInfo(state),
+});
+const MerchantProfile = connect(mapStateToProps)(MerchantProfileComponent);
 export {
     MerchantProfile
 }

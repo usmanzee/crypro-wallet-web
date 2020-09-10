@@ -15,15 +15,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 
-import ViewAgendaIcon from '@material-ui/icons/ViewAgenda';
-import Tooltip from '@material-ui/core/Tooltip';
-
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
 import * as MerchantApi from "../../apis/merchant";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -75,9 +66,8 @@ const MerchantPayments = () => {
     const classes = useStyles();
 
     const [payments, setPayments] = React.useState<any[]>([]);
-    const [page, setPage] = React.useState(10);
+    const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [open, setOpen] = React.useState(false); 
 
     React.useEffect(() => {
         MerchantApi.getMerchantPaymanets().then((response) => {
@@ -95,13 +85,6 @@ const MerchantPayments = () => {
         setPage(0);
       };
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
     return (
         <>
             <Box className={classes.root}>
@@ -119,26 +102,20 @@ const MerchantPayments = () => {
                                             <TableHead>
                                             <TableRow>
                                                 <StyledTableCell>TxId</StyledTableCell>
+                                                <StyledTableCell>Payment Address</StyledTableCell>
                                                 <StyledTableCell>Order ID</StyledTableCell>
                                                 <StyledTableCell>Amount</StyledTableCell>
                                                 <StyledTableCell>Status</StyledTableCell>
-                                                <StyledTableCell>Action</StyledTableCell>
                                             </TableRow>
                                             </TableHead>
                                             <TableBody>
                                             {payments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((payment, index) => (
                                                 <TableRow hover key={index}>
-                                                <StyledTableCell component="th" scope="row">
-                                                    {payment.txid}
-                                                </StyledTableCell>
+                                                <StyledTableCell>{payment.txid}</StyledTableCell>
+                                                <StyledTableCell>{payment.payment_address}</StyledTableCell>
                                                 <StyledTableCell>{payment.order_id}</StyledTableCell>
                                                 <StyledTableCell>{payment.amount}</StyledTableCell>
                                                 <StyledTableCell>{payment.status}</StyledTableCell>
-                                                <StyledTableCell>
-                                                <Tooltip title="View Details" placement="top-start">
-                                                    <ViewAgendaIcon className={classes.paymentDetails} onClick={handleClickOpen}/>
-                                                </Tooltip>
-                                                </StyledTableCell>
                                                 </TableRow>
                                             ))}
                                             </TableBody>
@@ -172,19 +149,6 @@ const MerchantPayments = () => {
                     </Grid>
                 </Paper>
             </Box>
-
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Payment details</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                           Content description here
-                        </DialogContentText>
-                                Content of dialog here
-                    </DialogContent>
-                <DialogActions>
-                    Actions here if any
-                </DialogActions>
-            </Dialog>
         </>
     );
 }
