@@ -38,6 +38,7 @@ import { profileReducer  } from './user/profile';
 import { userActivityReducer  } from './user/userActivity';
 import { walletsReducer  } from './user/wallets';
 import { withdrawLimitReducer  } from './user/withdrawLimit';
+import { merchantProfileReducer  } from './user/merchant-profile';
 
 export const publicReducer = combineReducers({
     colorTheme: changeColorThemeReducer,
@@ -78,4 +79,5 @@ export const userReducer = combineReducers({
     sendEmailVerification: sendEmailVerificationReducer,
     captchaKeys: getGeetestCaptchaReducer,
     withdrawLimit: withdrawLimitReducer,
+    merchantProfile: merchantProfileReducer,
 });

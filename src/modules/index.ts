@@ -41,6 +41,7 @@ import { ProfileState, rootProfileSaga } from './user/profile';
 import { rootUserActivitySaga, UserActivityState } from './user/userActivity';
 import { rootWalletsSaga, WalletsState } from './user/wallets';
 import { rootWithdrawLimitSaga, WithdrawLimitState } from './user/withdrawLimit';
+import { MerchanProfileState,  rootMerchantProfileSaga} from './user/merchant-profile';
 
 export * from './public/markets';
 export * from './public/orderBook';
@@ -109,6 +110,7 @@ export interface RootState {
         sendEmailVerification: EmailVerificationState;
         captchaKeys: GeetestCaptchaState;
         withdrawLimit: WithdrawLimitState;
+        merchantProfile: MerchanProfileState;
     };
 }
 
@@ -148,5 +150,6 @@ export function* rootSaga() {
         call(rootUserActivitySaga),
         call(rootWalletsSaga),
         call(rootWithdrawLimitSaga),
+        call(rootMerchantProfileSaga),
     ]);
 }
