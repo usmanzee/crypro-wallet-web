@@ -9,6 +9,31 @@ import { ErrorWrapper } from './containers';
 import { RootState } from './modules';
 import { languageMap } from './translations';
 
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+
+const theme = createMuiTheme({
+    palette: {
+      primary: {
+        // Purple and green play nicely together.
+        main: "rgb(111 33 88)",
+      }
+    },
+    typography: {
+        // In Chinese and Japanese the characters are usually larger,
+        // so a smaller fontsize may be appropriate.
+        fontSize: 20,
+        button: {
+            // color: "white",
+            // backgroundColor: "rgb(111 33 88)",
+            // '&:hover': {
+            //     backgroundColor: "rgb(111 33 88)",
+            // },
+        }
+    },
+  });
+  
+
 interface AppProps {
     history: History;
 }
@@ -46,20 +71,22 @@ class AppLayout extends React.Component<Props, {}, {}> {
         const { lang } = this.props;
 
         return (
-            <IntlProvider locale={lang} messages={languageMap[lang]} key={lang}>
-                <Router history={history}>
-                    <ErrorWrapper>
-                        <React.Suspense fallback={null}>
-                            <HeaderContainer/>
-                            <SidebarContainer/>
-                            <CustomizationContainer/>
-                            <AlertsContainer/>
-                            <LayoutContainer/>
-                            <FooterContainer/>
-                        </React.Suspense>
-                    </ErrorWrapper>
-                </Router>
-            </IntlProvider>
+            <ThemeProvider theme={theme}>
+                <IntlProvider locale={lang} messages={languageMap[lang]} key={lang}>
+                    <Router history={history}>
+                        <ErrorWrapper>
+                            <React.Suspense fallback={null}>
+                                <HeaderContainer/>
+                                <SidebarContainer/>
+                                <CustomizationContainer/>
+                                <AlertsContainer/>
+                                <LayoutContainer/>
+                                <FooterContainer/>
+                            </React.Suspense>
+                        </ErrorWrapper>
+                    </Router>
+                </IntlProvider>
+            </ThemeProvider>
         );
     }
 }

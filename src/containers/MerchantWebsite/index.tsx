@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme: Theme) =>
         marginBottom: "5px"
     },
     saveWebsiteButton: {
+        color: "white",
         marginTop: "15px",
         backgroundColor: "rgb(111 33 88)",
         '&:hover': {
