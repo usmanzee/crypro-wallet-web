@@ -7,7 +7,17 @@ import Paper from '@material-ui/core/Paper';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import * as MerchantApi from "../../apis/merchant";
+import { connect } from "react-redux";
+
+import {
+    RootState,
+    selectMerchantKey,
+    MerchantKey
+} from '../../modules';
+
+import {
+    merchantKeyFetch,
+} from '../../modules/user/merchantKey';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,10 +69,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const MerchantApiKeys = () => {
-    const classes = useStyles();
+interface ReduxProps {
+    merchantKey: MerchantKey;
+}
 
-    const [key, setKey] = React.useState("");
+const MerchantApiKeysController = (props) => {
+    const classes = useStyles();
+    const { key } = props.merchantKey;
+
     const [copyTooltipText, setCopyTooltipText] = React.useState("Copy");
 
     function copyToClipboard(text) {
@@ -79,17 +93,11 @@ const MerchantApiKeys = () => {
         setCopyTooltipText('copy');
     }
     React.useEffect(() => {
-        MerchantApi.getMerchantKey().then((response) => {
-            console.log(response.data);
-            setKey(response.data);
-        });
+        props.fetchMerchantKey();
     }, []);
 
     const getMerchantKey = () => {
-        MerchantApi.getMerchantKey().then((response) => {
-            console.log(response);
-            setKey(response.data);
-        });
+        props.fetchMerchantKey();
     }
     return (
         <>
@@ -127,6 +135,15 @@ const MerchantApiKeys = () => {
         </>
     );
 }
+
+const mapStateToProps = (state: RootState): ReduxProps => ({
+    merchantKey: selectMerchantKey(state),
+});
+const mapDispatchToProps = dispatch => ({
+    fetchMerchantKey: () => dispatch(merchantKeyFetch()),
+});
+
+const MerchantApiKeys = connect(mapStateToProps, mapDispatchToProps)(MerchantApiKeysController)
 
 export {
     MerchantApiKeys,

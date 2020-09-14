@@ -2,10 +2,10 @@ import * as React from 'react';
 import "./merchant.css";
 
 import { makeStyles, createStyles, Theme, useTheme } from '@material-ui/core/styles';
-import { MerchantProfile } from "../../containers/MerchantProfile";
+import { MerchantProfileContainer } from "../../containers/MerchantProfile";
 import { MerchantApiKeys } from "../../containers/MerchantApiKeys";
-import { MerchantWebsite } from "../../containers/MerchantWebsite";
-import { MerchantPayments } from "../../containers/MerchantPayments";
+import { MerchantWebsiteContainer } from "../../containers/MerchantWebsite";
+import { MerchantPaymentsContainer } from "../../containers/MerchantPayments";
 
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
@@ -94,16 +94,16 @@ const MerchantScreen = () => {
         </AppBar>
 
           <TabPanel value={value} index={0} dir={theme.direction}>
-            <MerchantProfile />
+            <MerchantProfileContainer />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
             <MerchantApiKeys />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-            <MerchantWebsite />
+            <MerchantWebsiteContainer />
           </TabPanel>
           <TabPanel value={value} index={3} dir={theme.direction}>
-            <MerchantPayments />
+            <MerchantPaymentsContainer />
           </TabPanel>
         </Container>
       </Box>

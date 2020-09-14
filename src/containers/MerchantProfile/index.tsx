@@ -19,9 +19,14 @@ import { connect } from "react-redux";
 
 import {
     RootState,
-    selectUserInfo,
-    User,
+    selectMerchantData,
+    MerchantProfile
 } from '../../modules';
+
+import {
+    merchantProfileFetch,
+} from '../../modules/user/merchantProfile';
+
 
 import * as MerchantApi from "../../apis/merchant";
 
@@ -88,10 +93,12 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 interface ReduxProps {
-    user: User;
-    passwordChangeSuccess?: boolean;
-    toggle2FASuccess?: boolean;
+    merchant: MerchantProfile;
 }
+
+// interface DispatchProps {
+//     merchantProfile: typeof merchantProfileFetch;
+// }
 
 interface PasswordState {
     currentPassword: string;
@@ -102,7 +109,7 @@ interface PasswordState {
 const MerchantProfileComponent = (props) => {
     const classes = useStyles();
 
-    const { user } = props;
+    const { merchant } = props;
 
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [passwordValues, setPasswordValues] = React.useState<PasswordState>({
@@ -110,6 +117,10 @@ const MerchantProfileComponent = (props) => {
         newPassword: "",
         confirmPassword: ""
     });
+
+    React.useEffect(() => {
+        props.fetchMerchantProfile();
+    }, []);
 
     const handleClickDialogOpen = () => {
         setDialogOpen(true);
@@ -154,7 +165,7 @@ const MerchantProfileComponent = (props) => {
                                         <h5>Account Email Address</h5>
                                         <p className={classes.emailMessage}>Used to sign in to your account and notify you when payments have been received.</p>
                                         <p className={classes.email}>
-                                            <strong>{user.email}</strong>
+                                            <strong>{merchant.email}</strong>
                                         </p>
                                     </div>
                                 </div>
@@ -163,7 +174,7 @@ const MerchantProfileComponent = (props) => {
                                     <h5>Support Email Address</h5>
                                         <p className={classes.emailMessage}>Your support email is used on receipts to allow customers to contact you about their purchases and payment.</p>
                                         <p className={classes.email}>
-                                            <strong>{user.email}</strong>
+                                            <strong>{merchant.email}</strong>
                                         </p>
                                     </div>
                                 </div>
@@ -198,6 +209,8 @@ const MerchantProfileComponent = (props) => {
                             type="password"
                             value={passwordValues.currentPassword}
                             name="currentPassword"
+                            autoFocus={true}
+                            autoComplete="off"
                             onChange={handlePasswordInputChange("currentPassword")}
                         />
 
@@ -210,6 +223,7 @@ const MerchantProfileComponent = (props) => {
                             type="password"
                             value={passwordValues.newPassword}
                             name="newPassword"
+                            autoComplete="off"
                             onChange={handlePasswordInputChange("newPassword")}
                         />
                         <TextField
@@ -221,6 +235,7 @@ const MerchantProfileComponent = (props) => {
                             type="password"
                             value={passwordValues.confirmPassword}
                             name="confirmPassword"
+                            autoComplete="off"
                             onChange={handlePasswordInputChange("confirmPassword")}
                         />
                         <Button
@@ -243,9 +258,13 @@ const MerchantProfileComponent = (props) => {
 }
 
 const mapStateToProps = (state: RootState): ReduxProps => ({
-    user: selectUserInfo(state),
+    merchant: selectMerchantData(state),
 });
-const MerchantProfile = connect(mapStateToProps)(MerchantProfileComponent);
+const mapDispatchToProps = dispatch => ({
+    fetchMerchantProfile: () => dispatch(merchantProfileFetch()),
+});
+
+const MerchantProfileContainer = connect(mapStateToProps, mapDispatchToProps)(MerchantProfileComponent);
 export {
-    MerchantProfile
+    MerchantProfileContainer
 }

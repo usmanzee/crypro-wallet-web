@@ -22,7 +22,7 @@ const theme = createMuiTheme({
     typography: {
         // In Chinese and Japanese the characters are usually larger,
         // so a smaller fontsize may be appropriate.
-        fontSize: 20,
+        fontSize: 16,
         button: {
             // color: "white",
             // backgroundColor: "rgb(111 33 88)",

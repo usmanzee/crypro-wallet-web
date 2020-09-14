@@ -1,4 +1,4 @@
-export interface MerchantProfile {
+export interface Profile {
     first_name: string;
     last_name: string;
     dob: string;
@@ -12,14 +12,14 @@ export interface MerchantProfile {
     metadata?: string;
 }
 
-export interface Merchant {
+export interface MerchantProfile {
     email: string;
     level: number;
     otp: boolean;
     role: string;
     state: string;
     uid: string;
-    profiles: MerchantProfile[];
     csrf_token?: string;
     data?: string;
+    profiles: Profile[];
 }

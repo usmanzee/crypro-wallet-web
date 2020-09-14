@@ -15,7 +15,17 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 
-import * as MerchantApi from "../../apis/merchant";
+import { connect } from "react-redux";
+
+import {
+    RootState,
+    selectMerchantPayments,
+    MerchantPayment
+} from '../../modules';
+
+import {
+    merchantPaymentsFetch,
+} from '../../modules/user/merchantPayments';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -62,18 +72,19 @@ const StyledTableCell = withStyles((theme: Theme) =>
   }),
 )(TableCell);
 
-const MerchantPayments = () => {
-    const classes = useStyles();
+interface ReduxProps {
+    merchantPayments: MerchantPayment;
+}
 
-    const [payments, setPayments] = React.useState<any[]>([]);
+const MerchantPaymentsComponent = (props) => {
+    const classes = useStyles();
+    const { merchantPayments } = props;
+
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     React.useEffect(() => {
-        MerchantApi.getMerchantPaymanets().then((response) => {
-            console.log(response.data);
-            setPayments(response.data);
-        });
+        props.fetchMerchantPayments();
     }, []);
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -95,7 +106,7 @@ const MerchantPayments = () => {
                     <Grid>
                         <Grid item md={12} container>
                             <div className={classes.body}>
-                                { payments.length ? (
+                                { merchantPayments.length ? (
                                     <>
                                     <TableContainer>
                                         <Table aria-label="simple table">
@@ -109,7 +120,7 @@ const MerchantPayments = () => {
                                             </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                            {payments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((payment, index) => (
+                                            {merchantPayments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((payment, index) => (
                                                 <TableRow hover key={index}>
                                                 <StyledTableCell>{payment.txid}</StyledTableCell>
                                                 <StyledTableCell>{payment.payment_address}</StyledTableCell>
@@ -125,7 +136,7 @@ const MerchantPayments = () => {
                                     <TablePagination
                                         rowsPerPageOptions={[10, 25, 100]}
                                         component="div"
-                                        count={payments.length}
+                                        count={merchantPayments.length}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onChangePage={handleChangePage}
@@ -153,6 +164,15 @@ const MerchantPayments = () => {
     );
 }
 
+const mapStateToProps = (state: RootState): ReduxProps => ({
+    merchantPayments: selectMerchantPayments(state),
+});
+const mapDispatchToProps = dispatch => ({
+    fetchMerchantPayments: () => dispatch(merchantPaymentsFetch()),
+});
+
+const MerchantPaymentsContainer = connect(mapStateToProps, mapDispatchToProps)(MerchantPaymentsComponent)
+
 export {
-    MerchantPayments
+    MerchantPaymentsContainer
 }

@@ -15,6 +15,18 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import { connect } from "react-redux";
+
+import {
+    RootState,
+    selectMerchantWebsite,
+    MerchantWebsite
+} from '../../modules';
+
+import {
+    merchantWebsiteFetch,
+} from '../../modules/user/merchantWebsite';
+
 import * as MerchantApi from "../../apis/merchant";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -69,37 +81,30 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface WebsiteState {
-    url?: string;
-    hook?: string;
+interface ReduxProps {
+    merchantWebsite: MerchantWebsite;
 }
 
-const MerchantWebsite = () => {
+const MerchantWebsiteComponent = (props) => {
     const classes = useStyles();
+    const { merchantWebsite } = props;
 
-    const [website, setWebsite] = React.useState<WebsiteState>({});
     const [open, setOpen] = React.useState(false);
 
-    const [values, setValues] = React.useState<WebsiteState>({
-        url: '',
-        hook: ''
+    const [values, setValues] = React.useState({
+        url: merchantWebsite.url,
+        hook: merchantWebsite.hook
     });
 
     React.useEffect(() => {
-        MerchantApi.getMerchantWebsiteDetail().then((response) => {
-            if(response.status == 200) {
-                setWebsite(response.data);
-
-                setValues((preValues) => ({
-                    ...preValues,
-                    url: response.data.url,
-                    hook: response.data.hook
-                }));
-            }
-        });
+        props.fetchMerchantWebsite();
     }, []);
 
     const handleClickOpen = () => {
+        setValues({
+            url: merchantWebsite.url,
+            hook: merchantWebsite.hook
+        });
         setOpen(true);
     };
 
@@ -107,7 +112,7 @@ const MerchantWebsite = () => {
         setOpen(false);
     };
 
-    const handleChange = (prop: keyof WebsiteState) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (prop: keyof MerchantWebsite) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setValues({ ...values, [prop]: event.target.value });
     };
 
@@ -127,10 +132,10 @@ const MerchantWebsite = () => {
                     <Grid>
                         <Grid item xs={6} sm={12} container>
                             <div className={classes.body}>
-                                {website ? (
+                                {merchantWebsite.url && merchantWebsite.hook ? (
                                     <>
-                                        <p><strong>URL: </strong>{website.url}</p>
-                                        <small><strong>Hook: </strong>{website.hook}</small>
+                                        <p><strong>URL: </strong>{merchantWebsite.url}</p>
+                                        <small><strong>Hook: </strong>{merchantWebsite.hook}</small>
                                     </>
                                 ) : (
                                     <>
@@ -143,7 +148,7 @@ const MerchantWebsite = () => {
                         </Grid>
                     </Grid>
                     <div className={classes.footer}>
-                                <div className={classes.footerLink} onClick={handleClickOpen}>{website ? "Update" : "Enter"} Website Details</div>
+                                <div className={classes.footerLink} onClick={handleClickOpen}>{merchantWebsite ? "Update" : "Enter"} Website Details</div>
                     </div>
                 </Paper>
 
@@ -166,6 +171,8 @@ const MerchantWebsite = () => {
                             }}
                             variant="outlined"
                             value={values.url}
+                            autoFocus={true}
+                            autoComplete="off"
                             onChange={handleChange('url')}
                         />
 
@@ -180,6 +187,7 @@ const MerchantWebsite = () => {
                             }}
                             variant="outlined"
                             value={values.hook}
+                            autoComplete="off"
                             onChange={handleChange('hook')}
                         />
                         <Button
@@ -191,7 +199,7 @@ const MerchantWebsite = () => {
                             startIcon={<SaveIcon />}
                             onClick={submitForm}
                         >
-                        {website ? "Update" : "Save"}
+                        {merchantWebsite ? "Update" : "Save"}
                     </Button>
                     </DialogContent>
                 <DialogActions>
@@ -201,6 +209,16 @@ const MerchantWebsite = () => {
     );
 }
 
+
+const mapStateToProps = (state: RootState): ReduxProps => ({
+    merchantWebsite: selectMerchantWebsite(state),
+});
+const mapDispatchToProps = dispatch => ({
+    fetchMerchantWebsite: () => dispatch(merchantWebsiteFetch()),
+});
+
+const MerchantWebsiteContainer = connect(mapStateToProps, mapDispatchToProps)(MerchantWebsiteComponent)
+
 export {
-    MerchantWebsite,
+    MerchantWebsiteContainer,
 };
