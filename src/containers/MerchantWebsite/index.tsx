@@ -101,10 +101,12 @@ const MerchantWebsiteComponent = (props) => {
     }, []);
 
     const handleClickOpen = () => {
-        setValues({
-            url: merchantWebsite.url,
-            hook: merchantWebsite.hook
-        });
+        if(merchantWebsite) {
+            setValues({
+                url: merchantWebsite.url,
+                hook: merchantWebsite.hook
+            });
+        }
         setOpen(true);
     };
 
