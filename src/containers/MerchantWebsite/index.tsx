@@ -92,8 +92,8 @@ const MerchantWebsiteComponent = (props) => {
     const [open, setOpen] = React.useState(false);
 
     const [values, setValues] = React.useState({
-        url: merchantWebsite.url,
-        hook: merchantWebsite.hook
+        url: "",
+        hook: ""
     });
 
     React.useEffect(() => {
