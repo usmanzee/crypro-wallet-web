@@ -122,9 +122,9 @@ const MerchantProfileComponent = (props) => {
         props.fetchMerchantProfile();
     }, []);
 
-    const handleClickDialogOpen = () => {
-        setDialogOpen(true);
-    };
+    // const handleClickDialogOpen = () => {
+    //     setDialogOpen(true);
+    // };
 
     const handleDialogClose = () => {
         setDialogOpen(false);
@@ -178,7 +178,7 @@ const MerchantProfileComponent = (props) => {
                                         </p>
                                     </div>
                                 </div>
-                                <div className={classes.password}>
+                                {/* <div className={classes.password}>
                                 <h3>Password</h3>
                                     <div>
                                         <p className={classes.emailMessage}>Your password is used to secure access to your account. You’ll need your existing password on hand to change it.</p>
@@ -188,7 +188,7 @@ const MerchantProfileComponent = (props) => {
                                     </div>
                                     <div>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </Grid>
                     </Grid>

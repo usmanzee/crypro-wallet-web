@@ -8,20 +8,34 @@ export const merchantWebsiteFetch = () => ({
 export const merchantWebsiteSuccess = (website: MerchantWebsite) => ({
     type: constants.MERCHANT_WEBSITE_SUCCESS,
     payload: {
-        website: website
+        website
     },
 });
 
-export const merchantWebsiteError = (message: String) => ({
+export const merchantWebsiteError = (message: string) => ({
     type: constants.MERCHANT_WEBSITE_ERROR,
     payload: {
-        message: message
+        message
     },
 });
 
-export const merchantWebsiteUpdate = (merchantWebsiteData: MerchantWebsite) => ({
+export const merchantWebsiteUpdate = (website: MerchantWebsite) => ({
     type: constants.MERCHANT_WEBSITE_UPDATE,
     payload: {
-        merchantWebsiteData: merchantWebsiteData
+        website
+    }
+});
+
+export const merchantWebsiteUpdateSuccess = (website: MerchantWebsite) => ({
+    type: constants.MERCHANT_WEBSITE_UPDATE_SUCCESS,
+    payload: {
+        website
+    }
+});
+
+export const merchantWebsiteUpdateError = (message: string) => ({
+    type: constants.MERCHANT_WEBSITE_UPDATE_ERROR,
+    payload: {
+        message
     }
 });

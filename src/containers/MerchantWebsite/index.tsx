@@ -14,6 +14,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { HTTPS_URL_REGEX } from '../../helpers';
 
 import { connect } from "react-redux";
 
@@ -25,9 +26,8 @@ import {
 
 import {
     merchantWebsiteFetch,
+    merchantWebsiteUpdate
 } from '../../modules/user/merchantWebsite';
-
-import * as MerchantApi from "../../apis/merchant";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -116,10 +116,18 @@ const MerchantWebsiteComponent = (props) => {
         setValues({ ...values, [prop]: event.target.value });
     };
 
+    const isValidForm = () => {
+        const {
+            url,
+            hook,
+        } = values;
+        const isURLValid = url.match(HTTPS_URL_REGEX);
+        const isHookValid = hook.match(HTTPS_URL_REGEX);
+        return url && hook && isURLValid && isHookValid;
+    }
+
     const submitForm = () => {
-        MerchantApi.createMerchant().then((response) => {
-            
-        });
+        props.updateMerchantWebsite(values);
         setOpen(false);
     }
     return (
@@ -197,6 +205,7 @@ const MerchantWebsiteComponent = (props) => {
                             fullWidth={true}
                             className={classes.saveWebsiteButton}
                             startIcon={<SaveIcon />}
+                            disabled={!isValidForm()}
                             onClick={submitForm}
                         >
                         {merchantWebsite ? "Update" : "Save"}
@@ -215,6 +224,9 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
 });
 const mapDispatchToProps = dispatch => ({
     fetchMerchantWebsite: () => dispatch(merchantWebsiteFetch()),
+    updateMerchantWebsite: (websiteData) => {
+        dispatch(merchantWebsiteUpdate(websiteData));
+    }
 });
 
 const MerchantWebsiteContainer = connect(mapStateToProps, mapDispatchToProps)(MerchantWebsiteComponent)

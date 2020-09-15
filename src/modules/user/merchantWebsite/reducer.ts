@@ -35,6 +35,23 @@ export const merchantWebsiteReducer = (state: MerchantWebsiteState = initialMerc
                 isFetching: false,
                 error: action.payload.message
             }
+        case constants.MERCHANT_WEBSITE_UPDATE:
+            return {
+                ...state,
+                isUpdating: true
+            }
+        case constants.MERCHANT_WEBSITE_UPDATE_SUCCESS:
+            return {
+                ...state,
+                isUpdating: false,
+                data: action.payload.website
+            }
+        case constants.MERCHANT_WEBSITE_UPDATE_ERROR:
+            return {
+                ...state,
+                isUpdating: false,
+                error: action.payload.message
+            }
         default:
             return state;
     }
