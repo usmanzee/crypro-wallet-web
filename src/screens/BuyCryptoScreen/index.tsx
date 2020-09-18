@@ -8,15 +8,22 @@ import {
     Paper,
     Grid,
     TextField,
+    List,
+    ListItem,
+    ListItemText
     // InputAdornment
  } from '@material-ui/core';
  import Autocomplete from '@material-ui/lab/Autocomplete';
  import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 //  import CheckIcon from '@material-ui/icons/Check';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
+import {
+    ToggleButtonGroup,
+    ToggleButton,
+    Alert
+} from '@material-ui/lab';
 
 import Axios from "axios";
+import { AnyARecord } from "dns";
 
 interface Currency {
     id: string;
@@ -107,13 +114,18 @@ const useStyles = makeStyles((theme: Theme) =>
 const BuyCryptoScreen = () => {
     const classes = useStyles();
 
+    const [amount, setAmount] = React.useState<any | undefined>('');
+    const [showAmountError, setShowAmountError] = React.useState<boolean>(false);
+    const [amountErrorMessage, setAmountErrorMessage] = React.useState<string | undefined>('');
+    const [channelErrorMessage, setChannelErrorMessage] = React.useState<string | undefined>('');
+
     const [fiatCurrencies, setFiatCurrencies] = React.useState<Currency[]>([]);
     const [cryptoCurrencies, setCryptoCurrencies] = React.useState<Currency[]>([]);
 
     const [fiatCurrencyOption, setFiatCurrencyOption] = React.useState<Currency | null>(null);
     const [cryptoCurrencyOption, setCryptoCurrencyOption] = React.useState<Currency | null>(null);
     
-    const [alignment, setAlignment] = React.useState<string | null>(paymentChannels[0]['value']);
+    const [paymentChannel, setPaymentChannel] = React.useState<string | null>(paymentChannels[0]['value']);
 
 
 
@@ -121,7 +133,7 @@ const BuyCryptoScreen = () => {
         if(!fiatCurrencies.length) {
             getCurrencies();
         } else {
-            //setFiatCurrencyOption(fiatCurrencies[0]);
+            setFiatCurrencyOption(fiatCurrencies[0]);
         }
         if(!cryptoCurrencies.length) {
             getCurrencies();
@@ -146,17 +158,55 @@ const BuyCryptoScreen = () => {
         })
     }
 
-    const fiatCurrencyOptionChengeEvent = () => {
+    const handleAmountChangeEvent = (event: any) => {
+        setAmount(event.target.value);
+        checkAmountLimit(event.target.value, fiatCurrencyOption);
         
     }
-    const cryptoCurrencyOptionChengeEvent = () => {
 
+    const handleFiatCurrencyChangeEvent = (option: Currency | null) => {
+        checkAmountLimit(amount, option);
+    }
+    const handleCryptoCurrencyChengeEvent = (option: Currency | null) => {
     }
 
+    const handlePaymentChannelChange = (event: React.MouseEvent<HTMLElement>, newPaymentChannel: string | null) => {
+        if (newPaymentChannel !== null && paymentChannel !== newPaymentChannel) {
+            setPaymentChannel(newPaymentChannel);
+            checkAmountLimit(amount, fiatCurrencyOption);
+        }
+    };
 
-  const handleAlignment = (event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
-    setAlignment(newAlignment);
-  };
+    const checkAmountLimit = (amount: any | undefined, baseCurrency: Currency | null)=> {
+
+        if(amount && baseCurrency) {
+            if(amount < baseCurrency.minAmount) {
+                setShowAmountError(true);
+                setAmountErrorMessage("Amount entered may not be suffecient for current payment channel.");
+                setChannelErrorMessage(`Insufficient amount. Minimum limit is ${baseCurrency.minAmount} ${baseCurrency.code.toUpperCase()}`);
+                return;
+            } else {
+                setShowAmountError(false);
+                setAmountErrorMessage("");
+                setChannelErrorMessage("");
+            }
+            
+            if(amount > baseCurrency.maxAmount) {
+                setShowAmountError(true);
+                setAmountErrorMessage("Amount entered may exceed the limit of current payment channel.");
+                setChannelErrorMessage(`Limit exceeded. Maximum limit per transaction is 17000 EUR ${baseCurrency.maxAmount} ${baseCurrency.code.toUpperCase()}`);
+                return;
+            } else {
+                setShowAmountError(false);
+                setAmountErrorMessage("");
+                setChannelErrorMessage("");
+            }
+        } else {
+            setShowAmountError(false);
+            setAmountErrorMessage("");
+            setChannelErrorMessage("");
+        }
+    }
 
     return (
         <>
@@ -170,24 +220,40 @@ const BuyCryptoScreen = () => {
                                 <TextField
                                     id="amount"
                                     label="I want to spend"
+                                    type="text"
+                                    name={amount}
                                     placeholder="Enter Amount"
+                                    autoFocus
                                     fullWidth
                                     InputLabelProps={{
                                         shrink: true,
                                     }}
                                     variant="outlined"
+                                    onChange={handleAmountChangeEvent}
+                                    error={showAmountError}
+                                    helperText={amountErrorMessage}
                                 />
                                 </Grid>
                                 <Grid item md={2}>
                                 <Autocomplete
-                                    id="fiat-currency"      
-                                    clearOnBlur={false}                             
-                                    options={fiatCurrencies}
+                                    id="fiat-currency" 
+                                    blurOnSelect     
                                     value={fiatCurrencyOption}
-                                    getOptionLabel={(option: Currency) => {   
-                                        return option ? option.code : ""
+                                    onChange={(event: any, selectedOption: Currency | null) => {
+                                        setFiatCurrencyOption(selectedOption);
+                                        handleFiatCurrencyChangeEvent(selectedOption);
+                                    }}                           
+                                    options={fiatCurrencies}
+                                    getOptionSelected={(option: Currency, value: Currency) => {
+                                        return option.code == value.code;
                                     }}
-                                    
+                                    getOptionLabel={(option: Currency) => {   
+                                        return option ? option.code.toUpperCase() : ""
+                                    }}
+                                    renderOption={(option) => (
+                                        
+                                        <span>{ option ? option.code.toUpperCase() : "" }</span>
+                                    )}
                                     renderInput={(params) => {
                                         return (
                                             <TextField 
@@ -211,22 +277,29 @@ const BuyCryptoScreen = () => {
                                 <Grid item md={3}>
                                 <Autocomplete
                                     id="crypto-currency"
-                                    freeSolo={false}
-                                    options={cryptoCurrencies}
+                                    blurOnSelect
                                     value={cryptoCurrencyOption}
+                                    onChange={(event: any, selectedOption: Currency | null) => {
+                                        setCryptoCurrencyOption(selectedOption);
+                                        handleCryptoCurrencyChengeEvent(selectedOption);
+                                    }} 
+                                    options={cryptoCurrencies}
+                                    getOptionSelected={(option: Currency, value: Currency) => {
+                                        return option.code == value.code;
+                                    }}
                                     getOptionLabel={(option) => {   
-                                        return option ? option.code : ""
+                                        return option ? option.code.toUpperCase() : ""
                                     }}
                                     renderOption={(option) => (
                                         <>
                                           {/* <img src={option.icon_url} style={{ width: "10%", marginRight: "5px" }}/> */}
-                                          <span>{ option ? option.code : "" }</span>
+                                          <span>{ option ? option.code.toUpperCase() : "" }</span>
                                         </>
                                     )}
                                     renderInput={(params) => {
                                         return (
                                             <TextField 
-                                                {...params} 
+                                                {...params}
                                                 label="Select Currency" 
                                                 placeholder="Select Your Currency" 
                                                 style={{ marginLeft: "3px" }} 
@@ -261,15 +334,16 @@ const BuyCryptoScreen = () => {
                                 <Grid item md={6}>
                                     <ToggleButtonGroup
                                         style={{ display: "block" }}
-                                        value={alignment}
+                                        value={paymentChannel}
                                         exclusive
-                                        onChange={handleAlignment}
+                                        onChange={handlePaymentChannelChange}
                                         orientation="horizontal"
                                         >
                                         {paymentChannels.map((paymentChannel) => {
                                             return (
                                                 <ToggleButton
                                                     key={paymentChannel.id}
+                                                    
                                                     classes={{ root: classes.paymentMethodButton, selected: classes.selectedPaymentMethodButton }}
                                                     value={paymentChannel.value}
                                                     >
@@ -290,6 +364,28 @@ const BuyCryptoScreen = () => {
                                 </Grid>
                                 <Grid item md={6}>
                                         <Paper variant="outlined" style={{ padding: "1rem" }}>
+                                            {showAmountError ? 
+                                                <Alert severity="error" style={{ margin:"1rem 0" }}>{channelErrorMessage}</Alert> 
+                                                : ""
+                                            }
+                                            <List style={{ borderBottom: "1px solid rgb(233, 236, 240)", marginBottom: "1rem" }}>
+                                                <ListItem style={{ padding: "0" }}>
+                                                    <ListItemText>Payment Method</ListItemText>
+                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> <img src="/assests/moonpay.svg" style={{ width:"2rem", height:"2rem" }}/> MoonPay</ListItemText>
+                                                </ListItem>
+                                                <ListItem style={{ padding: "0" }}>
+                                                    <ListItemText>Deposit to account</ListItemText>
+                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> usman.jamil0308@gmail.com</ListItemText>
+                                                </ListItem>
+                                                <ListItem style={{ padding: "0" }}>
+                                                    <ListItemText>Total including fee</ListItemText>
+                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> {amount} {fiatCurrencyOption ? fiatCurrencyOption.code.toUpperCase(): ""}</ListItemText>
+                                                </ListItem>
+                                                <ListItem style={{ padding: "0" }}>
+                                                    <ListItemText>You will get</ListItemText>
+                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> {amount} {cryptoCurrencyOption ? cryptoCurrencyOption.code.toUpperCase(): ""}</ListItemText>
+                                                </ListItem>
+                                            </List>
                                             <Typography variant="button" display="block" gutterBottom>Disclaimer</Typography>
                                             <Typography variant="subtitle1" display="block" gutterBottom>
                                                 You will now leave Binance.com and be taken to Banxa. Services relating to payments are provided by Banxa which is a separate platform owned by a third party. Please read and agree to Banxa's Terms of Use before using their service. For any questions relating to payments, please contact support@banxa.com. Binance does not assume any responsibility for any loss or damage caused by the use of this payment service.

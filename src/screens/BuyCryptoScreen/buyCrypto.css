@@ -1,21 +1,8 @@
-#input_container {
-    position:relative;
-    padding:0 0 0 20px;
-    margin:0 20px;
-    background:#ddd;
-    direction: rtl;
-    width: 200px;
-}
-#input {
-    height:20px;
-    margin:0;
-    padding-right: 30px;
-    width: 100%;
-}
-#input_img {
-    position:absolute;
-    bottom:2px;
-    right:5px;
-    width:24px;
-    height:24px;
+.list_item_text {
+    box-sizing: border-box;
+    min-width: 0px;
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    margin: 0px 0px 12px;
 }
