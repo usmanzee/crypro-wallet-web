@@ -15,21 +15,11 @@ import { ThemeProvider } from '@material-ui/styles';
 const theme = createMuiTheme({
     palette: {
       primary: {
-        // Purple and green play nicely together.
         main: "rgb(111 33 88)",
       }
     },
-    typography: {
-        // In Chinese and Japanese the characters are usually larger,
-        // so a smaller fontsize may be appropriate.
+    typography: {    
         fontSize: 16,
-        button: {
-            // color: "white",
-            // backgroundColor: "rgb(111 33 88)",
-            // '&:hover': {
-            //     backgroundColor: "rgb(111 33 88)",
-            // },
-        }
     },
   });
   

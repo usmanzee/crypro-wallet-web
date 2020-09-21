@@ -10,8 +10,12 @@ import {
     TextField,
     List,
     ListItem,
-    ListItemText
-    // InputAdornment
+    ListItemText,
+    // InputAdornment,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
+    Button,
  } from '@material-ui/core';
  import Autocomplete from '@material-ui/lab/Autocomplete';
  import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -45,7 +49,7 @@ interface Currency {
 //     name: string,
 //     value: string,
 //     iconUrl: string,
-//     supportedMethods: PaymentMethod[]
+//     supported_channels: PaymentMethod[]
 // }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -107,7 +111,19 @@ const useStyles = makeStyles((theme: Theme) =>
         height: "1.8rem", 
         width: "1.8rem", 
         marginRight: "0.3rem" 
-    }
+    },
+    paymentDetails: {
+        padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
+    },
+    continueButton: {
+        float: "right",
+        color: "white",
+        width: "50%",
+        backgroundColor: "rgb(111 33 88)",
+        '&:hover': {
+            backgroundColor: "rgb(111 33 88)",
+        },
+    },
   }),
 );
 
@@ -125,7 +141,7 @@ const BuyCryptoScreen = () => {
     const [fiatCurrencyOption, setFiatCurrencyOption] = React.useState<Currency | null>(null);
     const [cryptoCurrencyOption, setCryptoCurrencyOption] = React.useState<Currency | null>(null);
     
-    const [paymentChannel, setPaymentChannel] = React.useState<string | null>(paymentChannels[0]['value']);
+    const [paymentMethod, setPaymentMethod] = React.useState<string | null>(paymentMethods[0]['value']);
 
 
 
@@ -170,9 +186,9 @@ const BuyCryptoScreen = () => {
     const handleCryptoCurrencyChengeEvent = (option: Currency | null) => {
     }
 
-    const handlePaymentChannelChange = (event: React.MouseEvent<HTMLElement>, newPaymentChannel: string | null) => {
-        if (newPaymentChannel !== null && paymentChannel !== newPaymentChannel) {
-            setPaymentChannel(newPaymentChannel);
+    const handlePaymentMethodChange = (event: React.MouseEvent<HTMLElement>, newPaymentMethod: string | null) => {
+        if (newPaymentMethod !== null && paymentMethod !== newPaymentMethod) {
+            setPaymentMethod(newPaymentMethod);
             checkAmountLimit(amount, fiatCurrencyOption);
         }
     };
@@ -334,12 +350,12 @@ const BuyCryptoScreen = () => {
                                 <Grid item md={6}>
                                     <ToggleButtonGroup
                                         style={{ display: "block" }}
-                                        value={paymentChannel}
+                                        value={paymentMethod}
                                         exclusive
-                                        onChange={handlePaymentChannelChange}
+                                        onChange={handlePaymentMethodChange}
                                         orientation="horizontal"
                                         >
-                                        {paymentChannels.map((paymentChannel) => {
+                                        {paymentMethods.map((paymentChannel) => {
                                             return (
                                                 <ToggleButton
                                                     key={paymentChannel.id}
@@ -350,9 +366,9 @@ const BuyCryptoScreen = () => {
                                                     <img src={`/assests/${paymentChannel.iconUrl}`} className={classes.paymentChannelIcon} alt="Buy Crypto"/>
                                                     <span> {paymentChannel.name}</span>
                                                     <span style={{ marginLeft: "3rem" }}>
-                                                        {paymentChannel.supportedMethods.map((supportedMethod) => {
+                                                        {paymentChannel.supported_channels.map((supportedMethod) => {
                                                             return (
-                                                                <img key={supportedMethod.id} src={`assests/${supportedMethod.iconUrl}`} style={{ height: "2rem", width: "2rem" }} alt="Buy Crypto"/>
+                                                                <img key={supportedMethod.id} src={`assests/${supportedMethod.iconUrl}`} alt="Buy Crypto"/>
                                                                 
                                                             )
                                                         })}
@@ -363,34 +379,45 @@ const BuyCryptoScreen = () => {
                                     </ToggleButtonGroup>  
                                 </Grid>
                                 <Grid item md={6}>
-                                        <Paper variant="outlined" style={{ padding: "1rem" }}>
-                                            {showAmountError ? 
-                                                <Alert severity="error" style={{ margin:"1rem 0" }}>{channelErrorMessage}</Alert> 
-                                                : ""
-                                            }
-                                            <List style={{ borderBottom: "1px solid rgb(233, 236, 240)", marginBottom: "1rem" }}>
-                                                <ListItem style={{ padding: "0" }}>
-                                                    <ListItemText>Payment Method</ListItemText>
-                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> <img src="/assests/moonpay.svg" style={{ width:"2rem", height:"2rem" }}/> MoonPay</ListItemText>
-                                                </ListItem>
-                                                <ListItem style={{ padding: "0" }}>
-                                                    <ListItemText>Deposit to account</ListItemText>
-                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> usman.jamil0308@gmail.com</ListItemText>
-                                                </ListItem>
-                                                <ListItem style={{ padding: "0" }}>
-                                                    <ListItemText>Total including fee</ListItemText>
-                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> {amount} {fiatCurrencyOption ? fiatCurrencyOption.code.toUpperCase(): ""}</ListItemText>
-                                                </ListItem>
-                                                <ListItem style={{ padding: "0" }}>
-                                                    <ListItemText>You will get</ListItemText>
-                                                    <ListItemText style={{ flex: "0.1 1 auto" }}> {amount} {cryptoCurrencyOption ? cryptoCurrencyOption.code.toUpperCase(): ""}</ListItemText>
-                                                </ListItem>
-                                            </List>
-                                            <Typography variant="button" display="block" gutterBottom>Disclaimer</Typography>
-                                            <Typography variant="subtitle1" display="block" gutterBottom>
-                                                You will now leave Binance.com and be taken to Banxa. Services relating to payments are provided by Banxa which is a separate platform owned by a third party. Please read and agree to Banxa's Terms of Use before using their service. For any questions relating to payments, please contact support@banxa.com. Binance does not assume any responsibility for any loss or damage caused by the use of this payment service.
-                                            </Typography>
-                                        </Paper>
+                                    <Paper variant="outlined" className={classes.paymentDetails}>
+                                        {showAmountError ? 
+                                            <Alert severity="error" style={{ margin:"1rem 0" }}>{channelErrorMessage}</Alert> 
+                                            : ""
+                                        }
+                                        <List style={{ borderBottom: "1px solid rgb(233, 236, 240)", marginBottom: "1rem" }}>
+                                            <ListItem style={{ padding: "0" }}>
+                                                <ListItemText>Payment Method</ListItemText>
+                                                <ListItemText style={{ flex: "0.1 1 auto" }}> <img src="/assests/moonpay.svg" style={{ width:"2rem", height:"2rem" }}/> MoonPay</ListItemText>
+                                            </ListItem>
+                                            <ListItem style={{ padding: "0" }}>
+                                                <ListItemText>Deposit to account</ListItemText>
+                                                <ListItemText style={{ flex: "0.1 1 auto" }}> usman.jamil0308@gmail.com</ListItemText>
+                                            </ListItem>
+                                            <ListItem style={{ padding: "0" }}>
+                                                <ListItemText>Total including fee</ListItemText>
+                                                <ListItemText style={{ flex: "0.1 1 auto" }}> {amount} {fiatCurrencyOption ? fiatCurrencyOption.code.toUpperCase(): ""}</ListItemText>
+                                            </ListItem>
+                                            <ListItem style={{ padding: "0" }}>
+                                                <ListItemText>You will get</ListItemText>
+                                                <ListItemText style={{ flex: "0.1 1 auto" }}> {amount} {cryptoCurrencyOption ? cryptoCurrencyOption.code.toUpperCase(): ""}</ListItemText>
+                                            </ListItem>
+                                        </List>
+                                        <Typography variant="h6" display="block" gutterBottom>Disclaimer</Typography>
+                                        <Typography variant="subtitle1" display="block" gutterBottom>
+                                            You will now leave Binance.com and be taken to Banxa. Services relating to payments are provided by Banxa which is a separate platform owned by a third party. Please read and agree to Banxa's Terms of Use before using their service. For any questions relating to payments, please contact support@banxa.com. Binance does not assume any responsibility for any loss or damage caused by the use of this payment service.
+                                        </Typography>
+                                        <FormGroup>
+                                            <FormControlLabel
+                                                control={<Checkbox name="checkedA" color="primary" />}
+                                                label="I have read and agree to the Terms of Use."
+                                            />
+                                        </FormGroup>
+                                        <Grid container>
+                                            <Grid item md>
+                                                <Button className={classes.continueButton} variant="contained">Continue</Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Paper>
                                 </Grid>
                             </Grid>
                         </Typography>
@@ -406,43 +433,40 @@ export {
     BuyCryptoScreen
 }
 
-export const paymentChannels = [
+export const paymentMethods = [
     {
         "id": 1,
         "name": "MoonPay",
         "value": "moonpay",
+        "method_id": "credit_debit_card",
         "iconUrl": "moonpay.svg",
-        "supportedMethods": [
+        "supported_channels": [
             {
                 "id": 1,
-                "name": "visa",
+                "name": "Visa Payment",
                 "iconUrl": "visa.svg"
             },
             {
                 "id": 2,
-                "name": "mastercard",
+                "name": "Mastercard Payment",
                 "iconUrl": "mastercard.svg"
             }
 
         ]
     },
-    // {
-    //     "id": 2,
-    //     "name": "Simplex",
-    //     "value": "simplex",
-    //     "iconUrl": "simplex.svg",
-    //     "supportedMethods": [
-    //         {
-    //             "id": 1,
-    //             "name": "visa",
-    //             "iconUrl": "visa.svg"
-    //         },
-    //         {
-    //             "id": 2,
-    //             "name": "mastercard",
-    //             "iconUrl": "mastercard.svg"
-    //         }
+    {
+        "id": 2,
+        "name": "SEPA",
+        "value": "sepa",
+        "method_id": "sepa_bank_transfer",
+        "iconUrl": "sepa.png",
+        "supported_channels": [
+            {
+                "id": 1,
+                "name": "Bank Transfer",
+                "iconUrl": "bank_transfer.svg"
+            }
 
-    //     ]
-    // }
+        ]
+    }
 ]
