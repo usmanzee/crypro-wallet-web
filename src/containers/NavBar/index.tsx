@@ -1,7 +1,8 @@
 import * as React from 'react';
-//import { Card, Accordion } from 'react-bootstrap';
-//import BellIcon from '../../assets/images/BellIcon';
-import { getNotifications } from '../../apis/exchange';
+import { Card, ListGroup } from 'react-bootstrap';
+// import { Button } from 'react-bootstrap';
+import BellIcon from '../../assets/images/BellIcon';
+// import { getNotifications } from '../../apis/exchange';
 import {
     connect,
     MapDispatchToPropsFunction,
@@ -17,6 +18,17 @@ import {
     selectCurrentColorTheme,
 } from '../../modules';
 
+import * as ExchangeApi from "../../apis/exchange";
+// import { NotificationType } from '../../charting_library/charting_library.min';
+
+// interface Notification {
+//     id: number,
+//     subject: string,
+//     body: string,
+//     created_at: Date,
+//     updated_at: Date,
+// }
+
 export interface ReduxProps {
     colorTheme: string;
 }
@@ -31,7 +43,7 @@ export interface OwnProps {
 
 type Props = OwnProps & ReduxProps & DispatchProps;
 
-class NavBarComponent extends React.Component<Props> {
+class NavBarComponent extends React.Component<Props, any> {
     constructor(props: Props) {
         super(props);
 
@@ -41,70 +53,84 @@ class NavBarComponent extends React.Component<Props> {
         };
     }
     public async componentDidMount  (){
+
         try {
-        const notification = await getNotifications();
-        if (notification.length > 0){
-            this.setState({notifications: notification});
-        } 
+            await ExchangeApi.getNotifications().then((responseData) => {
+                this.setState({
+                    notifications: responseData
+                });
+              });
+        //const notification = await getNotifications();
+        // if (notification.length > 0){
+        //     this.setState({notifications: notification});
+        // } 
         } catch (error) {
           console.log(error);
         }
     };
-    // private renderNotification = () => {
-    //     //const { location } = this.props;
-    //     if (window.location.pathname.includes('/wallets')) {
-    //         return null;
-    //     }
+    private renderNotification = () => {
+        //const { location } = this.props;
+        if (window.location.pathname.includes('/wallets')) {
+            return null;
+        }
 
-    //     return <BellIcon 
-    //     width='22' 
-    //     active={true} 
-    //     //@ts-ignore
-    //     onClick={() =>this.setState({showNotification: !this.state.showNotification}) } />;
-    // };
+        return <BellIcon 
+        width='22' 
+        active={true} 
+        //@ts-ignore
+        onClick={() =>this.setState({showNotification: !this.state.showNotification}) } />;
+    };
     
     public render() {
-       // const { colorTheme } = this.props;
-        //const tradingCls = window.location.pathname.includes('/wallets')
-        //@ts-ignore
-        // const notification = this.state.notifications.length>0
-        // //@ts-ignore
-        // && this.state.notifications.map((item, i ) => {
-        //     return(
-        //         <Card key={i}>
-        //             <Accordion.Toggle as={Card.Header} eventKey={item.id}>
-        //             {item.subject} <span>Date: {item.created_at}</span>
-        //             </Accordion.Toggle>
-        //             <Accordion.Collapse eventKey="0">
-        //             <Card.Body>{item.body}</Card.Body>
-        //             </Accordion.Collapse>
-        //         </Card>
-
-        //     );
-        // }, this);
-
         return (
             <div className={'pg-navbar'}>
-                {/* {this.renderNotification()}  */}
-                {/* <div 
+                {this.renderNotification()} 
+                <div 
                 //@ts-ignore
                 style={this.state.showNotification ? {} : { display: 'none' }}>
+                
                 <div className="notification-wrapper">
-                <Accordion defaultActiveKey="0">
-                {notification ? notification:  <Card >
-                    <Accordion.Toggle as={Card.Header} 
-                    //@ts-ignore
-                    eventKey="0">
-                    No Notifications
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey="0">
-                    <Card.Body>
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>}                       
-                </Accordion>
+                    <div className="notification-header">
+                        <span>Notifications</span>
+                        <a href="#" className="notification-view-all">View All</a>
+                    </div>
+                    <div className="notification-body">
+                    <ListGroup>
+                        {this.state.notifications.map((notification) => {    
+                            return (
+                                <ListGroup.Item action href={`notification ${notification.id}`}>
+                                    <Card.Title style={{ color: "black" }}>{ notification.subject }</Card.Title>
+                                    <Card.Text>
+                                        {notification.body}
+                                    </Card.Text>
+                                </ListGroup.Item>
+                            )
+                        })}
+                    </ListGroup>
+                    </div>
+                    {/* <div className="notification-footer">
+                        <a href="#" className="notification-view-all">View All Notifications</a>
+                    </div> */}
+                {/* <Accordion defaultActiveKey="0">
+                    <Card>
+                        <Accordion.Toggle as={Card.Header} eventKey="0">
+                        Click me!
+                        </Accordion.Toggle>
+                        <Accordion.Collapse eventKey="0">
+                        <Card.Body>Hello! I'm the body</Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                    <Card>
+                        <Accordion.Toggle as={Card.Header} eventKey="1">
+                        Click me!
+                        </Accordion.Toggle>
+                        <Accordion.Collapse eventKey="1">
+                        <Card.Body>Hello! I'm another body</Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                </Accordion> */}
                 </div>
-                </div> */}
+                </div>
                 
                 <div className="pg-navbar__header-settings">
                     {/* <div className="pg-navbar__header-settings__switcher">
