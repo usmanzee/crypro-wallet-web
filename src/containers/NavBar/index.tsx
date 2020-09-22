@@ -21,13 +21,15 @@ import {
 import * as ExchangeApi from "../../apis/exchange";
 // import { NotificationType } from '../../charting_library/charting_library.min';
 
-// interface Notification {
-//     id: number,
-//     subject: string,
-//     body: string,
-//     created_at: Date,
-//     updated_at: Date,
-// }
+interface Notification {
+    id: number,
+    subject: string,
+    body: string,
+    expire_at: Date,
+    status: boolean,
+    created_at: Date,
+    updated_at: Date,
+}
 
 export interface ReduxProps {
     colorTheme: string;
@@ -43,16 +45,25 @@ export interface OwnProps {
 
 type Props = OwnProps & ReduxProps & DispatchProps;
 
-class NavBarComponent extends React.Component<Props, any> {
+interface IState {
+    showNotification: boolean,
+    notifications: Notification[],
+    notificationContainer: React.RefObject<HTMLInputElement>,
+
+} 
+
+class NavBarComponent extends React.Component<Props, IState> {
     constructor(props: Props) {
         super(props);
 
         this.state = {
             showNotification: false,
-            notifications: []
+            notifications: [],
+            notificationContainer: React.createRef()
         };
+        
     }
-    public async componentDidMount  (){
+    public async componentDidMount () {
 
         try {
             await ExchangeApi.getNotifications().then((responseData) => {
@@ -67,8 +78,9 @@ class NavBarComponent extends React.Component<Props, any> {
         } catch (error) {
           console.log(error);
         }
+        document.addEventListener('mousedown', this.handleClickOutside, false);
     };
-    private renderNotification = () => {
+    private renderNotificationBell = () => {
         //const { location } = this.props;
         if (window.location.pathname.includes('/wallets')) {
             return null;
@@ -80,25 +92,20 @@ class NavBarComponent extends React.Component<Props, any> {
         //@ts-ignore
         onClick={() =>this.setState({showNotification: !this.state.showNotification}) } />;
     };
-    
-    public render() {
-        return (
-            <div className={'pg-navbar'}>
-                {this.renderNotification()} 
-                <div 
-                //@ts-ignore
-                style={this.state.showNotification ? {} : { display: 'none' }}>
-                
-                <div className="notification-wrapper">
-                    <div className="notification-header">
-                        <span>Notifications</span>
-                        <a href="#" className="notification-view-all">View All</a>
-                    </div>
-                    <div className="notification-body">
+
+    private renderNotificationPanel = () => {
+        return <div className="notification-wrapper" ref={this.state.notificationContainer}>
+            <div className="notification-header">
+                <span>Notifications</span>
+                {this.state.notifications.length ? <a href="#" className="notification-view-all">View All</a> : ""}
+            </div>
+            <div className="notification-body">
+                { this.state.notifications.length  ?
                     <ListGroup>
-                        {this.state.notifications.map((notification) => {    
+                        {this.state.notifications.map((notification) => {
+                            // { notification.status && }
                             return (
-                                <ListGroup.Item action href={`notification ${notification.id}`}>
+                                <ListGroup.Item action>
                                     <Card.Title style={{ color: "black" }}>{ notification.subject }</Card.Title>
                                     <Card.Text>
                                         {notification.body}
@@ -106,30 +113,35 @@ class NavBarComponent extends React.Component<Props, any> {
                                 </ListGroup.Item>
                             )
                         })}
-                    </ListGroup>
+                    </ListGroup> :
+                    <div className="empty-body">
+                        <p>No Notification</p> 
                     </div>
-                    {/* <div className="notification-footer">
-                        <a href="#" className="notification-view-all">View All Notifications</a>
-                    </div> */}
-                {/* <Accordion defaultActiveKey="0">
-                    <Card>
-                        <Accordion.Toggle as={Card.Header} eventKey="0">
-                        Click me!
-                        </Accordion.Toggle>
-                        <Accordion.Collapse eventKey="0">
-                        <Card.Body>Hello! I'm the body</Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                    <Card>
-                        <Accordion.Toggle as={Card.Header} eventKey="1">
-                        Click me!
-                        </Accordion.Toggle>
-                        <Accordion.Collapse eventKey="1">
-                        <Card.Body>Hello! I'm another body</Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                </Accordion> */}
-                </div>
+                }
+            </div>
+            {/* <div className="notification-footer">
+                <a href="#" className="notification-view-all">View All Notifications</a>
+            </div> */}
+        </div>
+    }
+
+    private handleClickOutside = (event) => {
+        if(this.state.notificationContainer.current)
+        {
+            if (this.state.notificationContainer.current && !this.state.notificationContainer.current.contains(event.target)) {
+                this.setState({
+                    showNotification: false,
+                });
+            }
+        }
+    }
+    
+    public render() {
+        return (
+            <div className={'pg-navbar'}>
+                {this.renderNotificationBell()} 
+                <div style={this.state.showNotification ? {} : { display: 'none' }}>
+                    {this.renderNotificationPanel()}
                 </div>
                 
                 <div className="pg-navbar__header-settings">

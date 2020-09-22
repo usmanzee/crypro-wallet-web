@@ -293,17 +293,17 @@
 }
 
 .notification-wrapper {
-  position: absolute;
-  z-index: 1000;
-  top: 40px;
-  margin-top: 5px;
-  right: 0px;
-  width: 400px;
-  background-color: rgb(255, 255, 255);
-  border-radius: 4px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(236, 239, 241);
+    position: absolute;
+    z-index: 1000;
+    top: 40px;
+    margin-top: 5px;
+    right: 0px;
+    width: 400px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(236, 239, 241);
 }
 .notification-header {
     border-bottom: 1px solid rgb(236, 239, 241);
@@ -313,10 +313,16 @@
     color: black
 }
 .notification-body {
-  overflow: auto;
-  height: 50vh;
-
+    overflow: auto;
+    height: auto;
+    max-height: 50vh;
+}
+.empty-body {
+  text-align: center;
+  padding: 10%;
+  color: black;
+  font-size: 16px;
 }
 .notification-view-all {
-  float: right;
+    float: right;
 }
