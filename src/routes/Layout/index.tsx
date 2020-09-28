@@ -198,28 +198,32 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
         toggleColorTheme(colorTheme);
 
         return (
-            <div className={`container-fluid pg-layout ${tradingCls}`}>
-                <Switch>
-                    <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/signin" component={SignInScreen} />
-                    <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/accounts/confirmation" component={VerificationScreen} />
-                    <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/signup" component={SignUpScreen} />
-                    <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/forgot_password" component={ForgotPasswordScreen} />
-                    <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/accounts/password_reset" component={ChangeForgottenPasswordScreen} />
-                    <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/email-verification" component={EmailVerificationScreen} />
-                    <Route exact={true} path="/trading/:market?" component={TradingScreen} />
-                    <Route exact={true} path="/" component={LandingScreen} />
-                    <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/orders" component={OrdersTabScreen} />
-                    <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/history" component={HistoryScreen} />
-                    <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/confirm" component={ConfirmScreen} />
-                    <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile" component={ProfileScreen} />
-                    <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallets" component={WalletsScreen} />
-                    <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/masspay" component={MassPage} />
-                    <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/security/2fa" component={ProfileTwoFactorAuthScreen} />
-                    <Route exact path="/fee" component={FeeScreen}/>
-                    <Route path="**"><Redirect to="/trading/" /></Route>
-                </Switch>
-                {isLoggedIn && <WalletsFetch/>}
-                {isShownExpSessionModal && this.handleRenderExpiredSessionModal()}
+            <div className="main-panel">
+                <div className="content-wrapper">
+                    {/* <div className={`container-fluid pg-layout ${tradingCls}`}> */}
+                        <Switch>
+                            <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/signin" component={SignInScreen} />
+                            <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/accounts/confirmation" component={VerificationScreen} />
+                            <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/signup" component={SignUpScreen} />
+                            <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/forgot_password" component={ForgotPasswordScreen} />
+                            <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/accounts/password_reset" component={ChangeForgottenPasswordScreen} />
+                            <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/email-verification" component={EmailVerificationScreen} />
+                            <Route exact={true} path="/trading/:market?" component={TradingScreen} />
+                            <Route exact={true} path="/" component={LandingScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/orders" component={OrdersTabScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/history" component={HistoryScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/confirm" component={ConfirmScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile" component={ProfileScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallets" component={WalletsScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/masspay" component={MassPage} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/security/2fa" component={ProfileTwoFactorAuthScreen} />
+                            <Route exact path="/fee" component={FeeScreen}/>
+                            <Route path="**"><Redirect to="/trading/" /></Route>
+                        </Switch>
+                        {isLoggedIn && <WalletsFetch/>}
+                        {isShownExpSessionModal && this.handleRenderExpiredSessionModal()}
+                    {/* </div> */}
+                </div>
             </div>
         );
     }

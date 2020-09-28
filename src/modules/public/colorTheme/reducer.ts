@@ -17,7 +17,7 @@ const currentColorTheme: string = localStorage.getItem('colorTheme') || 'basic';
 export const initialChangeColorThemeState: ColorThemeState = {
     color: currentColorTheme,
     chartRebuild: false,
-    sideBarActive: false,
+    sideBarActive: true,
     marketSelectorActive: false,
 };
 

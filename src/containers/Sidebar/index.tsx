@@ -75,6 +75,13 @@ class SidebarContainer extends React.Component<Props, State> {
         });
 
         return (
+            <>
+            <nav className="sidebar sidebar-offcanvas" id="sidebar">
+                <ul className="nav">
+                    {this.renderNewProfileLink()}
+                    {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
+                </ul>
+            </nav>
             <div className={sidebarClassName}>
                 {this.renderProfileLink()}
                 <div className="pg-sidebar-wrapper-nav">
@@ -98,12 +105,75 @@ class SidebarContainer extends React.Component<Props, State> {
                 </div>
                 {this.renderLogout()}
             </div>
+            </>
         );
     }
+
+    public renderNewNavItems = (address: string) => (values: string[], index: number) => {
+        const { currentMarket } = this.props;
+
+        const [name, url, img] = values;
+        
+        const handleLinkChange = () => this.props.toggleSidebar(false);
+        const path = url.includes('/trading') && currentMarket ? `/trading/${currentMarket.id}` : url;
+        const isActive = (url === '/trading/' && address.includes('/trading')) || address === url;
+
+        const sidebarClassName = classnames('nav-item', {
+            'active': isActive,
+            '': !isActive,
+        });
+
+        return (
+            <React.Fragment>
+                <li className={sidebarClassName}>
+                    <Link to={path} key={index} className="nav-link">
+                        <FormattedMessage id={name} />
+                    </Link>
+                </li>
+            </React.Fragment>
+        );
+    };
+
+    public renderNewProfileLink = () => {
+        const { isLoggedIn, location } = this.props;
+        const handleLinkChange = () => this.props.toggleSidebar(false);
+        const address = location ? location.pathname : '';
+        const isActive = address === '/profile';
+
+        const sideBarClassName = classnames('nav-item', {
+            'active': isActive,
+        });
+
+        const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
+            'pg-sidebar-wrapper-nav-item-img--active': isActive,
+        });
+
+        return isLoggedIn && (
+            <React.Fragment>
+                <li className={sideBarClassName}>
+                    <Link to="/profile" className="nav-link">
+                        {/* <ProfileIcon className={iconClassName} /> */}
+                        <FormattedMessage id={'page.header.navbar.profile'} />
+                    </Link>
+                </li>
+            {/* <div className="pg-sidebar-wrapper-profile">
+                <Link to="/profile" onClick={handleLinkChange} className={`${isActive && 'route-selected'}`}>
+                    <div className="pg-sidebar-wrapper-profile-link">
+                        <ProfileIcon className={iconClassName} />
+                        <p className="pg-sidebar-wrapper-profile-link-text">
+                            <FormattedMessage id={'page.header.navbar.profile'} />
+                        </p>
+                    </div>
+                </Link>
+            </div> */}
+            </React.Fragment>
+        );
+    };
 
     public renderNavItems = (address: string) => (values: string[], index: number) => {
         const { currentMarket } = this.props;
 
+        console.log("currentMarket: ", currentMarket);
         const [name, url, img] = values;
         const handleLinkChange = () => this.props.toggleSidebar(false);
         const path = url.includes('/trading') && currentMarket ? `/trading/${currentMarket.id}` : url;

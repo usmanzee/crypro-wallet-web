@@ -50,12 +50,16 @@ class AppLayout extends React.Component<Props, {}, {}> {
                 <Router history={history}>
                     <ErrorWrapper>
                         <React.Suspense fallback={null}>
-                            <HeaderContainer/>
-                            <SidebarContainer/>
-                            <CustomizationContainer/>
-                            <AlertsContainer/>
-                            <LayoutContainer/>
-                            <FooterContainer/>
+                            <div className="container-scroller">
+                                <HeaderContainer/>
+                                <div className="container-fluid page-body-wrapper">
+                                    <SidebarContainer/>
+                                    <CustomizationContainer/>
+                                    <AlertsContainer/>
+                                    <LayoutContainer/>
+                                    <FooterContainer/>
+                                </div>
+                            </div>
                         </React.Suspense>
                     </ErrorWrapper>
                 </Router>
