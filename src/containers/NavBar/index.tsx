@@ -1,7 +1,8 @@
 import * as React from 'react';
-//import { Card, Accordion } from 'react-bootstrap';
-//import BellIcon from '../../assets/images/BellIcon';
-import { getNotifications } from '../../apis/exchange';
+import { Card, ListGroup } from 'react-bootstrap';
+// import { Button } from 'react-bootstrap';
+import BellIcon from '../../assets/images/BellIcon';
+// import { getNotifications } from '../../apis/exchange';
 import {
     connect,
     MapDispatchToPropsFunction,
@@ -17,6 +18,19 @@ import {
     selectCurrentColorTheme,
 } from '../../modules';
 
+import * as ExchangeApi from "../../apis/exchange";
+// import { NotificationType } from '../../charting_library/charting_library.min';
+
+interface Notification {
+    id: number,
+    subject: string,
+    body: string,
+    expire_at: Date,
+    status: boolean,
+    created_at: Date,
+    updated_at: Date,
+}
+
 export interface ReduxProps {
     colorTheme: string;
 }
@@ -31,80 +45,104 @@ export interface OwnProps {
 
 type Props = OwnProps & ReduxProps & DispatchProps;
 
-class NavBarComponent extends React.Component<Props> {
+interface IState {
+    showNotification: boolean,
+    notifications: Notification[],
+    notificationContainer: React.RefObject<HTMLInputElement>,
+
+} 
+
+class NavBarComponent extends React.Component<Props, IState> {
     constructor(props: Props) {
         super(props);
 
         this.state = {
             showNotification: false,
-            notifications: []
+            notifications: [],
+            notificationContainer: React.createRef()
         };
+        
     }
-    public async componentDidMount  (){
+    public async componentDidMount () {
+
         try {
-        const notification = await getNotifications();
-        if (notification.length > 0){
-            this.setState({notifications: notification});
-        } 
+            await ExchangeApi.getNotifications().then((responseData) => {
+                this.setState({
+                    notifications: responseData
+                });
+              });
+        //const notification = await getNotifications();
+        // if (notification.length > 0){
+        //     this.setState({notifications: notification});
+        // } 
         } catch (error) {
           console.log(error);
         }
+        document.addEventListener('mousedown', this.handleClickOutside, false);
     };
-    // private renderNotification = () => {
-    //     //const { location } = this.props;
-    //     if (window.location.pathname.includes('/wallets')) {
-    //         return null;
-    //     }
+    private renderNotificationBell = () => {
+        //const { location } = this.props;
+        if (window.location.pathname.includes('/wallets')) {
+            return null;
+        }
 
-    //     return <BellIcon 
-    //     width='22' 
-    //     active={true} 
-    //     //@ts-ignore
-    //     onClick={() =>this.setState({showNotification: !this.state.showNotification}) } />;
-    // };
+        return <BellIcon 
+        width='22' 
+        active={true} 
+        //@ts-ignore
+        onClick={() =>this.setState({showNotification: !this.state.showNotification}) } />;
+    };
+
+    private renderNotificationPanel = () => {
+        return <div className="notification-wrapper" ref={this.state.notificationContainer}>
+            <div className="notification-header">
+                <span>Notifications</span>
+                {this.state.notifications.length ? <a href="#" className="notification-view-all">View All</a> : ""}
+            </div>
+            <div className="notification-body">
+                { this.state.notifications.length  ?
+                    <ListGroup>
+                        {this.state.notifications.map((notification) => {
+                            // { notification.status && }
+                            return (
+                                <ListGroup.Item action>
+                                    <Card.Title style={{ color: "black" }}>{ notification.subject }</Card.Title>
+                                    <Card.Text>
+                                        {notification.body}
+                                    </Card.Text>
+                                </ListGroup.Item>
+                            )
+                        })}
+                    </ListGroup> :
+                    <div className="empty-body">
+                        <p>No Notification</p> 
+                    </div>
+                }
+            </div>
+            {/* <div className="notification-footer">
+                <a href="#" className="notification-view-all">View All Notifications</a>
+            </div> */}
+        </div>
+    }
+
+    private handleClickOutside = (event) => {
+        if(this.state.notificationContainer.current)
+        {
+            if (this.state.notificationContainer.current && !this.state.notificationContainer.current.contains(event.target)) {
+                this.setState({
+                    showNotification: false,
+                });
+            }
+        }
+    }
     
     public render() {
-       // const { colorTheme } = this.props;
-        //const tradingCls = window.location.pathname.includes('/wallets')
-        //@ts-ignore
-        // const notification = this.state.notifications.length>0
-        // //@ts-ignore
-        // && this.state.notifications.map((item, i ) => {
-        //     return(
-        //         <Card key={i}>
-        //             <Accordion.Toggle as={Card.Header} eventKey={item.id}>
-        //             {item.subject} <span>Date: {item.created_at}</span>
-        //             </Accordion.Toggle>
-        //             <Accordion.Collapse eventKey="0">
-        //             <Card.Body>{item.body}</Card.Body>
-        //             </Accordion.Collapse>
-        //         </Card>
-
-        //     );
-        // }, this);
-
         return (
             <div className={'pg-navbar'}>
-                {/* {this.renderNotification()}  */}
-                {/* <div 
-                //@ts-ignore
-                style={this.state.showNotification ? {} : { display: 'none' }}>
-                <div className="notification-wrapper">
-                <Accordion defaultActiveKey="0">
-                {notification ? notification:  <Card >
-                    <Accordion.Toggle as={Card.Header} 
-                    //@ts-ignore
-                    eventKey="0">
-                    No Notifications
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey="0">
-                    <Card.Body>
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>}                       
-                </Accordion>
+                {this.renderNotificationBell()} 
+                <div style={this.state.showNotification ? {} : { display: 'none' }}>
+                    {this.renderNotificationPanel()}
                 </div>
-                </div> */}
                 
                 <div className="pg-navbar__header-settings">
                     {/* <div className="pg-navbar__header-settings__switcher">
