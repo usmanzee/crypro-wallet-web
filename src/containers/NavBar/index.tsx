@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { Card, ListGroup } from 'react-bootstrap';
-// import { Button } from 'react-bootstrap';
-import BellIcon from '../../assets/images/BellIcon';
-// import { getNotifications } from '../../apis/exchange';
+
+import { Link } from "react-router-dom";
 import {
     connect,
     MapDispatchToPropsFunction,
@@ -12,10 +10,24 @@ import { compose } from 'redux';
 //import { Moon } from '../../assets/images/Moon';
 //import { Sun } from '../../assets/images/Sun';
 //import { colors } from '../../constants';
+
+import logoLight from '../../assets/images/logo.png';
+import { languages } from '../../api/config';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import Button from 'react-bootstrap/Button'
+
 import {
     changeColorTheme,
     RootState,
     selectCurrentColorTheme,
+    selectCurrentLanguage,
+    changeUserDataFetch,
+    changeLanguage,
+    logoutFetch,
+    selectUserInfo,
+    selectUserLoggedIn,
+    User,
 } from '../../modules';
 
 import * as ExchangeApi from "../../apis/exchange";
@@ -33,19 +45,28 @@ interface Notification {
 
 export interface ReduxProps {
     colorTheme: string;
+    lang: string;
+    isLoggedIn: boolean;
+    user: User;
 }
 
 interface DispatchProps {
     changeColorTheme: typeof changeColorTheme;
+    changeLanguage: typeof changeLanguage;
+    logoutFetch: typeof logoutFetch;
 }
 
 export interface OwnProps {
     onLinkChange?: () => void;
+    history: History;
+    changeUserDataFetch: typeof changeUserDataFetch;
 }
+
 
 type Props = OwnProps & ReduxProps & DispatchProps;
 
 interface IState {
+    isOpenLanguage: boolean,
     showNotification: boolean,
     notifications: Notification[],
     notificationContainer: React.RefObject<HTMLInputElement>,
@@ -57,6 +78,7 @@ class NavBarComponent extends React.Component<Props, IState> {
         super(props);
 
         this.state = {
+            isOpenLanguage: false,
             showNotification: false,
             notifications: [],
             notificationContainer: React.createRef()
@@ -71,92 +93,258 @@ class NavBarComponent extends React.Component<Props, IState> {
                     notifications: responseData
                 });
               });
-        //const notification = await getNotifications();
-        // if (notification.length > 0){
-        //     this.setState({notifications: notification});
-        // } 
         } catch (error) {
           console.log(error);
         }
-        document.addEventListener('mousedown', this.handleClickOutside, false);
     };
-    private renderNotificationBell = () => {
-        //const { location } = this.props;
-        if (window.location.pathname.includes('/wallets')) {
+    private renderNavLinks = () => {
+        const { isLoggedIn } = this.props;
+        if (!isLoggedIn) {
             return null;
         }
-
-        return <BellIcon 
-        width='22' 
-        active={true} 
-        //@ts-ignore
-        onClick={() =>this.setState({showNotification: !this.state.showNotification}) } />;
-    };
-
-    private renderNotificationPanel = () => {
-        return <div className="notification-wrapper" ref={this.state.notificationContainer}>
-            <div className="notification-header">
-                <span>Notifications</span>
-                {this.state.notifications.length ? <a href="#" className="notification-view-all">View All</a> : ""}
-            </div>
-            <div className="notification-body">
-                { this.state.notifications.length  ?
-                    <ListGroup>
-                        {this.state.notifications.map((notification) => {
-                            // { notification.status && }
-                            return (
-                                <ListGroup.Item action>
-                                    <Card.Title style={{ color: "black" }}>{ notification.subject }</Card.Title>
-                                    <Card.Text>
-                                        {notification.body}
-                                    </Card.Text>
-                                </ListGroup.Item>
-                            )
-                        })}
-                    </ListGroup> :
-                    <div className="empty-body">
-                        <p>No Notification</p> 
-                    </div>
-                }
-            </div>
-            {/* <div className="notification-footer">
-                <a href="#" className="notification-view-all">View All Notifications</a>
-            </div> */}
-        </div>
+        return (
+            <>
+                {/* <button className="navbar-toggler navbar-toggler align-self-center" type="button" >
+                    <span className="mdi mdi-menu"></span>
+                </button> */}
+                <div className="search-field d-xl-block">
+                    <ul className="navbar-nav mr-auto">
+                        <li className="nav-item active">
+                            <Link className="nav-link" to="/wallets">Wallets</Link>
+                        </li>          
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/orders">Orders</Link>
+                        </li>
+                    </ul>
+                </div> 
+            </>
+        );
     }
 
-    private handleClickOutside = (event) => {
-        if(this.state.notificationContainer.current)
-        {
-            if (this.state.notificationContainer.current && !this.state.notificationContainer.current.contains(event.target)) {
-                this.setState({
-                    showNotification: false,
-                });
-            }
+    private renderLoginRegisterLinks = () => {
+        const { isLoggedIn } = this.props;
+        if(isLoggedIn) {
+            return null;
         }
+        return (
+            <>
+                <li className="nav-item">
+                    <Link className="nav-link" to="/signin">Sign In</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="register-link" to="/signup">Register</Link>
+                </li>
+            </>
+        );
+    }
+    private renderProfile = () => {
+        const { isLoggedIn } = this.props;
+        if (!isLoggedIn) {
+            return null;
+        }
+        return (
+            <>
+                <li className="nav-item nav-profile dropdown">
+                    <a className="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                    <div className="nav-profile-img">
+                        {/* <img src={faceImg} alt="image" /> */}
+                        <AccountCircleIcon fontSize="large" />
+                    </div>
+                    <div className="nav-profile-text">
+                    <p className="mb-1" style={{ fontSize: "1.2rem" }}>Abubakar</p>
+                    </div>
+                    </a>
+                    <div className="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
+                        <div className="p-3">
+                            <Link className="dropdown-item py-3 d-flex align-items-center justify-content-between" to="/profile">
+                                <span>Usman@gmail.com</span>
+                                <ArrowRightIcon fontSize="large"/>
+                            </Link>
+                        </div>
+                        <div role="separator" className="dropdown-divider"></div>
+                        <div className="p-2">
+                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profile">
+                                <span>Security</span>
+                                <i className="mdi mdi-shield-outline"></i>
+                            </Link>
+                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profile">
+                                <span>Identification</span>
+                                <i className="mdi mdi-folder-account"></i>
+                            </Link>
+                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profileavascript:void(0)">
+                                <span>API Management</span>
+                                <i className="mdi mdi-settings"></i>
+                            </Link>
+                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profile">
+                                <span>Referal</span>
+                                <i className="mdi mdi-account-plus"></i>
+                            </Link>
+                            <div role="separator" className="dropdown-divider"></div>
+                            <a className="dropdown-item py-1 d-flex align-items-center justify-content-between" onClick={this.props.logoutFetch}>
+                                <span>Log Out</span>
+                                <i className="mdi mdi-logout ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </>
+        );
+    }
+    private renderLanguages = () => {
+        
+        const { lang } = this.props;
+        const languageName = lang.toUpperCase();
+        
+        return (
+            <>
+                <li className="nav-item nav-language dropdown d-none d-md-block">
+                    <a className="nav-link dropdown-toggle" id="languageDropdown" data-toggle="dropdown" aria-expanded="false">
+                        <div className="nav-language-icon">
+                            <img
+                                src={this.tryRequire(lang) && require(`../../assets/images/sidebar/${lang}.svg`)}
+                                alt={`${lang}-flag-icon`}
+                            />
+                        </div>
+                        <div className="nav-language-text">
+                            <p className="mb-1" style={{ fontSize: "1.2rem" }}>{languageName}</p>
+                        </div>
+                    </a>
+                    <div className="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown">
+                        {this.getLanguageDropdownItems()}
+                    </div>
+                </li>
+            </>
+        )
+    };
+
+    private renderNotifications = () => {
+        const { isLoggedIn } = this.props;
+        if (!isLoggedIn) {
+            return null;
+        }
+        const {notifications} = this.state;
+        return (
+            <>
+                <li className="nav-item dropdown">
+                    <a className="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+                        <i className="mdi mdi-bell-outline"></i>
+                        <span className="count-symbol bg-danger"></span>
+                    </a>
+                    <div className="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" style={{ minWidth: '300px' }}>
+                        <h6 className="p-3 mb-0 bg-primary-dull text-white py-4" style={{ fontSize: '1.3rem' }}>Notifications</h6>
+                        {notifications.map((notification, index) => {
+                            return (
+                                <>
+                                    <div className="dropdown-divider"></div>
+                                    <a className="dropdown-item preview-item">
+                                        <div className="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                                            <h6 className="preview-subject font-weight-normal mb-1" style={{ fontSize: "1.2rem" }}>{ notification.subject }</h6>
+                                            <p className="text-gray ellipsis mb-0" style={{ fontSize: "1rem" }}>  {notification.body} </p>
+                                        </div>
+                                    </a>
+                                    <div className="dropdown-divider"></div>
+                                </>
+                            );
+                        })}
+                        <a href="#" className="text-primary">
+                            <h6 className="p-3 mb-0 text-center" style={{ fontSize: '1.2rem' }}>See all notifications</h6>
+                        </a>
+                    </div>
+                </li>
+            </>
+        )
     }
     
     public render() {
+
         return (
-            <div className={'pg-navbar'}>
-                {this.renderNotificationBell()} 
-                <div style={this.state.showNotification ? {} : { display: 'none' }}>
-                    {this.renderNotificationPanel()}
-                </div>
-                
-                <div className="pg-navbar__header-settings">
-                    {/* <div className="pg-navbar__header-settings__switcher">
-                        <div
-                            className="pg-navbar__header-settings__switcher__items"
-                            onClick={e => this.handleChangeCurrentStyleMode(colorTheme === 'light' ? 'basic' : 'light')}
-                        >
-                            {this.getLightDarkMode()}
-                        </div>
-                    </div> */}
-                </div>
-            </div>
+            <>
+                <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+                    <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center" onClick={e => this.redirectToLanding()}>
+                        <a className="navbar-brand brand-logo"><img src={logoLight} alt="logo" /></a>
+                        <a className="navbar-brand brand-logo-mini"><img src={logoLight} alt="logo" /></a>
+                    </div>
+                    <div className="navbar-menu-wrapper d-flex align-items-stretch">
+                        <ul className="navbar-nav navbar-nav-right">
+                            
+                            {this.renderNavLinks()}
+                            {this.renderLoginRegisterLinks()}
+                            {this.renderProfile()}
+                            {this.renderLanguages()}
+                            {this.renderNotifications()}
+                        </ul>
+
+                        {/* Menu Opener for Mobile */}
+                        <button className="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                            <span className="mdi mdi-menu"></span>
+                        </button>
+                    </div>
+                </nav>
+            </>
+            
         );
     }
+
+    public getLanguageDropdownItems = () => {
+        return (
+            <>
+                {languages.map((language, index) => {
+                    return (
+                        <>
+                            <a className="dropdown-item" onClick={e => this.handleChangeLanguage(language)}>
+                                <div className="nav-language-icon mr-2">
+                                    <img
+                                        src={this.tryRequire(language) && require(`../../assets/images/sidebar/${language}.svg`)}
+                                        alt={`${language}-flag-icon`}
+                                    />
+                                </div>
+                                <div className="nav-language-text">
+                                    <p className="mb-1 text-black">{language.toUpperCase()}</p>
+                                </div>
+                            </a>
+                            <div className="dropdown-divider"></div>
+                        </>
+                    );
+                })}
+            </>
+        );
+    };
+
+    private tryRequire = (name: string) => {
+        try {
+            require(`../../assets/images/sidebar/${name}.svg`);
+
+            return true;
+        } catch (err) {
+            return false;
+        }
+    };
+
+    private handleChangeLanguage = (language: string) => {
+        const { user, isLoggedIn } = this.props;
+
+        if (isLoggedIn) {
+            const data = user.data && JSON.parse(user.data);
+
+            if (data && data.language && data.language !== language) {
+                const payload = {
+                    ...user,
+                    data: JSON.stringify({
+                        ...data,
+                        language,
+                    }),
+                };
+
+                this.props.changeUserDataFetch({ user: payload });
+            }
+        }
+
+        this.props.changeLanguage(language);
+    };
+
+    private redirectToLanding = () => {
+        // this.props.history.push('/');
+    };
 
     // private getLightDarkMode = () => {
     //     const { colorTheme } = this.props;
@@ -194,11 +382,17 @@ class NavBarComponent extends React.Component<Props, IState> {
 const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> =
     (state: RootState): ReduxProps => ({
         colorTheme: selectCurrentColorTheme(state),
+        lang: selectCurrentLanguage(state),
+        user: selectUserInfo(state),
+        isLoggedIn: selectUserLoggedIn(state),
     });
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
     dispatch => ({
         changeColorTheme: payload => dispatch(changeColorTheme(payload)),
+        changeLanguage: payload => dispatch(changeLanguage(payload)),
+        logoutFetch: () => dispatch(logoutFetch()),
+        changeUserDataFetch: payload => dispatch(changeUserDataFetch(payload)),
     });
 
 export const NavBar = compose(

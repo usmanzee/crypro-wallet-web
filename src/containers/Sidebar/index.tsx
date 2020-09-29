@@ -73,16 +73,20 @@ class SidebarContainer extends React.Component<Props, State> {
             'pg-sidebar-wrapper--active': isActive,
             'pg-sidebar-wrapper--hidden': !isActive,
         });
+        // const sideBarHidden = isActive ? false : true
+        const shouldRenderSidebar = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/' && !window.location.pathname.includes('/trading');
 
         return (
             <>
+            {shouldRenderSidebar && 
+            
             <nav className="sidebar sidebar-offcanvas" id="sidebar">
-                <ul className="nav">
-                    {this.renderNewProfileLink()}
-                    {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
-                </ul>
-            </nav>
-            <div className={sidebarClassName}>
+                    <ul className="nav">
+                        {this.renderNewProfileLink()}
+                        {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
+                    </ul>
+                </nav>}
+            {/* <div className={sidebarClassName}>
                 {this.renderProfileLink()}
                 <div className="pg-sidebar-wrapper-nav">
                     {pgRoutes(isLoggedIn).map(this.renderNavItems(address))}
@@ -104,7 +108,7 @@ class SidebarContainer extends React.Component<Props, State> {
                     </div>
                 </div>
                 {this.renderLogout()}
-            </div>
+            </div> */}
             </>
         );
     }
@@ -122,11 +126,18 @@ class SidebarContainer extends React.Component<Props, State> {
             'active': isActive,
             '': !isActive,
         });
+        const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
+            'pg-sidebar-wrapper-nav-item-img--active': isActive,
+        });
 
         return (
             <React.Fragment>
                 <li className={sidebarClassName}>
                     <Link to={path} key={index} className="nav-link">
+                        <SidebarIcons
+                            className={iconClassName}
+                            name={img}
+                        />
                         <FormattedMessage id={name} />
                     </Link>
                 </li>
@@ -152,7 +163,7 @@ class SidebarContainer extends React.Component<Props, State> {
             <React.Fragment>
                 <li className={sideBarClassName}>
                     <Link to="/profile" className="nav-link">
-                        {/* <ProfileIcon className={iconClassName} /> */}
+                        <ProfileIcon className={iconClassName} />
                         <FormattedMessage id={'page.header.navbar.profile'} />
                     </Link>
                 </li>
