@@ -20,6 +20,24 @@ import { formatCCYAddress, setDocumentTitle } from '../../helpers';
 import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
 import { CommonError } from '../../modules/types';
 
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+import {
+    Box,
+    Grid,
+    Paper,
+    Typography,
+    Button as MaterialButton,
+    InputBase,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TablePagination
+} from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+
 
 interface ReduxProps {
     user: User;
@@ -76,7 +94,47 @@ interface WalletsState {
     askCurrency: string;
     bidCurrency: string;
     history: [];
+
+    tablePage: number;
+    tableRowsPerPage: number;
+    searchedValue: string;
+    walletsData: WalletItemProps[];
 }
+
+const useStyles = theme => ({
+    searchInputTable: {
+        opacity: '0.6',
+        padding: `0px ${theme.spacing(1)}px`,
+        fontSize: '1.3rem',
+        backgroundColor: '#f2f2f2',
+        borderRadius: "2px",
+        border: `1px solid #fff`,
+        
+        "&.Mui-focused": {
+            border: `1px solid ${theme.palette.primary.main}`
+        },
+        '& .MuiSvgIcon-root': {
+            marginRight: theme.spacing(1)
+        }
+    },
+    headerPaper: {
+        height: "100px", 
+        padding: "32px 20px"
+    },
+    headeractionButton: {
+        margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
+    },
+    withdrawButton: {
+        margin: `0px ${theme.spacing(1)}px`,
+    },
+    pagePaper: {
+        // height: "120px", 
+        padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
+    },
+    tableContainer: {
+        paddingTop: theme.spacing(2)
+    },
+});
 
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
@@ -102,6 +160,10 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             askCurrency: 'btc',
             bidCurrency: 'btc',
             history: [],
+            tablePage: 0,
+            tableRowsPerPage: 25,
+            searchedValue: '',
+            walletsData: this.props.wallets
         };
     }
 
@@ -147,6 +209,11 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             withdrawSuccess,
         } = this.props;
 
+        this.setState({
+            walletsData: wallets
+        });
+        this.filteredRecords();
+
         if (wallets.length === 0 && next.wallets.length > 0) {
             this.setState({
                 selectedWalletIndex: 0,
@@ -181,7 +248,6 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
     public render() {
         const { wallets, historyList, mobileWalletChosen, walletsLoading } = this.props;
-        console.log('wallets', wallets[this.state.selectedWalletIndex]);
         const {
             rid,
             beneficiary,
@@ -191,7 +257,9 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             withdrawSubmitModal,
             withdrawConfirmModal,
             currentTabIndex,
+            walletsData
         } = this.state;
+
         const formattedWallets = wallets.map((wallet: WalletItemProps) => ({
             ...wallet,
             currency: wallet.currency.toUpperCase(),
@@ -211,8 +279,9 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
         return (
             <React.Fragment>
-                {wallets.length && <EstimatedValue wallets={wallets} />}
-                <div className="pg-container pg-wallet">
+                {/* {wallets.length && <EstimatedValue wallets={wallets} />} */}
+                {this.renderWalletTable()}
+                {/* <div className="pg-container pg-wallet">
                     <div className="text-center">
                         {walletsLoading && <Spinner animation="border" variant="primary" />}
                     </div>
@@ -247,9 +316,167 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         onSubmit={this.handleWithdraw}
                         onDismiss={this.toggleConfirmModal}
                     />
-                </div>
+                </div> */}
             </React.Fragment>
         );
+    }
+
+    private StyledTableCell = withStyles((theme: Theme) =>
+        createStyles({
+            head: {
+                backgroundColor: "rgb(228 224 224)",
+                color: theme.palette.common.black,
+                fontSize: 14,
+            },
+            body: {
+                fontSize: 14,
+            },
+        }),
+    )(TableCell);
+
+    private disableActionLink = (walletIndex) => {
+        const { wallets } = this.props;
+
+        return wallets[walletIndex].type === 'fiat' || wallets[walletIndex].balance;
+    }
+
+    private renderWalletTable = () => {
+        const { tablePage, tableRowsPerPage, searchedValue, walletsData } = this.state;
+        const { wallets } = this.props;
+        const { classes } = this.props;
+        return  <>
+                <Box>
+                    <Paper className={classes.headerPaper}>
+                        <Grid container>
+                            <Grid item md={8}>
+                                <Typography variant="h4" display="inline">Wallets</Typography>
+                            </Grid>
+                            <Grid className={classes.headeractionButton} item md={3}>
+                                <MaterialButton variant="contained" color="primary" href="#contained-buttons">
+                                    Deposit
+                                </MaterialButton>
+                                <MaterialButton className={classes.withdrawButton} variant="outlined" color="primary" href="#outlined-buttons">
+                                    Withdraw
+                                </MaterialButton>
+                                <MaterialButton variant="outlined" color="primary" href="#outlined-buttons">
+                                    Transfer
+                                </MaterialButton>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+                </Box>
+                {wallets.length && <EstimatedValue wallets={wallets} />}
+                <Box mt={2} pl={3} pr={3} alignItems="center">
+                    <Paper className={classes.pagePaper}>
+                        <InputBase 
+                            placeholder="search"
+                            className={ classes.searchInputTable }
+                            name="search"
+                            autoComplete='off'
+                            value={searchedValue}
+                            onChange={this.handleInputSearchChange}
+                            startAdornment={
+                                <SearchIcon fontSize="small" />
+                            }
+                        />
+                        <TableContainer className={classes.tableContainer}>    
+                            <Table aria-label="simple table">
+                                <TableHead>
+                                <TableRow>
+                                    <this.StyledTableCell>Coin</this.StyledTableCell>
+                                    <this.StyledTableCell>Total</this.StyledTableCell>
+                                    <this.StyledTableCell>Available</this.StyledTableCell>
+                                    <this.StyledTableCell>Locked</this.StyledTableCell>
+                                    <this.StyledTableCell>Action</this.StyledTableCell>
+                                </TableRow>
+                                </TableHead>
+                                {walletsData.length ? 
+
+                                    <TableBody>
+                                        {walletsData.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((wallet, index) => {
+                                            const walletBalance: string = wallet.balance ? wallet.balance : '0.00000000';
+                                            const walletLocked: string = wallet.locked ? wallet.locked : '0.00000000';
+                                            return <TableRow hover key={wallet.currency}>
+                                                <this.StyledTableCell>
+                                                    <img src={`${ wallet.iconUrl } `} style={{ width: "2.5rem", height: "2.5rem" }}/>
+                                                    <span style={{ margin: "0 0.5rem" }}>{wallet.currency.toUpperCase()}</span>
+                                                    <small>{wallet.name}</small>
+                                                </this.StyledTableCell>
+                                                <this.StyledTableCell>{+walletBalance + walletLocked}</this.StyledTableCell>
+                                                <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
+                                                <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
+                                                <this.StyledTableCell>
+                                                    <div style={{ marginRight: "10px", display: "inline" }}>
+                                                        <a href="#" color="primary">Deposit</a>
+                                                    </div>
+                                                    <div style={{ marginRight: "10px", display: "inline" }}>
+                                                        {this.disableActionLink(index) ? <a href="#">Withdraw</a> :  <span>Withdraw</span>}
+                                                    </div>
+                                                    <div style={{ marginRight: "10px", display: "inline" }}>
+                                                        {this.disableActionLink(index) ? <a href="#">Trade</a> :  <span>Trade</span>}
+                                                    </div>
+                                                </this.StyledTableCell>
+                                            </TableRow>
+                                        })}
+                                        
+                                    </TableBody> :
+                                        <div className="empty">
+                                            <Typography>No Record Found</Typography>
+                                        </div>
+                                }
+                            </Table>
+                        </TableContainer>
+
+                        {walletsData.length ? 
+                            <TablePagination
+                                rowsPerPageOptions={[10, 25, 100]}
+                                component="div"
+                                count={walletsData.length}
+                                rowsPerPage={tableRowsPerPage}
+                                page={tablePage}
+                                onChangePage={this.handleTablePageChange}
+                                onChangeRowsPerPage={this.handleTableRowsChangePerPage}
+                            /> : 
+                            ""
+                        }
+                    </Paper>
+                </Box>
+                </>
+    }
+
+    private handleTablePageChange = (event: unknown, newPage: number) => {
+        
+        this.setState({
+            tablePage: newPage
+        });
+    };
+
+    private handleTableRowsChangePerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            tableRowsPerPage: (+event.target.value),
+            tablePage: 0
+        })
+    };
+
+    private handleInputSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            searchedValue: event.target.value
+        });
+        this.filteredRecords();
+    }
+
+    private filteredRecords = () => {
+        const {wallets} = this.props;
+        const { searchedValue, walletsData } = this.state;
+        let filteredData = [];
+        if(searchedValue) {
+            filteredData = wallets.filter(e => {
+                return e.currency.includes(searchedValue) || e.name.toLowerCase().includes(searchedValue);
+            })
+            this.setState({
+                walletsData: filteredData
+            });
+        }
     }
 
     private onTabChange = (index, label) => this.setState({ tab: label });
@@ -784,4 +1011,4 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({
 });
 
 // tslint:disable-next-line:no-any
-export const WalletsScreen = injectIntl(withRouter(connect(mapStateToProps, mapDispatchToProps)(WalletsComponent) as any));
+export const WalletsScreen = injectIntl(withStyles(useStyles as {})(withRouter(connect(mapStateToProps, mapDispatchToProps)(WalletsComponent) as any)));

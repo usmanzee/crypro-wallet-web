@@ -20,6 +20,12 @@ import { rangerConnectFetch, RangerConnectFetch } from '../../../modules/public/
 import { RangerState } from '../../../modules/public/ranger/reducer';
 import { selectRanger } from '../../../modules/public/ranger/selectors';
 
+import Box from '@material-ui/core/Box';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+
 interface EstimatedValueProps {
     wallets: WalletItemProps[];
     hello: string;
@@ -41,6 +47,14 @@ interface DispatchProps {
     fetchTickers: typeof marketsTickersFetch;
     rangerConnect: typeof rangerConnectFetch;
 }
+
+const useStyles = theme => ({
+
+    pagePaper: {
+        // height: "120px", 
+        padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
+    }
+});
 
 type Props = DispatchProps & ReduxProps & EstimatedValueProps & InjectedIntlProps;
 
@@ -98,8 +112,27 @@ class EstimatedValueContainer extends React.Component<Props> {
         } = this.props;
         const estimatedValue = estimateValue(VALUATION_PRIMARY_CURRENCY, currencies, wallets, markets, tickers);
 
+        const { classes } = this.props;
         return (
-            <div className="pg-estimated-value">
+            <>
+             <Box mt={2} pl={3} pr={3} alignItems="center">
+                <Paper className={classes.pagePaper}>
+                    <Grid container>
+                        <Grid item md={12}>
+                            <Typography variant="subtitle1" display="block">
+                                {this.translate('page.body.wallets.estimated_value')}
+                            </Typography>
+                            <Typography variant="h4" display="inline" >{estimatedValue}</Typography>
+                            <Typography variant="subtitle1" display="inline" style={{ margin: '0px 3px' }}>
+                                {VALUATION_PRIMARY_CURRENCY.toUpperCase()}
+                            </Typography>
+                            
+                            {VALUATION_SECONDARY_CURRENCY && this.renderSecondaryCurrencyValuation(estimatedValue)}
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </Box>
+            {/* <div className="pg-estimated-value">
                 <div className="pg-estimated-value__container">
                     {this.translate('page.body.wallets.estimated_value')}
                     <span className="value-container">
@@ -110,7 +143,8 @@ class EstimatedValueContainer extends React.Component<Props> {
                     </span>
                     {VALUATION_SECONDARY_CURRENCY && this.renderSecondaryCurrencyValuation(estimatedValue)}
                 </div>
-            </div>
+            </div> */}
+            </>
         );
     }
 
@@ -125,12 +159,23 @@ class EstimatedValueContainer extends React.Component<Props> {
         const estimatedValueSecondary = estimateUnitValue(VALUATION_SECONDARY_CURRENCY, VALUATION_PRIMARY_CURRENCY, +estimatedValue, currencies, markets, tickers);
 
         return (
-            <span className="value-container">
-                <span className="value">
+            <>
+                <Typography variant="h5" display="inline" style={{ marginRight: '3px' }}>
+                     = 
+                </Typography>
+                <Typography variant="h5" display="inline" style={{ marginRight: '3px' }}>
                     {estimatedValueSecondary}
-                </span>
-                <span className="value-sign">{VALUATION_SECONDARY_CURRENCY.toUpperCase()}</span>
-            </span>
+                </Typography>
+                <Typography variant="overline" display="inline" gutterBottom>
+                    {VALUATION_SECONDARY_CURRENCY.toUpperCase()}
+                </Typography>
+                {/* <span className="value-container">
+                    <span className="value">
+                        {estimatedValueSecondary}
+                    </span>
+                    <span className="value-sign">{VALUATION_SECONDARY_CURRENCY.toUpperCase()}</span>
+                </span> */}
+            </>
         );
     };
 }
@@ -151,4 +196,4 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> = dispat
 });
 
 // tslint:disable-next-line:no-any
-export const EstimatedValue = injectIntl(connect(mapStateToProps, mapDispatchToProps)(EstimatedValueContainer)) as any;
+export const EstimatedValue = injectIntl(withStyles(useStyles as {})(connect(mapStateToProps, mapDispatchToProps)(EstimatedValueContainer))) as any;
