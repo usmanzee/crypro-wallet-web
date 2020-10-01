@@ -38,7 +38,11 @@ export function* walletsSaga() {
             });
         });
 
-        yield put(walletsData(accountsByCurrencies));
+        const cryptoAccountsByCurrencies = accountsByCurrencies.filter((account) => {
+            return account.type === 'coin'
+        })
+
+        yield put(walletsData(cryptoAccountsByCurrencies));
     } catch (error) {
         yield put(walletsError(error));
         yield put(alertPush({message: error.message, code: error.code, type: 'error'}));

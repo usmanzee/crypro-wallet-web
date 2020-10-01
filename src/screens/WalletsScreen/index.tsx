@@ -582,7 +582,6 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const error = addressDepositError ?
             this.props.intl.formatMessage({id: addressDepositError.message}) :
             this.props.intl.formatMessage({id: 'page.body.wallets.tabs.deposit.ccy.message.error'});
-
         const walletAddress = formatCCYAddress(currency, selectedWalletAddress);
 
         const buttonLabel = `
