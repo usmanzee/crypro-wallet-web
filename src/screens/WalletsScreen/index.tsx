@@ -281,7 +281,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             <React.Fragment>
                 {/* {wallets.length && <EstimatedValue wallets={wallets} />} */}
                 {this.renderWalletTable()}
-                {/* <div className="pg-container pg-wallet">
+                <div className="pg-container pg-wallet">
                     <div className="text-center">
                         {walletsLoading && <Spinner animation="border" variant="primary" />}
                     </div>
@@ -316,7 +316,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         onSubmit={this.handleWithdraw}
                         onDismiss={this.toggleConfirmModal}
                     />
-                </div> */}
+                </div>
             </React.Fragment>
         );
     }
@@ -394,8 +394,8 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
                                     <TableBody>
                                         {walletsData.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((wallet, index) => {
-                                            const walletBalance: string = wallet.balance ? wallet.balance : '0.00000000';
-                                            const walletLocked: string = wallet.locked ? wallet.locked : '0.00000000';
+                                            const walletBalance: string = wallet.balance ? wallet.balance : '';
+                                            const walletLocked: string = wallet.locked ? wallet.locked : '';
                                             return <TableRow hover key={wallet.currency}>
                                                 <this.StyledTableCell>
                                                     <img src={`${ wallet.iconUrl } `} style={{ width: "2.5rem", height: "2.5rem" }}/>

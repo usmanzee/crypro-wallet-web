@@ -14,4 +14,5 @@ export * from './TradingScreen';
 export * from './VerificationScreen';
 export * from './WalletsScreen';
 export * from './MassPage';
-export * from "./FeeScreen"
+export * from "./FeeScreen";
+export * from "./DepositCryptoScreen";
