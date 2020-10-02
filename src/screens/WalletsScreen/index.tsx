@@ -4,7 +4,7 @@ import { Button, Dropdown, DropdownButton,FormControl,InputGroup, Spinner } from
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, MapDispatchToProps } from 'react-redux';
 import { RouterProps } from 'react-router';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchRate, getExchangeHistory, postExchange } from '../../apis/exchange';
@@ -134,6 +134,12 @@ const useStyles = theme => ({
     tableContainer: {
         paddingTop: theme.spacing(2)
     },
+    links: {
+        color: theme.palette.primary.main,
+        '&:hover': {
+            color: theme.palette.primary.main,
+        }
+    }
 });
 
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
@@ -282,7 +288,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             <React.Fragment>
                 {/* {wallets.length && <EstimatedValue wallets={wallets} />} */}
                 {this.renderWalletTable()}
-                <div className="pg-container pg-wallet">
+                {/* <div className="pg-container pg-wallet">
                     <div className="text-center">
                         {walletsLoading && <Spinner animation="border" variant="primary" />}
                     </div>
@@ -317,7 +323,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         onSubmit={this.handleWithdraw}
                         onDismiss={this.toggleConfirmModal}
                     />
-                </div>
+                </div> */}
             </React.Fragment>
         );
     }
@@ -408,13 +414,13 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                                 <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
                                                 <this.StyledTableCell>
                                                     <div style={{ marginRight: "10px", display: "inline" }}>
-                                                        <a href="#" color="primary">Deposit</a>
+                                                        <Link to={`/wallet/deposit/crypto/${wallet.currency}`} className={classes.links}>Deposit</Link>
                                                     </div>
                                                     <div style={{ marginRight: "10px", display: "inline" }}>
-                                                        {this.disableActionLink(index) ? <a href="#">Withdraw</a> :  <span>Withdraw</span>}
+                                                        {this.disableActionLink(index) ? <a href="#" className={classes.links}>Withdraw</a> :  <span>Withdraw</span>}
                                                     </div>
                                                     <div style={{ marginRight: "10px", display: "inline" }}>
-                                                        {this.disableActionLink(index) ? <a href="#">Trade</a> :  <span>Trade</span>}
+                                                        {this.disableActionLink(index) ? <a href="#" className={classes.links}>Trade</a> :  <span>Trade</span>}
                                                     </div>
                                                 </this.StyledTableCell>
                                             </TableRow>
@@ -592,11 +598,6 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
             'pg-blur-deposit-crypto--active': isAccountActivated,
         });
-
-        // console.log(text);
-        // console.log(error);
-        // console.log(buttonLabel);
-        // console.log(blurCryptoClassName);
 
         if (wallets[selectedWalletIndex].type === 'coin') {
             return (

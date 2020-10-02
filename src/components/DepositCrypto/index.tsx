@@ -1,16 +1,15 @@
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
 import { CopyableTextField } from '../CopyableTextField';
 import { QRCode } from '../QRCode';
 
-import { fade, makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 import {
-    Box,
-    Grid,
     Paper,
     Typography,
-    Tooltip
+    Tooltip,
+    Button as MaterialButton
 } from '@material-ui/core';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
@@ -64,13 +63,19 @@ export interface DepositCryptoProps {
      * Generate address button label
      */
     buttonLabel?: string;
+
+    /**
+     * Selected Wallet currecny
+     */
+
+    currency?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
 
     networkPaper: {
-        padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
+        padding: `${theme.spacing(3)}px ${theme.spacing(2)}px`,
         margin: `${theme.spacing(2)}px 0px`,
         borderRadius: '4px'
     },
@@ -115,13 +120,31 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         handleGenerateAddress,
         buttonLabel,
         isAccountActivated,
+        currency,
     } = props;
     const size = dimensions || QR_SIZE;
-    const [copyText, setCopyText] = React.useState<string>('copy');
+    const [copyTooltipText, setCopyTooltipText] = React.useState<string>("Copy");
+
+    const copyToClipboard = (text) => {
+        var textField = document.createElement('textarea')
+        textField.innerText = text.key;
+        document.body.appendChild(textField)
+        textField.select()
+        document.execCommand('copy')
+        setCopyTooltipText('copied');
+        textField.remove()
+    };
+
+    const setCopyTooltipTextOnMouseOut = () => {
+        setCopyTooltipText('copy');
+    }
+
+    const address = data ? data : error;
+    
     const onCopy = !disabled ? handleOnCopy : undefined;
 
     const classes = useStyles();
-    const className = classnames({'cr-copyable-text-field__disabled': data === ''});
+    // const className = classnames({'cr-copyable-text-field__disabled': data === ''});
 
     const LightTooltip = withStyles((theme: Theme) => ({
         tooltip: {
@@ -145,24 +168,46 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                                 </LightTooltip>
                             </Typography>
                         </div>
-                        <div className={classes.networkPaperContent}>
-                            <Typography variant='body1' component='div'>
-                                BTC Address
-                            </Typography>
-                            <div className={classes.qrCode}>
-                                {data ? <QRCode dimensions={size} data={data}/> : null}
-                            </div>
-                            <Typography variant='body2' component='div' display='inline' className={classes.addressText}>
-                                {data ? data : error}
-                            </Typography>
-                            <Typography variant='body2' component='div' display='inline' onClick={onCopy}  onMouseEnter={() => setCopyText('copy')}>
-                            <LightTooltip style={{ marginLeft: '4px' }} title={copyText} placement="right-start">
-                                <FileCopyOutlinedIcon className={classes.copyIcon}/>
-                            </LightTooltip>
-                            </Typography>
-                        </div>
+                            {data ? (
+                                <>
+                                    <div className={classes.networkPaperContent}>
+                                        <Typography variant='body1' component='div'>
+                                            {currency ? currency.toUpperCase() : ''} Address
+                                        </Typography>
+                                        <div className={classes.qrCode}>
+                                            {data ? <QRCode dimensions={size} data={data}/> : null}
+                                        </div>
+                                        <Typography variant='body2' component='div' display='inline' className={classes.addressText}>
+                                            {data ? data : error}
+                                        </Typography>
+                                        <Typography variant='body2' component='div' display='inline' onClick={onCopy}>
+                                            <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                                                <FileCopyOutlinedIcon className={classes.copyIcon} onClick={() => copyToClipboard({address})} onMouseOut={setCopyTooltipTextOnMouseOut}/>
+                                            </LightTooltip>
+                                        </Typography>
+                                    </div>
+                                    <div style={{ marginTop: '24px' }}>
+                                        <Typography variant='subtitle2' component='div' display='block'>
+                                            Send only {currency ? currency.toUpperCase() : ''} to this deposit address.
+                                        </Typography>
+                                        <Typography variant='caption' component='div' display='block'>
+                                            Sending coin or token other than {currency ? currency.toUpperCase() : ''} to this address may result in the loss of your deposit.
+                                        </Typography>
+                                    </div>
+
+                                </>
+                            ) : (
+                                <>
+                                <div className={classes.networkPaperContent}>
+                                    <MaterialButton variant="contained" color="secondary" onClick={handleGenerateAddress}>
+                                        {buttonLabel ? buttonLabel : 'Generate deposit address'}
+                                    </MaterialButton>
+                                </div>
+                                </>
+                            )
+                            }
                     </Paper>
-                    <div>
+                    {/* <div>
                         <p className={'cr-deposit-info'}>{text}</p>
                         {data ? <div className="d-none d-md-block qr-code-wrapper"><QRCode dimensions={size} data={data}/></div> : null}
                     </div>
@@ -179,7 +224,7 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                                 />
                             </fieldset>
                         </form>
-                    </div>
+                    </div> */}
                 </>
             );
         }

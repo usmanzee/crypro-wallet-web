@@ -6,10 +6,9 @@ import {
     Paper,
     Typography,
 } from '@material-ui/core';
-import { fade, makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
+import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import InputBase from '@material-ui/core/InputBase';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -17,13 +16,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import StarIcon from '@material-ui/icons/Star'
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import Button from '@material-ui/core/Button';
-import Tooltip from '@material-ui/core/Tooltip';
 
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouterProps } from 'react-router';
-import { connect, MapDispatchToProps } from 'react-redux';
+import { connect } from 'react-redux';
 import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
 import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
 import { CommonError } from '../../modules/types';
@@ -155,19 +151,21 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
 const DepositWalletCrypto = (props: Props) => {
+    const defaultWalletCurrency = 'btc';
     //Props
     const classes = useStyles();
     const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
 
     //Params
     let params = useParams();
-    let currency: string = params ? params['currency'] : 'btc';
+    let currency: string = params ? params['currency'] : defaultWalletCurrency;
 
     //States
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
     
+    console.log(selectedWalletOption);
     //UseEffect
     React.useEffect(() => {
         if(wallets.length === 0) {
@@ -176,8 +174,8 @@ const DepositWalletCrypto = (props: Props) => {
             props.fetchBeneficiaries();
             
             let walletOptionByCurrency = searchWalletCurrency(currency);
-            if(walletOptionByCurrency) {
-                walletOptionByCurrency = searchWalletCurrency('btc');
+            if(!walletOptionByCurrency) {
+                walletOptionByCurrency = searchWalletCurrency(defaultWalletCurrency);
             }
             setSelectedWalletOption(walletOptionByCurrency);
         }
@@ -225,9 +223,9 @@ const DepositWalletCrypto = (props: Props) => {
     const handleGenerateAddress = () => {
         const { wallets } = props;
 
-        // if (wallets.length && wallets[selectedWalletIndex].type !== 'fiat') {
-        //     this.props.fetchAddress({ currency: wallets[selectedWalletIndex].currency });
-        // }
+        if (wallets.length && selectedWalletOption) {
+            props.fetchAddress({ currency: selectedWalletOption.currency });
+        }
     };
     
     const popperOpen = Boolean(anchorEl);
@@ -317,7 +315,7 @@ const DepositWalletCrypto = (props: Props) => {
                                     options={wallets}
                                     getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (
-                                        <InputBase
+                                    <InputBase
                                         ref={params.InputProps.ref}
                                         inputProps={params.inputProps}
                                         autoFocus
@@ -363,6 +361,7 @@ const DepositWalletCrypto = (props: Props) => {
                                 handleGenerateAddress={handleGenerateAddress}
                                 buttonLabel={buttonLabel}
                                 isAccountActivated={true}
+                                currency={selectedWalletOption ? selectedWalletOption.currency : ''}
                             />
                         </Grid>
                     </Grid>
