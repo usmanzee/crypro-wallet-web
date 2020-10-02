@@ -202,6 +202,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
     }
 
     public componentWillReceiveProps(next: Props) {
+        console.log('will receive prop');
         const {
             wallets,
             beneficiariesActivateSuccess,
@@ -565,6 +566,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
     private handleGenerateAddress = () => {
         const { selectedWalletIndex } = this.state;
+        console.log(selectedWalletIndex);
         const { wallets } = this.props;
 
         if (!wallets[selectedWalletIndex].address && wallets.length && wallets[selectedWalletIndex].type !== 'fiat') {
@@ -590,6 +592,11 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
             'pg-blur-deposit-crypto--active': isAccountActivated,
         });
+
+        // console.log(text);
+        // console.log(error);
+        // console.log(buttonLabel);
+        // console.log(blurCryptoClassName);
 
         if (wallets[selectedWalletIndex].type === 'coin') {
             return (

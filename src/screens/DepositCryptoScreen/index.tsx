@@ -6,11 +6,8 @@ import {
     Paper,
     Typography,
 } from '@material-ui/core';
-import { useTheme, fade, makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
+import { fade, makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 import Popper from '@material-ui/core/Popper';
-import SettingsIcon from '@material-ui/icons/Settings';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import InputBase from '@material-ui/core/InputBase';
@@ -24,12 +21,14 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 
-
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { RouterProps } from 'react-router';
 import { connect, MapDispatchToProps } from 'react-redux';
 import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
 import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
 import { CommonError } from '../../modules/types';
 import { formatCCYAddress, setDocumentTitle } from '../../helpers';
+import { QRCode } from '../../components/QRCode';
 
 import {
     useParams
@@ -152,81 +151,104 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const LightTooltip = withStyles((theme: Theme) => ({
-    tooltip: {
-      backgroundColor: theme.palette.common.white,
-      color: 'rgba(0, 0, 0, 0.87)',
-      boxShadow: theme.shadows[1],
-      fontSize: 11,
-    },
-  }))(Tooltip);
 
-type Props = ReduxProps & DispatchProps;
+type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
-const DepositWalletCrypto = (props) => {
+const DepositWalletCrypto = (props: Props) => {
+    //Props
     const classes = useStyles();
+    const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
 
+    //Params
     let params = useParams();
-    let currency = params ? params['currency'] : 'btc';
+    let currency: string = params ? params['currency'] : 'btc';
 
+    //States
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [value, setValue] = React.useState<any>();
-    const [pendingValue, setPendingValue] = React.useState<any>();
-
-    const [currencyOption, setCurrencyOption] = React.useState<WalletItemProps | null>(null);
-    const [selectedCurrencyOption, setSelectedCurrencyOption] = React.useState<WalletItemProps | null>(null);
-    const [walletAddress, setWalletAddress] = React.useState<string | null>(null);
+    const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
+    const [walletAddress, setWalletAddress] = React.useState<string>('');
     
-    const theme = useTheme();
-    const { wallets, selectedWalletAddress } = props;
-    console.log("selectedWalletAddress:", selectedWalletAddress);
-    console.log("walletAddress: ", walletAddress);
-
+    //UseEffect
     React.useEffect(() => {
         if(wallets.length === 0) {
             props.fetchWallets();
         } else {
-            let walletOptions = searchCurrency(currency);
-            if(walletOptions.length === 0) {
-                walletOptions = searchCurrency('btc');
+            props.fetchBeneficiaries();
+            
+            let walletOptionByCurrency = searchWalletCurrency(currency);
+            if(walletOptionByCurrency) {
+                walletOptionByCurrency = searchWalletCurrency('btc');
             }
-            setCurrencyOption(walletOptions[0]);
-            setSelectedCurrencyOption(walletOptions[0]);
+            setSelectedWalletOption(walletOptionByCurrency);
         }
-        if(selectedCurrencyOption) {
-            props.fetchAddress({currency: selectedCurrencyOption.currency})
-        }
-        if(selectedWalletAddress) {
-            console.log('call: ', currency,selectedWalletAddress);
-            setWalletAddress(formatCCYAddress(currency, selectedWalletAddress));
-        }
-    }, [wallets, selectedCurrencyOption, selectedWalletAddress]);
+        
+    }, [wallets]);
 
-    const searchCurrency = (currency) => {
-        return wallets.filter((wallet) => {
-            return wallet.currency == currency;
-        })
-    }
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        console.log('handleClick');
-        // setPendingValue(value);
-        setAnchorEl(event.currentTarget);
-      };
-    
-      const handleClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
-        console.log('handleClose');
-        if (reason === 'toggleInput') {
-          return;
+    React.useEffect(() => {
+        if (!props.currencies.length) {
+            props.currenciesFetch();
         }
-        setValue(pendingValue);
+    }, [currencies]);
+
+    React.useEffect(() => {
+        if(selectedWalletOption) {
+            selectedWalletOption.type === 'coin' && selectedWalletOption.balance && props.fetchAddress({ currency: selectedWalletOption.currency });
+        }
+    }, [selectedWalletOption]);
+
+    React.useEffect(() => {
+        if(selectedWalletAddress) {
+            const formatedWalletAddress = formatCCYAddress(currency, selectedWalletAddress);
+            setWalletAddress(formatedWalletAddress);
+        }
+    }, [selectedWalletAddress]);
+
+    //Addtional Methods
+    const searchWalletCurrency = (currency: string) => {
+        return wallets.find(wallet => wallet.currency === currency);
+    }
+    const handleCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    
+    const handleCurrencySelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
         if (anchorEl) {
           anchorEl.focus();
         }
         setAnchorEl(null);
-      };
+    };
+
+    const handleOnCopy = () => {
+        props.fetchSuccess({ message: ['page.body.wallets.tabs.deposit.ccy.message.success'], type: 'success'});
+    };
+
+    const handleGenerateAddress = () => {
+        const { wallets } = props;
+
+        // if (wallets.length && wallets[selectedWalletIndex].type !== 'fiat') {
+        //     this.props.fetchAddress({ currency: wallets[selectedWalletIndex].currency });
+        // }
+    };
     
-      const open = Boolean(anchorEl);
-      const id = open ? 'github-label' : undefined;
+    const popperOpen = Boolean(anchorEl);
+    const popperId = popperOpen ? 'wallet-currencies' : undefined;
+
+    const translate = (id: string) => props.intl.formatMessage({ id });
+
+    const currencyItem = ((currencies && selectedWalletOption) && currencies.find(currency => currency.id === selectedWalletOption.currency)) || { min_confirmations: 6 };
+    const text = props.intl.formatMessage({ id: 'page.body.wallets.tabs.deposit.ccy.message.submit' }, { confirmations: currencyItem.min_confirmations });
+
+    const error = addressDepositError ?
+        props.intl.formatMessage({id: addressDepositError.message}) :
+        props.intl.formatMessage({id: 'page.body.wallets.tabs.deposit.ccy.message.error'});
+
+    const buttonLabel = `
+        ${translate('page.body.wallets.tabs.deposit.ccy.button.generate')} ${selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : ''} ${translate('page.body.wallets.tabs.deposit.ccy.button.address')}
+    `;
+
+    // const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
+    //     'pg-blur-deposit-crypto--active': isAccountActivated,
+    // });
     return (
         <>
             <Box>
@@ -247,15 +269,15 @@ const DepositWalletCrypto = (props) => {
 
                     <Grid container>
                         <Grid item md={6}>
-                            <div className={classes.currencySelect} onClick={handleClick}>
-                                {selectedCurrencyOption ? 
+                            <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
+                                {selectedWalletOption ? 
                                     (<>
-                                        <img src={selectedCurrencyOption ? selectedCurrencyOption.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
+                                        <img src={selectedWalletOption ? selectedWalletOption.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
                                         <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
-                                            { selectedCurrencyOption.currency.toUpperCase() }
+                                            { selectedWalletOption.currency.toUpperCase() }
                                         </Typography>
                                         <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
-                                            { selectedCurrencyOption.name }
+                                            { selectedWalletOption.name }
                                         </Typography> 
                                     </>) :
                                     ""
@@ -263,8 +285,8 @@ const DepositWalletCrypto = (props) => {
                             </div>
 
                             <Popper
-                                id={id}
-                                open={open}
+                                id={popperId}
+                                open={popperOpen}
                                 anchorEl={anchorEl}
                                 placement="bottom-start"
                                 className={classes.popper}
@@ -272,14 +294,14 @@ const DepositWalletCrypto = (props) => {
                                 <div className={classes.header}>Search Currency</div>
                                 <Autocomplete
                                     open
-                                    onClose={handleClose}
+                                    onClose={handleCurrencySelectClose}
                                     disableCloseOnSelect={false}
-                                    value={currencyOption}
+                                    value={selectedWalletOption}
                                     onChange={(event: any, selectedOption: WalletItemProps | null) => {
-                                        setSelectedCurrencyOption(selectedOption);
+                                        setSelectedWalletOption(selectedOption);
                                     }}
                                     noOptionsText="No Records Found"
-                                    renderOption={(option: WalletItemProps | null) => (
+                                    renderOption={(option: WalletItemProps | null | undefined) => (
                                         <React.Fragment>
                                             <img src={option ? option.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
                                             <div>
@@ -293,7 +315,7 @@ const DepositWalletCrypto = (props) => {
                                         </React.Fragment>
                                     )}
                                     options={wallets}
-                                    getOptionLabel={(option: WalletItemProps | null) => option ? option.name: ''}
+                                    getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (
                                         <InputBase
                                         ref={params.InputProps.ref}
@@ -306,8 +328,8 @@ const DepositWalletCrypto = (props) => {
                             </Popper>
                             <Box mt={3} mb={3}>
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>Total balance:</Typography>
-                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedCurrencyOption ? selectedCurrencyOption.balance : '' }</Typography>
-                                <Typography variant="h6" component="div" display="inline">{ selectedCurrencyOption ? selectedCurrencyOption.currency.toUpperCase() : '' }</Typography>
+                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOption ? selectedWalletOption.balance : '' }</Typography>
+                                <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
                             <Paper elevation={0} className={classes.cryptoTips}>
                                 <Typography variant="h6" component="div"><EmojiObjectsIcon /> Tips:</Typography>
@@ -322,13 +344,7 @@ const DepositWalletCrypto = (props) => {
                                         <ListItemIcon>
                                             <StarIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary="Coins will be deposited after 1 network confirmations.." />
-                                    </ListItem>
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <StarIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Until 2 confirmations are made, an equivalent amount of your assets will be temporarily unavailable for withdrawals." />
+                                        <ListItemText primary={text} />
                                     </ListItem>
                                    
                                 </List>
@@ -336,21 +352,18 @@ const DepositWalletCrypto = (props) => {
                         </Grid>
                         <Grid item md={1}></Grid>
                         <Grid item md={5}>
-                            <Paper elevation={2} className={classes.networkPaper}>
-                                <div className={classes.networkPaperHeader}>
-                                    <Typography variant="body1" component="div" display="inline">
-                                        Deposit network 
-                                        <LightTooltip style={{ marginLeft: '4px' }} title="Please select the corresponding Binance Deposit address format according to the public chain type of the transferred wallet. Do note that some wallets may support multiple public chain types of token transfer, like exchange wallets generally support deposits from ERC20, OMNI, and TRC20 types of USDT. Make sure that the public chain network type selected at the time of transfer is the same the one for Binance Deposits." placement="right-start">
-                                            <InfoOutlinedIcon />
-                                        </LightTooltip>
-                                    </Typography>
-                                </div>
-                                <div className={classes.networkPaperContent}>
-                                    <Typography variant='body1' component='div'>
-                                        BTC Address
-                                    </Typography>
-                                </div>
-                            </Paper>
+                            <DepositCrypto
+                                data={walletAddress.split('?dt=').length === 2 ? walletAddress.split('?dt=')[0] : walletAddress}
+                                handleOnCopy={handleOnCopy}
+                                error={error}
+                                text={text}
+                                disabled={walletAddress === ''}
+                                copiableTextFieldText={translate('page.body.wallets.tabs.deposit.ccy.message.address')}
+                                copyButtonText={translate('page.body.wallets.tabs.deposit.ccy.message.button')}
+                                handleGenerateAddress={handleGenerateAddress}
+                                buttonLabel={buttonLabel}
+                                isAccountActivated={true}
+                            />
                         </Grid>
                     </Grid>
 
@@ -384,107 +397,4 @@ const mapDispatchToProps = dispatch => ({
     currenciesFetch: () => dispatch(currenciesFetch()),
 });
 
-const DepositCryptoScreen = connect(mapStateToProps, mapDispatchToProps)(DepositWalletCrypto)
-
-export { DepositCryptoScreen }
-
-
-interface LabelType {
-    name: string;
-    color: string;
-    description?: string;
-  }
-  
-  // From https://github.com/abdonrd/github-labels
-  const labels = [
-    {
-      name: 'good first issue',
-      color: '#7057ff',
-      description: 'Good for newcomers',
-    },
-    {
-      name: 'help wanted',
-      color: '#008672',
-      description: 'Extra attention is needed',
-    },
-    {
-      name: 'priority: critical',
-      color: '#b60205',
-      description: '',
-    },
-    {
-      name: 'priority: high',
-      color: '#d93f0b',
-      description: '',
-    },
-    {
-      name: 'priority: low',
-      color: '#0e8a16',
-      description: '',
-    },
-    {
-      name: 'priority: medium',
-      color: '#fbca04',
-      description: '',
-    },
-    {
-      name: "status: can't reproduce",
-      color: '#fec1c1',
-      description: '',
-    },
-    {
-      name: 'status: confirmed',
-      color: '#215cea',
-      description: '',
-    },
-    {
-      name: 'status: duplicate',
-      color: '#cfd3d7',
-      description: 'This issue or pull request already exists',
-    },
-    {
-      name: 'status: needs information',
-      color: '#fef2c0',
-      description: '',
-    },
-    {
-      name: 'status: wont do/fix',
-      color: '#eeeeee',
-      description: 'This will not be worked on',
-    },
-    {
-      name: 'type: bug',
-      color: '#d73a4a',
-      description: "Something isn't working",
-    },
-    {
-      name: 'type: discussion',
-      color: '#d4c5f9',
-      description: '',
-    },
-    {
-      name: 'type: documentation',
-      color: '#006b75',
-      description: '',
-    },
-    {
-      name: 'type: enhancement',
-      color: '#84b6eb',
-      description: '',
-    },
-    {
-      name: 'type: epic',
-      color: '#3e4b9e',
-      description: 'A theme of work that contain sub-tasks',
-    },
-    {
-      name: 'type: feature request',
-      color: '#fbca04',
-      description: 'New feature or request',
-    },
-    {
-      name: 'type: question',
-      color: '#d876e3',
-      description: 'Further information is requested',
-    },
-  ];
+export const DepositCryptoScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(DepositWalletCrypto))
