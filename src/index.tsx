@@ -53,27 +53,30 @@ const theme = createMuiTheme({
               }
             }
           },
-          textPrimary: {
-            color: "#fff"
-          },
-          textSecondary: {
-            color: "#fff"
-          },
-          contained: {
-            color: "#fff"
-          },
-          outlined: {
-            "&:hover": {
-                color: 'rgb(111, 33, 88)',
-                backgroundColor: "#35C37D"
-            }
-          },
+          // outlined: {
+          //   "&:hover": {
+          //       color: 'rgb(111, 33, 88)',
+          //       backgroundColor: "#35C37D"
+          //   }
+          // },
           containedPrimary: {
             color: "#fff"
           },
     
           containedSecondary: {
             color: "#fff"
+          },
+          outlinedPrimary: {
+            color: "#f58220",
+              "&:hover": {
+                color: 'rgb(111, 33, 88)',
+            }
+          },
+          outlinedSecondary: {
+            color: "#f58220",
+              "&:hover": {
+                color: '#f58220',
+            }
           },
     
         //   raised: {

@@ -124,10 +124,15 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
     } = props;
     const size = dimensions || QR_SIZE;
     const [copyTooltipText, setCopyTooltipText] = React.useState<string>("Copy");
-
+    
+    // const onCopy = !disabled ? handleOnCopy : undefined;
+    const onCopy = (textToCopy) => {
+        copyToClipboard(textToCopy);
+        handleOnCopy();
+    }
     const copyToClipboard = (text) => {
         var textField = document.createElement('textarea')
-        textField.innerText = text.key;
+        textField.innerText = text;
         document.body.appendChild(textField)
         textField.select()
         document.execCommand('copy')
@@ -139,10 +144,6 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         setCopyTooltipText('copy');
     }
 
-    const address = data ? data : error;
-    
-    const onCopy = !disabled ? handleOnCopy : undefined;
-
     const classes = useStyles();
     // const className = classnames({'cr-copyable-text-field__disabled': data === ''});
 
@@ -153,97 +154,95 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
           boxShadow: theme.shadows[1],
           fontSize: 11,
         },
-      }))(Tooltip);
+    }))(Tooltip);
 
     const getContent = () => {
-        if (isAccountActivated) {
-            return (
-                <>
-                    <Paper elevation={2} className={classes.networkPaper}>
-                        <div className={classes.networkPaperHeader}>
-                            <Typography variant="body1" component="div" display="inline">
-                                Deposit network 
-                                <LightTooltip style={{ marginLeft: '4px' }} title="Please select the corresponding Binance Deposit address format according to the public chain type of the transferred wallet. Do note that some wallets may support multiple public chain types of token transfer, like exchange wallets generally support deposits from ERC20, OMNI, and TRC20 types of USDT. Make sure that the public chain network type selected at the time of transfer is the same the one for Binance Deposits." placement="right-start">
-                                    <InfoOutlinedIcon />
-                                </LightTooltip>
-                            </Typography>
-                        </div>
-                            {data ? (
-                                <>
-                                    <div className={classes.networkPaperContent}>
-                                        <Typography variant='body1' component='div'>
-                                            {currency ? currency.toUpperCase() : ''} Address
-                                        </Typography>
-                                        <div className={classes.qrCode}>
-                                            {data ? <QRCode dimensions={size} data={data}/> : null}
-                                        </div>
-                                        <Typography variant='body2' component='div' display='inline' className={classes.addressText}>
-                                            {data ? data : error}
-                                        </Typography>
-                                        <Typography variant='body2' component='div' display='inline' onClick={onCopy}>
-                                            <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
-                                                <FileCopyOutlinedIcon className={classes.copyIcon} onClick={() => copyToClipboard({address})} onMouseOut={setCopyTooltipTextOnMouseOut}/>
-                                            </LightTooltip>
-                                        </Typography>
-                                    </div>
-                                    <div style={{ marginTop: '24px' }}>
-                                        <Typography variant='subtitle2' component='div' display='block'>
-                                            Send only {currency ? currency.toUpperCase() : ''} to this deposit address.
-                                        </Typography>
-                                        <Typography variant='caption' component='div' display='block'>
-                                            Sending coin or token other than {currency ? currency.toUpperCase() : ''} to this address may result in the loss of your deposit.
-                                        </Typography>
-                                    </div>
-
-                                </>
-                            ) : (
-                                <>
-                                <div className={classes.networkPaperContent}>
-                                    <MaterialButton variant="contained" color="secondary" onClick={handleGenerateAddress}>
-                                        {buttonLabel ? buttonLabel : 'Generate deposit address'}
-                                    </MaterialButton>
-                                </div>
-                                </>
-                            )
-                            }
-                    </Paper>
-                    {/* <div>
-                        <p className={'cr-deposit-info'}>{text}</p>
-                        {data ? <div className="d-none d-md-block qr-code-wrapper"><QRCode dimensions={size} data={data}/></div> : null}
-                    </div>
-                    <div>
-                        <form className={'cr-deposit-crypto__copyable'}>
-                            <fieldset className={'cr-copyable-text-field'} onClick={onCopy}>
-                                <CopyableTextField
-                                    className={'cr-deposit-crypto__copyable-area'}
-                                    value={data ? data : error}
-                                    fieldId={data ? 'copy_deposit_1' : 'copy_deposit_2'}
-                                    copyButtonText={copyButtonText}
-                                    disabled={disabled}
-                                    label={copiableTextFieldText ? copiableTextFieldText : 'Deposit by Wallet Address'}
-                                />
-                            </fieldset>
-                        </form>
-                    </div> */}
-                </>
-            );
-        }
-
         return (
-            <div className="cr-deposit-crypto__create">
-                <div className="cr-deposit-crypto__create-btn">
-                    <Button
-                        block={true}
-                        type="button"
-                        onClick={handleGenerateAddress}
-                        size="lg"
-                        variant="primary"
-                    >
-                        {buttonLabel ? buttonLabel : 'Generate deposit address'}
-                    </Button>
+            <>
+                <Paper elevation={2} className={classes.networkPaper}>
+                    <div className={classes.networkPaperHeader}>
+                        <Typography variant="body1" component="div" display="inline">
+                            Deposit network 
+                            <LightTooltip style={{ marginLeft: '4px' }} title="Please select the corresponding B4U Deposit address format according to the public chain type of the transferred wallet. Do note that some wallets may support multiple public chain types of token transfer, like exchange wallets generally support deposits from ERC20, OMNI, and TRC20 types of USDT. Make sure that the public chain network type selected at the time of transfer is the same the one for Binance Deposits." placement="right-start">
+                                <InfoOutlinedIcon />
+                            </LightTooltip>
+                        </Typography>
+                    </div>
+                    {isAccountActivated ? 
+                    (
+                        <>
+                            <div className={classes.networkPaperContent}>
+                                <Typography variant='body1' component='div'>
+                                    {currency ? currency.toUpperCase() : ''} Address
+                                </Typography>
+                                <div className={classes.qrCode}>
+                                    {data ? <QRCode dimensions={size} data={data}/> : null}
+                                </div>
+                                <Typography variant='body2' component='div' display='inline' className={classes.addressText}>
+                                    {data ? data : error}
+                                </Typography>
+                                <Typography variant='body2' component='div' display='inline' onClick={() => onCopy(data)} onMouseOut={setCopyTooltipTextOnMouseOut}>
+                                    <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                                        <FileCopyOutlinedIcon className={classes.copyIcon}/>
+                                    </LightTooltip>
+                                </Typography>
+                            </div>
+                            <div style={{ marginTop: '24px' }}>
+                                <Typography variant='subtitle2' component='div' display='block'>
+                                    Send only {currency ? currency.toUpperCase() : ''} to this deposit address.
+                                </Typography>
+                                <Typography variant='caption' component='div' display='block'>
+                                    Sending coin or token other than {currency ? currency.toUpperCase() : ''} to this address may result in the loss of your deposit.
+                                </Typography>
+                            </div>
+                        </>
+                    ) :
+                    (
+                        <>
+                            <div className={classes.networkPaperContent}>
+                                <MaterialButton variant="contained" color="secondary" onClick={handleGenerateAddress}>
+                                    {buttonLabel ? buttonLabel : 'Generate deposit address'}
+                                </MaterialButton>
+                            </div>
+
+                            {/* <div className="cr-deposit-crypto__create">
+                                <div className="cr-deposit-crypto__create-btn">
+                                    <Button
+                                        block={true}
+                                        type="button"
+                                        onClick={handleGenerateAddress}
+                                        size="lg"
+                                        variant="primary"
+                                    >
+                                        {buttonLabel ? buttonLabel : 'Generate deposit address'}
+                                    </Button>
+                                </div>
+                            </div> */}
+                        </>
+                    )
+                    }
+                </Paper>
+                {/* <div>
+                    <p className={'cr-deposit-info'}>{text}</p>
+                    {data ? <div className="d-none d-md-block qr-code-wrapper"><QRCode dimensions={size} data={data}/></div> : null}
                 </div>
-            </div>
+                <div>
+                    <form className={'cr-deposit-crypto__copyable'}>
+                        <fieldset className={'cr-copyable-text-field'} onClick={onCopy}>
+                            <CopyableTextField
+                                className={'cr-deposit-crypto__copyable-area'}
+                                value={data ? data : error}
+                                fieldId={data ? 'copy_deposit_1' : 'copy_deposit_2'}
+                                copyButtonText={copyButtonText}
+                                disabled={disabled}
+                                label={copiableTextFieldText ? copiableTextFieldText : 'Deposit by Wallet Address'}
+                            />
+                        </fieldset>
+                    </form>
+                </div> */}
+            </>
         );
+        
     };
 
     return (

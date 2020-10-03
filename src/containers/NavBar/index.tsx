@@ -138,7 +138,7 @@ class NavBarComponent extends React.Component<Props, IState> {
         );
     }
     private renderProfile = () => {
-        const { isLoggedIn } = this.props;
+        const { isLoggedIn, user } = this.props;
         if (!isLoggedIn) {
             return null;
         }
@@ -151,13 +151,13 @@ class NavBarComponent extends React.Component<Props, IState> {
                         <AccountCircleIcon fontSize="large" />
                     </div>
                     <div className="nav-profile-text">
-                    <p className="mb-1" style={{ fontSize: "1.2rem" }}>Abubakar</p>
+                    <p className="mb-1" style={{ fontSize: "1.2rem" }}>Profile</p>
                     </div>
                     </a>
                     <div className="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
                         <div className="p-3">
                             <Link className="dropdown-item py-3 d-flex align-items-center justify-content-between" to="/profile">
-                                <span>Usman@gmail.com</span>
+                                <span>{user.email}</span>
                                 <ArrowRightIcon fontSize="large"/>
                             </Link>
                         </div>

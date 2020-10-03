@@ -161,11 +161,11 @@ const DepositWalletCrypto = (props: Props) => {
     let currency: string = params ? params['currency'] : defaultWalletCurrency;
 
     //States
+    const [selectedCurrency, setSelectedCurrency] = React.useState<string>(currency);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
     
-    console.log(selectedWalletOption);
     //UseEffect
     React.useEffect(() => {
         if(wallets.length === 0) {
@@ -173,7 +173,7 @@ const DepositWalletCrypto = (props: Props) => {
         } else {
             props.fetchBeneficiaries();
             
-            let walletOptionByCurrency = searchWalletCurrency(currency);
+            let walletOptionByCurrency = searchWalletCurrency(selectedCurrency);
             if(!walletOptionByCurrency) {
                 walletOptionByCurrency = searchWalletCurrency(defaultWalletCurrency);
             }
@@ -228,10 +228,12 @@ const DepositWalletCrypto = (props: Props) => {
         }
     };
     
+    const translate = (id: string) => props.intl.formatMessage({ id });
+
     const popperOpen = Boolean(anchorEl);
     const popperId = popperOpen ? 'wallet-currencies' : undefined;
 
-    const translate = (id: string) => props.intl.formatMessage({ id });
+    const isAccountActivated = (selectedWalletOption && selectedWalletOption.balance) ? true : false;
 
     const currencyItem = ((currencies && selectedWalletOption) && currencies.find(currency => currency.id === selectedWalletOption.currency)) || { min_confirmations: 6 };
     const text = props.intl.formatMessage({ id: 'page.body.wallets.tabs.deposit.ccy.message.submit' }, { confirmations: currencyItem.min_confirmations });
@@ -247,6 +249,8 @@ const DepositWalletCrypto = (props: Props) => {
     // const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
     //     'pg-blur-deposit-crypto--active': isAccountActivated,
     // });
+    const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0.0000;
+    const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? +selectedWalletOption.locked : 0.0000;
     return (
         <>
             <Box>
@@ -297,6 +301,7 @@ const DepositWalletCrypto = (props: Props) => {
                                     value={selectedWalletOption}
                                     onChange={(event: any, selectedOption: WalletItemProps | null) => {
                                         setSelectedWalletOption(selectedOption);
+                                        setSelectedCurrency(selectedOption ? selectedOption.currency : defaultWalletCurrency);
                                     }}
                                     noOptionsText="No Records Found"
                                     renderOption={(option: WalletItemProps | null | undefined) => (
@@ -326,7 +331,7 @@ const DepositWalletCrypto = (props: Props) => {
                             </Popper>
                             <Box mt={3} mb={3}>
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>Total balance:</Typography>
-                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOption ? selectedWalletOption.balance : '' }</Typography>
+                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
                             <Paper elevation={0} className={classes.cryptoTips}>
@@ -360,7 +365,7 @@ const DepositWalletCrypto = (props: Props) => {
                                 copyButtonText={translate('page.body.wallets.tabs.deposit.ccy.message.button')}
                                 handleGenerateAddress={handleGenerateAddress}
                                 buttonLabel={buttonLabel}
-                                isAccountActivated={true}
+                                isAccountActivated={isAccountActivated}
                                 currency={selectedWalletOption ? selectedWalletOption.currency : ''}
                             />
                         </Grid>

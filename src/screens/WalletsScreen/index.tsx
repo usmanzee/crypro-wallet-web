@@ -111,7 +111,7 @@ const useStyles = theme => ({
         border: `1px solid #fff`,
         
         "&.Mui-focused": {
-            border: `1px solid ${theme.palette.primary.main}`
+            border: `1px solid ${theme.palette.secondary.main}`
         },
         '& .MuiSvgIcon-root': {
             marginRight: theme.spacing(1)
@@ -135,9 +135,10 @@ const useStyles = theme => ({
         paddingTop: theme.spacing(2)
     },
     links: {
-        color: theme.palette.primary.main,
+        color: theme.palette.secondary.main,
         '&:hover': {
-            color: theme.palette.primary.main,
+            textDecoration: 'none',
+            color: theme.palette.secondary.main,
         }
     }
 });
@@ -359,13 +360,15 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 <Typography variant="h4" display="inline">Wallets</Typography>
                             </Grid>
                             <Grid className={classes.headeractionButton} item md={3}>
-                                <MaterialButton variant="contained" color="primary" href="#contained-buttons">
-                                    Deposit
-                                </MaterialButton>
-                                <MaterialButton className={classes.withdrawButton} variant="outlined" color="primary" href="#outlined-buttons">
+                                <Link to="/wallet/deposit/crypto" style={{ textDecoration: 'none' }}>
+                                    <MaterialButton variant="contained" color="secondary">
+                                        Deposit
+                                    </MaterialButton>
+                                </Link>
+                                <MaterialButton className={classes.withdrawButton} variant="outlined" color="secondary" href="#outlined-buttons">
                                     Withdraw
                                 </MaterialButton>
-                                <MaterialButton variant="outlined" color="primary" href="#outlined-buttons">
+                                <MaterialButton variant="outlined" color="secondary" href="#outlined-buttons">
                                     Transfer
                                 </MaterialButton>
                             </Grid>
@@ -401,8 +404,8 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
                                     <TableBody>
                                         {walletsData.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((wallet, index) => {
-                                            const walletBalance: string = wallet.balance ? wallet.balance : '';
-                                            const walletLocked: string = wallet.locked ? wallet.locked : '';
+                                            const walletBalance: number = wallet.balance ? +wallet.balance : 0.0000;
+                                            const walletLocked: number = wallet.locked ? +wallet.locked : 0.0000;
                                             return <TableRow hover key={wallet.currency}>
                                                 <this.StyledTableCell>
                                                     <img src={`${ wallet.iconUrl } `} style={{ width: "2.5rem", height: "2.5rem" }}/>

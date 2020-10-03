@@ -216,6 +216,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/confirm" component={ConfirmScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile" component={ProfileScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallets" component={WalletsScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallet/deposit/crypto" component={DepositCryptoScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallet/deposit/crypto/:currency" component={DepositCryptoScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/masspay" component={MassPage} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/security/2fa" component={ProfileTwoFactorAuthScreen} />
