@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './depositCrypto.css';
 import {
     Box,
     Grid,
@@ -19,7 +18,7 @@ import StarIcon from '@material-ui/icons/Star'
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import { Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
 import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
@@ -165,38 +164,25 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
-const DepositWalletCrypto = (props: Props) => {
-    const defaultWalletCurrency = 'btc';
+const DepositFiatComponent = (props: Props) => {
+    const defaultFiatDepositCurrency = 'EUR';
+    let history = useHistory();
     //Props
     const classes = useStyles();
     const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
 
     //Params
     let params = useParams();
-    let currency: string = params ? params['currency'] : defaultWalletCurrency;
+    let currency: string = params ? params['currency'] : defaultFiatDepositCurrency;
 
     //States
     const [selectedCurrency, setSelectedCurrency] = React.useState<string>(currency);
+    const [fiatCurrencies, setFiatCurrencies] = React.useState<Currency[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
+    const [selectedCurrencyOption, setSelectedCurrencyOption] = React.useState<Currency | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
-    
-    //UseEffect
-    React.useEffect(() => {
-        if(wallets.length === 0) {
-            props.fetchWallets();
-        } else {
-            props.fetchBeneficiaries();
-            
-            let walletOptionByCurrency = searchWalletCurrency(selectedCurrency);
-            if(!walletOptionByCurrency) {
-                walletOptionByCurrency = searchWalletCurrency(defaultWalletCurrency);
-            }
-            setSelectedWalletOption(walletOptionByCurrency);
-        }
-        
-    }, [wallets]);
 
+    //UseEffects
     React.useEffect(() => {
         if (!props.currencies.length) {
             props.currenciesFetch();
@@ -204,10 +190,25 @@ const DepositWalletCrypto = (props: Props) => {
     }, [currencies]);
 
     React.useEffect(() => {
-        if(selectedWalletOption) {
-            selectedWalletOption.type === 'coin' && selectedWalletOption.balance && props.fetchAddress({ currency: selectedWalletOption.currency });
+        if (!fiatCurrencies.length) {
+            setFiatCurrencies(currencies.filter((currency) => {
+                return currency.type === 'fiat';
+            }));
+        } else {
+            
+            let searchedcurrencyOption = searchSelectedCurrency(selectedCurrency);
+            if(!searchedcurrencyOption) {
+                searchedcurrencyOption = searchSelectedCurrency(defaultFiatDepositCurrency);
+            }
+            setSelectedCurrencyOption(searchedcurrencyOption);
         }
-    }, [selectedWalletOption]);
+    }, [fiatCurrencies]);
+
+    React.useEffect(() => {
+        // if(selectedCurrencyOption) {
+        //     selectedCurrencyOption.type === 'coin' && selectedCurrencyOption.balance && props.fetchAddress({ currency: selectedCurrencyOption.currency });
+        // }
+    }, [selectedCurrencyOption]);
 
     React.useEffect(() => {
         if(selectedWalletAddress) {
@@ -217,8 +218,8 @@ const DepositWalletCrypto = (props: Props) => {
     }, [selectedWalletAddress]);
 
     //Addtional Methods
-    const searchWalletCurrency = (currency: string) => {
-        return wallets.find(wallet => wallet.currency === currency);
+    const searchSelectedCurrency = (currency: string) => {
+        return fiatCurrencies.find(fiatCurrency => fiatCurrency.id === currency);
     }
     const handleCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -238,36 +239,39 @@ const DepositWalletCrypto = (props: Props) => {
     const handleGenerateAddress = () => {
         const { wallets } = props;
 
-        if (wallets.length && selectedWalletOption) {
-            props.fetchAddress({ currency: selectedWalletOption.currency });
+        if (wallets.length && selectedCurrencyOption) {
+            props.fetchAddress({ currency: selectedCurrencyOption.id });
         }
     };
+
+    const handleTabLinkClick = (event) => {
+        const targetUrl = event.target.url;
+        history.push(targetUrl);
+    }
     
     const translate = (id: string) => props.intl.formatMessage({ id });
 
     const popperOpen = Boolean(anchorEl);
     const popperId = popperOpen ? 'wallet-currencies' : undefined;
 
-    const isAccountActivated = (selectedWalletOption && selectedWalletOption.balance) ? true : false;
+    // const isAccountActivated = (selectedCurrencyOption && selectedCurrencyOption.balance) ? true : false;
 
-    const currencyItem = ((currencies && selectedWalletOption) && currencies.find(currency => currency.id === selectedWalletOption.currency)) || { min_confirmations: 6 };
-    const text = props.intl.formatMessage({ id: 'page.body.wallets.tabs.deposit.ccy.message.submit' }, { confirmations: currencyItem.min_confirmations });
-    const tip1 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip1' });
-    const tip2 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip2' }, { confirmations: currencyItem.min_confirmations });
+    // const currencyItem = ((currencies && selectedCurrencyOption) && currencies.find(currency => currency.id === selectedCurrencyOption.currency)) || { min_confirmations: 6 };
+    // const text = props.intl.formatMessage({ id: 'page.body.wallets.tabs.deposit.ccy.message.submit' }, { confirmations: currencyItem.min_confirmations });
+    // const tip1 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip1' });
+    // const tip2 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip2' }, { confirmations: currencyItem.min_confirmations });
 
-    const error = addressDepositError ?
-        props.intl.formatMessage({id: addressDepositError.message}) :
-        props.intl.formatMessage({id: 'page.body.wallets.tabs.deposit.ccy.message.error'});
+    // const error = addressDepositError ?
+    //     props.intl.formatMessage({id: addressDepositError.message}) :
+    //     props.intl.formatMessage({id: 'page.body.wallets.tabs.deposit.ccy.message.error'});
 
-    const buttonLabel = `
-        ${translate('page.body.wallets.tabs.deposit.ccy.button.generate')} ${selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : ''} ${translate('page.body.wallets.tabs.deposit.ccy.button.address')}
-    `;
+    // const buttonLabel = `
+    //     ${translate('page.body.wallets.tabs.deposit.ccy.button.generate')} ${selectedCurrencyOption ? selectedCurrencyOption.currency.toUpperCase() : ''} ${translate('page.body.wallets.tabs.deposit.ccy.button.address')}
+    // `;
 
-    // const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
-    //     'pg-blur-deposit-crypto--active': isAccountActivated,
-    // });
-    const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0.0000;
-    const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? +selectedWalletOption.locked : 0.0000;
+    
+    // const selectedCurrencyOptionBalance: number = selectedCurrencyOption && selectedCurrencyOption.balance ? +selectedCurrencyOption.balance : 0.0000;
+    // const selectedCurrencyOptionLocked: number = selectedCurrencyOption && selectedCurrencyOption.locked ? +selectedCurrencyOption.locked : 0.0000;
     return (
         <>
             <Box>
@@ -284,29 +288,29 @@ const DepositWalletCrypto = (props: Props) => {
             <Box mt={2} pl={3} pr={3} alignItems="center">
                 <Paper className={classes.pagePaper}>
                     <div className={classes.pagePaperHeader}>
-                    <Link to="/wallet/deposit/crypto" className={classes.activePage}>
+                        <Link to="/wallet/deposit/crypto" className={classes.inActivePage}>
                             <Typography variant="h6" component="div" display="inline" >
                                 <FormattedMessage id={'page.body.deposit.tabs.crypto'} />
                             </Typography>
-                    </Link>
-                    <Link to="/wallet/deposit/fiat" className={classes.inActivePage}>
-                        <Typography variant="h6" component="div"  display="inline">
-                            <FormattedMessage id={'page.body.deposit.tabs.fiat'} />
-                        </Typography>
-                    </Link>
+                        </Link>
+                        <Link to="/wallet/deposit/fiat" className={classes.activePage}>
+                            <Typography variant="h6" component="div"  display="inline">
+                                <FormattedMessage id={'page.body.deposit.tabs.fiat'} />
+                            </Typography>
+                        </Link>
                     </div>
 
                     <Grid container>
                         <Grid item md={6}>
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
-                                {selectedWalletOption ? 
+                                {selectedCurrencyOption ? 
                                     (<>
-                                        <img src={selectedWalletOption ? selectedWalletOption.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
+                                        <img src={selectedCurrencyOption ? selectedCurrencyOption.icon_url: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
                                         <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
-                                            { selectedWalletOption.currency.toUpperCase() }
+                                            { selectedCurrencyOption.id.toUpperCase() }
                                         </Typography>
                                         <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
-                                            { selectedWalletOption.name }
+                                            { selectedCurrencyOption.name }
                                         </Typography> 
                                     </>) :
                                     ""
@@ -327,18 +331,18 @@ const DepositWalletCrypto = (props: Props) => {
                                     open
                                     onClose={handleCurrencySelectClose}
                                     disableCloseOnSelect={false}
-                                    value={selectedWalletOption}
-                                    onChange={(event: any, selectedOption: WalletItemProps | null) => {
-                                        setSelectedWalletOption(selectedOption);
-                                        setSelectedCurrency(selectedOption ? selectedOption.currency : defaultWalletCurrency);
+                                    value={selectedCurrencyOption}
+                                    onChange={(event: any, selectedOption: Currency | null) => {
+                                        setSelectedCurrencyOption(selectedOption);
+                                        setSelectedCurrency(selectedOption ? selectedOption.id : defaultFiatDepositCurrency);
                                     }}
                                     noOptionsText="No Records Found"
-                                    renderOption={(option: WalletItemProps | null | undefined) => (
+                                    renderOption={(option: Currency | null | undefined) => (
                                         <React.Fragment>
-                                            <img src={option ? option.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
+                                            <img src={option ? option.icon_url: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
                                             <div>
                                                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
-                                                    { option ? option.currency.toUpperCase(): '' }
+                                                    { option ? option.id.toUpperCase(): '' }
                                                 </Typography>
                                                 <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
                                                     { option ? option.name : '' }
@@ -346,8 +350,8 @@ const DepositWalletCrypto = (props: Props) => {
                                             </div>
                                         </React.Fragment>
                                     )}
-                                    options={wallets}
-                                    getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
+                                    options={fiatCurrencies}
+                                    getOptionLabel={(option: Currency | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (
                                     <InputBase
                                         ref={params.InputProps.ref}
@@ -358,13 +362,13 @@ const DepositWalletCrypto = (props: Props) => {
                                     )}
                                 />
                             </Popper>
-                            <Box mt={3} mb={3}>
+                            {/* <Box mt={3} mb={3}>
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                                     <FormattedMessage id={'page.body.deposit.total_balance'} />:
                                 </Typography>
-                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
-                                <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
-                            </Box>
+                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedCurrencyOptionBalance + selectedCurrencyOptionLocked }</Typography>
+                                <Typography variant="h6" component="div" display="inline">{ selectedCurrencyOption ? selectedCurrencyOption.currency.toUpperCase() : '' }</Typography>
+                            </Box> */}
                             <Paper elevation={0} className={classes.cryptoTips}>
                                 <Typography variant="h6" component="div"><EmojiObjectsIcon />
                                     <FormattedMessage id={'page.body.deposit.tips.title'} />
@@ -374,13 +378,13 @@ const DepositWalletCrypto = (props: Props) => {
                                         <ListItemIcon>
                                             <StarIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary={tip1} />
+                                        <ListItemText primary={"tip1"} />
                                     </ListItem>
                                     <ListItem button>
                                         <ListItemIcon>
                                             <StarIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary={tip2} />
+                                        <ListItemText primary={"tip2"} />
                                     </ListItem>
                                    
                                 </List>
@@ -388,25 +392,13 @@ const DepositWalletCrypto = (props: Props) => {
                         </Grid>
                         <Grid item md={1}></Grid>
                         <Grid item md={5}>
-                            <DepositCrypto
-                                data={walletAddress.split('?dt=').length === 2 ? walletAddress.split('?dt=')[0] : walletAddress}
-                                handleOnCopy={handleOnCopy}
-                                error={error}
-                                text={text}
-                                disabled={walletAddress === ''}
-                                copiableTextFieldText={translate('page.body.wallets.tabs.deposit.ccy.message.address')}
-                                copyButtonText={translate('page.body.wallets.tabs.deposit.ccy.message.button')}
-                                handleGenerateAddress={handleGenerateAddress}
-                                buttonLabel={buttonLabel}
-                                isAccountActivated={isAccountActivated}
-                                currency={selectedWalletOption ? selectedWalletOption.currency : ''}
-                            />
+                            
                         </Grid>
                     </Grid>
                     <Divider className={classes.historyDivider}/>
                     <Grid container>
                         <Grid item md={12}>
-                            {selectedWalletOption && <WalletHistory label="deposit" type="deposits" currency={selectedWalletOption} />}
+                            {selectedCurrencyOption && <WalletHistory label="deposit" type="deposits" currency={selectedCurrencyOption} />}
                         </Grid>
                     </Grid>
                 </Paper>
@@ -439,4 +431,4 @@ const mapDispatchToProps = dispatch => ({
     currenciesFetch: () => dispatch(currenciesFetch()),
 });
 
-export const DepositCryptoScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(DepositWalletCrypto))
+export const DepositFiatScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(DepositFiatComponent))
