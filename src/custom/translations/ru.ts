@@ -2,6 +2,9 @@ import { LangType } from '../../translations';
 import { nationalitiesNames } from '../../translations/nationalities';
 
 export const ru: LangType = {
+    //General Messages
+    'no.record.found': 'Записей не найдено.',
+    
     'page.header.navbar.signIn': 'Войти',
     'page.header.navbar.trade': 'Биржа',
     'page.header.navbar.wallets': 'Кошельки',

@@ -145,6 +145,10 @@ const useStyles = theme => ({
         pointerEvents: 'none',
         color: '#ccc',
         margin: `0px ${theme.spacing(1)}px`,
+    },
+    emptyTableText: {
+        textAlign: 'center',
+        padding: `0px ${theme.spacing(5)}px`,
     }
 });
 
@@ -446,9 +450,11 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                         })}
                                         
                                     </TableBody> :
-                                        <div className="empty">
-                                            <Typography>No Record Found</Typography>
-                                        </div>
+                                    <>
+                                        <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
+                                            <FormattedMessage id={'no.record.found'} />
+                                        </caption>
+                                    </>
                                 }
                             </Table>
                         </TableContainer>

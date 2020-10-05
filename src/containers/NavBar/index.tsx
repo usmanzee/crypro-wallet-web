@@ -143,9 +143,9 @@ class NavBarComponent extends React.Component<Props, IState> {
     }
     private renderProfile = () => {
         const { isLoggedIn, user } = this.props;
-        // if (!isLoggedIn) {
-        //     return null;
-        // }
+        if (!isLoggedIn) {
+            return null;
+        }
         return (
             <>
                 <li className="nav-item nav-profile dropdown">

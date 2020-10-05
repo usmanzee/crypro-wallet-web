@@ -2,6 +2,9 @@ import { en as customTranslations } from '../custom/translations/en';
 import { nationalitiesNames } from './nationalities';
 
 export const en = {
+    //General Messages
+    'no.record.found': 'No Record Found.',
+
     'page.header.navbar.signIn': 'Sign In',
     'page.header.navbar.trade': 'Trade',
     'page.header.navbar.wallets': 'Wallets',
