@@ -40,6 +40,16 @@ export interface WalletItemProps {
      * Value for url for wallet icon. If empty string, then there will be icon displayed from @openware/cryptoicon
      */
     iconUrl?: string;
+
+    /**
+     *Is deposit enable
+     */
+    depositEnabled: boolean,
+
+    /**
+     *Is withdraw enable
+     */
+    withdrawEnabled: boolean,
 }
 
 const style: React.CSSProperties = {

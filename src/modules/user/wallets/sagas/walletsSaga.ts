@@ -35,6 +35,8 @@ export function* walletsSaga() {
                 type: currency!.type,
                 fixed: currency!.precision,
                 iconUrl: currency.icon_url,
+                depositEnabled: currency.deposit_enabled,
+                withdrawEnabled: currency.withdrawal_enabled,
             });
         });
 

@@ -15,6 +15,24 @@ export const pgRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => 
 
     return isLoggedIn ? routes : routesUnloggedIn;
 };
+export const headerRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
+    const routes = [
+        ['page.header.navbar.wallets', '/wallets', `wallets${isLight ? 'Light' : ''}`],
+        ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`],
+    ];
+
+    return isLoggedIn ? routes : [];
+};
+export const headerProfileRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
+    const routes = [
+        ['page.header.navbar.profile.security', '/profile', 'mdi mdi-shield-outline'],
+        ['page.header.navbar.profile.identification', '/profile', 'mdi mdi-folder-account'],
+        ['page.header.navbar.profile.api_management', '/profile', 'mdi mdi-settings'],
+        ['page.header.navbar.profile.referal', '/profile', 'mdi mdi-account-plus'],
+    ];
+
+    return isLoggedIn ? routes : [];
+};
 
 export const DEFAULT_CCY_PRECISION = 4;
 export const STORAGE_DEFAULT_LIMIT = 50;
@@ -22,6 +40,7 @@ export const ORDER_BOOK_DEFAULT_SIDE_LIMIT = 25;
 export const DEFAULT_TRADING_VIEW_INTERVAL = '15';
 export const VALUATION_PRIMARY_CURRENCY = 'USD';
 export const VALUATION_SECONDARY_CURRENCY = 'BTC';
+export const DEFAULT_WALLET_CURRENCY = 'BTC';
 
 export const PASSWORD_ENTROPY_STEP = 6;
 

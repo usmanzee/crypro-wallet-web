@@ -11,6 +11,13 @@ export const en = {
     'page.header.navbar.profile': 'Profile',
     'page.header.navbar.logout': 'Logout',
 
+    // Header Profile Links
+    'page.header.navbar.profile.security': 'Security',
+    'page.header.navbar.profile.identification': 'Identification',
+    'page.header.navbar.profile.api_management': 'API Management',
+    'page.header.navbar.profile.referal': 'Referal',
+    
+
     'page.sidebar.group.text': 'Fee Group:',
     'page.sidebar.group.value': 'Base',
 
@@ -144,7 +151,20 @@ export const en = {
 
 
     /* Wallets */
+
+    'page.body.wallets.title': 'Wallets',
+    'page.body.wallets.action.deposit': 'Deposit',
+    'page.body.wallets.action.withdraw': 'Withdraw',
+    'page.body.wallets.action.transfer': 'Transfer',
+    'page.body.wallets.action.trade': 'Trade',
+
     'page.body.wallets.estimated_value': 'Estimated Value',
+
+    'page.body.wallets.table.header.coin': 'Coin',
+    'page.body.wallets.table.header.total': 'Total',
+    'page.body.wallets.table.header.available': 'Available',
+    'page.body.wallets.table.header.locked': 'Locked',
+    'page.body.wallets.table.header.actions': 'Actions',
 
     'page.body.wallets.locked': 'Locked',
     'page.body.wallets.balance': 'Balance',
@@ -300,6 +320,22 @@ export const en = {
     'page.body.history.trade.header.total': 'Total',
     'page.body.history.trade.header.amount': 'Amount',
     'page.body.history.trade.header.balance': 'Balance',
+
+    // Deposit Screen
+    'page.body.deposit.header.title': 'Deposit',
+    'page.body.deposit.tabs.crypto': 'Crypto',
+    'page.body.deposit.tabs.fiat': 'Fiat',
+    'page.body.deposit.select.title': 'Search Currency',
+    'page.body.deposit.total_balance': 'Total Balance',
+    'page.body.deposit.tips.title': 'Tips',
+    'page.body.deposit.tips.tip1': 'If you have deposited, please pay attention to the text messages, site letters and emails we send to you.',
+    'page.body.deposit.tips.tip2': 'Until {confirmations} confirmations are made, an equivalent amount of your assets will be temporarily unavailable for withdrawals.',
+    'page.body.deposit.network.title': 'Deposit network',
+    'page.body.deposit.network.message': 'Please select the corresponding B4U Deposit address format according to the public chain type of the transferred wallet. Do note that some wallets may support multiple public chain types of token transfer, like exchange wallets generally support deposits from ERC20, OMNI, and TRC20 types of USDT. Make sure that the public chain network type selected at the time of transfer is the same the one for B4U Deposits.',
+    'page.body.deposit.network.address.text': '{currency} Address.',
+    'page.body.deposit.network.address.instructions.title': 'Send only {currency} to this deposit address..',
+    'page.body.deposit.network.address.instructions.description': 'Sending coin or token other than {currency} to this address may result in the loss of your deposit..',
+    
 
 
     'page.body.profile.header.account': 'Profile',

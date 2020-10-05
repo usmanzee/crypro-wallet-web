@@ -103,7 +103,9 @@ export class WalletTable extends React.Component<Props> {
         return (
             <div className="pg-history-elem__wallet">
                 <div className="pg-history-elem__label">
-                    {this.props.intl.formatMessage({ id: `page.body.history.${label}` })}
+                    <strong>
+                        {this.props.intl.formatMessage({ id: `page.body.history.${label}` })}
+                    </strong>
                 </div>
                 <History headers={this.getHeaders()} data={this.retrieveData(list)} />
                 <Pagination

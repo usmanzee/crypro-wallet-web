@@ -14,17 +14,18 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
 import StarIcon from '@material-ui/icons/Star'
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
 import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
 import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
 import { CommonError } from '../../modules/types';
+import { WalletHistory } from '../../containers/Wallets/History';
 import { formatCCYAddress, setDocumentTitle } from '../../helpers';
-import { QRCode } from '../../components/QRCode';
 
 import {
     useParams
@@ -143,6 +144,9 @@ const useStyles = makeStyles((theme: Theme) =>
     networkPaperContent: {
         textAlign: 'center',
         padding: `${theme.spacing(15)}px 0px`,
+    },
+    historyDivider: {
+        margin: `${theme.spacing(4)}px 0px ${theme.spacing(3)}px`,
     }
   }),
 );
@@ -237,6 +241,8 @@ const DepositWalletCrypto = (props: Props) => {
 
     const currencyItem = ((currencies && selectedWalletOption) && currencies.find(currency => currency.id === selectedWalletOption.currency)) || { min_confirmations: 6 };
     const text = props.intl.formatMessage({ id: 'page.body.wallets.tabs.deposit.ccy.message.submit' }, { confirmations: currencyItem.min_confirmations });
+    const tip1 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip1' });
+    const tip2 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip2' }, { confirmations: currencyItem.min_confirmations });
 
     const error = addressDepositError ?
         props.intl.formatMessage({id: addressDepositError.message}) :
@@ -257,7 +263,9 @@ const DepositWalletCrypto = (props: Props) => {
                 <Paper className={classes.headerPaper}>
                     <Grid container>
                         <Grid item md={12}>
-                            <Typography variant="h4" display="inline">Deposit</Typography>
+                            <Typography variant="h4" display="inline">
+                                <FormattedMessage id={'page.body.deposit.header.title'} />
+                            </Typography>
                         </Grid>
                     </Grid>
                 </Paper>
@@ -265,8 +273,12 @@ const DepositWalletCrypto = (props: Props) => {
             <Box mt={2} pl={3} pr={3} alignItems="center">
                 <Paper className={classes.pagePaper}>
                     <div className={classes.pagePaperHeader}>
-                        <Typography variant="h6" component="div"  display="inline" className={classes.activePage}>Crypto</Typography>
-                        <Typography variant="h6" component="div"  display="inline" className={classes.inActivePage}>Fiat</Typography>
+                        <Typography variant="h6" component="div"  display="inline" className={classes.activePage}>
+                            <FormattedMessage id={'page.body.deposit.tabs.crypto'} />
+                        </Typography>
+                        <Typography variant="h6" component="div"  display="inline" className={classes.inActivePage}>
+                            <FormattedMessage id={'page.body.deposit.tabs.fiat'} />
+                        </Typography>
                     </div>
 
                     <Grid container>
@@ -293,7 +305,9 @@ const DepositWalletCrypto = (props: Props) => {
                                 placement="bottom-start"
                                 className={classes.popper}
                             >
-                                <div className={classes.header}>Search Currency</div>
+                                <div className={classes.header}>
+                                    <FormattedMessage id={'page.body.deposit.select.title'} />
+                                </div>
                                 <Autocomplete
                                     open
                                     onClose={handleCurrencySelectClose}
@@ -330,24 +344,28 @@ const DepositWalletCrypto = (props: Props) => {
                                 />
                             </Popper>
                             <Box mt={3} mb={3}>
-                                <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>Total balance:</Typography>
+                                <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
+                                    <FormattedMessage id={'page.body.deposit.total_balance'} />:
+                                </Typography>
                                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
                             <Paper elevation={0} className={classes.cryptoTips}>
-                                <Typography variant="h6" component="div"><EmojiObjectsIcon /> Tips:</Typography>
+                                <Typography variant="h6" component="div"><EmojiObjectsIcon />
+                                    <FormattedMessage id={'page.body.deposit.tips.title'} />
+                                </Typography>
                                 <List component="ul" aria-label="contacts">
                                     <ListItem button>
                                         <ListItemIcon>
                                             <StarIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary="If you have deposited, please pay attention to the text messages, site letters and emails we send to you." />
+                                        <ListItemText primary={tip1} />
                                     </ListItem>
                                     <ListItem button>
                                         <ListItemIcon>
                                             <StarIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary={text} />
+                                        <ListItemText primary={tip2} />
                                     </ListItem>
                                    
                                 </List>
@@ -370,7 +388,12 @@ const DepositWalletCrypto = (props: Props) => {
                             />
                         </Grid>
                     </Grid>
-
+                    <Divider className={classes.historyDivider}/>
+                    <Grid container>
+                        <Grid item md={12}>
+                            {selectedWalletOption && <WalletHistory label="deposit" type="deposits" currency={selectedWalletOption} />}
+                        </Grid>
+                    </Grid>
                 </Paper>
             </Box>
         </>

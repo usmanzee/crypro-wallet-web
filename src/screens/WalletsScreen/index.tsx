@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import * as React from 'react';
 import { Button, Dropdown, DropdownButton,FormControl,InputGroup, Spinner } from 'react-bootstrap';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { connect, MapDispatchToProps } from 'react-redux';
 import { RouterProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
@@ -134,12 +134,17 @@ const useStyles = theme => ({
     tableContainer: {
         paddingTop: theme.spacing(2)
     },
-    links: {
+    actionLink: {
         color: theme.palette.secondary.main,
+        margin: `0px ${theme.spacing(1)}px`,
         '&:hover': {
-            textDecoration: 'none',
             color: theme.palette.secondary.main,
         }
+    },
+    disabledActionLink: {
+        pointerEvents: 'none',
+        color: '#ccc',
+        margin: `0px ${theme.spacing(1)}px`,
     }
 });
 
@@ -177,6 +182,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
     //tslint:disable member-ordering
     public translate = (id: string) => this.props.intl.formatMessage({ id });
 
+    private pageTitle = this.translate('page.body.wallets.title');
     private title = this.translate('page.body.wallets.tabs.deposit.fiat.message1');
     private description = this.translate('page.body.wallets.tabs.deposit.fiat.message2');
 
@@ -357,19 +363,19 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                     <Paper className={classes.headerPaper}>
                         <Grid container>
                             <Grid item md={8}>
-                                <Typography variant="h4" display="inline">Wallets</Typography>
+                                <Typography variant="h4" display="inline">{this.pageTitle}</Typography>
                             </Grid>
                             <Grid className={classes.headeractionButton} item md={3}>
                                 <Link to="/wallet/deposit/crypto" style={{ textDecoration: 'none' }}>
                                     <MaterialButton variant="contained" color="secondary">
-                                        Deposit
+                                        <FormattedMessage id={'page.body.wallets.action.deposit'} />
                                     </MaterialButton>
                                 </Link>
                                 <MaterialButton className={classes.withdrawButton} variant="outlined" color="secondary" href="#outlined-buttons">
-                                    Withdraw
+                                    <FormattedMessage id={'page.body.wallets.action.withdraw'} />
                                 </MaterialButton>
                                 <MaterialButton variant="outlined" color="secondary" href="#outlined-buttons">
-                                    Transfer
+                                    <FormattedMessage id={'page.body.wallets.action.transfer'} />
                                 </MaterialButton>
                             </Grid>
                         </Grid>
@@ -393,11 +399,21 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                             <Table aria-label="simple table">
                                 <TableHead>
                                 <TableRow>
-                                    <this.StyledTableCell>Coin</this.StyledTableCell>
-                                    <this.StyledTableCell>Total</this.StyledTableCell>
-                                    <this.StyledTableCell>Available</this.StyledTableCell>
-                                    <this.StyledTableCell>Locked</this.StyledTableCell>
-                                    <this.StyledTableCell>Action</this.StyledTableCell>
+                                    <this.StyledTableCell>
+                                        <FormattedMessage id={'page.body.wallets.table.header.coin'} />
+                                    </this.StyledTableCell>
+                                    <this.StyledTableCell>
+                                        <FormattedMessage id={'page.body.wallets.table.header.total'} />
+                                    </this.StyledTableCell>
+                                    <this.StyledTableCell>
+                                        <FormattedMessage id={'page.body.wallets.table.header.available'} />
+                                    </this.StyledTableCell>
+                                    <this.StyledTableCell>
+                                        <FormattedMessage id={'page.body.wallets.table.header.locked'} />
+                                    </this.StyledTableCell>
+                                    <this.StyledTableCell>
+                                        <FormattedMessage id={'page.body.wallets.table.header.actions'} />
+                                    </this.StyledTableCell>
                                 </TableRow>
                                 </TableHead>
                                 {walletsData.length ? 
@@ -416,15 +432,15 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                                 <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
                                                 <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
                                                 <this.StyledTableCell>
-                                                    <div style={{ marginRight: "10px", display: "inline" }}>
-                                                        <Link to={`/wallet/deposit/crypto/${wallet.currency}`} className={classes.links}>Deposit</Link>
-                                                    </div>
-                                                    <div style={{ marginRight: "10px", display: "inline" }}>
-                                                        {this.disableActionLink(index) ? <a href="#" className={classes.links}>Withdraw</a> :  <span>Withdraw</span>}
-                                                    </div>
-                                                    <div style={{ marginRight: "10px", display: "inline" }}>
-                                                        {this.disableActionLink(index) ? <a href="#" className={classes.links}>Trade</a> :  <span>Trade</span>}
-                                                    </div>
+                                                    <Link to={`/wallet/deposit/crypto/${wallet.currency}`} className={wallet.depositEnabled ? classes.actionLink : classes.disabledActionLink}>
+                                                        <FormattedMessage id={'page.body.wallets.action.deposit'} />
+                                                    </Link>
+                                                    <Link to={`/wallet/deposit/crypto/${wallet.currency}`} className={wallet.withdrawEnabled ? classes.actionLink : classes.disabledActionLink}>
+                                                        <FormattedMessage id={'page.body.wallets.action.withdraw'} />
+                                                    </Link>
+                                                    <Link to={`trading`} className={classes.actionLink}>
+                                                        <FormattedMessage id={'page.body.wallets.action.trade'} />
+                                                    </Link>
                                                 </this.StyledTableCell>
                                             </TableRow>
                                         })}

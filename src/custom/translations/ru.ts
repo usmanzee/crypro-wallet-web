@@ -11,6 +11,12 @@ export const ru: LangType = {
     'page.header.navbar.profile': 'Профиль',
     'page.header.navbar.logout': 'Выйти',
 
+    // Header Profile Links
+    'page.header.navbar.profile.security': 'Безопасность',
+    'page.header.navbar.profile.identification': 'Идентификация',
+    'page.header.navbar.profile.api_management': 'Управление API',
+    'page.header.navbar.profile.referal': 'Направления',
+
     'page.sidebar.group.text': 'Fee Group:',
     'page.sidebar.group.value': 'Base',
 
@@ -143,7 +149,19 @@ export const ru: LangType = {
 
 
     /* Wallets */
+    'page.body.wallets.title': 'Кошельки',
+    'page.body.wallets.action.deposit': 'Депозит',
+    'page.body.wallets.action.withdraw': 'Изымать',
+    'page.body.wallets.action.transfer': 'Перевод',
+    'page.body.wallets.action.trade': 'Сделка',
+    
     'page.body.wallets.estimated_value': 'Оценочная стоимость',
+
+    'page.body.wallets.table.header.coin': 'Монета',
+    'page.body.wallets.table.header.total': 'Всего',
+    'page.body.wallets.table.header.available': 'Доступный',
+    'page.body.wallets.table.header.locked': 'Заблокировано',
+    'page.body.wallets.table.header.actions': 'Действия',
 
     'page.body.wallets.locked': 'В ордерах',
     'page.body.wallets.balance': 'Баланс',
@@ -302,6 +320,21 @@ export const ru: LangType = {
     'page.body.history.trade.header.total': 'Всего',
     'page.body.history.trade.header.amount': 'Кол.',
     'page.body.history.trade.header.balance': 'Баланс',
+
+    // Deposit Screen
+    'page.body.deposit.header.title': 'Депозит',
+    'page.body.deposit.tabs.crypto': 'Крипто',
+    'page.body.deposit.tabs.fiat': 'Фіат',
+    'page.body.deposit.select.title': 'Валюта поиска',
+    'page.body.deposit.total_balance': 'Итоговый баланс',
+    'page.body.deposit.tips.title': 'подсказки',
+    'page.body.deposit.tips.tip1': 'Если вы сделали депозит, обратите внимание на текстовые сообщения, письма с сайта и электронные письма, которые мы отправляем вам.',
+    'page.body.deposit.tips.tip2': 'Пока не будет сделано {confirmations} подтверждения, эквивалентная сумма ваших активов будет временно недоступна для вывода.',
+    'page.body.deposit.network.title': 'Депозитная сеть',
+    'page.body.deposit.network.message': 'Пожалуйста, выберите соответствующий формат адреса депозита B4U в соответствии с типом публичной сети переведенного кошелька. Обратите внимание, что некоторые кошельки могут поддерживать несколько типов публичных цепочек передачи токенов, например, обменные кошельки обычно поддерживают депозиты из типов USDT ERC20, OMNI и TRC20. Убедитесь, что тип сети публичной сети, выбранный во время перевода, такой же, как и для B4U Deposits.',
+    'page.body.deposit.network.address.text': '{currency} адрес.',
+    'page.body.deposit.network.address.instructions.title': 'Отправляйте только {currency} на этот депозитный адрес.',
+    'page.body.deposit.network.address.instructions.description': 'Отправка монеты или токена, отличного от {currency}, на этот адрес может привести к потере вашего депозита.',
 
     'page.body.profile.header.account': 'Профиль',
 

@@ -1,12 +1,16 @@
 import * as React from 'react';
 
+import classnames from 'classnames';
+import { History } from 'history';
 import { Link } from "react-router-dom";
+import { FormattedMessage } from 'react-intl';
 import {
     connect,
     MapDispatchToPropsFunction,
     MapStateToProps,
 } from 'react-redux';
 import { compose } from 'redux';
+
 //import { Moon } from '../../assets/images/Moon';
 //import { Sun } from '../../assets/images/Sun';
 //import { colors } from '../../constants';
@@ -16,6 +20,7 @@ import { languages } from '../../api/config';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import Button from 'react-bootstrap/Button'
+import { headerRoutes, headerProfileRoutes } from '../../constants';
 
 import {
     changeColorTheme,
@@ -97,29 +102,24 @@ class NavBarComponent extends React.Component<Props, IState> {
           console.log(error);
         }
     };
-    private renderNavLinks = () => {
-        const { isLoggedIn } = this.props;
-        if (!isLoggedIn) {
-            return null;
-        }
+
+    private renderNavLinks = () => (values: string[], index: number) => {
+
+        const [name, url, img] = values;
         return (
-            <>
-                {/* <button className="navbar-toggler navbar-toggler align-self-center" type="button" >
-                    <span className="mdi mdi-menu"></span>
-                </button> */}
+            <React.Fragment>
                 <div className="search-field d-xl-block">
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item active">
-                            <Link className="nav-link" to="/wallets">Wallets</Link>
-                        </li>          
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/orders">Orders</Link>
+                            <Link className="nav-link" to={url}>
+                                <FormattedMessage id={name} />
+                            </Link>
                         </li>
                     </ul>
                 </div> 
-            </>
+            </React.Fragment>
         );
-    }
+    };
 
     private renderLoginRegisterLinks = () => {
         const { isLoggedIn } = this.props;
@@ -129,19 +129,23 @@ class NavBarComponent extends React.Component<Props, IState> {
         return (
             <>
                 <li className="nav-item">
-                    <Link className="nav-link" to="/signin">Sign In</Link>
+                    <Link className="nav-link" to="/signin">
+                        <FormattedMessage id={'page.header.navbar.signIn'} />
+                    </Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="register-link" to="/signup">Register</Link>
+                    <Link className="register-link" to="/signup">
+                        <FormattedMessage id={'page.header.signUp'} />
+                    </Link>
                 </li>
             </>
         );
     }
     private renderProfile = () => {
         const { isLoggedIn, user } = this.props;
-        if (!isLoggedIn) {
-            return null;
-        }
+        // if (!isLoggedIn) {
+        //     return null;
+        // }
         return (
             <>
                 <li className="nav-item nav-profile dropdown">
@@ -151,7 +155,9 @@ class NavBarComponent extends React.Component<Props, IState> {
                         <AccountCircleIcon fontSize="large" />
                     </div>
                     <div className="nav-profile-text">
-                    <p className="mb-1" style={{ fontSize: "1.2rem" }}>Profile</p>
+                    <p className="mb-1" style={{ fontSize: "1.2rem" }}>
+                        <FormattedMessage id={'page.header.navbar.profile'} />
+                    </p>
                     </div>
                     </a>
                     <div className="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
@@ -160,34 +166,30 @@ class NavBarComponent extends React.Component<Props, IState> {
                                 <span>{user.email}</span>
                                 <ArrowRightIcon fontSize="large"/>
                             </Link>
+                            {headerProfileRoutes(isLoggedIn).map(this.renderProfileLinks())}
                         </div>
-                        <div role="separator" className="dropdown-divider"></div>
                         <div className="p-2">
-                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profile">
-                                <span>Security</span>
-                                <i className="mdi mdi-shield-outline"></i>
-                            </Link>
-                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profile">
-                                <span>Identification</span>
-                                <i className="mdi mdi-folder-account"></i>
-                            </Link>
-                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profileavascript:void(0)">
-                                <span>API Management</span>
-                                <i className="mdi mdi-settings"></i>
-                            </Link>
-                            <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to="/profile">
-                                <span>Referal</span>
-                                <i className="mdi mdi-account-plus"></i>
-                            </Link>
                             <div role="separator" className="dropdown-divider"></div>
                             <a className="dropdown-item py-1 d-flex align-items-center justify-content-between" onClick={this.props.logoutFetch}>
-                                <span>Log Out</span>
+                                <span><FormattedMessage id={'page.header.navbar.logout'} /></span>
                                 <i className="mdi mdi-logout ml-1"></i>
                             </a>
                         </div>
                     </div>
                 </li>
             </>
+        );
+    }
+
+    public renderProfileLinks = () => (values: string[], index: number) => {
+        const [name, url, iconClassName] = values;
+        return (
+            <React.Fragment>
+                <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to={url}>
+                    <span><FormattedMessage id={name} /></span>
+                    <i className={iconClassName}></i>
+                </Link>
+            </React.Fragment>
         );
     }
     private renderLanguages = () => {
@@ -256,7 +258,7 @@ class NavBarComponent extends React.Component<Props, IState> {
     }
     
     public render() {
-
+        const { isLoggedIn } = this.props;
         return (
             <>
                 <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -266,8 +268,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                     </div>
                     <div className="navbar-menu-wrapper d-flex align-items-stretch">
                         <ul className="navbar-nav navbar-nav-right">
-                            
-                            {this.renderNavLinks()}
+                            {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
                             {this.renderLoginRegisterLinks()}
                             {this.renderProfile()}
                             {this.renderLanguages()}

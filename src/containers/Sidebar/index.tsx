@@ -167,16 +167,6 @@ class SidebarContainer extends React.Component<Props, State> {
                         <FormattedMessage id={'page.header.navbar.profile'} />
                     </Link>
                 </li>
-            {/* <div className="pg-sidebar-wrapper-profile">
-                <Link to="/profile" onClick={handleLinkChange} className={`${isActive && 'route-selected'}`}>
-                    <div className="pg-sidebar-wrapper-profile-link">
-                        <ProfileIcon className={iconClassName} />
-                        <p className="pg-sidebar-wrapper-profile-link-text">
-                            <FormattedMessage id={'page.header.navbar.profile'} />
-                        </p>
-                    </div>
-                </Link>
-            </div> */}
             </React.Fragment>
         );
     };

@@ -10,6 +10,8 @@ export interface Wallet {
     explorerAddress: string;
     fixed: number;
     iconUrl?: string;
+    depositEnabled: boolean,
+    withdrawEnabled: boolean,
 }
 
 export interface WalletAddress {

@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
 import { CopyableTextField } from '../CopyableTextField';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { QRCode } from '../QRCode';
 
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
@@ -106,7 +107,9 @@ const useStyles = makeStyles((theme: Theme) =>
 /**
  *  Component that displays wallet details that can be used to deposit cryptocurrency.
  */
-const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (props: DepositCryptoProps) => {
+type Props = DepositCryptoProps & InjectedIntlProps;
+
+const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (props: Props) => {
     const QR_SIZE = 118;
     const {
         data,
@@ -123,8 +126,14 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         currency,
     } = props;
     const size = dimensions || QR_SIZE;
+
+    const addressText = props.intl.formatMessage({ id: 'page.body.deposit.network.address.text' }, { currency: currency ? currency.toUpperCase(): '' });
+    const addressInstructionsTitle = props.intl.formatMessage({ id: 'page.body.deposit.network.address.instructions.title' }, { currency: currency ? currency.toUpperCase(): '' });
+    const addressInstructionsDescription = props.intl.formatMessage({ id: 'page.body.deposit.network.address.instructions.description' }, { currency: currency ? currency.toUpperCase(): '' });
+
     const [copyTooltipText, setCopyTooltipText] = React.useState<string>("Copy");
-    
+
+    const translate = (id: string) => props.intl.formatMessage({ id });
     // const onCopy = !disabled ? handleOnCopy : undefined;
     const onCopy = (textToCopy) => {
         copyToClipboard(textToCopy);
@@ -162,8 +171,8 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                 <Paper elevation={2} className={classes.networkPaper}>
                     <div className={classes.networkPaperHeader}>
                         <Typography variant="body1" component="div" display="inline">
-                            Deposit network 
-                            <LightTooltip style={{ marginLeft: '4px' }} title="Please select the corresponding B4U Deposit address format according to the public chain type of the transferred wallet. Do note that some wallets may support multiple public chain types of token transfer, like exchange wallets generally support deposits from ERC20, OMNI, and TRC20 types of USDT. Make sure that the public chain network type selected at the time of transfer is the same the one for Binance Deposits." placement="right-start">
+                            <FormattedMessage id={'page.body.deposit.network.title'} /> 
+                            <LightTooltip style={{ marginLeft: '4px' }} title={<FormattedMessage id={'page.body.deposit.network.message'} /> } placement="right-start">
                                 <InfoOutlinedIcon />
                             </LightTooltip>
                         </Typography>
@@ -173,7 +182,7 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                         <>
                             <div className={classes.networkPaperContent}>
                                 <Typography variant='body1' component='div'>
-                                    {currency ? currency.toUpperCase() : ''} Address
+                                    {addressText}
                                 </Typography>
                                 <div className={classes.qrCode}>
                                     {data ? <QRCode dimensions={size} data={data}/> : null}
@@ -189,10 +198,10 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                             </div>
                             <div style={{ marginTop: '24px' }}>
                                 <Typography variant='subtitle2' component='div' display='block'>
-                                    Send only {currency ? currency.toUpperCase() : ''} to this deposit address.
+                                    {addressInstructionsTitle}
                                 </Typography>
                                 <Typography variant='caption' component='div' display='block'>
-                                    Sending coin or token other than {currency ? currency.toUpperCase() : ''} to this address may result in the loss of your deposit.
+                                    {addressInstructionsDescription}
                                 </Typography>
                             </div>
                         </>
@@ -257,5 +266,5 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
     );
 };
 
-export const DepositCrypto = DepositCryptoComponent;
+export const DepositCrypto = injectIntl(DepositCryptoComponent)
 
