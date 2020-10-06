@@ -436,7 +436,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                                 <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
                                                 <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
                                                 <this.StyledTableCell>
-                                                    <Link to={`/wallet/deposit/crypto/${wallet.currency}`} className={wallet.depositEnabled ? classes.actionLink : classes.disabledActionLink}>
+                                                    <Link to={wallet.type === 'coin' ? `/wallet/deposit/crypto/${wallet.currency}` : `/wallet/deposit/fiat/${wallet.currency}`} className={wallet.depositEnabled ? classes.actionLink : classes.disabledActionLink}>
                                                         <FormattedMessage id={'page.body.wallets.action.deposit'} />
                                                     </Link>
                                                     <Link to={`/wallet/deposit/crypto/${wallet.currency}`} className={wallet.withdrawEnabled ? classes.actionLink : classes.disabledActionLink}>

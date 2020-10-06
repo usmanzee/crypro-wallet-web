@@ -180,8 +180,8 @@ const DepositFiatComponent = (props: Props) => {
     const [fiatWallets, setFiatWallets] = React.useState<WalletItemProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedFiatWalletOption, setSelectedFiatWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
-    const [walletAddress, setWalletAddress] = React.useState<string>('');
 
+    console.log('selectedCurrency: ', selectedCurrency);
     //UseEffects
     React.useEffect(() => {
         if (!props.wallets.length) {
@@ -208,10 +208,11 @@ const DepositFiatComponent = (props: Props) => {
             }
             setSelectedFiatWalletOption(searchedOption);
         }
-    }, [fiatWallets]);
+    }, [fiatWallets, wallets]);
 
     //Addtional Methods
     const searchSelectedCurrencyInFiatWallets = (currency: string) => {
+        console.log('currency: ', currency);
         return fiatWallets.find(fiatWallet => fiatWallet.currency === currency);
     }
     const handleCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
