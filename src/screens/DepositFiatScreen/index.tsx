@@ -165,7 +165,7 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
 const DepositFiatComponent = (props: Props) => {
-    const defaultFiatDepositCurrency = 'EUR';
+    const defaultFiatDepositCurrency = 'usd';
     let history = useHistory();
     //Props
     const classes = useStyles();
@@ -177,12 +177,18 @@ const DepositFiatComponent = (props: Props) => {
 
     //States
     const [selectedCurrency, setSelectedCurrency] = React.useState<string>(currency);
-    const [fiatCurrencies, setFiatCurrencies] = React.useState<Currency[]>([]);
+    const [fiatWallets, setFiatWallets] = React.useState<WalletItemProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [selectedCurrencyOption, setSelectedCurrencyOption] = React.useState<Currency | null | undefined>(null);
+    const [selectedFiatWalletOption, setSelectedFiatWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
 
     //UseEffects
+    React.useEffect(() => {
+        if (!props.wallets.length) {
+            props.fetchWallets();
+        }
+    }, [wallets]);
+
     React.useEffect(() => {
         if (!props.currencies.length) {
             props.currenciesFetch();
@@ -190,36 +196,23 @@ const DepositFiatComponent = (props: Props) => {
     }, [currencies]);
 
     React.useEffect(() => {
-        if (!fiatCurrencies.length) {
-            setFiatCurrencies(currencies.filter((currency) => {
-                return currency.type === 'fiat';
+        if (!fiatWallets.length && wallets.length > 0) {
+            setFiatWallets(wallets.filter((wallet) => {
+                return wallet.type === 'fiat';
             }));
-        } else {
+        } else if(fiatWallets.length > 0 && wallets.length > 0) {
             
-            let searchedcurrencyOption = searchSelectedCurrency(selectedCurrency);
-            if(!searchedcurrencyOption) {
-                searchedcurrencyOption = searchSelectedCurrency(defaultFiatDepositCurrency);
+            let searchedOption = searchSelectedCurrencyInFiatWallets(selectedCurrency);
+            if(!searchedOption) {
+                searchedOption = searchSelectedCurrencyInFiatWallets(defaultFiatDepositCurrency);
             }
-            setSelectedCurrencyOption(searchedcurrencyOption);
+            setSelectedFiatWalletOption(searchedOption);
         }
-    }, [fiatCurrencies]);
-
-    React.useEffect(() => {
-        // if(selectedCurrencyOption) {
-        //     selectedCurrencyOption.type === 'coin' && selectedCurrencyOption.balance && props.fetchAddress({ currency: selectedCurrencyOption.currency });
-        // }
-    }, [selectedCurrencyOption]);
-
-    React.useEffect(() => {
-        if(selectedWalletAddress) {
-            const formatedWalletAddress = formatCCYAddress(currency, selectedWalletAddress);
-            setWalletAddress(formatedWalletAddress);
-        }
-    }, [selectedWalletAddress]);
+    }, [fiatWallets]);
 
     //Addtional Methods
-    const searchSelectedCurrency = (currency: string) => {
-        return fiatCurrencies.find(fiatCurrency => fiatCurrency.id === currency);
+    const searchSelectedCurrencyInFiatWallets = (currency: string) => {
+        return fiatWallets.find(fiatWallet => fiatWallet.currency === currency);
     }
     const handleCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -232,46 +225,17 @@ const DepositFiatComponent = (props: Props) => {
         setAnchorEl(null);
     };
 
-    const handleOnCopy = () => {
-        props.fetchSuccess({ message: ['page.body.wallets.tabs.deposit.ccy.message.success'], type: 'success'});
-    };
-
-    const handleGenerateAddress = () => {
-        const { wallets } = props;
-
-        if (wallets.length && selectedCurrencyOption) {
-            props.fetchAddress({ currency: selectedCurrencyOption.id });
-        }
-    };
-
-    const handleTabLinkClick = (event) => {
-        const targetUrl = event.target.url;
-        history.push(targetUrl);
-    }
-    
     const translate = (id: string) => props.intl.formatMessage({ id });
 
     const popperOpen = Boolean(anchorEl);
     const popperId = popperOpen ? 'wallet-currencies' : undefined;
 
-    // const isAccountActivated = (selectedCurrencyOption && selectedCurrencyOption.balance) ? true : false;
-
-    // const currencyItem = ((currencies && selectedCurrencyOption) && currencies.find(currency => currency.id === selectedCurrencyOption.currency)) || { min_confirmations: 6 };
-    // const text = props.intl.formatMessage({ id: 'page.body.wallets.tabs.deposit.ccy.message.submit' }, { confirmations: currencyItem.min_confirmations });
-    // const tip1 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip1' });
-    // const tip2 = props.intl.formatMessage({ id: 'page.body.deposit.tips.tip2' }, { confirmations: currencyItem.min_confirmations });
-
-    // const error = addressDepositError ?
-    //     props.intl.formatMessage({id: addressDepositError.message}) :
-    //     props.intl.formatMessage({id: 'page.body.wallets.tabs.deposit.ccy.message.error'});
-
-    // const buttonLabel = `
-    //     ${translate('page.body.wallets.tabs.deposit.ccy.button.generate')} ${selectedCurrencyOption ? selectedCurrencyOption.currency.toUpperCase() : ''} ${translate('page.body.wallets.tabs.deposit.ccy.button.address')}
-    // `;
-
+    const pageTitle = translate('page.body.wallets.title');
+    const title = translate('page.body.wallets.tabs.deposit.fiat.message1');
+    const description = translate('page.body.wallets.tabs.deposit.fiat.message2');
     
-    // const selectedCurrencyOptionBalance: number = selectedCurrencyOption && selectedCurrencyOption.balance ? +selectedCurrencyOption.balance : 0.0000;
-    // const selectedCurrencyOptionLocked: number = selectedCurrencyOption && selectedCurrencyOption.locked ? +selectedCurrencyOption.locked : 0.0000;
+    const selectedFiatWalletbalance: number = selectedFiatWalletOption && selectedFiatWalletOption.balance ? +selectedFiatWalletOption.balance : 0.0000;
+    const selectedFiatWalletLocked: number = selectedFiatWalletOption && selectedFiatWalletOption.locked ? +selectedFiatWalletOption.locked : 0.0000;
     return (
         <>
             <Box>
@@ -303,14 +267,14 @@ const DepositFiatComponent = (props: Props) => {
                     <Grid container>
                         <Grid item md={6}>
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
-                                {selectedCurrencyOption ? 
+                                {selectedFiatWalletOption ? 
                                     (<>
-                                        <img src={selectedCurrencyOption ? selectedCurrencyOption.icon_url: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
+                                        <img src={selectedFiatWalletOption ? selectedFiatWalletOption.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
                                         <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
-                                            { selectedCurrencyOption.id.toUpperCase() }
+                                            { selectedFiatWalletOption.currency.toUpperCase() }
                                         </Typography>
                                         <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
-                                            { selectedCurrencyOption.name }
+                                            { selectedFiatWalletOption.name }
                                         </Typography> 
                                     </>) :
                                     ""
@@ -331,18 +295,18 @@ const DepositFiatComponent = (props: Props) => {
                                     open
                                     onClose={handleCurrencySelectClose}
                                     disableCloseOnSelect={false}
-                                    value={selectedCurrencyOption}
-                                    onChange={(event: any, selectedOption: Currency | null) => {
-                                        setSelectedCurrencyOption(selectedOption);
-                                        setSelectedCurrency(selectedOption ? selectedOption.id : defaultFiatDepositCurrency);
+                                    value={selectedFiatWalletOption}
+                                    onChange={(event: any, selectedOption: WalletItemProps | null) => {
+                                        setSelectedFiatWalletOption(selectedOption);
+                                        setSelectedCurrency(selectedOption ? selectedOption.currency : defaultFiatDepositCurrency);
                                     }}
                                     noOptionsText="No Records Found"
-                                    renderOption={(option: Currency | null | undefined) => (
+                                    renderOption={(option: WalletItemProps | null | undefined) => (
                                         <React.Fragment>
-                                            <img src={option ? option.icon_url: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
+                                            <img src={option ? option.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
                                             <div>
                                                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
-                                                    { option ? option.id.toUpperCase(): '' }
+                                                    { option ? option.currency.toUpperCase(): '' }
                                                 </Typography>
                                                 <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
                                                     { option ? option.name : '' }
@@ -350,8 +314,8 @@ const DepositFiatComponent = (props: Props) => {
                                             </div>
                                         </React.Fragment>
                                     )}
-                                    options={fiatCurrencies}
-                                    getOptionLabel={(option: Currency | null | undefined) => option ? option.name: ''}
+                                    options={fiatWallets}
+                                    getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (
                                     <InputBase
                                         ref={params.InputProps.ref}
@@ -362,14 +326,14 @@ const DepositFiatComponent = (props: Props) => {
                                     )}
                                 />
                             </Popper>
-                            {/* <Box mt={3} mb={3}>
+                            <Box mt={3} mb={3}>
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                                     <FormattedMessage id={'page.body.deposit.total_balance'} />:
                                 </Typography>
-                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedCurrencyOptionBalance + selectedCurrencyOptionLocked }</Typography>
-                                <Typography variant="h6" component="div" display="inline">{ selectedCurrencyOption ? selectedCurrencyOption.currency.toUpperCase() : '' }</Typography>
-                            </Box> */}
-                            <Paper elevation={0} className={classes.cryptoTips}>
+                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedFiatWalletbalance + selectedFiatWalletLocked }</Typography>
+                                <Typography variant="h6" component="div" display="inline">{ selectedFiatWalletOption ? selectedFiatWalletOption.currency.toUpperCase() : '' }</Typography>
+                            </Box>
+                            {/* <Paper elevation={0} className={classes.cryptoTips}>
                                 <Typography variant="h6" component="div"><EmojiObjectsIcon />
                                     <FormattedMessage id={'page.body.deposit.tips.title'} />
                                 </Typography>
@@ -388,17 +352,17 @@ const DepositFiatComponent = (props: Props) => {
                                     </ListItem>
                                    
                                 </List>
-                            </Paper>
+                            </Paper> */}
                         </Grid>
                         <Grid item md={1}></Grid>
                         <Grid item md={5}>
-                            
+                            <DepositFiat title={title} description={description} uid={user ? user.uid : ''} currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}/>
                         </Grid>
                     </Grid>
                     <Divider className={classes.historyDivider}/>
                     <Grid container>
                         <Grid item md={12}>
-                            {selectedCurrencyOption && <WalletHistory label="deposit" type="deposits" currency={selectedCurrencyOption} />}
+                            {selectedFiatWalletOption && <WalletHistory label="deposit" type="deposits" currency={selectedFiatWalletOption} />}
                         </Grid>
                     </Grid>
                 </Paper>

@@ -299,7 +299,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             <React.Fragment>
                 {/* {wallets.length && <EstimatedValue wallets={wallets} />} */}
                 {this.renderWalletTable()}
-                <div className="pg-container pg-wallet">
+                {/* <div className="pg-container pg-wallet">
                     <div className="text-center">
                         {walletsLoading && <Spinner animation="border" variant="primary" />}
                     </div>
@@ -334,7 +334,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         onSubmit={this.handleWithdraw}
                         onDismiss={this.toggleConfirmModal}
                     />
-                </div>
+                </div> */}
             </React.Fragment>
         );
     }

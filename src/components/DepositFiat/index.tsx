@@ -1,5 +1,10 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
+import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
+import {
+    Paper,
+    Typography,
+} from '@material-ui/core';
 
 
 export interface DepositFiatProps {
@@ -15,18 +20,43 @@ export interface DepositFiatProps {
     currency: string;
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+
+    networkPaper: {
+        padding: `${theme.spacing(3)}px ${theme.spacing(2)}px`,
+        margin: `${theme.spacing(2)}px 0px`,
+        borderRadius: '4px'
+    },
+    networkPaperHeader: {
+        paddingBottom: theme.spacing(1),
+        borderWidth: '0px 0px 1px',
+        borderStyle: 'solid',
+        borderColor: 'rgb(234, 236, 239)'
+    },
+    depositDescription: {
+      marginBottom: `${theme.spacing(3)}px`
+    }
+  }),
+);
+
 
 /**
  * Component to display bank account details which can be used for a
  * deposit
  */
 const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFiatProps) => {
+    const classes = useStyles();
     const {
         description,
         title,
         uid,
         currency,
     } = props;
+
+    const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
+    const depositDescription = (currency === 'usd' || currency === 'eur') ? 'Please using following to deposit using TrasferWise' : description;
+
 //@ts-ignore
     const bank_account = (id) =>{
 
@@ -97,23 +127,123 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
     ];
 
     const renderDetails = (detail, index: number) => {
-        return (
-            <div className="cr-deposit-fiat-detail" key={index}>
-                <p className="cr-deposit-fiat-detail__label">{detail.key}:</p>
-                <p className="cr-deposit-fiat-detail__value">{detail.value}</p>
-            </div>
-        );
+
+		if(detail.title !== currency) {
+			return null;
+		}
+
+		return (
+			<>
+				{detail.banks && detail.banks.map((bank) => {
+					return <><div className="cr-deposit-fiat-detail" key={bank.title}>
+						<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+							<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
+						</Typography>
+						<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+							{bank.title}
+						</Typography>
+					  	</div>
+						<div className="cr-deposit-fiat-detail" key={bank.accountNumber}>
+							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
+							</Typography>
+							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+								{bank.accountNumber}
+							</Typography>
+						</div>
+						<div className="cr-deposit-fiat-detail" key={bank.name}>
+							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />
+							</Typography>
+							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+								{bank.name}
+							</Typography>
+						</div>
+						<div className="cr-deposit-fiat-detail" key={bank.uid}>
+							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
+							</Typography>
+							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+								{uid}
+							</Typography>
+						</div>
+						</>
+			  })}
+			</>
+		  );
     };
 
     return (
-        <div className="cr-deposit-fiat">
-            <p className="cr-deposit-fiat__title">{currency==='usd'|| 'eur'?'Deposit using TransferWise':title}</p>
-            <p className="cr-deposit-fiat__description">{currency==='usd'|| 'eur'?'Please using following to deposit using TrasferWise':description}</p>
-            <div className="cr-deposit-fiat-credentials">{bankData(uid).map(renderDetails)}</div>
-        </div>
+      <>
+      <Paper elevation={2} className={classes.networkPaper}>
+          <div className={classes.networkPaperHeader}>
+              <Typography variant="body1" component="div" display="inline">
+                  <FormattedMessage id={'page.body.deposit.network.title'} /> 
+              </Typography>
+          </div>
+          <div className="cr-deposit-fiat">
+              <Typography variant="h6" component="div" gutterBottom>{depositTitle}</Typography>
+              <Typography variant="subtitle1" component="div" gutterBottom className={classes.depositDescription}>{depositDescription}</Typography>
+              {/* <div className="cr-deposit-fiat-credentials">{bankData(uid).map(renderDetails)}</div> */}
+              <div className="cr-deposit-fiat-credentials">
+                {bankCurrencies.map(renderDetails)}
+              </div>
+          </div>
+      </Paper>
+      </>
     );
 };
 
 export {
     DepositFiat,
 };
+const bankCurrencies = [
+  {
+    id: '1',
+    title: 'usd',
+    banks: [
+      {
+        id: '1',
+        title: 'B4u Group of Companies, S.L',
+        name: 'Bank Cod(Swift/Bic): CMFGUS33',
+        accountNumber: '831-061-555-0',
+      }
+    ]
+  },
+  {
+    id: '2',
+    title: 'myr',
+    banks: [
+      {
+        id: '1',
+        title: 'BRAVO Tech Trading',
+        name: 'OCBC Bank',
+        accountNumber: '704-128-334-9',
+      }
+    ]
+  },
+  {
+    id: '3',
+    title: 'eur',
+    banks: [
+      {
+        id: '1',
+        title: 'B4U Group of Companies, S.L',
+        name: 'Bank Cod(Swift/Bic): TRWIBEB1XXX',
+        accountNumber: 'BE79-9670-5851-7133',
+      }
+    ]
+  },
+  {
+    id: '4',
+    title: 'sgd',
+    banks: [
+      {
+        id: '1',
+        title: 'BRAVO Tech Trading',
+        name: 'OCBC Bank',
+        accountNumber: '704-128-335-7',
+      }
+    ]
+  }
+];

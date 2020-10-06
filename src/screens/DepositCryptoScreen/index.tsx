@@ -177,31 +177,40 @@ const DepositWalletCrypto = (props: Props) => {
 
     //States
     const [selectedCurrency, setSelectedCurrency] = React.useState<string>(currency);
+    const [cryptoWallets, setCryptoWallets] = React.useState<WalletItemProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
-    
+    console.log(wallets);
+    console.log(cryptoWallets);
     //UseEffect
     React.useEffect(() => {
-        if(wallets.length === 0) {
+        if (!wallets.length) {
             props.fetchWallets();
-        } else {
-            props.fetchBeneficiaries();
-            
-            let walletOptionByCurrency = searchWalletCurrency(selectedCurrency);
-            if(!walletOptionByCurrency) {
-                walletOptionByCurrency = searchWalletCurrency(defaultWalletCurrency);
-            }
-            setSelectedWalletOption(walletOptionByCurrency);
         }
-        
     }, [wallets]);
 
+    
     React.useEffect(() => {
-        if (!props.currencies.length) {
+        if (!currencies.length) {
             props.currenciesFetch();
         }
     }, [currencies]);
+
+    React.useEffect(() => {
+        if (cryptoWallets.length === 0 && wallets.length > 0) {
+            setCryptoWallets(wallets.filter((wallet: WalletItemProps) => {
+                return wallet.type === 'coin';
+            }));
+        } else if(cryptoWallets.length > 0 && wallets.length > 0) {
+            
+            let searchedOption = searchSelectedCurrencyInCryptoWallets(selectedCurrency);
+            if(!searchedOption) {
+                searchedOption = searchSelectedCurrencyInCryptoWallets(defaultWalletCurrency);
+            }
+            setSelectedWalletOption(searchedOption);
+        }
+    }, [cryptoWallets, wallets]);
 
     React.useEffect(() => {
         if(selectedWalletOption) {
@@ -217,8 +226,8 @@ const DepositWalletCrypto = (props: Props) => {
     }, [selectedWalletAddress]);
 
     //Addtional Methods
-    const searchWalletCurrency = (currency: string) => {
-        return wallets.find(wallet => wallet.currency === currency);
+    const searchSelectedCurrencyInCryptoWallets = (currency: string) => {
+        return cryptoWallets.find(wallet => wallet.currency === currency);
     }
     const handleCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -346,7 +355,7 @@ const DepositWalletCrypto = (props: Props) => {
                                             </div>
                                         </React.Fragment>
                                     )}
-                                    options={wallets}
+                                    options={cryptoWallets}
                                     getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (
                                     <InputBase
