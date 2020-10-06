@@ -299,7 +299,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             <React.Fragment>
                 {/* {wallets.length && <EstimatedValue wallets={wallets} />} */}
                 {this.renderWalletTable()}
-                <div className="pg-container pg-wallet">
+                {/* <div className="pg-container pg-wallet">
                     <div className="text-center">
                         {walletsLoading && <Spinner animation="border" variant="primary" />}
                     </div>
@@ -334,7 +334,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         onSubmit={this.handleWithdraw}
                         onDismiss={this.toggleConfirmModal}
                     />
-                </div>
+                </div> */}
             </React.Fragment>
         );
     }
@@ -375,9 +375,11 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                         <FormattedMessage id={'page.body.wallets.action.deposit'} />
                                     </MaterialButton>
                                 </Link>
-                                <MaterialButton className={classes.withdrawButton} variant="outlined" color="secondary" href="#outlined-buttons">
-                                    <FormattedMessage id={'page.body.wallets.action.withdraw'} />
-                                </MaterialButton>
+                                <Link to="/wallet/withdraw/crypto" style={{ textDecoration: 'none' }}>
+                                    <MaterialButton className={classes.withdrawButton} variant="outlined" color="secondary">
+                                        <FormattedMessage id={'page.body.wallets.action.withdraw'} />
+                                    </MaterialButton>
+                                </Link>
                                 <MaterialButton variant="outlined" color="secondary" href="#outlined-buttons">
                                     <FormattedMessage id={'page.body.wallets.action.transfer'} />
                                 </MaterialButton>
@@ -439,7 +441,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                                     <Link to={wallet.type === 'coin' ? `/wallet/deposit/crypto/${wallet.currency}` : `/wallet/deposit/fiat/${wallet.currency}`} className={wallet.depositEnabled ? classes.actionLink : classes.disabledActionLink}>
                                                         <FormattedMessage id={'page.body.wallets.action.deposit'} />
                                                     </Link>
-                                                    <Link to={`/wallet/deposit/crypto/${wallet.currency}`} className={wallet.withdrawEnabled ? classes.actionLink : classes.disabledActionLink}>
+                                                    <Link to={wallet.type === 'coin' ? `/wallet/withdraw/crypto/${wallet.currency}` : `/wallet/withdraw/fiat/${wallet.currency}`} className={wallet.withdrawEnabled ? classes.actionLink : classes.disabledActionLink}>
                                                         <FormattedMessage id={'page.body.wallets.action.withdraw'} />
                                                     </Link>
                                                     <Link to={`trading`} className={classes.actionLink}>
