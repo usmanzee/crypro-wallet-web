@@ -17,3 +17,5 @@ export * from './MassPage';
 export * from "./FeeScreen";
 export * from "./DepositCryptoScreen";
 export * from "./DepositFiatScreen";
+export * from "./WithdrawCryptoScreen";
+export * from "./WithdrawFiatScreen";

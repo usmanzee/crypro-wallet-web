@@ -415,7 +415,7 @@ const DepositWalletCrypto = (props: Props) => {
                     <Divider className={classes.historyDivider}/>
                     <Grid container>
                         <Grid item md={12}>
-                            {selectedWalletOption && <WalletHistory label="deposit" type="deposits" currency={selectedWalletOption} />}
+                            {selectedWalletOption && <WalletHistory label="deposit" type="deposits" currency={selectedWalletOption.currency} />}
                         </Grid>
                     </Grid>
                 </Paper>

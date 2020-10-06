@@ -338,8 +338,15 @@ export const en = {
     'page.body.deposit.network.address.text': '{currency} Address.',
     'page.body.deposit.network.address.instructions.title': 'Send only {currency} to this deposit address..',
     'page.body.deposit.network.address.instructions.description': 'Sending coin or token other than {currency} to this address may result in the loss of your deposit..',
-    
 
+    'page.body.withdraw.header.title': 'Withdraw',
+    'page.body.withdraw.tabs.crypto': 'Crypto',
+    'page.body.withdraw.tabs.fiat': 'Fiat',
+    'page.body.withdraw.select.title': 'Search Currency',
+    'page.body.withdraw.total_balance': 'Total Balance',
+    'page.body.withdraw.tips.title': 'Tips',
+    'page.body.withdraw.tips.tip1': 'Do not withdraw directly to a crowdfund or ICO address, as your account will not be credited with tokens from such sales.',
+    'page.body.withdraw.tips.tip2': "When withdrawing to the B4U user's address, the handling fee will be returned to the Current Account by default.",
 
     'page.body.profile.header.account': 'Profile',
 

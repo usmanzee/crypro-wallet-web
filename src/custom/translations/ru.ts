@@ -339,6 +339,15 @@ export const ru: LangType = {
     'page.body.deposit.network.address.instructions.title': 'Отправляйте только {currency} на этот депозитный адрес.',
     'page.body.deposit.network.address.instructions.description': 'Отправка монеты или токена, отличного от {currency}, на этот адрес может привести к потере вашего депозита.',
 
+    'page.body.withdraw.header.title': 'Изымать',
+    'page.body.withdraw.tabs.crypto': 'Крипто',
+    'page.body.withdraw.tabs.fiat': 'Фіат',
+    'page.body.withdraw.select.title': 'Валюта поиска',
+    'page.body.withdraw.total_balance': 'Итоговый баланс',
+    'page.body.withdraw.tips.title': 'подсказки',
+    'page.body.withdraw.tips.tip1': 'Не выводите средства напрямую на адрес краудфандинга или ICO, поскольку на ваш счет не будут зачислены токены от таких продаж.',
+    'page.body.withdraw.tips.tip2': 'При выводе на адрес пользователя B4U комиссия за обработку будет возвращена на Текущий счет по умолчанию.',
+
     'page.body.profile.header.account': 'Профиль',
 
     'page.body.profile.header.account.content.password': 'Пароль',
