@@ -13324,8 +13324,8 @@ dl {
 /* Sidebar */
 .sidebar {
   min-height: calc(100vh - 64px);
-  background: #F3F3F3;
-  font-family: "nunito-medium", sans-serif;
+  background: #fffefe;
+  /* font-family: "nunito-medium", sans-serif; */
   box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 4px, rgba(0, 0, 0, 0.08) 0px 0px 4px;
   padding: 40px 0px;
   width: 230px;
@@ -13343,10 +13343,10 @@ dl {
     -ms-flex-direction: column;
     flex-direction: column;
     margin-bottom: 60px;
-    font-size: 14px;
+    font-size: 16px;
   }
     .sidebar .nav .nav-item {
-      padding: 0 1.375rem;
+      padding: 0 16px;
       -webkit-transition-duration: 0.25s;
       transition-duration: 0.25s;
       transition-property: background;
@@ -13354,7 +13354,8 @@ dl {
       position: relative; 
     }
     .sidebar .nav .nav-item .nav-link svg {
-      margin-right: 0.8rem;
+      margin-right: 8px;
+      margin-left: 8px;
     }
     
       .sidebar .nav .nav-item .collapse {

@@ -174,7 +174,6 @@ class SidebarContainer extends React.Component<Props, State> {
     public renderNavItems = (address: string) => (values: string[], index: number) => {
         const { currentMarket } = this.props;
 
-        console.log("currentMarket: ", currentMarket);
         const [name, url, img] = values;
         const handleLinkChange = () => this.props.toggleSidebar(false);
         const path = url.includes('/trading') && currentMarket ? `/trading/${currentMarket.id}` : url;
