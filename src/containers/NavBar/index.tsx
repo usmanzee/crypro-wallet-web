@@ -261,26 +261,18 @@ class NavBarComponent extends React.Component<Props, IState> {
         const { isLoggedIn } = this.props;
         return (
             <>
-                <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-                    <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                        <Link className="navbar-brand brand-logo" to="/"><img src={logoLight} alt="logo" /></Link>
-                        <Link className="navbar-brand brand-logo-mini" to="/"><img src={logoLight} alt="logo" /></Link>
-                    </div>
-                    <div className="navbar-menu-wrapper d-flex align-items-stretch">
-                        <ul className="navbar-nav navbar-nav-right">
-                            {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
-                            {this.renderLoginRegisterLinks()}
-                            {this.renderProfile()}
-                            {this.renderLanguages()}
-                            {this.renderNotifications()}
-                        </ul>
+                <ul className="navbar-nav navbar-nav-right">
+                    {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
+                    {this.renderLoginRegisterLinks()}
+                    {this.renderProfile()}
+                    {this.renderLanguages()}
+                    {this.renderNotifications()}
+                </ul>
 
-                        {/* Menu Opener for Mobile */}
-                        <button className="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                            <span className="mdi mdi-menu"></span>
-                        </button>
-                    </div>
-                </nav>
+                {/* Menu Opener for Mobile */}
+                <button className="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                    <span className="mdi mdi-menu"></span>
+                </button>
             </>
             
         );

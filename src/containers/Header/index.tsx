@@ -18,8 +18,25 @@ import {
     toggleMarketSelector,
     toggleSidebar
 } from '../../modules';
+import logoLight from '../../assets/images/logo.png';
 import { HeaderToolbar } from '../HeaderToolbar';
 import { NavBar } from '../NavBar';
+
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+
+const useStyles = theme => ({
+    subHeader: {
+        backgroundColor: '#fff',
+        padding: theme.spacing(2),
+        color: '#000',
+        margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`
+      },
+});
+
 
 interface ReduxProps {
     currentMarket: Market | undefined;
@@ -45,7 +62,7 @@ type Props = ReduxProps & HistoryProps & DispatchProps & InjectedIntlProps;
 class Head extends React.Component<Props> {
 
     public render() {
-        const {mobileWallet } = this.props;
+        const {mobileWallet, classes } = this.props;
         
         const tradingCls = window.location.pathname.includes('/trading') ? 'pg-container-trading' : '';
         const shouldRenderHeader = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/';
@@ -53,35 +70,56 @@ class Head extends React.Component<Props> {
         return (
             <React.Fragment>
             {shouldRenderHeader &&
-                
-                <NavBar onLinkChange={this.closeMenu}/>
-                // <header className={`pg-header`}>
-                //     <div className={`pg-container pg-header__content ${tradingCls}`}>
-                //         <div
-                //             className={`pg-sidebar__toggler ${mobileWallet && 'pg-sidebar__toggler-mobile'}`}
-                //             onClick={this.openSidebar}
-                //         >
-                //             <span className="pg-sidebar__toggler-item"/>
-                //             <span className="pg-sidebar__toggler-item"/>
-                //             <span className="pg-sidebar__toggler-item"/>
-                //         </div>
-                //         <div onClick={e => this.redirectToLanding()} className="pg-header__logo">
-                //             <div className="pg-logo">
-                //                 <img src={logoLight} className="pg-logo__img" alt="Logo" />
-                //                 {/* <LogoIcon className="pg-logo__img" /> */}
-                //             </div>
-                //         </div>
-                //         {this.renderMarketToggler()}
-                //         <div className="pg-header__location">
-                //             {mobileWallet ? <span>{mobileWallet}</span> : <span>{window.location.pathname.split('/')[1]}</span>}
-                //         </div>
-                //         {this.renderMobileWalletNav()}
-                //         <div className="pg-header__navbar">
-                //             {this.renderMarketToolbar()}
-                //             <NavBar onLinkChange={this.closeMenu}/>
-                //         </div>
-                //     </div>
-                // </header>
+                (
+                    <>
+                        <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+                            <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                                <Link className="navbar-brand brand-logo" to="/"><img src={logoLight} alt="logo" /></Link>
+                                <Link className="navbar-brand brand-logo-mini" to="/"><img src={logoLight} alt="logo" /></Link>
+                            </div>
+                            <div className="navbar-menu-wrapper d-flex align-items-stretch">
+                                <NavBar onLinkChange={this.closeMenu}/>
+                            </div>
+                        </nav>
+                        <Paper className={classes.subHeader} elevation={1}>
+                            <Grid container>
+                                <Grid item md={1} style={{ marginTop: '8px' }}>
+                                    {this.renderMarketToggler()}
+                                </Grid>
+                                <Grid item md={11}>
+                                    {this.renderMarketToolbar()}
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                    </>
+                    // <header className={`pg-header`}>
+                    //     <div className={`pg-container pg-header__content ${tradingCls}`}>
+                    //         <div
+                    //             className={`pg-sidebar__toggler ${mobileWallet && 'pg-sidebar__toggler-mobile'}`}
+                    //             onClick={this.openSidebar}
+                    //         >
+                    //             <span className="pg-sidebar__toggler-item"/>
+                    //             <span className="pg-sidebar__toggler-item"/>
+                    //             <span className="pg-sidebar__toggler-item"/>
+                    //         </div>
+                    //         <div onClick={e => this.redirectToLanding()} className="pg-header__logo">
+                    //             <div className="pg-logo">
+                    //                 <img src={logoLight} className="pg-logo__img" alt="Logo" />
+                    //                 {/* <LogoIcon className="pg-logo__img" /> */}
+                    //             </div>
+                    //         </div>
+                    //         {this.renderMarketToggler()}
+                    //         <div className="pg-header__location">
+                    //             {mobileWallet ? <span>{mobileWallet}</span> : <span>{window.location.pathname.split('/')[1]}</span>}
+                    //         </div>
+                    //         {this.renderMobileWalletNav()}
+                    //         <div className="pg-header__navbar">
+                    //             {this.renderMarketToolbar()}
+                    //             <NavBar onLinkChange={this.closeMenu}/>
+                    //         </div>
+                    //     </div>
+                    // </header>
+                )
                 }
           </React.Fragment>
         );
@@ -159,8 +197,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
         toggleMarketSelector: () => dispatch(toggleMarketSelector()),
     });
 
-const Header = injectIntl(withRouter(connect(mapStateToProps, mapDispatchToProps)(Head) as any) as any);
-
+const Header = injectIntl(withStyles(useStyles as {})(withRouter(connect(mapStateToProps, mapDispatchToProps)(Head) as any)));
 export {
     Header,
 };

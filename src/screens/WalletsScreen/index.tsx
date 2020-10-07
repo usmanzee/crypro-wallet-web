@@ -370,7 +370,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const { tablePage, tableRowsPerPage, searchedValue, hideSmallBalances, walletsData } = this.state;
         const { wallets } = this.props;
         const { classes } = this.props;
-        const searchInputPlaceHolder = this.props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.address' })
+        const searchInputPlaceHolder = this.props.intl.formatMessage({ id: 'page.body.wallets.input.search.placeholder' })
         return  <>
                 <Box>
                     <Paper className={classes.headerPaper}>
@@ -401,7 +401,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                     <Paper className={classes.pagePaper}>
                         <FormGroup row>
                             <TextField 
-                                placeholder={searchInputPlaceHolder || 'Amount'}
+                                placeholder={searchInputPlaceHolder || 'Search'}
                                 // className={ classes.searchInputTable }
                                 name="search"
                                 autoComplete='off'
