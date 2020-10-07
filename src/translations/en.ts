@@ -162,6 +162,8 @@ export const en = {
     'page.body.wallets.action.trade': 'Trade',
 
     'page.body.wallets.estimated_value': 'Estimated Value',
+    'page.body.wallets.input.search.placeholder': 'Search',
+    'page.body.wallets.checkbox.label.hide_balance': 'hide small balances',
 
     'page.body.wallets.table.header.coin': 'Coin',
     'page.body.wallets.table.header.total': 'Total',

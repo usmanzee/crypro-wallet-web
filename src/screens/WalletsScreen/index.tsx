@@ -28,13 +28,18 @@ import {
     Typography,
     Button as MaterialButton,
     InputBase,
+    TextField,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    TablePagination
+    TablePagination,
+    Checkbox,
+    FormGroup,
+    FormControlLabel,
+    InputAdornment
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
@@ -98,6 +103,8 @@ interface WalletsState {
     tablePage: number;
     tableRowsPerPage: number;
     searchedValue: string;
+    hideSmallBalances: boolean;
+    isTrue: boolean;
     walletsData: WalletItemProps[];
 }
 
@@ -111,7 +118,7 @@ const useStyles = theme => ({
         border: `1px solid #fff`,
         
         "&.Mui-focused": {
-            border: `1px solid ${theme.palette.secondary.main}`
+            border: `1px solid ${theme.palette.primary.main}`
         },
         '& .MuiSvgIcon-root': {
             marginRight: theme.spacing(1)
@@ -179,6 +186,8 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             tablePage: 0,
             tableRowsPerPage: 25,
             searchedValue: '',
+            hideSmallBalances: false,
+            isTrue: false,
             walletsData: this.props.wallets
         };
     }
@@ -219,7 +228,6 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
     }
 
     public componentWillReceiveProps(next: Props) {
-        console.log('will receive prop');
         const {
             wallets,
             beneficiariesActivateSuccess,
@@ -236,7 +244,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             this.setState({
                 selectedWalletIndex: 0,
             });
-            this.props.fetchBeneficiaries();
+            // this.props.fetchBeneficiaries();
             next.wallets[0].type === 'coin' && next.wallets[0].balance && this.props.fetchAddress({ currency: next.wallets[0].currency });
         }
 
@@ -359,9 +367,10 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
     }
 
     private renderWalletTable = () => {
-        const { tablePage, tableRowsPerPage, searchedValue, walletsData } = this.state;
+        const { tablePage, tableRowsPerPage, searchedValue, hideSmallBalances, walletsData } = this.state;
         const { wallets } = this.props;
         const { classes } = this.props;
+        const searchInputPlaceHolder = this.props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.address' })
         return  <>
                 <Box>
                     <Paper className={classes.headerPaper}>
@@ -390,17 +399,39 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                 {wallets.length && <EstimatedValue wallets={wallets} />}
                 <Box mt={2} pl={3} pr={3} alignItems="center">
                     <Paper className={classes.pagePaper}>
-                        <InputBase 
-                            placeholder="search"
-                            className={ classes.searchInputTable }
-                            name="search"
-                            autoComplete='off'
-                            value={searchedValue}
-                            onChange={this.handleInputSearchChange}
-                            startAdornment={
-                                <SearchIcon fontSize="small" />
-                            }
-                        />
+                        <FormGroup row>
+                            <TextField 
+                                placeholder={searchInputPlaceHolder || 'Amount'}
+                                // className={ classes.searchInputTable }
+                                name="search"
+                                autoComplete='off'
+                                value={searchedValue}
+                                onChange={this.handleInputSearchChange}
+                                InputProps={{
+                                    startAdornment: (
+                                      <InputAdornment position="start">
+                                            <SearchIcon fontSize="small" />
+                                      </InputAdornment>
+                                    ),
+                                }}
+                                // startAdornment={
+                                //     <SearchIcon fontSize="small" />
+                                // }
+                            />
+                            <FormControlLabel
+                                control={
+                                <Checkbox
+                                    checked={hideSmallBalances}
+                                    // onClick={this.handleHideSmallBalancesCheckboxClick}
+                                    onChange={this.handleHideSmallBalancesCheckboxChange}
+                                    name="hideSmallBalances"
+                                    color="primary"
+                                />
+                                }
+                                style={{ margin: '0px' }}
+                                label={<FormattedMessage id={'page.body.wallets.checkbox.label.hide_balance'} />}
+                            />
+                        </FormGroup>
                         <TableContainer className={classes.tableContainer}>    
                             <Table aria-label="simple table">
                                 <TableHead>
@@ -491,6 +522,12 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             tablePage: 0
         })
     };
+    private handleHideSmallBalancesCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            hideSmallBalances: event.target.checked
+        });
+        this.filteredRecords();
+    };
 
     private handleInputSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
@@ -501,16 +538,17 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
     private filteredRecords = () => {
         const {wallets} = this.props;
-        const { searchedValue, walletsData } = this.state;
+        const { searchedValue, hideSmallBalances, walletsData } = this.state;
         let filteredData = [];
-        if(searchedValue) {
-            filteredData = wallets.filter(e => {
-                return e.currency.includes(searchedValue) || e.name.toLowerCase().includes(searchedValue);
-            })
-            this.setState({
-                walletsData: filteredData
-            });
-        }
+
+        filteredData = wallets.filter(e => {
+            return (e.currency.includes(searchedValue) || e.name.toLowerCase().includes(searchedValue)) && (hideSmallBalances ? e.balance > 0 : e);
+        })
+
+        this.setState({
+            walletsData: filteredData
+        });
+    
     }
 
     private onTabChange = (index, label) => this.setState({ tab: label });

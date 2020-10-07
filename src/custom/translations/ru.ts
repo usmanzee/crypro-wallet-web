@@ -159,6 +159,8 @@ export const ru: LangType = {
     'page.body.wallets.action.trade': 'Сделка',
     
     'page.body.wallets.estimated_value': 'Оценочная стоимость',
+    'page.body.wallets.input.search.placeholder': 'Поиск',
+    'page.body.wallets.checkbox.label.hide_balance': 'Скрыть небольшие остатки',
 
     'page.body.wallets.table.header.coin': 'Монета',
     'page.body.wallets.table.header.total': 'Всего',
