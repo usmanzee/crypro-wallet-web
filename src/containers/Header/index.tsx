@@ -66,6 +66,7 @@ class Head extends React.Component<Props> {
         
         const tradingCls = window.location.pathname.includes('/trading') ? 'pg-container-trading' : '';
         const shouldRenderHeader = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/';
+        const shouldRenderMarketToolbar = window.location.pathname.includes('/trading/') ? true : false;
     
         return (
             <React.Fragment>
@@ -81,16 +82,22 @@ class Head extends React.Component<Props> {
                                 <NavBar onLinkChange={this.closeMenu}/>
                             </div>
                         </nav>
-                        <Paper className={classes.subHeader} elevation={1}>
-                            <Grid container>
-                                <Grid item md={1} style={{ marginTop: '8px' }}>
-                                    {this.renderMarketToggler()}
-                                </Grid>
-                                <Grid item md={11}>
-                                    {this.renderMarketToolbar()}
-                                </Grid>
-                            </Grid>
-                        </Paper>
+                        {shouldRenderMarketToolbar && 
+                        (
+                            <>
+                                <Paper className={classes.subHeader} elevation={1}>
+                                    <Grid container>
+                                        <Grid item md={1} style={{ marginTop: '8px' }}>
+                                            {this.renderMarketToggler()}
+                                        </Grid>
+                                        <Grid item md={11}>
+                                            {this.renderMarketToolbar()}
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
+                            </>
+                        )
+                        }
                     </>
                     // <header className={`pg-header`}>
                     //     <div className={`pg-container pg-header__content ${tradingCls}`}>
