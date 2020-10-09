@@ -35,6 +35,7 @@ const CustomizationContainer = React.lazy(() => import('./containers/Customizati
 const FooterContainer = React.lazy(() => import('./containers/Footer').then(({ Footer }) => ({ default: Footer })));
 const HeaderContainer = React.lazy(() => import('./containers/Header').then(({ Header }) => ({ default: Header })));
 const SidebarContainer = React.lazy(() => import('./containers/Sidebar').then(({ Sidebar }) => ({ default: Sidebar })));
+const TradingToolbarContainer = React.lazy(() => import('./containers/TradingToolbar').then(({ TradingToolbar }) => ({ default: TradingToolbar })));
 const LayoutContainer = React.lazy(() => import('./routes').then(({ Layout }) => ({ default: Layout })));
 
 class AppLayout extends React.Component<Props, {}, {}> {
@@ -44,7 +45,7 @@ class AppLayout extends React.Component<Props, {}, {}> {
 
     public render() {
         const { lang } = this.props;
-
+        const shouldRenderMarketToolbar = window.location.pathname.includes('/trading/') ? true : false;
         return (
             <IntlProvider locale={lang} messages={languageMap[lang]} key={lang}>
                 <Router history={history}>
@@ -52,12 +53,13 @@ class AppLayout extends React.Component<Props, {}, {}> {
                         <React.Suspense fallback={null}>
                             <div className="container-scroller">
                                 <HeaderContainer/>
+                                {/* {shouldRenderMarketToolbar && <TradingToolbarContainer />} */}
                                 <div className="container-fluid page-body-wrapper">
                                     <SidebarContainer/>
                                     <CustomizationContainer/>
                                     <AlertsContainer/>
                                     <LayoutContainer/>
-                                    <FooterContainer/>
+                                    {/* <FooterContainer/> */}
                                 </div>
                             </div>
                         </React.Suspense>

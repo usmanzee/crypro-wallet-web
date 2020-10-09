@@ -24,16 +24,27 @@ import { NavBar } from '../NavBar';
 
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
 const useStyles = theme => ({
     subHeader: {
         backgroundColor: '#fff',
-        padding: theme.spacing(2),
+        padding: theme.spacing(1),
         color: '#000',
-        margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`
+        margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
+        // [theme.breakpoints.only('lg')]: {
+        //     backgroundColor: 'yellow',
+        // },
+        // [theme.breakpoints.only('md')]: {
+        //     backgroundColor: 'red',
+        // },
+        // [theme.breakpoints.only('sm')]: {
+        //     backgroundColor: 'white',
+        // },
+        [theme.breakpoints.only('xs')]: {
+            margin: `${theme.spacing(12)}px 0px ${theme.spacing(1)}px`,
+        },
       },
 });
 
@@ -73,7 +84,7 @@ class Head extends React.Component<Props> {
             {shouldRenderHeader &&
                 (
                     <>
-                        <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+                        <div className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ display: 'block' }}>
                             <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                                 <Link className="navbar-brand brand-logo" to="/"><img src={logoLight} alt="logo" /></Link>
                                 <Link className="navbar-brand brand-logo-mini" to="/"><img src={logoLight} alt="logo" /></Link>
@@ -81,11 +92,11 @@ class Head extends React.Component<Props> {
                             <div className="navbar-menu-wrapper d-flex align-items-stretch">
                                 <NavBar onLinkChange={this.closeMenu}/>
                             </div>
-                        </nav>
+                        </div>
                         {shouldRenderMarketToolbar && 
                         (
                             <>
-                                <Paper className={classes.subHeader} elevation={1}>
+                                <Paper className={classes.subHeader} elevation={1} style={{ display: 'block' }}>
                                     <Grid container>
                                         <Grid item md={1} style={{ marginTop: '8px' }}>
                                             {this.renderMarketToggler()}

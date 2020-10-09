@@ -103,6 +103,10 @@ const useStyles = makeStyles((theme: Theme) =>
         borderColor: 'rgb(230, 232, 234)',
         borderStyle: 'solid',
     },
+    currencyIcon: {
+        width: "25px", 
+        height: '25px'
+    },
     popper: {
       border: '1px solid rgba(27,31,35,.15)',
       boxShadow: '0 3px 12px rgba(27,31,35,.15)',
@@ -270,8 +274,8 @@ const DepositFiatComponent = (props: Props) => {
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
                                 {selectedFiatWalletOption ? 
                                     (<>
-                                        <img src={selectedFiatWalletOption ? selectedFiatWalletOption.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
-                                        <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
+                                        {selectedFiatWalletOption.iconUrl ? (<img src={`${ selectedFiatWalletOption.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedFiatWalletOption.currency.toUpperCase()} />)}
+                                        <Typography variant="h6" component="div" display="inline" style={{ margin: '0px 4px' }}>
                                             { selectedFiatWalletOption.currency.toUpperCase() }
                                         </Typography>
                                         <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
@@ -302,11 +306,12 @@ const DepositFiatComponent = (props: Props) => {
                                         setSelectedCurrency(selectedOption ? selectedOption.currency : defaultFiatDepositCurrency);
                                     }}
                                     noOptionsText="No Records Found"
-                                    renderOption={(option: WalletItemProps | null | undefined) => (
-                                        <React.Fragment>
-                                            <img src={option ? option.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
+                                    renderOption = {(option: WalletItemProps | null | undefined) => {
+                                        const optionCurrency = option ? option.currency.toUpperCase() : '';
+                                        return <React.Fragment>
+                                            {option && option.iconUrl ? (<img src={`${ option.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={optionCurrency} />)}
                                             <div>
-                                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
+                                                <Typography variant="h6" component="div" display="inline" style={{ margin: '0px 4px' }}>
                                                     { option ? option.currency.toUpperCase(): '' }
                                                 </Typography>
                                                 <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
@@ -314,7 +319,7 @@ const DepositFiatComponent = (props: Props) => {
                                                 </Typography>
                                             </div>
                                         </React.Fragment>
-                                    )}
+                                    }}
                                     options={fiatWallets}
                                     getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (

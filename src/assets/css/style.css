@@ -13992,7 +13992,9 @@ dl {
   flex-grow: 1; }
   @media (max-width: 991px) {
     .content-wrapper {
-      padding: 2rem 1rem; } }
+      padding: 2rem 0rem; 
+    }
+  }
 
 /* === Custom css === */
 .transaparent-tab-border {

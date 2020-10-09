@@ -17,9 +17,18 @@ import { rootSaga } from './modules';
 import { rangerSagas } from './modules/public/ranger';
 import { rangerMiddleware, sagaMiddleware, store } from './store';
 
-import { createMuiTheme, Theme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+      },
+    },
     palette: {
       primary: {
         main: "rgb(111, 33, 88)",
@@ -100,6 +109,7 @@ const theme = createMuiTheme({
         htmlFontSize: 16
       }
   });
+theme = responsiveFontSizes(theme);
 
 addLocaleData([...en, ...customLocaleData]);
 sagaMiddleware.run(rootSaga);

@@ -11,14 +11,13 @@ import { fetchRate, getExchangeHistory, postExchange } from '../../apis/exchange
 //fetchRate
 import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
 import { Withdraw, WithdrawProps } from '../../containers';
-import { ModalWithdrawConfirmation } from '../../containers/ModalWithdrawConfirmation';
-import { ModalWithdrawSubmit } from '../../containers/ModalWithdrawSubmit';
 import { EstimatedValue } from '../../containers/Wallets/EstimatedValue';
 import { WalletHistory } from '../../containers/Wallets/History';
 import { formatCCYAddress, setDocumentTitle } from '../../helpers';
 //import MaterialTable from "material-table";
 import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
 import { CommonError } from '../../modules/types';
+
 
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -129,7 +128,7 @@ const useStyles = theme => ({
         padding: "32px 20px"
     },
     headeractionButton: {
-        margin: `${theme.spacing(1)}px 0px`,
+        // margin: `${theme.spacing(1)}px 0px`,
     },
     withdrawButton: {
         margin: `0px ${theme.spacing(1)}px`,
@@ -140,6 +139,10 @@ const useStyles = theme => ({
     },
     tableContainer: {
         paddingTop: theme.spacing(2)
+    },
+    currencyIcon: {
+        width: "2.5rem", 
+        height: "2.5rem"
     },
     actionLink: {
         color: theme.palette.secondary.main,
@@ -389,9 +392,9 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                         <FormattedMessage id={'page.body.wallets.action.withdraw'} />
                                     </MaterialButton>
                                 </Link>
-                                <MaterialButton variant="outlined" color="secondary" href="#outlined-buttons">
+                                {/* <MaterialButton variant="outlined" color="secondary" href="#outlined-buttons">
                                     <FormattedMessage id={'page.body.wallets.action.transfer'} />
-                                </MaterialButton>
+                                </MaterialButton> */}
                             </Grid>
                         </Grid>
                     </Paper>
@@ -461,8 +464,8 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                             const walletLocked: number = wallet.locked ? +wallet.locked : 0.0000;
                                             return <TableRow hover key={wallet.currency}>
                                                 <this.StyledTableCell>
-                                                    <img src={`${ wallet.iconUrl } `} style={{ width: "2.5rem", height: "2.5rem" }}/>
-                                                    <span style={{ margin: "0 0.5rem" }}>{wallet.currency.toUpperCase()}</span>
+                                                    {wallet.iconUrl ? (<img src={`${ wallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon className={classes.currencyIcon} code={wallet.currency.toUpperCase()} />)}
+                                                    <span style={{ margin: "0 8px" }}>{wallet.currency.toUpperCase()}</span>
                                                     <small>{wallet.name}</small>
                                                 </this.StyledTableCell>
                                                 <this.StyledTableCell>{+walletBalance + walletLocked}</this.StyledTableCell>

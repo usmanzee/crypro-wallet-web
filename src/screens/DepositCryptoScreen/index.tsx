@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './depositCrypto.css';
 import {
     Box,
     Grid,
@@ -22,8 +21,8 @@ import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
-import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
-import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
+import { Blur, DepositCrypto, WalletItemProps, CryptoIcon } from '../../components';
+import { alertPush, beneficiariesFetch, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
 import { CommonError } from '../../modules/types';
 import { WalletHistory } from '../../containers/Wallets/History';
 import { formatCCYAddress, setDocumentTitle } from '../../helpers';
@@ -103,6 +102,10 @@ const useStyles = makeStyles((theme: Theme) =>
         borderWidth: '1px',
         borderColor: 'rgb(230, 232, 234)',
         borderStyle: 'solid',
+    },
+    currencyIcon: {
+        width: "25px", 
+        height: '25px'
     },
     popper: {
       border: '1px solid rgba(27,31,35,.15)',
@@ -310,8 +313,9 @@ const DepositWalletCrypto = (props: Props) => {
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
                                 {selectedWalletOption ? 
                                     (<>
-                                        <img src={selectedWalletOption ? selectedWalletOption.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
-                                        <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
+                                        {/* <img src={selectedWalletOption ? selectedWalletOption.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/> */}
+                                        {selectedWalletOption.iconUrl ? (<img src={`${ selectedWalletOption.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedWalletOption.currency.toUpperCase()} />)}
+                                        <Typography variant="h6" component="div" display="inline" style={{ margin: '0px 4px' }}>
                                             { selectedWalletOption.currency.toUpperCase() }
                                         </Typography>
                                         <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
@@ -342,11 +346,12 @@ const DepositWalletCrypto = (props: Props) => {
                                         setSelectedCurrency(selectedOption ? selectedOption.currency : defaultWalletCurrency);
                                     }}
                                     noOptionsText="No Records Found"
-                                    renderOption={(option: WalletItemProps | null | undefined) => (
-                                        <React.Fragment>
-                                            <img src={option ? option.iconUrl: ''} style={{ width: "25px", height: '25px', margin: "2px 5px" }}/>
+                                    renderOption = {(option: WalletItemProps | null | undefined) => {
+                                        const optionCurrency = option ? option.currency.toUpperCase() : '';
+                                        return <React.Fragment>
+                                            {option && option.iconUrl ? (<img src={`${ option.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={optionCurrency} />)}
                                             <div>
-                                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '8px' }}>
+                                                <Typography variant="h6" component="div" display="inline" style={{ margin: '0px 4px' }}>
                                                     { option ? option.currency.toUpperCase(): '' }
                                                 </Typography>
                                                 <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
@@ -354,7 +359,7 @@ const DepositWalletCrypto = (props: Props) => {
                                                 </Typography>
                                             </div>
                                         </React.Fragment>
-                                    )}
+                                    }}
                                     options={cryptoWallets}
                                     getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (
