@@ -128,7 +128,7 @@ const useStyles = theme => ({
         padding: "32px 20px"
     },
     headeractionButton: {
-        // margin: `${theme.spacing(1)}px 0px`,
+        // margin: `0px 8px`,
     },
     withdrawButton: {
         margin: `0px ${theme.spacing(1)}px`,
@@ -378,17 +378,17 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                 <Box>
                     <Paper className={classes.headerPaper}>
                         <Grid container>
-                            <Grid item md={8}>
+                            <Grid item xs={4} sm={6} md={8} lg={10}>
                                 <Typography variant="h4" display="inline">{this.pageTitle}</Typography>
                             </Grid>
-                            <Grid className={classes.headeractionButton} item md={4}>
+                            <Grid className={classes.headeractionButton} item xs={8} sm={6} md={4} lg={2}>
                                 <Link to="/wallet/deposit/crypto" style={{ textDecoration: 'none' }}>
-                                    <MaterialButton variant="contained" color="secondary">
+                                    <MaterialButton variant="contained" color="secondary" size="small">
                                         <FormattedMessage id={'page.body.wallets.action.deposit'} />
                                     </MaterialButton>
                                 </Link>
                                 <Link to="/wallet/withdraw/crypto" style={{ textDecoration: 'none' }}>
-                                    <MaterialButton className={classes.withdrawButton} variant="outlined" color="secondary">
+                                    <MaterialButton className={classes.withdrawButton} variant="outlined" color="secondary" size="small">
                                         <FormattedMessage id={'page.body.wallets.action.withdraw'} />
                                     </MaterialButton>
                                 </Link>

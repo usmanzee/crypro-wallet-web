@@ -13,7 +13,8 @@ header {
 
   &__market-selector-toggle {
     align-items: center;
-    border: 1px solid white;
+    //border: 1px solid white;
+    border: 1px solid;
     border-radius: 3px;
     cursor: pointer;
     display: flex;
@@ -22,7 +23,7 @@ header {
     padding: 5px 14px;
 
     &-value {
-      color: white;
+      //color: white;
       margin: 0 14px 0 0;
     }
   }
@@ -65,7 +66,7 @@ header {
       }
 
       &-text {
-        color: white;
+        //color: white;
         font-size: calc(var(--font-size) * 0.85);
         margin: 5px 0 0;
         text-align: right;
@@ -148,6 +149,18 @@ header {
       &-value {
         margin-right: 7px;
       }
+    }
+
+    &__toolbar {
+     &-item {
+        margin-left: 0px;
+        &-value {
+          text-align: center;
+        }
+        &-text {
+          text-align: center;
+        }
+     }
     }
 
     &__navbar {

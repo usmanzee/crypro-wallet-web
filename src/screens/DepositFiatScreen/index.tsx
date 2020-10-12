@@ -102,6 +102,12 @@ const useStyles = makeStyles((theme: Theme) =>
         borderWidth: '1px',
         borderColor: 'rgb(230, 232, 234)',
         borderStyle: 'solid',
+        [theme.breakpoints.only('sm')]: {
+            width: 'auto',
+        },
+        [theme.breakpoints.only('xs')]: {
+            width: 'auto',
+        },
     },
     currencyIcon: {
         width: "25px", 
@@ -143,6 +149,14 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: 'rgb(245, 245, 245)',
         borderRadius: '4px',
         padding: '16px'
+    },
+    depositCol: {
+        [theme.breakpoints.up('lg')]: {
+            padding: `0px ${theme.spacing(1)}px`,
+        },
+        [theme.breakpoints.only('md')]: {
+            padding: `0px ${theme.spacing(1)}px`,
+        }
     },
     networkPaper: {
         padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
@@ -270,7 +284,7 @@ const DepositFiatComponent = (props: Props) => {
                     </div>
 
                     <Grid container>
-                        <Grid item md={6}>
+                        <Grid item xs={12} sm ={12} md={6} lg={6}>
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
                                 {selectedFiatWalletOption ? 
                                     (<>
@@ -360,8 +374,7 @@ const DepositFiatComponent = (props: Props) => {
                                 </List>
                             </Paper> */}
                         </Grid>
-                        <Grid item md={1}></Grid>
-                        <Grid item md={5}>
+                        <Grid item xs={12} sm={12} md={6} lg={6} className={classes.depositCol}>
                             <DepositFiat title={title} description={description} uid={user ? user.uid : ''} currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}/>
                         </Grid>
                     </Grid>

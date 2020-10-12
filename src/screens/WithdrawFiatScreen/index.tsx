@@ -116,6 +116,12 @@ const useStyles = makeStyles((theme: Theme) =>
         borderWidth: '1px',
         borderColor: 'rgb(230, 232, 234)',
         borderStyle: 'solid',
+        [theme.breakpoints.only('sm')]: {
+            width: 'auto',
+        },
+        [theme.breakpoints.only('xs')]: {
+            width: 'auto',
+        },
     },
     currencyIcon: {
         width: "25px", 
@@ -158,20 +164,13 @@ const useStyles = makeStyles((theme: Theme) =>
         borderRadius: '4px',
         padding: '16px'
     },
-    networkPaper: {
-        padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
-        margin: `${theme.spacing(2)}px 0px`,
-        borderRadius: '4px'
-    },
-    networkPaperHeader: {
-        paddingBottom: theme.spacing(1),
-        borderWidth: '0px 0px 1px',
-        borderStyle: 'solid',
-        borderColor: 'rgb(234, 236, 239)'
-    },
-    networkPaperContent: {
-        textAlign: 'center',
-        padding: `${theme.spacing(15)}px 0px`,
+    withdrawCol: {
+        [theme.breakpoints.up('lg')]: {
+            padding: `0px ${theme.spacing(1)}px`,
+        },
+        [theme.breakpoints.only('md')]: {
+            padding: `0px ${theme.spacing(1)}px`,
+        }
     },
     historyDivider: {
         margin: `${theme.spacing(4)}px 0px ${theme.spacing(3)}px`,
@@ -404,7 +403,7 @@ const WithdrawFiatComponent = (props: Props) => {
                     </div>
 
                     <Grid container>
-                        <Grid item md={6}>
+                        <Grid item xs={12} sm ={12} md={6} lg={6}>
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
                                 {selectedWalletOption ? 
                                     (<>
@@ -473,7 +472,7 @@ const WithdrawFiatComponent = (props: Props) => {
                                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
-                            <Paper elevation={0} className={classes.cryptoTips}>
+                            {/* <Paper elevation={0} className={classes.cryptoTips}>
                                 <Typography variant="h6" component="div"><EmojiObjectsIcon />
                                     <FormattedMessage id={'page.body.withdraw.tips.title'} />
                                 </Typography>
@@ -492,10 +491,9 @@ const WithdrawFiatComponent = (props: Props) => {
                                     </ListItem>
                                    
                                 </List>
-                            </Paper>
+                            </Paper> */}
                         </Grid>
-                        <Grid item md={1}></Grid>
-                        <Grid item md={5}>
+                        <Grid item xs={12} sm={12} md={6} lg={6} className={classes.withdrawCol}>
                             {renderWithdrawContent()}
                         </Grid>
                     </Grid>

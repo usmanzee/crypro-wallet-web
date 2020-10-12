@@ -185,10 +185,10 @@ class NavBarComponent extends React.Component<Props, IState> {
         const [name, url, iconClassName] = values;
         return (
             <React.Fragment>
-                <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to={url}>
+                {/* <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to={url}>
                     <span><FormattedMessage id={name} /></span>
                     <i className={iconClassName}></i>
-                </Link>
+                </Link> */}
             </React.Fragment>
         );
     }
