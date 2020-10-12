@@ -10,20 +10,14 @@ import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
-
 import { Button } from 'react-bootstrap';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
-import { Withdraw, WithdrawProps } from '../../containers';
-import { ModalWithdrawConfirmation } from '../../containers/ModalWithdrawConfirmation';
-import { ModalWithdrawSubmit } from '../../containers/ModalWithdrawSubmit';
-import { WalletItemProps, CryptoIcon } from '../../components';
+import { WalletItemProps, CryptoIcon, WalletsDropdown } from '../../components';
 import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
-import { CommonError } from '../../modules/types';
-import { WalletHistory } from '../../containers/Wallets/History';
 
 import {
     useParams
@@ -32,38 +26,19 @@ import {
 interface ReduxProps {
     user: User;
     wallets: WalletItemProps[];
-    withdrawSuccess: boolean;
-    addressDepositError?: CommonError;
     walletsLoading?: boolean;
     historyList: WalletHistoryList;
-    mobileWalletChosen: string;
-    selectedWalletAddress: string;
-    beneficiariesActivateSuccess: boolean;
-    beneficiariesDeleteSuccess: boolean;
     currencies: Currency[];
 }
 
 interface DispatchProps {
-    fetchBeneficiaries: typeof beneficiariesFetch;
     fetchWallets: typeof walletsFetch;
     fetchAddress: typeof walletsAddressFetch;
     clearWallets: () => void;
     walletsWithdrawCcy: typeof walletsWithdrawCcyFetch;
     fetchSuccess: typeof alertPush;
-    setMobileWalletUi: typeof setMobileWalletUi;
     currenciesFetch: typeof currenciesFetch;
 }
-
-const defaultBeneficiary: Beneficiary = {
-    id: 0,
-    currency: '',
-    name: '',
-    state: '',
-    data: {
-        address: '',
-    },
-};
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     headerPaper: {
@@ -175,33 +150,22 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
-const WithdrawFiatComponent = (props: Props) => {
+const SwapComponent = (props: Props) => {
     const defaultWalletCurrency = 'usd';
     //Props
     const classes = useStyles();
-    const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
+    const { wallets, user, currencies } = props;
 
     //Params
     let params = useParams();
     let currency: string = params ? params['currency'] : defaultWalletCurrency;
 
     //States
-    const [selectedCurrency, setSelectedCurrency] = React.useState<string>(currency);
-    const [fiatWallets, setFiatWallets] = React.useState<WalletItemProps[]>([]);
+    const [walletsFrom, setWalletsFrom] = React.useState<WalletItemProps[]>([]);
+    const [walletsTo, setWalletsTo] = React.useState<WalletItemProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
-    const [withdrawDone, setWithDrawDone] = React.useState<boolean>(false);
-
-    const [withdrawCryptostate, setWithdrawCryptoState] = React.useState({
-        rid: '',
-        amount: '',
-        beneficiary: defaultBeneficiary,
-        otpCode: '',
-        withdrawConfirmModal: false,
-        total: '',
-        withdrawDone: false,
-        withdrawSubmitModal: false,
-    });
+    const [selectedWalletFromOption, setSelectedWalletFromOption] = React.useState<WalletItemProps | null | undefined>(null);
+    const [selectedWalletToOption, setSelectedWalletToOption] = React.useState<WalletItemProps | null | undefined>(null);
 
     //UseEffect
     React.useEffect(() => {
@@ -210,31 +174,15 @@ const WithdrawFiatComponent = (props: Props) => {
         }
     }, [wallets]);
 
-    
     React.useEffect(() => {
-        if (!currencies.length) {
-            props.currenciesFetch();
+        if (wallets.length && !walletsFrom.length) {
+            setWalletsFrom(wallets)
         }
-    }, [currencies]);
-
-    React.useEffect(() => {
-        if (fiatWallets.length === 0 && wallets.length > 0) {
-            setFiatWallets(wallets.filter((wallet: WalletItemProps) => {
-                return wallet.type === 'fiat';
-            }));
-        } else if(fiatWallets.length > 0 && wallets.length > 0) {
-            
-            let searchedOption = searchSelectedCurrencyInCryptoWallets(selectedCurrency);
-            if(!searchedOption) {
-                searchedOption = searchSelectedCurrencyInCryptoWallets(defaultWalletCurrency);
-            }
-            setSelectedWalletOption(searchedOption);
-        }
-    }, [fiatWallets, wallets]);
+    }, [wallets, walletsFrom]);
 
     //Addtional Methods
     const searchSelectedCurrencyInCryptoWallets = (currency: string) => {
-        return fiatWallets.find(wallet => wallet.currency === currency);
+        return walletsFrom.find(wallet => wallet.currency === currency);
     }
     const handleCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -251,122 +199,19 @@ const WithdrawFiatComponent = (props: Props) => {
     
     const translate = (id: string) => props.intl.formatMessage({ id });
 
-    const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0.0000;
-    const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? +selectedWalletOption.locked : 0.0000;
+    const selectedWalletOptionBalance: number = selectedWalletFromOption && selectedWalletFromOption.balance ? +selectedWalletFromOption.balance : 0.0000;
+    const selectedWalletOptionLocked: number = selectedWalletFromOption && selectedWalletFromOption.locked ? +selectedWalletFromOption.locked : 0.0000;
 
-    let confirmationAddress = '';
-    if (selectedWalletOption) {
-        confirmationAddress = selectedWalletOption.type === 'fiat' ? (
-            withdrawCryptostate.beneficiary.name
-        ) : (
-            withdrawCryptostate.rid
-            //beneficiary.data ? (beneficiary.data.address as string) : ''
-        );
+    const renderWalletDropdown = () => {
+        // const selectedWallet = selectedWalletFromOption ? selectedWalletFromOption : {};
+        return <WalletsDropdown 
+            wallets = {walletsFrom}
+            selectedWallet = {selectedWalletFromOption}
+            setSelectedWallet = {setSelectedWalletFromOption}
+            walletDropdownClick = {handleCurrencySelectClick}
+            walletDropdownClose = {handleCurrencySelectClose}
+        />
     }
-
-    const handleWithdraw = () => {
-        const { otpCode, beneficiary, rid, total } = withdrawCryptostate;
-
-        const currency = selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency;
-        console.log(currency);
-
-        if (selectedWalletOption && selectedWalletOption.type === 'coin') {
-            const withdrawRequest = {
-                rid,
-                amount: total,
-                currency: currency.toLowerCase(),
-                otp: otpCode,
-            };
-            props.walletsWithdrawCcy(withdrawRequest);
-        } else {
-            const withdrawRequest = {
-                amount: total,
-                currency: currency.toLowerCase(),
-                otp: otpCode,
-                beneficiary_id: beneficiary.id,
-            };
-            props.walletsWithdrawCcy(withdrawRequest);
-        }
-        toggleConfirmModal();
-    };
-    const toggleSubmitModal = () => {
-        
-        setWithdrawCryptoState({
-            ...withdrawCryptostate,
-            withdrawSubmitModal: !withdrawCryptostate.withdrawSubmitModal,
-            withdrawDone: true
-        });
-    };
-
-    const toggleConfirmModal = (rid?: string, amount?: string, total?: string, beneficiary?: Beneficiary, otpCode?: string) => {
-        console.log('submit');
-
-        setWithdrawCryptoState({
-            ...withdrawCryptostate,
-            rid: rid || '',
-            amount: amount || '',
-            beneficiary: beneficiary ? beneficiary : defaultBeneficiary,
-            otpCode: otpCode ? otpCode : '',
-            withdrawConfirmModal: !withdrawCryptostate.withdrawConfirmModal,
-            total: total || '',
-            withdrawDone: false,
-        });
-    };
-
-    const isTwoFactorAuthRequired = (level: number, is2faEnabled: boolean) => {
-        return level > 1 || (level === 1 && is2faEnabled);
-    }
-
-    const isOtpDisabled = () => {
-        return (
-            <React.Fragment>
-                <p className="pg-wallet__enable-2fa-message">
-                    {translate('page.body.wallets.tabs.withdraw.content.enable2fa')}
-                </p>
-                <Button
-                    block={true}
-                    onClick={redirectToEnable2fa}
-                    size="lg"
-                    variant="primary"
-                >
-                    {translate('page.body.wallets.tabs.withdraw.content.enable2faButton')}
-                </Button>
-            </React.Fragment>
-        );
-    };
-
-    const redirectToEnable2fa = () => props.history.push('/security/2fa', { enable2fa: true });
-
-    const renderWithdrawContent = () => {
-    
-        const { user: { level, otp }, wallets } = props;
-        // const wallet = selectedWalletOption;
-        // const { currency, fee, type } = wallet;
-        const currency = selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency;
-        const fee = selectedWalletOption ? selectedWalletOption.fee : 0;
-        const type = selectedWalletOption ? selectedWalletOption.type : 'coin';
-        const fixed = selectedWalletOption ? selectedWalletOption.fixed : 0;
-        const balance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0;
-    
-        const withdrawProps: WithdrawProps = {
-            withdrawDone,
-            balance,
-            currency,
-            fee,
-            onClick: toggleConfirmModal,
-            twoFactorAuthRequired: isTwoFactorAuthRequired(level, otp),
-            fixed,
-            type,
-            withdrawAddressLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.address' }),
-            withdrawAmountLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.amount' }),
-            withdraw2faLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.code2fa' }),
-            withdrawFeeLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.fee' }),
-            withdrawTotalLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.total' }),
-            withdrawButtonLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.button' }),
-        };
-    
-        return otp ? <Withdraw {...withdrawProps} /> : isOtpDisabled();
-    };
 
     return (
         <>
@@ -375,7 +220,8 @@ const WithdrawFiatComponent = (props: Props) => {
                     <Grid container>
                         <Grid item md={12}>
                             <Typography variant="h4" display="inline">
-                                <FormattedMessage id={'page.body.withdraw.header.title'} />
+                                {/* <FormattedMessage id={'page.body.withdraw.header.title'} /> */}
+                                Swap
                             </Typography>
                         </Grid>
                     </Grid>
@@ -383,7 +229,7 @@ const WithdrawFiatComponent = (props: Props) => {
             </Box>
             <Box mt={2} pl={3} pr={3} alignItems="center">
                 <Paper className={classes.pagePaper}>
-                    <div className={classes.pagePaperHeader}>
+                    {/* <div className={classes.pagePaperHeader}>
                     <Link to="/wallet/withdraw/crypto" className={classes.inActivePage}>
                             <Typography variant="h6" component="div" display="inline" >
                                 <FormattedMessage id={'page.body.withdraw.tabs.crypto'} />
@@ -394,26 +240,28 @@ const WithdrawFiatComponent = (props: Props) => {
                             <FormattedMessage id={'page.body.withdraw.tabs.fiat'} />
                         </Typography>
                     </Link>
-                    </div>
+                    </div> */}
 
                     <Grid container>
                         <Grid item xs={12} sm ={12} md={6} lg={6}>
-                            <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
-                                {selectedWalletOption ? 
+                            {renderWalletDropdown()}
+                            {/* <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
+                                {selectedWalletFromOption ? 
                                     (<>
-                                        {selectedWalletOption.iconUrl ? (<img src={`${ selectedWalletOption.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedWalletOption.currency.toUpperCase()} />)}
+                                        {selectedWalletFromOption.iconUrl ? (<img src={`${ selectedWalletFromOption.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedWalletFromOption.currency.toUpperCase()} />)}
                                         <Typography variant="h6" component="div" display="inline" style={{ margin: '0 4px' }}>
-                                            { selectedWalletOption.currency.toUpperCase() }
+                                            { selectedWalletFromOption.currency.toUpperCase() }
                                         </Typography>
                                         <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
-                                            { selectedWalletOption.name }
+                                            { selectedWalletFromOption.name }
                                         </Typography> 
                                     </>) :
                                     ""
                                 }
-                            </div>
+                            </div> */}
 
-                            <Popper
+
+                            {/* <Popper
                                 id={popperId}
                                 open={popperOpen}
                                 anchorEl={anchorEl}
@@ -427,10 +275,9 @@ const WithdrawFiatComponent = (props: Props) => {
                                     open
                                     onClose={handleCurrencySelectClose}
                                     disableCloseOnSelect={false}
-                                    value={selectedWalletOption}
+                                    value={selectedWalletFromOption}
                                     onChange={(event: any, selectedOption: WalletItemProps | null) => {
-                                        setSelectedWalletOption(selectedOption);
-                                        setSelectedCurrency(selectedOption ? selectedOption.currency : defaultWalletCurrency);
+                                        setSelectedWalletFromOption(selectedOption);
                                     }}
                                     noOptionsText="No Records Found"
                                     renderOption = {(option: WalletItemProps | null | undefined) => {
@@ -447,7 +294,7 @@ const WithdrawFiatComponent = (props: Props) => {
                                             </div>
                                         </React.Fragment>
                                     }}
-                                    options={fiatWallets}
+                                    options={walletsFrom}
                                     getOptionLabel={(option: WalletItemProps | null | undefined) => option ? option.name: ''}
                                     renderInput={(params) => (
                                     <InputBase
@@ -458,61 +305,27 @@ const WithdrawFiatComponent = (props: Props) => {
                                     />
                                     )}
                                 />
-                            </Popper>
+                            </Popper> */}
                             <Box mt={3} mb={3}>
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                                     <FormattedMessage id={'page.body.withdraw.total_balance'} />:
                                 </Typography>
                                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
-                                <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
+                                <Typography variant="h6" component="div" display="inline">{ selectedWalletFromOption ? selectedWalletFromOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
-                            {/* <Paper elevation={0} className={classes.cryptoTips}>
-                                <Typography variant="h6" component="div"><EmojiObjectsIcon />
-                                    <FormattedMessage id={'page.body.withdraw.tips.title'} />
-                                </Typography>
-                                <List component="ul" aria-label="contacts">
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <StarIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={<FormattedMessage id={'page.body.withdraw.tips.tip1'} />} />
-                                    </ListItem>
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <StarIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={<FormattedMessage id={'page.body.withdraw.tips.tip2'} />} />
-                                    </ListItem>
-                                   
-                                </List>
-                            </Paper> */}
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} className={classes.withdrawCol}>
-                            {renderWithdrawContent()}
+                           
                         </Grid>
                     </Grid>
                     <Divider className={classes.historyDivider}/>
                     <Grid container>
                         <Grid item md={12}>
-                            {user.otp && selectedWalletOption && <WalletHistory label="withdraw" type="withdraws" currency={selectedWalletOption.currency} />}
+                            {/* {user.otp && selectedWalletOption && <WalletHistory label="withdraw" type="withdraws" currency={selectedWalletOption.currency} />} */}
                         </Grid>
                     </Grid>
                 </Paper>
             </Box>
-            
-            <ModalWithdrawSubmit
-                show={withdrawCryptostate.withdrawSubmitModal}
-                currency={selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency}
-                onSubmit={toggleSubmitModal}
-            />
-            <ModalWithdrawConfirmation
-                show={withdrawCryptostate.withdrawConfirmModal}
-                amount={withdrawCryptostate.total}
-                currency={selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency}
-                rid={confirmationAddress}
-                onSubmit={handleWithdraw}
-                onDismiss={toggleConfirmModal}
-            />
         </>
     );
 }
@@ -521,24 +334,16 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     user: selectUserInfo(state),
     wallets: selectWallets(state),
     walletsLoading: selectWalletsLoading(state),
-    addressDepositError: selectWalletsAddressError(state),
-    withdrawSuccess: selectWithdrawSuccess(state),
     historyList: selectHistory(state),
-    mobileWalletChosen: selectMobileWalletUi(state),
-    selectedWalletAddress: selectWalletAddress(state),
-    beneficiariesActivateSuccess: selectBeneficiariesActivateSuccess(state),
-    beneficiariesDeleteSuccess: selectBeneficiariesDeleteSuccess(state),
     currencies: selectCurrencies(state),
 });
 const mapDispatchToProps = dispatch => ({
-    fetchBeneficiaries: () => dispatch(beneficiariesFetch()),
     fetchWallets: () => dispatch(walletsFetch()),
     fetchAddress: ({ currency }) => dispatch(walletsAddressFetch({ currency })),
     walletsWithdrawCcy: params => dispatch(walletsWithdrawCcyFetch(params)),
     clearWallets: () => dispatch(walletsData([])),
     fetchSuccess: payload => dispatch(alertPush(payload)),
-    setMobileWalletUi: payload => dispatch(setMobileWalletUi(payload)),
     currenciesFetch: () => dispatch(currenciesFetch()),
 });
 
-export const WithdrawFiatScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(WithdrawFiatComponent))
+export const SwapScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(SwapComponent))

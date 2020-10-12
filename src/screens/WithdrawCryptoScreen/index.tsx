@@ -190,13 +190,11 @@ const WithdrawCryptoComponent = (props: Props) => {
 
     //Params
     let params = useParams();
-    let currencyType: string = params ? params['currency'] : defaultWalletCurrency;
-    let currency: string = params ? params['currencyType'] : defaultWalletCurrency;
+    let currency: string = params ? params['currency'] : defaultWalletCurrency;
 
     //States
     const [selectedCurrency, setSelectedCurrency] = React.useState<string>(currency);
     const [cryptoWallets, setCryptoWallets] = React.useState<WalletItemProps[]>([]);
-    const [fiatWallets, setFiatWallets] = React.useState<WalletItemProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [withdrawDone, setWithDrawDone] = React.useState<boolean>(false);

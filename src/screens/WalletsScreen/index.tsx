@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { fetchRate, getExchangeHistory, postExchange } from '../../apis/exchange';
 //fetchRate
 import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
-import { Withdraw, WithdrawProps } from '../../containers';
+import { Withdraw, WithdrawProps, ModalWithdrawSubmit, ModalWithdrawConfirmation } from '../../containers';
 import { EstimatedValue } from '../../containers/Wallets/EstimatedValue';
 import { WalletHistory } from '../../containers/Wallets/History';
 import { formatCCYAddress, setDocumentTitle } from '../../helpers';
@@ -310,7 +310,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             <React.Fragment>
                 {/* {wallets.length && <EstimatedValue wallets={wallets} />} */}
                 {this.renderWalletTable()}
-                {/* <div className="pg-container pg-wallet">
+                <div className="pg-container pg-wallet">
                     <div className="text-center">
                         {walletsLoading && <Spinner animation="border" variant="primary" />}
                     </div>
@@ -345,7 +345,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         onSubmit={this.handleWithdraw}
                         onDismiss={this.toggleConfirmModal}
                     />
-                </div> */}
+                </div>
             </React.Fragment>
         );
     }
