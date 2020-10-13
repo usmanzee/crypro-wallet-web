@@ -1,4 +1,4 @@
-export const PG_TITLE_PREFIX = 'Cryptobase';
+export const PG_TITLE_PREFIX = 'B4U Wallet';
 
 export const pgRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
     const routes = [

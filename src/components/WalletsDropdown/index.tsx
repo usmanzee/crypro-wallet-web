@@ -18,10 +18,10 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     currencySelect: {
         display: 'flex',
-        width: '300px',
+        width: 300,
         cursor: 'pointer',
-        margin:' 16px 0px',
-        padding: theme.spacing(1),
+        // margin:' 8px 0px',
+        padding: `12px ${theme.spacing(1)}px`,
         borderRadius: '4px',
         borderWidth: '1px',
         borderColor: 'rgb(230, 232, 234)',
@@ -47,6 +47,11 @@ const useStyles = makeStyles((theme: Theme) =>
       color: '#586069',
       backgroundColor: '#f6f8fa',
     },
+    selectWalletHeader: {
+        borderBottom: '1px solid #e1e4e8',
+        padding: '8px 10px',
+        fontWeight: 600,
+    },
     inputBase: {
       padding: 10,
       width: '100%',
@@ -68,25 +73,26 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface WalletDropdownProps {
+    anchorEl: HTMLElement | null;
+    popperOpen: boolean;
+    popperId: string | undefined;
     wallets: WalletItemProps[];
     selectedWallet: WalletItemProps | null | undefined;
-    setSelectedWallet(option: WalletItemProps): void;
+    setAnchorEl(target: HTMLElement | null): void;
+    setSelectedWallet(option: WalletItemProps | null): void;
     /**
      * Callback function which is invoked whenever wallet item is clicked
      */
     walletDropdownClick(event: React.MouseEvent<HTMLElement>): void;
+    walletDropdownChange(event: React.MouseEvent<HTMLElement>, option: WalletItemProps | null | undefined): void;
     /**
      * Callback function which is invoked whenever wallet item is clicked
      */
     walletDropdownClose(event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason): void;
 }
 export const WalletsDropdown = (props: WalletDropdownProps) => {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-    const popperOpen = Boolean(anchorEl);
-    const popperId = popperOpen ? 'wallet-currencies' : undefined;
+    const { anchorEl, setAnchorEl, popperId, popperOpen, wallets, selectedWallet, setSelectedWallet, walletDropdownClick, walletDropdownChange, walletDropdownClose } = props;
     const classes = useStyles();
-    const { wallets, selectedWallet, setSelectedWallet, walletDropdownClick, walletDropdownClose } = props;
     return (
         <>
         <div className={classes.currencySelect} onClick={walletDropdownClick}>
@@ -110,7 +116,7 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
                 placement="bottom-start"
                 className={classes.popper}
             >
-                <div>
+                <div className={classes.selectWalletHeader}>
                     {/* <FormattedMessage id={'page.body.withdraw.select.title'} /> */}
                     Select Wallet
                 </div>
@@ -119,9 +125,10 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
                     onClose={walletDropdownClose}
                     disableCloseOnSelect={false}
                     value={selectedWallet}
-                    // onChange={(event: any, selectedOption: WalletItemProps) => {
-                    //     setSelectedWallet(selectedOption);
-                    // }}
+                    onChange={(event: any, selectedOption: WalletItemProps | null) => {
+                        // setSelectedWallet(selectedOption);
+                        walletDropdownChange(event, selectedOption)
+                    }}
                     noOptionsText="No Records Found"
                     renderOption = {(option: WalletItemProps) => {
                         const optionCurrency = option ? option.currency.toUpperCase() : '';
