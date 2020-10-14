@@ -35,13 +35,36 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     currencyIcon: {
         width: "25px", 
-        height: '25px'
+        [theme.breakpoints.only('sm')]: {
+            width: "15px", 
+        },
+        [theme.breakpoints.only('xs')]: {
+            width: "15px", 
+        },
+    },
+    walletCurrencyTag: {
+        margin: '0 4px',
+        [theme.breakpoints.only('sm')]: {
+            // display: 'none'
+        },
+        [theme.breakpoints.only('xs')]: {
+            // display: 'none'
+        },
+    },
+    walletCurrencyName: {
+        marginTop: '5px',
+        [theme.breakpoints.only('sm')]: {
+            display: 'none'
+        },
+        [theme.breakpoints.only('xs')]: {
+            display: 'none'
+        },
     },
     popper: {
       border: '1px solid rgba(27,31,35,.15)',
       boxShadow: '0 3px 12px rgba(27,31,35,.15)',
       borderRadius: 3,
-      width: 300,
+    //   width: 300,
       zIndex: 1,
       fontSize: 13,
       color: '#586069',
@@ -95,14 +118,14 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
     const classes = useStyles();
     return (
         <>
-        <div className={classes.currencySelect} onClick={walletDropdownClick}>
+        <div onClick={walletDropdownClick}>
             {selectedWallet ? 
                 (<>
                     {selectedWallet.iconUrl ? (<img src={`${ selectedWallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedWallet.currency.toUpperCase()} />)}
-                    <Typography variant="h6" component="div" display="inline" style={{ margin: '0 4px' }}>
+                    <Typography variant="body1" component="div" display="inline" className={classes.walletCurrencyTag}>
                         { selectedWallet.currency.toUpperCase() }
                     </Typography>
-                    <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>
+                    <Typography variant="body2" component="div" display="inline" className={classes.walletCurrencyName}>
                         { selectedWallet.name }
                     </Typography> 
                 </>) :

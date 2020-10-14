@@ -260,7 +260,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             this.props.fetchBeneficiaries();
         }
     }
-     private async exchangeHistory () {
+    private async exchangeHistory () {
 
          try {
              const data = await getExchangeHistory();
@@ -273,7 +273,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
          }
 
-     }
+    }
 
     public render() {
         const { wallets, historyList, mobileWalletChosen, walletsLoading } = this.props;
