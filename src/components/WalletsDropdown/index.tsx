@@ -9,7 +9,7 @@ import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 import { WalletItemProps } from '../WalletItem';
 import { CryptoIcon } from '../CryptoIcon';
@@ -18,37 +18,30 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     currencySelect: {
         display: 'flex',
-        width: 300,
-        cursor: 'pointer',
-        // margin:' 8px 0px',
-        padding: `12px ${theme.spacing(1)}px`,
-        borderRadius: '4px',
-        borderWidth: '1px',
-        borderColor: 'rgb(230, 232, 234)',
-        borderStyle: 'solid',
-        [theme.breakpoints.only('sm')]: {
-            width: 'auto',
-        },
-        [theme.breakpoints.only('xs')]: {
-            width: 'auto',
-        },
     },
     currencyIcon: {
         width: "25px", 
+        height: "25px", 
         [theme.breakpoints.only('sm')]: {
-            width: "15px", 
+            width: "20px", 
+            height: "20px",
+            marginTop: theme.spacing(1)
         },
         [theme.breakpoints.only('xs')]: {
-            width: "15px", 
+            width: "20px",
+            height: "20px",
+            marginTop: theme.spacing(1)
         },
     },
     walletCurrencyTag: {
         margin: '0 4px',
         [theme.breakpoints.only('sm')]: {
-            // display: 'none'
+            fontSize: '14px',
+            marginTop: theme.spacing(1)
         },
         [theme.breakpoints.only('xs')]: {
-            // display: 'none'
+            fontSize: '14px',
+            marginTop: theme.spacing(1)
         },
     },
     walletCurrencyName: {
@@ -118,16 +111,17 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
     const classes = useStyles();
     return (
         <>
-        <div onClick={walletDropdownClick}>
+        <div onClick={walletDropdownClick} className={classes.currencySelect}>
             {selectedWallet ? 
                 (<>
                     {selectedWallet.iconUrl ? (<img src={`${ selectedWallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedWallet.currency.toUpperCase()} />)}
-                    <Typography variant="body1" component="div" display="inline" className={classes.walletCurrencyTag}>
+                    <Typography variant="h6" component="div" display="inline" className={classes.walletCurrencyTag}>
                         { selectedWallet.currency.toUpperCase() }
                     </Typography>
                     <Typography variant="body2" component="div" display="inline" className={classes.walletCurrencyName}>
                         { selectedWallet.name }
-                    </Typography> 
+                    </Typography>
+                    <ArrowDropDownIcon style={{ marginTop: '4px' }}/> 
                 </>) :
                 ""
             }
@@ -158,7 +152,7 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
                         return <React.Fragment>
                             {option && option.iconUrl ? (<img src={`${ option.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={optionCurrency} />)}
                             <div>
-                                <Typography variant="h6" component="div" display="inline" style={{ margin: '0px 4px' }}>
+                                <Typography variant="h6" component="div" display="inline" className={classes.walletCurrencyTag}>
                                     { option ? option.currency.toUpperCase(): '' }
                                 </Typography>
                                 <Typography variant="body2" component="div" display="inline" style={{ marginTop: '5px' }}>

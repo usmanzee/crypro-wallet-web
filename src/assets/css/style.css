@@ -12881,13 +12881,8 @@ dl {
 
 /* Navbar */
 .navbar {
-  font-family: "nunito-medium", sans-serif;
   background: rgb(111 33 88);
-  transition: background 0.25s ease;
-  -webkit-transition: background 0.25s ease;
-  -moz-transition: background 0.25s ease;
-  -ms-transition: background 0.25s ease;
-  font-family: "nunito-medium", sans-serif; 
+  opacity: 0.85;
   color: white;
 }
   .navbar .navbar-brand {
@@ -13992,7 +13987,7 @@ dl {
   flex-grow: 1; }
   @media (max-width: 991px) {
     .content-wrapper {
-      padding: 2rem 0rem; 
+      /* padding: 2rem 0rem;  */
     }
   }
 

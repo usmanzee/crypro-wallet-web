@@ -108,15 +108,11 @@ class NavBarComponent extends React.Component<Props, IState> {
         const [name, url, img] = values;
         return (
             <React.Fragment>
-                <div className="search-field d-xl-block">
-                    <ul className="navbar-nav mr-auto">
-                        <li className="nav-item active">
-                            <Link className="nav-link" to={url}>
-                                <FormattedMessage id={name} />
-                            </Link>
-                        </li>
-                    </ul>
-                </div> 
+                <li className="nav-item active">
+                    <Link className="nav-link" to={url}>
+                        <FormattedMessage id={name} />
+                    </Link>
+                </li>
             </React.Fragment>
         );
     };
@@ -268,11 +264,6 @@ class NavBarComponent extends React.Component<Props, IState> {
                     {this.renderLanguages()}
                     {this.renderNotifications()}
                 </ul>
-
-                {/* Menu Opener for Mobile */}
-                <button className="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                    <span className="mdi mdi-menu"></span>
-                </button>
             </>
             
         );

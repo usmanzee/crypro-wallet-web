@@ -75,17 +75,23 @@ class SidebarContainer extends React.Component<Props, State> {
         });
         // const sideBarHidden = isActive ? false : true
         const shouldRenderSidebar = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/' && !window.location.pathname.includes('/trading');
+        console.log('shouldRenderSidebar: ', shouldRenderSidebar);
+        const newSidebarClassName = classnames('sidebar sidebar-offcanvas', {
+            'd-lg-none': !shouldRenderSidebar,
+            '': shouldRenderSidebar,
+        });
 
         return (
             <>
-            {shouldRenderSidebar && 
-            
-            <nav className="sidebar sidebar-offcanvas" id="sidebar">
+                <nav className={newSidebarClassName}>
                     <ul className="nav">
                         {this.renderNewProfileLink()}
                         {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
                     </ul>
-                </nav>}
+                </nav>
+            {/* {shouldRenderSidebar && 
+            } */}
+            
             {/* <div className={sidebarClassName}>
                 {this.renderProfileLink()}
                 <div className="pg-sidebar-wrapper-nav">

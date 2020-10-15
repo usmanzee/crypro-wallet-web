@@ -1,5 +1,4 @@
 import * as React from 'react';
-import clsx from 'clsx';
 import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {
     Box,
@@ -77,7 +76,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     walletSelect: {
         display: 'flex',
-        width: 300,
+        // width: 300,
         cursor: 'pointer',
         // margin:' 8px 0px',
         padding: `12px ${theme.spacing(1)}px`,
@@ -85,16 +84,16 @@ const useStyles = makeStyles((theme: Theme) =>
         borderWidth: '1px',
         borderColor: 'rgb(230, 232, 234)',
         borderStyle: 'solid',
-        [theme.breakpoints.only('sm')]: {
-            width: 'auto',
-        },
-        [theme.breakpoints.only('xs')]: {
-            width: 'auto',
-        },
+        // [theme.breakpoints.only('sm')]: {
+        //     width: 'auto',
+        // },
+        // [theme.breakpoints.only('xs')]: {
+        //     width: 'auto',
+        // },
     },
     fromWalletSelect: {
         cursor: 'pointer',
-        width: '200px',
+        // width: '200px',
         [theme.breakpoints.only('sm')]: {
             width: 'auto',
         },
@@ -116,7 +115,7 @@ const useStyles = makeStyles((theme: Theme) =>
     divider: {
         height: 28,
         margin: 4,
-    }
+    },
   }),
 );
 
@@ -139,6 +138,7 @@ const SwapComponent = (props: Props) => {
     const [walletsToanchorEl, setWalletsToAnchorEl] = React.useState<null | HTMLElement>(null);
     const [walletsFomAnchorEl, setWalletsFromAnchorEl] = React.useState<null | HTMLElement>(null);
     const [previousSelectedWalletFromOption, setPreviousSelectedWalletFromOption] = React.useState<WalletItemProps | null | undefined>(null);
+    const [previousSelectedWalletToOption, setPreviousSelectedWalletToOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [selectedWalletFromOption, setSelectedWalletFromOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [selectedWalletToOption, setSelectedWalletToOption] = React.useState<WalletItemProps | null | undefined>(null);
 
@@ -176,18 +176,34 @@ const SwapComponent = (props: Props) => {
     }, [wallets, walletsTo]);
 
     React.useEffect(() => {
-        checkWalletsFromAndToSelectedOption();
-        handleWalletsFromAmountErrors(walletsFromAmount)
+        checkWalletsFromSelectedOption();
+        getExchangeRates();
+        handleWalletsFromAmountErrors(walletsFromAmount);
     }, [selectedWalletFromOption])
 
     React.useEffect(() => {
-        checkWalletsFromAndToSelectedOption();
-        handleWalletsFromAmountErrors(walletsFromAmount)
+        checkWalletsToSelectedOption();
+        handleWalletsFromAmountErrors(walletsFromAmount);
+        getExchangeRates();
     }, [selectedWalletToOption])
 
     React.useEffect(() => {
         fetchExchangeHistory();
     }, [])
+
+    React.useEffect(() => {
+        handleWalletsFromAmountErrors(walletsFromAmount);
+        getExchangeRates();
+    }, [walletsFromAmount])
+
+    const selectedWalletFromCurrency: string = selectedWalletFromOption && selectedWalletFromOption.currency ? selectedWalletFromOption.currency : defaultWalletsFromCurrency;
+    const selectedWalletToCurrency: string = selectedWalletToOption && selectedWalletToOption.currency ? selectedWalletToOption.currency : defaultWalletsToCurrency;
+
+    const selectedWalletFromOptionBalance: number = selectedWalletFromOption ? Number(selectedWalletFromOption.balance) : 0;
+
+    
+    const selectedWalletFromOptionLocked: number = selectedWalletFromOption ? Number(selectedWalletFromOption.locked) : 0;
+    const selectedWalletFromOptionFixed: number = selectedWalletFromOption ? Number(selectedWalletFromOption.fixed) : 8;
 
     //Addtional Methods
     const searchCurrencyInWallets = (currency: string) => {
@@ -206,11 +222,12 @@ const SwapComponent = (props: Props) => {
         }
         setWalletsFromAnchorEl(null);
     };
-
+    
     const handleWalletsToSelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setWalletsToAnchorEl(event.currentTarget);
     };
     const handleWalletsToSelectChange = (event: React.MouseEvent<HTMLElement>, option: WalletItemProps | null | undefined) => {
+        setPreviousSelectedWalletToOption(selectedWalletToOption);
         setSelectedWalletToOption(option);
     };
     const handleWalletsToSelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
@@ -219,23 +236,18 @@ const SwapComponent = (props: Props) => {
         }
         setWalletsToAnchorEl(null);
     };
-
-    const checkWalletsFromAndToSelectedOption = () => {
+    const checkWalletsFromSelectedOption = () => {
         if(selectedWalletFromOption && selectedWalletToOption && selectedWalletFromOption.currency === selectedWalletToOption.currency) {
-            const tempOption = selectedWalletFromOption;
             setSelectedWalletFromOption(selectedWalletToOption);
             setSelectedWalletToOption(previousSelectedWalletFromOption);
         }
     }
-
-    const selectedWalletFromCurrency: string = selectedWalletFromOption && selectedWalletFromOption.currency ? selectedWalletFromOption.currency : defaultWalletsFromCurrency;
-    const selectedWalletToCurrency: string = selectedWalletToOption && selectedWalletToOption.currency ? selectedWalletToOption.currency : defaultWalletsToCurrency;
-
-    const selectedWalletFromOptionBalance: number = selectedWalletFromOption ? Number(selectedWalletFromOption.balance) : 0;
-
-    
-    const selectedWalletFromOptionLocked: number = selectedWalletFromOption ? Number(selectedWalletFromOption.locked) : 0;
-    const selectedWalletFromOptionFixed: number = selectedWalletFromOption ? Number(selectedWalletFromOption.fixed) : 8;
+    const checkWalletsToSelectedOption = () => {
+        if(selectedWalletFromOption && selectedWalletToOption && selectedWalletFromOption.currency === selectedWalletToOption.currency) {
+            setSelectedWalletToOption(selectedWalletFromOption);
+            setSelectedWalletFromOption(previousSelectedWalletToOption);
+        }
+    }
 
     const handleWalletsFromAmountChange = (event) => {
         const value = event.target.value;
@@ -243,47 +255,35 @@ const SwapComponent = (props: Props) => {
         const convertedValue = cleanPositiveFloatInput(String(value));
         const condition = new RegExp(`^(?:[\\d-]*\\.?[\\d-]{0,${selectedWalletFromOptionFixed}}|[\\d-]*\\.[\\d-])$`);
         if (convertedValue.match(condition)) {
-            const amount = (convertedValue !== '') ? Number(parseFloat(convertedValue).toFixed(selectedWalletFromOptionFixed)) : '';
-            
-            // const total = (amount !== '') ? (amount + Number(this.props.fee)).toFixed(selectedWalletFromOptionFixed) : '';
-
-            // if (Number(total) <= 0) {
-            //     this.setTotal((0).toFixed(fixed));
-            // } else {
-            //     this.setTotal(total);
-            // }
-
-            // this.setState({
-            //     amount: convertedValue,
-            // });
-            handleWalletsFromAmountErrors(convertedValue)
             setWalletsFromAmount(convertedValue);
-            getExchangeRates();
+
         }
     }
     const handleWalletsFromAmountErrors = (amount) => {
-        console.log(selectedWalletFromOptionBalance);
+        let errorMsg = '';
         if(amount) {
-
             if(Number(amount) < minFromAmount) {
                 setWalletsFromError(true);
-                setWalletsFromErrorMessage(`The amount has to be higher than ${minFromAmount}`);
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: minFromAmount });
     
             } else if(Number(amount) > maxFromAmount) {
                 setWalletsFromError(true);
-                setWalletsFromErrorMessage(`The amount has to be lower than ${maxFromAmount}`);
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: maxFromAmount });
     
             }else if (Number(amount) > selectedWalletFromOptionBalance) {
                 setWalletsFromError(true);
-                setWalletsFromErrorMessage(`Your balance is not enough`);
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error3'});
             } else {
                 setWalletsFromError(false);
+                errorMsg = '';
                 setWalletsFromErrorMessage('');
             }
         } else {
             setWalletsFromError(false);
+            errorMsg = '';
             setWalletsFromErrorMessage('');
         }
+        setWalletsFromErrorMessage(`${errorMsg}`);
     }
 
     const handleWalletsToAmountChange = (event) => {
@@ -299,8 +299,13 @@ const SwapComponent = (props: Props) => {
     }
     
     const getExchangeRates = async () => {
-        const response = await fetchRate( selectedWalletFromCurrency, selectedWalletToCurrency, walletsFromAmount);
-        setWalletsToAmount(response.data);
+        if(walletsFromAmount && Number(walletsFromAmount) > 0) {
+            const response = await fetchRate( selectedWalletFromCurrency, selectedWalletToCurrency, walletsFromAmount);
+            // if(response.data) {}
+            setWalletsToAmount(response.data);
+        } else {
+            setWalletsToAmount('0.00');
+        }
     }
     const isValidForm = () => {
         return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError; 
@@ -339,11 +344,21 @@ const SwapComponent = (props: Props) => {
        return (
            <>
                 <Typography variant="body2" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
-                {/* <FormattedMessage id={'page.body.withdraw.total_balance'} />: */}
-                Available:
+                    <FormattedMessage id={'page.body.swap.available'} />:
                 </Typography>
                 <Typography variant="subtitle2" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletFromOption && selectedWalletFromOption.balance }</Typography>
                 <Typography variant="body2" component="div" display="inline">{ selectedWalletFromOption ? selectedWalletFromOption.currency.toUpperCase() : '' }</Typography>
+           </>
+       );
+    }
+    const renderPrice = () => {
+        const price = Number(walletsToAmount)/Number(walletsFromAmount);
+        return (
+           <>
+                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
+                    <FormattedMessage id={'page.body.swap.price'} />:
+                </Typography>
+                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{`1 ${ selectedWalletFromCurrency.toUpperCase() } = ${price} ${selectedWalletToCurrency.toUpperCase()}`}</Typography>
            </>
        );
     }
@@ -351,7 +366,7 @@ const SwapComponent = (props: Props) => {
         return (
             <>
                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
-                    Fee:
+                <FormattedMessage id={'page.body.swap.fee'} />:
                 </Typography>
                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>
                     <Decimal fixed={5}>{exchangeTradingFee}</Decimal>
@@ -366,7 +381,7 @@ const SwapComponent = (props: Props) => {
                 <>
                     <Tooltip title="Estimated price of the swap, not the final price that the swap is executed." placement="right">
                         <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
-                            Receive:
+                        <FormattedMessage id={'page.body.swap.receive'} />:
                         </Typography>
                     </Tooltip>
                     <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>
@@ -377,7 +392,7 @@ const SwapComponent = (props: Props) => {
             );
     };
 
-    const renderExchangeHistory = () => {
+    const renderSwapHistory = () => {
         const columns = [];
         return (
             <>
@@ -432,21 +447,19 @@ const SwapComponent = (props: Props) => {
                     <Grid container>
                         <Grid item md={12}>
                             <Typography variant="h4" display="inline">
-                                {/* <FormattedMessage id={'page.body.withdraw.header.title'} /> */}
-                                Swap
+                                <FormattedMessage id={'page.body.swap.title.swap'} />
                             </Typography>
                         </Grid>
                     </Grid>
                 </Paper>
             </Box>
             <Box mt={3} pl={3} pr={3}>
-                <Container>
                 <Grid container>
                     <Grid item xs={12} sm ={12} md={12} lg={12}>
                         <Paper className={classes.page}>
                             <Grid container>
-                                <Grid md={3} lg={3}></Grid>
-                                <Grid md={6} lg={6}>
+                                <Grid item md={4} lg={4}></Grid>
+                                <Grid item md={4} lg={4}>
                                     {/* <div className={classes.pageTitle}>
                                         <Typography variant="h4" gutterBottom>
                                             Swap
@@ -458,39 +471,43 @@ const SwapComponent = (props: Props) => {
                                         </div>
                                         <div className={classes.swapFromFields}>
                                             <FormControl variant="outlined" fullWidth className={classes.formControl } error={walletsFromError}>
-                                                <InputLabel htmlFor="sell">Sell</InputLabel>
+                                                <InputLabel htmlFor="swap">
+                                                    <FormattedMessage id={'page.body.swap.input.swap'} />
+                                                </InputLabel>
                                                 <OutlinedInput
-                                                    id="sell"
+                                                    id="swap"
+                                                    label={<FormattedMessage id={'page.body.swap.input.swap'} />}
                                                     placeholder={`${minFromAmount}-${maxFromAmount}`}
                                                     type='number'
                                                     value={walletsFromAmount}
-                                                    onChange={handleWalletsFromAmountChange}
-                                                    fullWidth
-                                                    aria-describedby="sell-text"
+                                                    onChange={(e) => {
+                                                        handleWalletsFromAmountChange(e)
+                                                    }}
+                                                    aria-describedby="swap-text"
                                                     endAdornment={
                                                         <InputAdornment position="end">
-                                                            <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>Max</span>
+                                                            <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
+                                                                <FormattedMessage id={'page.body.swap.input.tag.max'} />
+                                                            </span>
                                                             <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
                                                             <div className={classes.fromWalletSelect}>
                                                                 {renderWalletsFromDropdown()}
                                                             </div>
                                                         </InputAdornment>
                                                     }
-                                                    labelWidth={20}
                                                 />
-                                                {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
+                                                {walletsFromError && <FormHelperText id="swap-text">{walletsFromErrorMessage}</FormHelperText>}
                                             </FormControl>
                                         </div>
                                         <div className={classes.swapFields}>
                                             <FormControl variant="filled" fullWidth className={classes.formControl }>
-                                                {/* <InputLabel htmlFor="buy">Buy</InputLabel> */}
-                                                <FilledInput
-                                                    id="buy"
+                                                {/* <InputLabel htmlFor="receive">Receive</InputLabel> */}
+                                                <OutlinedInput
+                                                    id="receive"
                                                     placeholder='0.00'
                                                     type='number'
                                                     value={walletsToAmount}
                                                     onChange={handleWalletsToAmountChange}
-                                                    fullWidth
                                                     disabled={true}
                                                 />
                                             </FormControl>
@@ -498,8 +515,11 @@ const SwapComponent = (props: Props) => {
                                                 {renderWalletsToDropdown()}
                                             </div>
                                         </div>
-                                        {!isValidForm() && (
+                                        {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
                                             <>
+                                                <Box>
+                                                    {renderPrice()}
+                                                </Box>
                                                 <Box>
                                                     {renderExchangeTradingFee()}
                                                 </Box>
@@ -516,18 +536,17 @@ const SwapComponent = (props: Props) => {
                                             onClick={handleSwapButtonClick}
                                             disabled={isValidForm()}
                                         >
-                                            Swap
+                                            <FormattedMessage id={'page.body.swap.button.text.swap'} />
                                         </Button>
                                     </div>
                                 </Grid>
-                                <Grid md={3} lg={3}></Grid>
+                                <Grid item md={4} lg={4}></Grid>
                             </Grid>
                             <Divider className={classes.historyDivider}/>
-                            {renderExchangeHistory()}
+                            {renderSwapHistory()}
                         </Paper> 
                     </Grid>
                 </Grid>
-                </Container>
             </Box>
         </>
     );

@@ -37,43 +37,33 @@ let theme = createMuiTheme({
         main: "#f58220",
       },
     },
-    // typography: {
-    //     fontSize: 16,
-    // },
-    // overrides: {
-    //     MuiDrawer: {
-    //         paper: {
-    //             background: '#fff',
-    //             '& *': { color: 'gba(0, 0, 0, 0.87)' },
-    //         },
-    //     },
-    // },
 
     overrides: {
         MuiButton: {
           root: {
-            // color: "white",
-            "&:hover": {
-              textDecoration: "none",
-              color: '#fff',
-              // Reset on touch devices, it doesn't add specificity
-              "@media (hover: none)": {
-                backgroundColor: "#3C37D"
-              }
-            }
+            // "&:hover": {
+            //   textDecoration: "none",
+            //   color: '#fff',
+            //   "@media (hover: none)": {
+            //     backgroundColor: "#3C37D"
+            //   }
+            // },
           },
-          // outlined: {
-          //   "&:hover": {
-          //       color: 'rgb(111, 33, 88)',
-          //       backgroundColor: "#35C37D"
-          //   }
-          // },
           containedPrimary: {
-            color: "#fff"
+            color: "#fff",
+            "&:disabled": {
+              color: "#fff",
+              backgroundColor: "rgb(111, 33, 88)",
+              opacity: 0.5
+            },
           },
-    
           containedSecondary: {
-            color: "#fff"
+            color: "#fff",
+            "&:disabled": {
+              color: "#fff",
+              backgroundColor: "#f58220",
+              opacity: 0.5
+            },
           },
           outlinedPrimary: {
             color: "#f58220",
@@ -87,11 +77,6 @@ let theme = createMuiTheme({
                 color: '#f58220',
             }
           },
-    
-        //   raised: {
-        //     color: "#fff"
-        //   },
-    
           colorInherit: {
             color: "#fff"
           }

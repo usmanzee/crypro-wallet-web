@@ -10,6 +10,8 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+
 export interface ExchangeHistoryProps {
     in_currency_id: string;
     out_currency_id: string;
@@ -19,7 +21,7 @@ export interface ExchangeHistoryProps {
     created_at: Date;
     updated_at: Date;
 }
-interface Props {
+interface ComponentProps {
     // colums: string[];
     rows: ExchangeHistoryProps[];
 }
@@ -33,6 +35,7 @@ const useStyles = makeStyles({
   },
 });
 
+type Props = ComponentProps & InjectedIntlProps;
 const ExchangeHistoryComponent = (props: Props) => {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -53,50 +56,51 @@ const ExchangeHistoryComponent = (props: Props) => {
       <>
         <div className={classes.root}>
             <Typography variant="h4" gutterBottom>
-                Exchange History
+                <FormattedMessage id={'page.body.swap.history.title.swap_history'} />
             </Typography>
             <Paper>
                 <TableContainer className={classes.container}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                <TableCell>Sell</TableCell>
-                                <TableCell>Amount</TableCell>
-                                <TableCell>Buy</TableCell>
-                                <TableCell>Amount</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell>Date</TableCell>
+                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.sell'} /></TableCell>
+                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.amount'} /></TableCell>
+                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.buy'} /></TableCell>
+                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.amount'} /></TableCell>
+                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.status'} /></TableCell>
+                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.date'} /></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                            return (
-                                <TableRow hover role="checkbox" tabIndex={-1}>
-                                    <TableCell>
-                                        {row.in_currency_id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.in_amount}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.out_currency_id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.out_amount_requested}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.status}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.created_at}
-                                    </TableCell>
-                                </TableRow>
-                            );
+                                return (
+                                    <TableRow hover role="checkbox" tabIndex={-1}>
+                                        <TableCell>
+                                            {row.in_currency_id.toUpperCase()}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.in_amount}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.out_currency_id.toUpperCase()}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.out_amount_requested}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.status}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.created_at}
+                                        </TableCell>
+                                    </TableRow>
+                                );
                             })}
                         </TableBody>
                     </Table>
                 </TableContainer>
                 <TablePagination
+                    labelRowsPerPage={<FormattedMessage id={'page.body.swap.history.table.pagination.text.rows_per_page'} />}
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
                     count={rows.length}
@@ -111,4 +115,4 @@ const ExchangeHistoryComponent = (props: Props) => {
   );
 }
 
-export const ExchangeHistory = ExchangeHistoryComponent;
+export const ExchangeHistory = injectIntl(ExchangeHistoryComponent)
