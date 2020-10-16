@@ -790,6 +790,8 @@ export const en = {
     'account.withdraw.create_error': 'Failed to create withdraw',
     'account.withdraw.invalid_otp': 'Invalid otp',
     'account.withdraw.disabled_api': 'Withdrawal API is disabled',
+    'account.exchanges.exchange.success': 'Exchange request has been received.',
+    'account.exchange.non_positive_amount': 'Exchange field should have a positive value.',
 
     'market.market.doesnt_exist': 'Market doesn\'t exist',
     'market.order.invalid_state': 'Invalid deposit state',

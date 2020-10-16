@@ -792,6 +792,8 @@ export const ru: LangType = {
     'account.withdraw.create_error': 'Не удалось создать вывод',
     'account.withdraw.invalid_otp': 'Неверный 2FA',
     'account.withdraw.disabled_api': 'Снятие API отключено',
+    'account.exchanges.exchange.success': 'Запрос на обмен получен.',
+    'account.exchange.non_positive_amount': 'Поле обмена должно иметь положительное значение.',
 
     'market.market.doesnt_exist': 'Рынок не существует',
     'market.order.invalid_state': 'Неверное состояние депозита',

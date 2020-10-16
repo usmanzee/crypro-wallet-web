@@ -27,7 +27,31 @@ import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
 import { WalletItemProps, WalletsDropdown, Decimal } from '../../components';
 import { ExchangeHistory, ExchangeHistoryProps } from '../../containers/ExchangeHistory';
-import { alertPush, currenciesFetch, Currency, RootState, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
+import { alertPush, 
+    currenciesFetch, 
+    Currency, 
+    RootState, 
+    selectCurrencies, 
+    selectHistory, 
+    selectMobileWalletUi, 
+    selectUserInfo, 
+    selectWalletAddress, 
+    selectWallets, 
+    selectWalletsAddressError, 
+    selectWalletsLoading, 
+    selectWithdrawSuccess, 
+    setMobileWalletUi, 
+    User, 
+    WalletHistoryList, 
+    walletsAddressFetch, 
+    walletsData, 
+    walletsFetch, 
+    walletsWithdrawCcyFetch, 
+    exchangeRateFetch,
+    selectIsFetchingExchangeRate,
+    selectExchangeRate
+} from '../../modules';
+import { stat } from 'fs';
 
 interface ReduxProps {
     user: User;
@@ -35,6 +59,8 @@ interface ReduxProps {
     walletsLoading?: boolean;
     historyList: WalletHistoryList;
     currencies: Currency[];
+    isFetchingRate: boolean;
+    exchangeRate: string;
 }
 
 interface DispatchProps {
@@ -42,8 +68,9 @@ interface DispatchProps {
     fetchAddress: typeof walletsAddressFetch;
     clearWallets: () => void;
     walletsWithdrawCcy: typeof walletsWithdrawCcyFetch;
-    fetchSuccess: typeof alertPush;
+    fetchAlert: typeof alertPush;
     currenciesFetch: typeof currenciesFetch;
+    exchangeRateFetch: typeof exchangeRateFetch;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -130,8 +157,9 @@ const SwapComponent = (props: Props) => {
     const maxFromAmount = 100;
     //Props
     const classes = useStyles();
-    const { wallets, user, currencies } = props;
+    const { wallets, user, currencies, isFetchingRate, exchangeRate } = props;
 
+    console.log(isFetchingRate);
     //States
     const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
     const [walletsToCurrency, setWalletsToCurrency] = React.useState<string>(defaultWalletsToCurrency);
@@ -199,6 +227,10 @@ const SwapComponent = (props: Props) => {
         handleWalletsFromAmountErrors(walletsFromAmount);
         getExchangeRates();
     }, [walletsFromAmount])
+
+    React.useEffect(() => {
+        setWalletsToAmount(exchangeRate);
+    }, [exchangeRate])
 
     const selectedWalletFromCurrency: string = selectedWalletFromOption && selectedWalletFromOption.currency ? selectedWalletFromOption.currency : defaultWalletsFromCurrency;
     const selectedWalletToCurrency: string = selectedWalletToOption && selectedWalletToOption.currency ? selectedWalletToOption.currency : defaultWalletsToCurrency;
@@ -291,7 +323,7 @@ const SwapComponent = (props: Props) => {
     }
 
     const handleWalletsToAmountChange = (event) => {
-        setWalletsToAmount(event.target.value);
+        // setWalletsToAmount(event.target.value);
     }
     
     const setWalletFromMaxAmount = () => {
@@ -303,32 +335,42 @@ const SwapComponent = (props: Props) => {
     }
     
     const getExchangeRates = async () => {
-        if(walletsFromAmount && Number(walletsFromAmount) > 0) {
-            const response = await fetchRate( selectedWalletToCurrency, walletsFromAmount, selectedWalletFromCurrency);
-            // if(response.data) {}
-            setWalletsToAmount(response.data);
-        } else {
-            setWalletsToAmount('0.00');
-        }
+        props.exchangeRateFetch({
+            base_currency: selectedWalletToCurrency,
+            quote_currency: selectedWalletFromCurrency,
+            quote_amount: walletsFromAmount
+        });
+        // if(walletsFromAmount && Number(walletsFromAmount) > 0) {
+
+
+        //     // try {
+        //     //     console.log('try');
+        //     //     const response = await fetchRate( selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
+        //     //     if (response.status === 201) {
+        //     //         setWalletsToAmount(response.data);
+        //     //     }
+        //     // } catch (error) {
+        //     //     console.log('catch: ', error);
+        //     //     // props.fetchAlert({message: error.message, code: error.code, type: 'error'});
+        //     // }
+            
+        // } else {
+        //     setWalletsToAmount(isFetchingRate ? 'Loading' : '0.00');
+        // }
     }
     const isValidForm = () => {
         return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError; 
     }
     const handleSwapButtonClick = async () => {
-        const res = await postExchange(selectedWalletFromCurrency, selectedWalletToCurrency, walletsFromAmount);
         try {
-            if (res.status === 201){
-                toast.success('Success Notification !', {
-                    position: 'top-right',
-                });
+            const res = await postExchange(selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
+            if (res.status === 201) {
+                props.fetchAlert({ message: ['account.exchanges.exchange.success'], type: 'success'});
                 fetchExchangeHistory();
             }
 
         } catch (error) {
-            toast.error('Insufficient Balance!', {
-                position: 'top-right',
-              });
-
+            props.fetchAlert({message: error.message, code: error.code, type: 'error'});
         }
     }
 
@@ -509,7 +551,7 @@ const SwapComponent = (props: Props) => {
                                                 {/* <InputLabel htmlFor="receive">Receive</InputLabel> */}
                                                 <OutlinedInput
                                                     id="receive"
-                                                    placeholder='0.00'
+                                                    placeholder={isFetchingRate ? 'Loading...' : '0.00'}
                                                     type='number'
                                                     value={walletsToAmount}
                                                     onChange={handleWalletsToAmountChange}
@@ -563,14 +605,19 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     walletsLoading: selectWalletsLoading(state),
     historyList: selectHistory(state),
     currencies: selectCurrencies(state),
+    isFetchingRate: selectIsFetchingExchangeRate(state),
+    exchangeRate: selectExchangeRate(state)
 });
 const mapDispatchToProps = dispatch => ({
     fetchWallets: () => dispatch(walletsFetch()),
     fetchAddress: ({ currency }) => dispatch(walletsAddressFetch({ currency })),
     walletsWithdrawCcy: params => dispatch(walletsWithdrawCcyFetch(params)),
     clearWallets: () => dispatch(walletsData([])),
-    fetchSuccess: payload => dispatch(alertPush(payload)),
+    fetchAlert: payload => dispatch(alertPush(payload)),
     currenciesFetch: () => dispatch(currenciesFetch()),
+    exchangeRateFetch: (data) => {
+        dispatch(exchangeRateFetch(data));
+    }
 });
 
 export const SwapScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(SwapComponent))

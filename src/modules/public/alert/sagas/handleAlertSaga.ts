@@ -41,6 +41,7 @@ export function* handleAlertSaga(action: AlertPush) {
                 }
 
                 return;
+            case 422:
             default:
                 yield call(callAlertData, action);
         }
