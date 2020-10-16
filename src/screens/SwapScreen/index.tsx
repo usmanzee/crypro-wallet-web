@@ -152,14 +152,9 @@ const SwapComponent = (props: Props) => {
 
     //UseEffect
     React.useEffect(() => {
-        // if (!wallets.length) {
-        //     props.fetchWallets();
-        // }
-
-        const timer = setTimeout(() => {
+        if (!wallets.length) {
             props.fetchWallets();
-          }, 1000);
-          return () => clearTimeout(timer);
+        }
     }, [wallets]);
 
     React.useEffect(() => {
