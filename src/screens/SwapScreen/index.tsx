@@ -133,6 +133,8 @@ const SwapComponent = (props: Props) => {
     const { wallets, user, currencies } = props;
 
     //States
+    const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
+    const [walletsToCurrency, setWalletsToCurrency] = React.useState<string>(defaultWalletsToCurrency);
     const [walletsFrom, setWalletsFrom] = React.useState<WalletItemProps[]>([]);
     const [walletsTo, setWalletsTo] = React.useState<WalletItemProps[]>([]);
     const [walletsToanchorEl, setWalletsToAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -150,9 +152,14 @@ const SwapComponent = (props: Props) => {
 
     //UseEffect
     React.useEffect(() => {
-        if (!wallets.length) {
+        // if (!wallets.length) {
+        //     props.fetchWallets();
+        // }
+
+        const timer = setTimeout(() => {
             props.fetchWallets();
-        }
+          }, 1000);
+          return () => clearTimeout(timer);
     }, [wallets]);
 
     React.useEffect(() => {
@@ -160,7 +167,7 @@ const SwapComponent = (props: Props) => {
             setWalletsFrom(wallets)
         } else if(walletsFrom.length > 0 && wallets.length > 0) {
             
-            let searchedOption = searchCurrencyInWallets(defaultWalletsFromCurrency);
+            let searchedOption = searchCurrencyInWallets(walletsFromCurrency);
             setSelectedWalletFromOption(searchedOption);
         }
     }, [wallets, walletsFrom]);
@@ -170,18 +177,20 @@ const SwapComponent = (props: Props) => {
             setWalletsTo(wallets)
         } else if(walletsTo.length > 0 && wallets.length > 0) {
             
-            let searchedOption = searchCurrencyInWallets(defaultWalletsToCurrency);
+            let searchedOption = searchCurrencyInWallets(walletsToCurrency);
             setSelectedWalletToOption(searchedOption);
         }
     }, [wallets, walletsTo]);
 
     React.useEffect(() => {
+        setWalletsFromCurrency(selectedWalletFromOption ? selectedWalletFromOption.currency : walletsFromCurrency);
         checkWalletsFromSelectedOption();
         getExchangeRates();
         handleWalletsFromAmountErrors(walletsFromAmount);
     }, [selectedWalletFromOption])
 
     React.useEffect(() => {
+        setWalletsToCurrency(selectedWalletToOption ? selectedWalletToOption.currency : walletsToCurrency);
         checkWalletsToSelectedOption();
         handleWalletsFromAmountErrors(walletsFromAmount);
         getExchangeRates();
@@ -300,7 +309,7 @@ const SwapComponent = (props: Props) => {
     
     const getExchangeRates = async () => {
         if(walletsFromAmount && Number(walletsFromAmount) > 0) {
-            const response = await fetchRate( selectedWalletFromCurrency, selectedWalletToCurrency, walletsFromAmount);
+            const response = await fetchRate( selectedWalletToCurrency, walletsFromAmount, selectedWalletFromCurrency);
             // if(response.data) {}
             setWalletsToAmount(response.data);
         } else {
@@ -458,8 +467,8 @@ const SwapComponent = (props: Props) => {
                     <Grid item xs={12} sm ={12} md={12} lg={12}>
                         <Paper className={classes.page}>
                             <Grid container>
-                                <Grid item md={4} lg={4}></Grid>
-                                <Grid item md={4} lg={4}>
+                                <Grid item md={2} lg={4}></Grid>
+                                <Grid item xs={12} sm={12} md={8} lg={4}>
                                     {/* <div className={classes.pageTitle}>
                                         <Typography variant="h4" gutterBottom>
                                             Swap
@@ -480,6 +489,7 @@ const SwapComponent = (props: Props) => {
                                                     placeholder={`${minFromAmount}-${maxFromAmount}`}
                                                     type='number'
                                                     value={walletsFromAmount}
+                                                    autoFocus={true}
                                                     onChange={(e) => {
                                                         handleWalletsFromAmountChange(e)
                                                     }}
@@ -540,7 +550,7 @@ const SwapComponent = (props: Props) => {
                                         </Button>
                                     </div>
                                 </Grid>
-                                <Grid item md={4} lg={4}></Grid>
+                                <Grid item md={2} lg={4}></Grid>
                             </Grid>
                             <Divider className={classes.historyDivider}/>
                             {renderSwapHistory()}

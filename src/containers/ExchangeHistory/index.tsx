@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -27,13 +28,23 @@ interface ComponentProps {
 }
 
 const useStyles = makeStyles({
-  root: {
-    width: '100%',
-  },
-  container: {
-    maxHeight: 440,
-  },
+    tablePaper: {
+        padding: '8px 16px'
+    }
 });
+
+const StyledTableCell = withStyles((theme: Theme) =>
+    createStyles({
+        head: {
+            backgroundColor: "rgb(228 224 224)",
+            color: theme.palette.common.black,
+            fontSize: 13,
+        },
+        body: {
+            fontSize: 13,
+        },
+    }),
+)(TableCell);
 
 type Props = ComponentProps & InjectedIntlProps;
 const ExchangeHistoryComponent = (props: Props) => {
@@ -54,63 +65,75 @@ const ExchangeHistoryComponent = (props: Props) => {
 
   return (
       <>
-        <div className={classes.root}>
-            <Typography variant="h4" gutterBottom>
-                <FormattedMessage id={'page.body.swap.history.title.swap_history'} />
-            </Typography>
-            <Paper>
-                <TableContainer className={classes.container}>
+        <Box mt={2}>
+            <Paper className={classes.tablePaper}>
+                <Typography variant="h4" gutterBottom>
+                    <FormattedMessage id={'page.body.swap.history.title.swap_history'} />
+                </Typography>
+                <TableContainer>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.sell'} /></TableCell>
-                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.amount'} /></TableCell>
-                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.buy'} /></TableCell>
-                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.amount'} /></TableCell>
-                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.status'} /></TableCell>
-                                <TableCell><FormattedMessage id={'page.body.swap.history.table.column.date'} /></TableCell>
+                                <StyledTableCell><FormattedMessage id={'page.body.swap.history.table.column.sell'} /></StyledTableCell>
+                                <StyledTableCell><FormattedMessage id={'page.body.swap.history.table.column.amount'} /></StyledTableCell>
+                                <StyledTableCell><FormattedMessage id={'page.body.swap.history.table.column.buy'} /></StyledTableCell>
+                                <StyledTableCell><FormattedMessage id={'page.body.swap.history.table.column.amount'} /></StyledTableCell>
+                                <StyledTableCell><FormattedMessage id={'page.body.swap.history.table.column.status'} /></StyledTableCell>
+                                <StyledTableCell><FormattedMessage id={'page.body.swap.history.table.column.date'} /></StyledTableCell>
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                return (
-                                    <TableRow hover role="checkbox" tabIndex={-1}>
-                                        <TableCell>
-                                            {row.in_currency_id.toUpperCase()}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.in_amount}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.out_currency_id.toUpperCase()}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.out_amount_requested}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.status}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.created_at}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
+                        {rows.length ? 
+                        <>
+                            <TableBody>
+                                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                    return (
+                                        <TableRow hover role="checkbox" tabIndex={-1}>
+                                            <StyledTableCell>
+                                                {row.in_currency_id.toUpperCase()}
+                                            </StyledTableCell>
+                                            <StyledTableCell>
+                                                {row.in_amount}
+                                            </StyledTableCell>
+                                            <StyledTableCell>
+                                                {row.out_currency_id.toUpperCase()}
+                                            </StyledTableCell>
+                                            <StyledTableCell>
+                                                {row.out_amount_requested}
+                                            </StyledTableCell>
+                                            <StyledTableCell>
+                                                {row.status}
+                                            </StyledTableCell>
+                                            <StyledTableCell>
+                                                {row.created_at}
+                                            </StyledTableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                            </> : 
+                            <>
+                                <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
+                                    <FormattedMessage id={'no.record.found'} />
+                                </caption>
+                            </>
+                        }
+                        
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    labelRowsPerPage={<FormattedMessage id={'page.body.swap.history.table.pagination.text.rows_per_page'} />}
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
+                {rows.length ?
+                    <TablePagination
+                        labelRowsPerPage={<FormattedMessage id={'page.body.swap.history.table.pagination.text.rows_per_page'} />}
+                        rowsPerPageOptions={[10, 25, 100]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onChangePage={handleChangePage}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                    /> : ""
+                }
             </Paper>
-        </div>
+        </Box>
       </>
   );
 }
