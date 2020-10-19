@@ -1,8 +1,5 @@
 import * as React from 'react';
 import {
-    Box,
-    Grid,
-    Paper,
     Typography,
 } from '@material-ui/core';
 import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
@@ -96,14 +93,8 @@ export interface WalletDropdownProps {
     selectedWallet: WalletItemProps | null | undefined;
     setAnchorEl(target: HTMLElement | null): void;
     setSelectedWallet(option: WalletItemProps | null): void;
-    /**
-     * Callback function which is invoked whenever wallet item is clicked
-     */
     walletDropdownClick(event: React.MouseEvent<HTMLElement>): void;
     walletDropdownChange(event: React.MouseEvent<HTMLElement>, option: WalletItemProps | null | undefined): void;
-    /**
-     * Callback function which is invoked whenever wallet item is clicked
-     */
     walletDropdownClose(event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason): void;
 }
 export const WalletsDropdown = (props: WalletDropdownProps) => {

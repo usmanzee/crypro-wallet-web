@@ -1,0 +1,38 @@
+HTTP/2 200
+Content-Type: application/json; charset=utf-8
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, PUT, PATCH, DELETE
+access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Authorization
+Access-Control-Allow-Headers: *
+
+[{
+		"id": 1,
+		"currency": "btc",
+		"type": "coin",
+		"amount": "0.000056",
+		"fee": "0.0",
+		"blockchain_txid": "e554a76d8217867cd5163182a28ed78397d0b44534b79c6d0c84d9755fe4c9f0",
+		"rid": "2Mzeza4DKa2vKN1MvnL844En4eWzC3hTd3B",
+		"state": "confirming",
+		"confirmations": 0,
+		"note": null,
+		"created_at": "2020-10-19T12:46:36+02:00",
+		"updated_at": "2020-10-19T12:46:37+02:00",
+		"done_at": null
+	},
+	{
+		"id": 2,
+		"currency": "btc",
+		"type": "coin",
+		"amount": "0.00055",
+		"fee": "0.0",
+		"blockchain_txid": "e554a76d8217867cd5163182a28ed78397d0b44534b79c6d0c84d9755fe4c9f0",
+		"rid": "2N62wmgGooRJjRRg849vVzTK1QLZ75qdCDr",
+		"state": "confirming",
+		"confirmations": 0,
+		"note": null,
+		"created_at": "2020-10-19T12:46:36+02:00",
+		"updated_at": "2020-10-19T12:46:37+02:00",
+		"done_at": null
+	}
+]

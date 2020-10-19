@@ -37,7 +37,7 @@ import {
     ForgotPasswordScreen,
     HistoryScreen,
     LandingScreen,
-    MassPage,
+    MasspayScreen,
     OrdersTabScreen,
     ProfileScreen,
     ProfileTwoFactorAuthScreen,
@@ -225,7 +225,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallet/withdraw/crypto/:currency?" component={WithdrawCryptoScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallet/withdraw/fiat/:currency?" component={WithdrawFiatScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/swap" component={SwapScreen} />
-                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/masspay" component={MassPage} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/masspay" component={MasspayScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/security/2fa" component={ProfileTwoFactorAuthScreen} />
                             <Route exact path="/fee" component={FeeScreen}/>
                             <Route path="**"><Redirect to="/trading/" /></Route>
