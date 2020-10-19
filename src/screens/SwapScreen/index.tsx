@@ -49,7 +49,8 @@ import { alertPush,
     walletsWithdrawCcyFetch, 
     exchangeRateFetch,
     selectIsFetchingExchangeRate,
-    selectExchangeRate
+    selectExchangeRate,
+    exchangeRateReset
 } from '../../modules';
 import { stat } from 'fs';
 
@@ -71,6 +72,7 @@ interface DispatchProps {
     fetchAlert: typeof alertPush;
     currenciesFetch: typeof currenciesFetch;
     exchangeRateFetch: typeof exchangeRateFetch;
+    exchangeRateReset: typeof exchangeRateReset;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -335,28 +337,29 @@ const SwapComponent = (props: Props) => {
     }
     
     const getExchangeRates = async () => {
-        props.exchangeRateFetch({
-            base_currency: selectedWalletToCurrency,
-            quote_currency: selectedWalletFromCurrency,
-            quote_amount: walletsFromAmount
-        });
-        // if(walletsFromAmount && Number(walletsFromAmount) > 0) {
+        if(walletsFromAmount && Number(walletsFromAmount) > 0) {
+            props.exchangeRateFetch({
+                base_currency: selectedWalletToCurrency,
+                quote_currency: selectedWalletFromCurrency,
+                quote_amount: walletsFromAmount
+            });
 
 
-        //     // try {
-        //     //     console.log('try');
-        //     //     const response = await fetchRate( selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
-        //     //     if (response.status === 201) {
-        //     //         setWalletsToAmount(response.data);
-        //     //     }
-        //     // } catch (error) {
-        //     //     console.log('catch: ', error);
-        //     //     // props.fetchAlert({message: error.message, code: error.code, type: 'error'});
-        //     // }
+            // try {
+            //     console.log('try');
+            //     const response = await fetchRate( selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
+            //     if (response.status === 201) {
+            //         setWalletsToAmount(response.data);
+            //     }
+            // } catch (error) {
+            //     console.log('catch: ', error);
+            //     // props.fetchAlert({message: error.message, code: error.code, type: 'error'});
+            // }
             
-        // } else {
-        //     setWalletsToAmount(isFetchingRate ? 'Loading' : '0.00');
-        // }
+        } else {
+            // setWalletsToAmount(isFetchingRate ? 'Loading' : '0.00');
+            props.exchangeRateReset();
+        }
     }
     const isValidForm = () => {
         return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError; 
@@ -617,7 +620,8 @@ const mapDispatchToProps = dispatch => ({
     currenciesFetch: () => dispatch(currenciesFetch()),
     exchangeRateFetch: (data) => {
         dispatch(exchangeRateFetch(data));
-    }
+    },
+    exchangeRateReset: () => dispatch(exchangeRateReset())
 });
 
 export const SwapScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(SwapComponent))

@@ -3,6 +3,7 @@ import {
     EXCHANGE_RATE_FETCH,
     EXCHANGE_RATE_SUCCESS,
     EXCHANGE_RATE_ERROR,
+    EXCHANGE_RATE_RESET,
     EXCHANGE_FETCH,
     EXCHANGE_SUCCESS,
     EXCHANGE_ERROR,
@@ -38,6 +39,12 @@ export const exchangeReducer = (state: ExchangeState = initialExchangeState, act
                 isRateFetching: false,
                 rate: '0.00',
                 error: action.payload.message
+            }
+        case EXCHANGE_RATE_RESET:
+            return {
+                ...state,
+                isFetchingRate: false,
+                rate: '0.00'
             }
         default:
             return state;

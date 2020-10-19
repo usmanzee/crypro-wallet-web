@@ -3,6 +3,7 @@ import {
     EXCHANGE_RATE_FETCH,
     EXCHANGE_RATE_SUCCESS,
     EXCHANGE_RATE_ERROR,
+    EXCHANGE_RATE_RESET,
     EXCHANGE_FETCH,
     EXCHANGE_SUCCESS,
     EXCHANGE_ERROR,
@@ -28,4 +29,9 @@ export const exchangeRateError = (message: string) => ({
     payload: {
         message
     },
+});
+
+export const exchangeRateReset = () => ({
+    type: EXCHANGE_RATE_RESET,
+    
 });
