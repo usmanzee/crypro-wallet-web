@@ -154,14 +154,10 @@ type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 const SwapComponent = (props: Props) => {
     const defaultWalletsFromCurrency = 'btc';
     const defaultWalletsToCurrency = 'eth';
-    const exchangeTradingFee = 0.01;
-    const minFromAmount = 0.1;
-    const maxFromAmount = 100;
     //Props
     const classes = useStyles();
     const { wallets, user, currencies, isFetchingRate, exchangeRate } = props;
 
-    console.log(isFetchingRate);
     //States
     const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
     const [walletsToCurrency, setWalletsToCurrency] = React.useState<string>(defaultWalletsToCurrency);
@@ -238,6 +234,10 @@ const SwapComponent = (props: Props) => {
     const selectedWalletToCurrency: string = selectedWalletToOption && selectedWalletToOption.currency ? selectedWalletToOption.currency : defaultWalletsToCurrency;
 
     const selectedWalletFromOptionBalance: number = selectedWalletFromOption ? Number(selectedWalletFromOption.balance) : 0;
+    const selectedWalletFromOptionMinswapAmount: number = selectedWalletFromOption ? Number(selectedWalletFromOption.minSwapAmount) : 0;
+    const selectedWalletFromOptionMaxswapAmount: number = selectedWalletFromOption ? Number(selectedWalletFromOption.maxSwapAmount) : 0;
+
+    const selectedWalletToOptionSwapFee: number = selectedWalletToOption ? Number(selectedWalletToOption.swapFee) : 0;
 
     
     const selectedWalletFromOptionLocked: number = selectedWalletFromOption ? Number(selectedWalletFromOption.locked) : 0;
@@ -300,13 +300,15 @@ const SwapComponent = (props: Props) => {
     const handleWalletsFromAmountErrors = (amount) => {
         let errorMsg = '';
         if(amount) {
-            if(Number(amount) < minFromAmount) {
+            console.log(selectedWalletFromOptionMinswapAmount);
+            console.log(selectedWalletFromOptionMaxswapAmount);
+            if(Number(amount) < selectedWalletFromOptionMinswapAmount) {
                 setWalletsFromError(true);
-                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: minFromAmount });
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: selectedWalletFromOptionMinswapAmount });
     
-            } else if(Number(amount) > maxFromAmount) {
+            } else if(Number(amount) > selectedWalletFromOptionMaxswapAmount) {
                 setWalletsFromError(true);
-                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: maxFromAmount });
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: selectedWalletFromOptionMaxswapAmount });
     
             }else if (Number(amount) > selectedWalletFromOptionBalance) {
                 setWalletsFromError(true);
@@ -418,7 +420,7 @@ const SwapComponent = (props: Props) => {
                 <FormattedMessage id={'page.body.swap.fee'} />:
                 </Typography>
                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>
-                    <Decimal fixed={5}>{exchangeTradingFee}</Decimal>
+                    <Decimal fixed={5}>{selectedWalletToOptionSwapFee}</Decimal>
                 </Typography>
                 <Typography variant="h6" component="div" display="inline">{ selectedWalletToCurrency.toUpperCase() }</Typography>
             </>
@@ -434,7 +436,7 @@ const SwapComponent = (props: Props) => {
                         </Typography>
                     </Tooltip>
                     <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>
-                        <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * exchangeTradingFee}</Decimal>
+                        <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal>
                     </Typography>
                     <Typography variant="h6" component="div" display="inline">{ selectedWalletToCurrency.toUpperCase() }</Typography>
                 </>
@@ -526,7 +528,7 @@ const SwapComponent = (props: Props) => {
                                                 <OutlinedInput
                                                     id="swap"
                                                     label={<FormattedMessage id={'page.body.swap.input.swap'} />}
-                                                    placeholder={`${minFromAmount}-${maxFromAmount}`}
+                                                    placeholder={selectedWalletFromOption ? `${selectedWalletFromOption.minSwapAmount} - ${selectedWalletFromOption.maxSwapAmount}` : ''}
                                                     type='number'
                                                     value={walletsFromAmount}
                                                     autoFocus={true}

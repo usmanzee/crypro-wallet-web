@@ -50,6 +50,10 @@ export interface WalletItemProps {
      *Is withdraw enable
      */
     withdrawEnabled: boolean,
+
+    swapFee: number,
+	minSwapAmount: number,
+	maxSwapAmount: number
 }
 
 const style: React.CSSProperties = {

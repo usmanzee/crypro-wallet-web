@@ -37,6 +37,10 @@ export function* walletsSaga() {
                 iconUrl: currency.icon_url,
                 depositEnabled: currency.deposit_enabled,
                 withdrawEnabled: currency.withdrawal_enabled,
+                swapFee: currency.swap_fee,
+                minSwapAmount: currency.min_swap_amount,
+                maxSwapAmount: currency.max_swap_amount
+                
             });
         });
 

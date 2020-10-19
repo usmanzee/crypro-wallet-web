@@ -17,4 +17,7 @@ export interface Currency {
     base_factor: number;
     precision: number;
     icon_url: string;
+    swap_fee: number;
+	min_swap_amount: number;
+	max_swap_amount: number;
 }

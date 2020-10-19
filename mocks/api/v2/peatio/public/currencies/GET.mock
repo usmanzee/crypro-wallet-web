@@ -24,7 +24,11 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 0,
 	"icon_url": "https://i.ibb.co/TmdGr36/rs-04.png",
-	"min_confirmations": 6
+	"min_confirmations": 6,
+	"swap_fee": 0.01,
+	"min_swap_amount": 1,
+	"max_swap_amount": 10
+
 }, {
 	"id": "btc",
 	"name": "Bitcoin",
@@ -44,7 +48,10 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 1,
 	"icon_url": "https://raw.githubusercontent.com/HafeezRai/cryptocurrency-icons/master/128/color/btc.png",
-	"min_confirmations": 2
+	"min_confirmations": 2,
+	"swap_fee": 0.001,
+	"min_swap_amount": 0.00001,
+	"max_swap_amount": 5
 }, {
 	"id": "eth",
 	"name": "Ethereum",
@@ -64,7 +71,10 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 2,
 	"icon_url": "https://raw.githubusercontent.com/HafeezRai/cryptocurrency-icons/master/128/color/eth.png",
-	"min_confirmations": 3
+	"min_confirmations": 3,
+	"swap_fee": 0.01,
+	"min_swap_amount": 0.01,
+	"max_swap_amount": 10
 }, {
 	"id": "bch",
 	"name": "BitcoinCash",
@@ -84,7 +94,10 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 3,
 	"icon_url": "https://raw.githubusercontent.com/HafeezRai/cryptocurrency-icons/master/128/color/bch.png",
-	"min_confirmations": 3
+	"min_confirmations": 3,
+	"swap_fee": 0.01,
+	"min_swap_amount": 0.1,
+	"max_swap_amount": 10
 }, {
 	"id": "dash",
 	"name": "Dash",
@@ -104,7 +117,10 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 4,
 	"icon_url": "https://raw.githubusercontent.com/HafeezRai/cryptocurrency-icons/master/128/color/dash.png",
-	"min_confirmations": 6
+	"min_confirmations": 6,
+	"swap_fee": 0.01,
+	"min_swap_amount": 0.1,
+	"max_swap_amount": 10
 }, {
 	"id": "ltc",
 	"name": "Litecoin",
@@ -124,7 +140,11 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 5,
 	"icon_url": "https://raw.githubusercontent.com/HafeezRai/cryptocurrency-icons/master/128/color/ltc.png",
-	"min_confirmations": 6
+	"min_confirmations": 6,
+	"swap_fee": 0.01,
+	"min_swap_amount": 0.11,
+	"max_swap_amount": 10
+	
 }, {
 	"id": "usd",
 	"name": "US Dollar",
@@ -141,7 +161,10 @@ Access-Control-Allow-Credentials: true
 	"base_factor": 1,
 	"precision": 2,
 	"position": 6,
-	"icon_url": "https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/128/icon/usd.png"
+	"icon_url": "https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/128/icon/usd.png",
+	"swap_fee": 0.01,
+	"min_swap_amount": 50,
+	"max_swap_amount": 100
 }, {
 	"id": "myr",
 	"name": "Malaysian Ringgit",
@@ -158,7 +181,10 @@ Access-Control-Allow-Credentials: true
 	"base_factor": 1,
 	"precision": 2,
 	"position": 7,
-	"icon_url": "https://www.xe.com/themes/xe/images/flags/big/myr.png"
+	"icon_url": "https://www.xe.com/themes/xe/images/flags/big/myr.png",
+	"swap_fee": 0.01,
+	"min_swap_amount": 100,
+	"max_swap_amount": 500
 }, {
 	"id": "eur",
 	"name": "Euro",
@@ -175,7 +201,10 @@ Access-Control-Allow-Credentials: true
 	"base_factor": 1,
 	"precision": 2,
 	"position": 8,
-	"icon_url": "https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/128/icon/eur.png"
+	"icon_url": "https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/128/icon/eur.png",
+	"swap_fee": 0.01,
+	"min_swap_amount": 20,
+	"max_swap_amount": 100
 }, {
 	"id": "zec",
 	"name": "ZCash",
@@ -195,7 +224,10 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 8,
 	"icon_url": "https://raw.githubusercontent.com/HafeezRai/cryptocurrency-icons/master/128/color/zec.png",
-	"min_confirmations": 3
+	"min_confirmations": 3,
+	"swap_fee": 0.01,
+	"min_swap_amount": 1,
+	"max_swap_amount": 10
 }, {
 	"id": "xrp",
 	"name": "Ripple",
@@ -215,7 +247,10 @@ Access-Control-Allow-Credentials: true
 	"precision": 8,
 	"position": 10,
 	"icon_url": "https://raw.githubusercontent.com/HafeezRai/cryptocurrency-icons/master/128/color/xrp.png",
-	"min_confirmations": 1
+	"min_confirmations": 1,
+	"swap_fee": 0.01,
+	"min_swap_amount": 1,
+	"max_swap_amount": 10
 }, {
 	"id": "sgd",
 	"name": "Singapore Dollar",
@@ -232,5 +267,8 @@ Access-Control-Allow-Credentials: true
 	"base_factor": 1,
 	"precision": 2,
 	"position": 13,
-	"icon_url": "https://www.xe.com/themes/xe/images/flags/big/sgd.png"
+	"icon_url": "https://www.xe.com/themes/xe/images/flags/big/sgd.png",
+	"swap_fee": 0.01,
+	"min_swap_amount": 1,
+	"max_swap_amount": 10
 }]
