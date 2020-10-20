@@ -33,7 +33,6 @@ import { alertPush,
     RootState, 
     selectCurrencies, 
     selectHistory, 
-    selectMobileWalletUi, 
     selectUserInfo, 
     selectWalletAddress, 
     selectWallets, 
@@ -50,7 +49,8 @@ import { alertPush,
     exchangeRateFetch,
     selectIsFetchingExchangeRate,
     selectExchangeRate,
-    exchangeRateReset
+    exchangeRateReset,
+    exchangeRequest
 } from '../../modules';
 import { stat } from 'fs';
 
@@ -73,6 +73,7 @@ interface DispatchProps {
     currenciesFetch: typeof currenciesFetch;
     exchangeRateFetch: typeof exchangeRateFetch;
     exchangeRateReset: typeof exchangeRateReset;
+    exchangeRequest: typeof exchangeRequest;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -154,6 +155,9 @@ type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 const SwapComponent = (props: Props) => {
     const defaultWalletsFromCurrency = 'btc';
     const defaultWalletsToCurrency = 'eth';
+    const defaultSwapFee = 0.01;
+    const defaultMinSwapFee = 0.1;
+    const defaultMaxSwapFee = 10;
     //Props
     const classes = useStyles();
     const { wallets, user, currencies, isFetchingRate, exchangeRate } = props;
@@ -234,12 +238,12 @@ const SwapComponent = (props: Props) => {
     const selectedWalletToCurrency: string = selectedWalletToOption && selectedWalletToOption.currency ? selectedWalletToOption.currency : defaultWalletsToCurrency;
 
     const selectedWalletFromOptionBalance: number = selectedWalletFromOption ? Number(selectedWalletFromOption.balance) : 0;
-    const selectedWalletFromOptionMinswapAmount: number = selectedWalletFromOption ? Number(selectedWalletFromOption.minSwapAmount) : 0;
-    const selectedWalletFromOptionMaxswapAmount: number = selectedWalletFromOption ? Number(selectedWalletFromOption.maxSwapAmount) : 0;
+    const selectedWalletFromOptionMinswapAmount: number = selectedWalletFromOption && selectedWalletFromOption.minSwapAmount ? Number(selectedWalletFromOption.minSwapAmount) : defaultMinSwapFee;
+    const selectedWalletFromOptionMaxswapAmount: number = selectedWalletFromOption && selectedWalletFromOption.maxSwapAmount ? Number(selectedWalletFromOption.maxSwapAmount) : defaultMaxSwapFee;
 
-    const selectedWalletToOptionSwapFee: number = selectedWalletToOption ? Number(selectedWalletToOption.swapFee) : 0;
+    const selectedWalletToOptionSwapFee: number = selectedWalletToOption && selectedWalletToOption.swapFee ? Number(selectedWalletToOption.swapFee) : defaultSwapFee;
 
-    
+
     const selectedWalletFromOptionLocked: number = selectedWalletFromOption ? Number(selectedWalletFromOption.locked) : 0;
     const selectedWalletFromOptionFixed: number = selectedWalletFromOption ? Number(selectedWalletFromOption.fixed) : 8;
 
@@ -345,21 +349,8 @@ const SwapComponent = (props: Props) => {
                 quote_currency: selectedWalletFromCurrency,
                 quote_amount: walletsFromAmount
             });
-
-
-            // try {
-            //     console.log('try');
-            //     const response = await fetchRate( selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
-            //     if (response.status === 201) {
-            //         setWalletsToAmount(response.data);
-            //     }
-            // } catch (error) {
-            //     console.log('catch: ', error);
-            //     // props.fetchAlert({message: error.message, code: error.code, type: 'error'});
-            // }
             
         } else {
-            // setWalletsToAmount(isFetchingRate ? 'Loading' : '0.00');
             props.exchangeRateReset();
         }
     }
@@ -367,16 +358,11 @@ const SwapComponent = (props: Props) => {
         return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError; 
     }
     const handleSwapButtonClick = async () => {
-        try {
-            const res = await postExchange(selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
-            if (res.status === 201) {
-                props.fetchAlert({ message: ['account.exchanges.exchange.success'], type: 'success'});
-                fetchExchangeHistory();
-            }
-
-        } catch (error) {
-            props.fetchAlert({message: error.message, code: error.code, type: 'error'});
-        }
+        props.exchangeRequest({
+            base_currency: selectedWalletToCurrency,
+            quote_currency: selectedWalletFromCurrency,
+            quote_amount: walletsFromAmount
+        });
     }
 
     const fetchExchangeHistory = async () => {
@@ -623,7 +609,10 @@ const mapDispatchToProps = dispatch => ({
     exchangeRateFetch: (data) => {
         dispatch(exchangeRateFetch(data));
     },
-    exchangeRateReset: () => dispatch(exchangeRateReset())
+    exchangeRequest: (data) => {
+        dispatch(exchangeRequest(data));
+    },
+    exchangeRateReset: () => dispatch(exchangeRateReset()),
 });
 
 export const SwapScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(SwapComponent))

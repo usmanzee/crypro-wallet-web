@@ -13320,7 +13320,6 @@ dl {
 .sidebar {
   min-height: calc(100vh - 64px);
   background: #fffefe;
-  /* font-family: "nunito-medium", sans-serif; */
   box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 4px, rgba(0, 0, 0, 0.08) 0px 0px 4px;
   padding: 40px 0px;
   width: 230px;
@@ -13645,6 +13644,7 @@ dl {
     bottom: 0;
     overflow: auto;
     right: -258px;
+    padding: 8px 0px;
     -webkit-transition: all 0.25s ease-out;
     transition: all 0.25s ease-out; }
     .sidebar-offcanvas.active {

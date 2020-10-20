@@ -4,7 +4,7 @@ import {
     EXCHANGE_RATE_SUCCESS,
     EXCHANGE_RATE_ERROR,
     EXCHANGE_RATE_RESET,
-    EXCHANGE_FETCH,
+    EXCHANGE_REQUEST,
     EXCHANGE_SUCCESS,
     EXCHANGE_ERROR,
 } from './constants';
@@ -33,5 +33,25 @@ export const exchangeRateError = (message: string) => ({
 
 export const exchangeRateReset = () => ({
     type: EXCHANGE_RATE_RESET,
+    
+});
+
+export const exchangeRequest = (data) => ({
+    type: EXCHANGE_REQUEST,
+    payload: {
+        data: data
+    }
+    
+});
+
+export const exchangeSuccess = () => ({
+    type: EXCHANGE_SUCCESS,
+    
+});
+export const exchangeError = (message: string) => ({
+    type: EXCHANGE_ERROR,
+    payload: {
+        message
+    },
     
 });

@@ -24,8 +24,6 @@ import TextField from '@material-ui/core/TextField';
 import {DropzoneArea} from 'material-ui-dropzone';
 import Papa from 'papaparse';
 import { postMassWithdraws } from '../../apis/withdraw';
-// import {currencies} from '../../helpers/currency';
-
 
 import { withStyles, Theme } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -39,6 +37,7 @@ import {
     User, 
 } from '../../modules';
 import { CurrencyInfo } from '../../components';
+import { exit } from 'process';
 
 interface ReduxProps {
     user: User;
@@ -93,14 +92,10 @@ type Props = ReduxProps & DispatchProps & InjectedIntlProps;
 class MasspayComponent extends React.Component<Props> {
 
     state = {
-        upload: [],
-        selectedCurrency: null,
-        error: '',
-        open: false,
-        setOpen: false,
-        currency: '',
-        data: [],
-        tx_data: [],
+        uploadedFile: [],
+        modalOpen: false,
+        fileData: [],
+        responseData: [],
         otp:'',
         submitted: false,
         formatedData: []
@@ -108,9 +103,6 @@ class MasspayComponent extends React.Component<Props> {
 
     constructor(props) {
         super(props);
-
-        // Bind this to function updateData (This eliminates the error)
-        this.updateData = this.updateData.bind(this);
     }
 
     public componentDidMount() {
@@ -121,35 +113,121 @@ class MasspayComponent extends React.Component<Props> {
         }
     }
 
-    onSubmit = async e => {
+    onFileChange = (files) => {
+        this.setState({uploadedFile: files[0]})
+        this.isFileFormValid();    
+    }
+
+    onFileSubmit = async e => {
         e.preventDefault();
 
-        Papa.parse(this.state.upload, {
+        let allKeyPresent = false;
+        Papa.parse(this.state.uploadedFile, {
             header: true,
             download: false,
             skipEmptyLines: true,
-            // Here this is also available. So we can call our custom class method
-            complete: this.updateData
+            complete: (results) => {
+                const fileData = results.data;
+                this.setState({
+                    fileData: fileData
+                });
+                this.handleModalOpen();
+            }
         });
-        this.handleClickOpen()
-
     };
-    downloadCSV =()=>
-    {
-        var csv = Papa.unparse(this.state.tx_data);
+
+    handleModalOpen = () => {
+        this.setState({modalOpen: true})
+    }
+
+    handleOTPChange(event) {
+        this.setState({
+            otp: event.target.value
+        });
+    }
+
+    handleModalClose = () => {
+        // this.resetDropzone();
+        this.setState({modalOpen: false})
+    }
+
+    public isFileFormValid = () => {
+        if(this.state.uploadedFile) {
+            return true;
+        }
+        return false;
+    }
+
+    public isRequestFormValid = () => {
+        if(this.state.submitted || !this.state.otp || !Boolean(this.state.otp.length > 5)) {
+            return true;
+        }
+        return false;
+    }
+
+    handleRequestSubmit = async () => {
+        this.setState({submitted: true})
+        const formatedData = await this.formateData();
+
+        const formatedCurrenciesData = formatedData.filter((row) => {
+            return row.meta_data.length > 0
+        });
+        this.setState({
+            // @ts-ignore
+            formatedData: formatedCurrenciesData
+        });
+
+        const response = await postMassWithdraws({
+            otp: this.state.otp,
+            data: this.state.formatedData
+        });
+        if(response.data) {
+            this.resetDropzone();
+            this.setState({modalOpen: false, responseData: response.data})
+            this.downloadCSV()
+            this.setState({submitted: false})
+        }
+
+    }
+
+    public resetDropzone = () => {
+         //remove upload file
+         let element: HTMLElement = document.getElementsByClassName('MuiDropzonePreviewList-removeButton')[0] as HTMLElement;
+         if(element) {
+             element.click();
+         }
+    }
+
+    private formateData = async () => {
+        const {currencies} = this.props;
+
+        const rows = this.state.fileData;
+        return await currencies.map(currency => {
+            // @ts-ignore
+            const dataInfo = rows.filter((row) => {
+                // @ts-ignore
+                return row.Currency === currency.id.toUpperCase() && row.BTC_Address != ''
+            });
+
+            return ({
+                    currency: currency.id,
+                    meta_data: dataInfo
+                });
+        });
+    }
+
+    private downloadCSV = () => {
+        var csv = Papa.unparse(this.state.responseData);
 
         var csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
         //@ts-ignore
         var csvURL 
-        if (navigator.msSaveBlob)
-        {
+        if (navigator.msSaveBlob) {
             csvURL = navigator.msSaveBlob(csvData, 'download.csv');
         }
-        else
-        {
+        else {
             csvURL = window.URL.createObjectURL(csvData);
-
-
+            
             var link = document.createElement("a");
             if (link.download !== undefined) { // feature detection
                 // Browsers that support HTML5 download attribute
@@ -162,129 +240,10 @@ class MasspayComponent extends React.Component<Props> {
                 document.body.removeChild(link);
             }
         }
-
-    }
-
-    updateData(result) {
-        const data = result.data;
-        // Here this is available and we can call this.setState (since it's binded in the constructor)
-        this.setState({
-            data: data
-        }); // or shorter ES syntax: this.setState({ data });
-    }
-
-    onFilesChange = (files) => {
-        this.setState({upload: files[0]})
-    }
-
-    handleChange = (event) => {
-        const value = event.target.value;
-        this.setState({value});
-        this.setState({currency: value})
-    }
-    // @ts-ignore
-    onChange = field => e => {
-        // @ts-ignore
-        this.props.onChange(field, e.target.value.trim());
-    };
-
-    updateInputValue(evt) {
-        this.setState({
-            otp: evt.target.value
-        });
-    }
-
-    handleChangeField = (ev) => {
-        this.setState({[ev.target.name]: ev.target.value})
-    };
-
-
-    handleClickOpen = () => {
-        this.setState({setOpen: true, open: true})
-    }
-
-    handleClose = () => {
-        this.setState({setOpen: false, open: false})
-    }
-
-    resetForm = () => {
-    }
-
-    handleSubmit = async () => {
-        this.setState({submitted: true})
-        const res_data= []
-        const dic = this.state.data;
-        const formatedData = await this.formateData();
-
-        const formatedCurrenciesData = formatedData.filter((row) => {
-            return row.data.length > 0
-        });
-        this.setState({
-            // @ts-ignore
-            formatedData: formatedCurrenciesData
-        });
-
-        const response = await postMassWithdraws({
-            opt_code: this.state.otp,
-            currencies: this.state.formatedData
-        });
-
-        // for(var index in dic) {
-
-        //     // @ts-ignore
-        //     const response = await postMassWithdraws(
-        //         {
-        //             // @ts-ignore
-        //             rid: dic[index].BTC_Address,
-        //             // @ts-ignore
-        //             amount: dic[index].Amount,
-        //             currency: this.state.currency,
-        //             otp: this.state.otp
-        //         }
-        //     );
-        //     if(response.data) {
-        //         let resp = response.data
-        //         //let w_id = ['W_ID': dic[index].W_ID]
-        //         //resp['W_ID']= dic[index].W_ID
-        //         // @ts-ignore
-        //         let data = {'W_ID': dic[index].W_ID, ...resp}
-        //         //resp.unshift(dic[index].W_ID)
-        //         // @ts-ignore
-        //         res_data.push(data)
-        //         console.log("result", data)
-        //     }
-
-        // }
-        if(response.data) {
-
-            this.setState({setOpen: false, open: false, tx_data: response.data})
-            this.downloadCSV()
-            this.setState({submitted: false})
-            this.resetForm();
-        }
-
-    }
-
-    private formateData = async () => {
-        const {currencies} = this.props;
-
-        const rows = this.state.data;
-        return await currencies.map(currency => {
-            // @ts-ignore
-            const dataInfo = rows.filter((row) => {
-                // @ts-ignore
-                return row.Currency === currency.id.toUpperCase() && row.BTC_Address != ''
-            });
-
-            return ({
-                    currency: currency.id,
-                    data: dataInfo
-                });
-        });
     }
 
     render() {
-        const {data,  currency, otp} = this.state;
+        const {fileData, otp} = this.state;
         const {currencies, classes} = this.props;
 
 
@@ -299,18 +258,18 @@ class MasspayComponent extends React.Component<Props> {
                         <form className={classes.form}>
                             <FormControl margin="normal" required fullWidth>
                                 <DropzoneArea
-                                    acceptedFiles={['text/*', 'application/*']}
+                                    acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
+                                    clearOnUnmount={true}
                                     maxFileSize={10000000}
                                     dropzoneText="Drag and Drop a CSV file or Click Here"
                                     showFileNamesInPreview={true}
                                     filesLimit={1}
-                                    onChange={this.onFilesChange.bind(this)}
+                                    onChange={this.onFileChange.bind(this)}
                                 />
                             </FormControl>
 
                             <Typography variant="h6"
                                         style={{padding: 10, color: 'red', fontSize: '12px', textAlign: 'center'}}>
-                                {this.state.error}
                             </Typography>
                             <FormControl margin="normal" required fullWidth>
                                 <Button
@@ -318,8 +277,9 @@ class MasspayComponent extends React.Component<Props> {
                                     variant="contained"
                                     color="primary"
                                     className={classes.submit}
+                                    disabled={!this.isFileFormValid()}
                                     onClick={(e) => {
-                                        this.onSubmit(e)
+                                        this.onFileSubmit(e)
                                     }}
                                 >
                                     Submit
@@ -328,7 +288,7 @@ class MasspayComponent extends React.Component<Props> {
 
                         </form>
                     </div>
-                    <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <Dialog open={this.state.modalOpen} onClose={this.handleModalClose} aria-labelledby="form-dialog-title">
                         <DialogTitle id="form-dialog-title">Multiple Withdraws</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
@@ -342,7 +302,7 @@ class MasspayComponent extends React.Component<Props> {
                                 autoFocus
                                 fullWidth
                                 variant="outlined"
-                                onChange={evt => this.updateInputValue(evt)}
+                                onChange={event => this.handleOTPChange(event)}
                                 value={otp}
                             />
                             
@@ -356,7 +316,7 @@ class MasspayComponent extends React.Component<Props> {
                                 </TableHead>
                                 <TableBody>
                                     {
-                                        data.map((ad, index) =>
+                                        fileData.map((ad, index) =>
                                             <TableRow key={index} className={
                                                 // @ts-ignore
                                                 ad.BTC_Address ? classes.defaultRow : classes.redRow}>
@@ -381,16 +341,16 @@ class MasspayComponent extends React.Component<Props> {
                             </Table>
                             <Typography component="h1"
                             // @ts-ignore
-                                variant="h5">Total: {data.reduce((partial_sum, a) => partial_sum + parseFloat(a.Amount), 0)}</Typography>
+                                variant="h5">Total: {fileData.reduce((partial_sum, a) => partial_sum + parseFloat(a.Amount), 0)}</Typography>
 
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={this.handleClose} color="primary">
+                            <Button onClick={this.handleModalClose} color="primary">
                                 Cancel
                             </Button>
                             <Button
-                                onClick={this.handleSubmit}
-                                disabled={this.state.submitted}
+                                onClick={this.handleRequestSubmit}
+                                disabled={this.isRequestFormValid()}
                                 color="primary"
                             >
                                 Submit

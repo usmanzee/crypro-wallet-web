@@ -3,7 +3,11 @@ import { FormattedMessage } from 'react-intl';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 import {
     Paper,
-    Typography,
+	Typography,
+	List,
+	ListItem,
+	ListItemText,
+	Divider
 } from '@material-ui/core';
 
 
@@ -36,7 +40,18 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     depositDescription: {
       marginBottom: `${theme.spacing(3)}px`
-    }
+	},
+	list: {
+		display: 'flex',
+		flexDirection: 'row',
+		padding: 0,
+        [theme.breakpoints.only('xs')]: {
+            display: 'block',
+        },
+	},
+	BanksDivider: {
+		margin: `${theme.spacing(2)}px 0px`
+	}
   }),
 );
 
@@ -135,39 +150,91 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 		return (
 			<>
 				{detail.banks && detail.banks.map((bank) => {
-					return <><div className="cr-deposit-fiat-detail" key={bank.title}>
-						<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
-							<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
-						</Typography>
-						<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
-							{bank.title}
-						</Typography>
-					  	</div>
-						<div className="cr-deposit-fiat-detail" key={bank.accountNumber}>
-							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
-								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
+					return (
+					<>
+					<List className={classes.list} disablePadding={true}>
+						<ListItem disableGutters>
+							<Typography variant="button" display="inline" gutterBottom>
+								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
 							</Typography>
-							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
-								{bank.accountNumber}
+						</ListItem>
+						<ListItem disableGutters>
+						<Typography variant="body1" display="inline" gutterBottom>
+								{bank.title}
 							</Typography>
-						</div>
-						<div className="cr-deposit-fiat-detail" key={bank.name}>
-							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+						</ListItem>
+					</List>
+					<List className={classes.list} disablePadding={true}>
+						<ListItem disableGutters>
+						<Typography variant="button" display="inline" gutterBottom>
+									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
+								</Typography>
+						</ListItem>
+						<ListItem disableGutters>
+						<Typography variant="body1" display="inline" gutterBottom>
+									{bank.accountNumber}
+								</Typography>
+						</ListItem>
+					</List>
+					<List className={classes.list} disablePadding={true}>
+						<ListItem disableGutters>
+							<Typography variant="button" display="inline" gutterBottom>
 								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />
 							</Typography>
-							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+						</ListItem>
+						<ListItem disableGutters>
+							<Typography variant="body1" display="inline" gutterBottom>
 								{bank.name}
 							</Typography>
-						</div>
-						<div className="cr-deposit-fiat-detail" key={bank.uid}>
-							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+						</ListItem>
+					</List>
+					<List className={classes.list} disablePadding={true}>
+						<ListItem disableGutters>
+							<Typography variant="button" display="inline" gutterBottom>
 								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
 							</Typography>
-							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+						</ListItem>
+						<ListItem disableGutters>
+							<Typography variant="body1" display="inline" gutterBottom>
 								{uid}
 							</Typography>
-						</div>
+						</ListItem>
+					</List>
+						{/* <div className="cr-deposit-fiat-detail" key={bank.title}>
+							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
+							</Typography>
+							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+								{bank.title}
+							</Typography>
+							</div>
+							<div className="cr-deposit-fiat-detail" key={bank.accountNumber}>
+								<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
+								</Typography>
+								<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+									{bank.accountNumber}
+								</Typography>
+							</div>
+							<div className="cr-deposit-fiat-detail" key={bank.name}>
+								<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />
+								</Typography>
+								<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+									{bank.name}
+								</Typography>
+							</div>
+							<div className="cr-deposit-fiat-detail" key={bank.uid}>
+								<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
+								</Typography>
+								<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+									{uid}
+								</Typography>
+							</div> */}
+							<Divider className={classes.BanksDivider}/>
 						</>
+					)
 			  })}
 			</>
 		  );
@@ -203,6 +270,12 @@ const bankCurrencies = [
     title: 'usd',
     banks: [
       {
+        id: '1',
+        title: 'B4u Group of Companies, S.L',
+        name: 'Bank Cod(Swift/Bic): CMFGUS33',
+        accountNumber: '831-061-555-0',
+	  },
+	  {
         id: '1',
         title: 'B4u Group of Companies, S.L',
         name: 'Bank Cod(Swift/Bic): CMFGUS33',

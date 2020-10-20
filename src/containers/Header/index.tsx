@@ -97,7 +97,7 @@ class Head extends React.Component<Props> {
                                 </button>
                             </div>
                         </div>
-                        {/* {shouldRenderMarketToolbar && 
+                        {shouldRenderMarketToolbar && 
                         (
                             <>
                                 <Paper className={classes.subHeader} elevation={1} style={{ display: 'block' }}>
@@ -112,7 +112,7 @@ class Head extends React.Component<Props> {
                                 </Paper>
                             </>
                         )
-                        } */}
+                        }
                     </>
                     // <header className={`pg-header`}>
                     //     <div className={`pg-container pg-header__content ${tradingCls}`}>

@@ -4,7 +4,7 @@ import {
     EXCHANGE_RATE_SUCCESS,
     EXCHANGE_RATE_ERROR,
     EXCHANGE_RATE_RESET,
-    EXCHANGE_FETCH,
+    EXCHANGE_REQUEST,
     EXCHANGE_SUCCESS,
     EXCHANGE_ERROR,
 } from './constants';
@@ -12,11 +12,13 @@ import {
 
 export interface ExchangeState {
     isRateFetching: boolean;
+    isProcessingRequest: boolean;
     rate: string;
 }
 
 export const initialExchangeState: ExchangeState = {
     isRateFetching: false,
+    isProcessingRequest: false,
     rate: '0.00'
 }
 
@@ -45,6 +47,22 @@ export const exchangeReducer = (state: ExchangeState = initialExchangeState, act
                 ...state,
                 isFetchingRate: false,
                 rate: '0.00'
+            }
+        case EXCHANGE_REQUEST:
+            return {
+                ...state,
+                isProcessingRequest: true,
+            }
+        case EXCHANGE_SUCCESS:
+            return {
+                ...state,
+                isProcessingRequest: false,
+            }
+        case EXCHANGE_ERROR:
+            return {
+                ...state,
+                isProcessingRequest: false,
+                error: action.payload.message
             }
         default:
             return state;
