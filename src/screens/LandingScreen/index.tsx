@@ -63,7 +63,10 @@ class Landing extends React.Component<Props> {
                         <img src={WalletLogo} className="pg-logo__img" alt="Logo" />
                     </div>
                     <div className="pg-landing-screen__header__wrap__right">
-                        <Link to="/signin" className="landing-button landing-button--simple">
+                        {/* <Link to="/signin">
+                            {this.translate('page.body.landing.header.button2')}
+                        </Link> */}
+                        <Link to="/signin" className="landing-button" style={{ marginRight: '8px' }}>
                             {this.translate('page.body.landing.header.button2')}
                         </Link>
                         <Link to="/signup" className="landing-button">
