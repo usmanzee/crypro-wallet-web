@@ -21,11 +21,22 @@ import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
-import { Blur, DepositCrypto, WalletItemProps, CryptoIcon } from '../../components';
-import { alertPush, beneficiariesFetch, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
+import { DepositCrypto, WalletItemProps, CryptoIcon } from '../../components';
+import { 
+    RootState, 
+    alertPush,
+    selectUserInfo, 
+    selectWalletAddress, 
+    selectWallets, 
+    selectWalletsAddressError, 
+    selectWalletsLoading, 
+    User, 
+    walletsAddressFetch, 
+    walletsFetch, 
+} from '../../modules';
 import { CommonError } from '../../modules/types';
 import { WalletHistory } from '../../containers/Wallets/History';
-import { formatCCYAddress, setDocumentTitle } from '../../helpers';
+import { formatCCYAddress } from '../../helpers';
 
 import {
     useParams
@@ -34,26 +45,15 @@ import {
 interface ReduxProps {
     user: User;
     wallets: WalletItemProps[];
-    withdrawSuccess: boolean;
     addressDepositError?: CommonError;
     walletsLoading?: boolean;
-    historyList: WalletHistoryList;
-    mobileWalletChosen: string;
     selectedWalletAddress: string;
-    beneficiariesActivateSuccess: boolean;
-    beneficiariesDeleteSuccess: boolean;
-    currencies: Currency[];
 }
 
 interface DispatchProps {
-    fetchBeneficiaries: typeof beneficiariesFetch;
+    fetchSuccess: typeof alertPush;
     fetchWallets: typeof walletsFetch;
     fetchAddress: typeof walletsAddressFetch;
-    clearWallets: () => void;
-    walletsWithdrawCcy: typeof walletsWithdrawCcyFetch;
-    fetchSuccess: typeof alertPush;
-    setMobileWalletUi: typeof setMobileWalletUi;
-    currenciesFetch: typeof currenciesFetch;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -198,21 +198,12 @@ const DepositWalletCrypto = (props: Props) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
-    console.log(wallets);
-    console.log(cryptoWallets);
     //UseEffect
     React.useEffect(() => {
         if (!wallets.length) {
             props.fetchWallets();
         }
     }, [wallets]);
-
-    
-    React.useEffect(() => {
-        if (!currencies.length) {
-            props.currenciesFetch();
-        }
-    }, [currencies]);
 
     React.useEffect(() => {
         if (cryptoWallets.length === 0 && wallets.length > 0) {
@@ -289,9 +280,6 @@ const DepositWalletCrypto = (props: Props) => {
         ${translate('page.body.wallets.tabs.deposit.ccy.button.generate')} ${selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : ''} ${translate('page.body.wallets.tabs.deposit.ccy.button.address')}
     `;
 
-    // const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
-    //     'pg-blur-deposit-crypto--active': isAccountActivated,
-    // });
     const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0.0000;
     const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? +selectedWalletOption.locked : 0.0000;
     return (
@@ -447,23 +435,12 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     wallets: selectWallets(state),
     walletsLoading: selectWalletsLoading(state),
     addressDepositError: selectWalletsAddressError(state),
-    withdrawSuccess: selectWithdrawSuccess(state),
-    historyList: selectHistory(state),
-    mobileWalletChosen: selectMobileWalletUi(state),
     selectedWalletAddress: selectWalletAddress(state),
-    beneficiariesActivateSuccess: selectBeneficiariesActivateSuccess(state),
-    beneficiariesDeleteSuccess: selectBeneficiariesDeleteSuccess(state),
-    currencies: selectCurrencies(state),
 });
 const mapDispatchToProps = dispatch => ({
-    fetchBeneficiaries: () => dispatch(beneficiariesFetch()),
+    fetchSuccess: payload => dispatch(alertPush(payload)),
     fetchWallets: () => dispatch(walletsFetch()),
     fetchAddress: ({ currency }) => dispatch(walletsAddressFetch({ currency })),
-    walletsWithdrawCcy: params => dispatch(walletsWithdrawCcyFetch(params)),
-    clearWallets: () => dispatch(walletsData([])),
-    fetchSuccess: payload => dispatch(alertPush(payload)),
-    setMobileWalletUi: payload => dispatch(setMobileWalletUi(payload)),
-    currenciesFetch: () => dispatch(currenciesFetch()),
 });
 
 export const DepositCryptoScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(DepositWalletCrypto))

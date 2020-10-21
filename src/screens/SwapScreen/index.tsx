@@ -2,7 +2,6 @@ import * as React from 'react';
 import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {
     Box,
-    Container,
     Grid,
     Paper,
     Typography,
@@ -12,15 +11,14 @@ import { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import Divider from '@material-ui/core/Divider';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import FilledInput from '@material-ui/core/FilledInput';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { cleanPositiveFloatInput} from '../../helpers';
-import { toast } from 'react-toastify';
 import { fetchRate, getExchangeHistory, postExchange } from '../../apis/exchange';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouterProps } from 'react-router';
@@ -28,29 +26,20 @@ import { connect } from 'react-redux';
 import { WalletItemProps, WalletsDropdown, Decimal } from '../../components';
 import { ExchangeHistory, ExchangeHistoryProps } from '../../containers/ExchangeHistory';
 import { alertPush, 
-    currenciesFetch, 
-    Currency, 
     RootState, 
-    selectCurrencies, 
-    selectHistory, 
     selectUserInfo, 
-    selectWalletAddress, 
     selectWallets, 
-    selectWalletsAddressError, 
     selectWalletsLoading, 
     selectWithdrawSuccess, 
-    setMobileWalletUi, 
     User, 
-    WalletHistoryList, 
-    walletsAddressFetch, 
-    walletsData, 
     walletsFetch, 
-    walletsWithdrawCcyFetch, 
     exchangeRateFetch,
     selectIsFetchingExchangeRate,
     selectExchangeRate,
     exchangeRateReset,
-    exchangeRequest
+    exchangeRequest,
+    selectExchangeSuccess,
+    selectExchangeLoading
 } from '../../modules';
 import { stat } from 'fs';
 
@@ -58,19 +47,14 @@ interface ReduxProps {
     user: User;
     wallets: WalletItemProps[];
     walletsLoading?: boolean;
-    historyList: WalletHistoryList;
-    currencies: Currency[];
     isFetchingRate: boolean;
     exchangeRate: string;
+    exchangeSuccess: boolean;
+    exchangeLoading: boolean;
 }
 
 interface DispatchProps {
     fetchWallets: typeof walletsFetch;
-    fetchAddress: typeof walletsAddressFetch;
-    clearWallets: () => void;
-    walletsWithdrawCcy: typeof walletsWithdrawCcyFetch;
-    fetchAlert: typeof alertPush;
-    currenciesFetch: typeof currenciesFetch;
     exchangeRateFetch: typeof exchangeRateFetch;
     exchangeRateReset: typeof exchangeRateReset;
     exchangeRequest: typeof exchangeRequest;
@@ -137,6 +121,9 @@ const useStyles = makeStyles((theme: Theme) =>
         height: 28,
         margin: 4,
     },
+    buttonProgress: {
+        color: '#fff',
+    }
   }),
 );
 
@@ -151,7 +138,7 @@ const SwapComponent = (props: Props) => {
     const defaultMaxSwapFee = 10;
     //Props
     const classes = useStyles();
-    const { wallets, user, currencies, isFetchingRate, exchangeRate } = props;
+    const { wallets, user, currencies, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading } = props;
 
     //States
     const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
@@ -224,6 +211,12 @@ const SwapComponent = (props: Props) => {
     React.useEffect(() => {
         setWalletsToAmount(exchangeRate);
     }, [exchangeRate])
+
+    React.useEffect(() => {
+        if(exchangeSuccess) {
+            resetFrom();
+        }
+    }, [exchangeSuccess])
 
     const selectedWalletFromCurrency: string = selectedWalletFromOption && selectedWalletFromOption.currency ? selectedWalletFromOption.currency : defaultWalletsFromCurrency;
     const selectedWalletToCurrency: string = selectedWalletToOption && selectedWalletToOption.currency ? selectedWalletToOption.currency : defaultWalletsToCurrency;
@@ -337,8 +330,8 @@ const SwapComponent = (props: Props) => {
         if(walletsFromAmount && Number(walletsFromAmount) > 0) {
             props.exchangeRateFetch({
                 base_currency: selectedWalletToCurrency,
-                quote_currency: selectedWalletFromCurrency,
-                quote_amount: walletsFromAmount
+                qoute_currency: selectedWalletFromCurrency,
+                qoute_amount: walletsFromAmount
             });
             
         } else {
@@ -346,15 +339,21 @@ const SwapComponent = (props: Props) => {
         }
     }
     const isValidForm = () => {
-        return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError; 
+        return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError || exchangeLoading; 
     }
     const handleSwapButtonClick = async () => {
         const requestData = {
             base_currency: selectedWalletToCurrency,
-            quote_currency: selectedWalletFromCurrency,
-            quote_amount: walletsFromAmount
+            qoute_currency: selectedWalletFromCurrency,
+            qoute_amount: walletsFromAmount
         };
         props.exchangeRequest(requestData);
+    }
+
+    const resetFrom = () => {
+        setWalletsFromAmount('');
+        props.fetchWallets();
+        props.exchangeRateReset();
     }
 
     const fetchExchangeHistory = async () => {
@@ -569,7 +568,7 @@ const SwapComponent = (props: Props) => {
                                             onClick={handleSwapButtonClick}
                                             disabled={isValidForm()}
                                         >
-                                            <FormattedMessage id={'page.body.swap.button.text.buy'} />
+                                            {exchangeLoading ? <CircularProgress className={classes.buttonProgress} size={18} /> : <FormattedMessage id={'page.body.swap.button.text.buy'} />}
                                         </Button>
                                     </div>
                                 </Grid>
@@ -589,18 +588,13 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     user: selectUserInfo(state),
     wallets: selectWallets(state),
     walletsLoading: selectWalletsLoading(state),
-    historyList: selectHistory(state),
-    currencies: selectCurrencies(state),
     isFetchingRate: selectIsFetchingExchangeRate(state),
-    exchangeRate: selectExchangeRate(state)
+    exchangeRate: selectExchangeRate(state),
+    exchangeSuccess: selectExchangeSuccess(state),
+    exchangeLoading: selectExchangeLoading(state)
 });
 const mapDispatchToProps = dispatch => ({
     fetchWallets: () => dispatch(walletsFetch()),
-    fetchAddress: ({ currency }) => dispatch(walletsAddressFetch({ currency })),
-    walletsWithdrawCcy: params => dispatch(walletsWithdrawCcyFetch(params)),
-    clearWallets: () => dispatch(walletsData([])),
-    fetchAlert: payload => dispatch(alertPush(payload)),
-    currenciesFetch: () => dispatch(currenciesFetch()),
     exchangeRateFetch: (data) => {
         dispatch(exchangeRateFetch(data));
     },

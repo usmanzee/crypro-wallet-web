@@ -103,7 +103,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
 /**
  *  Component that displays wallet details that can be used to deposit cryptocurrency.
  */
@@ -125,6 +124,8 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         isAccountActivated,
         currency,
     } = props;
+
+    console.log(props);
     const size = dimensions || QR_SIZE;
 
     const addressText = props.intl.formatMessage({ id: 'page.body.deposit.network.address.text' }, { currency: currency ? currency.toUpperCase(): '' });

@@ -12,13 +12,15 @@ import {
 
 export interface ExchangeState {
     isRateFetching: boolean;
-    isProcessingRequest: boolean;
+    loading: boolean;
+    exchangeSuccess: boolean;
     rate: string;
 }
 
 export const initialExchangeState: ExchangeState = {
     isRateFetching: false,
-    isProcessingRequest: false,
+    loading: false,
+    exchangeSuccess: false,
     rate: '0.00'
 }
 
@@ -51,17 +53,20 @@ export const exchangeReducer = (state: ExchangeState = initialExchangeState, act
         case EXCHANGE_REQUEST:
             return {
                 ...state,
-                isProcessingRequest: true,
+                loading: true,
+                exchangeSuccess: false
             }
         case EXCHANGE_SUCCESS:
             return {
                 ...state,
-                isProcessingRequest: false,
+                loading: false,
+                exchangeSuccess: true
             }
         case EXCHANGE_ERROR:
             return {
                 ...state,
-                isProcessingRequest: false,
+                loading: false,
+                exchangeSuccess: false,
                 error: action.payload.message
             }
         default:
