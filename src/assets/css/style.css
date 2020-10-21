@@ -12881,8 +12881,7 @@ dl {
 
 /* Navbar */
 .navbar {
-  background: rgb(111 33 88);
-  opacity: 0.85;
+  background-color: rgba(111, 33, 88, 0.85);
   color: white;
 }
   .navbar .navbar-brand {

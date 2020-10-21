@@ -9,6 +9,7 @@ export const en = {
     'page.header.navbar.trade': 'Trade',
     'page.header.navbar.wallets': 'Wallets',
     'page.header.navbar.swap': 'Swap',
+    'page.header.navbar.buy_sell': 'Buy/Sell',
     'page.header.navbar.openOrders': 'Orders',
     'page.header.navbar.history': 'History',
 
@@ -161,6 +162,7 @@ export const en = {
     'page.body.wallets.action.withdraw': 'Withdraw',
     'page.body.wallets.action.transfer': 'Transfer',
     'page.body.wallets.action.trade': 'Trade',
+    'page.body.wallets.action.buy': 'Buy',
 
     'page.body.wallets.estimated_value': 'Estimated Value',
     'page.body.wallets.input.search.placeholder': 'Search',
@@ -263,8 +265,11 @@ export const en = {
     'page.body.wallets.beneficiaries.failAddModal.button': 'Confirm an account',
 
     'page.body.swap.title.swap': 'Swap',
+    'page.body.swap.title.buy_sell': 'Buy/Sell',
     'page.body.swap.available': 'Available',
     'page.body.swap.input.swap': 'Swap',
+    'page.body.swap.input.sell': 'Sell',
+    'page.body.swap.input.buy': 'Buy',
     'page.body.swap.input.tag.max': 'Max',
     'page.body.swap.input.error1': 'The amount has to be higher than {amount}.',
     'page.body.swap.input.error2': 'The amount has to be lower than {amount}.',
@@ -273,7 +278,9 @@ export const en = {
     'page.body.swap.price': 'Price',
     'page.body.swap.receive': 'Receive',
     'page.body.swap.button.text.swap': 'Swap',
+    'page.body.swap.button.text.buy': 'Buy',
     'page.body.swap.history.title.swap_history': 'Swap History',
+    'page.body.swap.history.title.buy_sell_history': 'Buy/Sell History',
     'page.body.swap.history.table.column.sell': 'Sell',
     'page.body.swap.history.table.column.amount': 'Amount',
     'page.body.swap.history.table.column.buy': 'Buy',

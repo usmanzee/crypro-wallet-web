@@ -29,7 +29,7 @@ interface ComponentProps {
 
 const useStyles = makeStyles({
     tablePaper: {
-        padding: '8px 16px'
+        padding: '16px 16px'
     }
 });
 
@@ -68,7 +68,7 @@ const ExchangeHistoryComponent = (props: Props) => {
         <Box mt={2}>
             <Paper className={classes.tablePaper}>
                 <Typography variant="h4" gutterBottom>
-                    <FormattedMessage id={'page.body.swap.history.title.swap_history'} />
+                    <FormattedMessage id={'page.body.swap.history.title.buy_sell_history'} />
                 </Typography>
                 <TableContainer>
                     <Table stickyHeader aria-label="sticky table">

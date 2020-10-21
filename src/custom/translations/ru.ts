@@ -9,6 +9,7 @@ export const ru: LangType = {
     'page.header.navbar.trade': 'Биржа',
     'page.header.navbar.wallets': 'Кошельки',
     'page.header.navbar.swap': 'Поменять местами',
+    'page.header.navbar.buy_sell': 'Купи продай',
     'page.header.navbar.openOrders': 'Ордера',
     'page.header.navbar.history': 'История',
 
@@ -158,6 +159,7 @@ export const ru: LangType = {
     'page.body.wallets.action.withdraw': 'Изымать',
     'page.body.wallets.action.transfer': 'Перевод',
     'page.body.wallets.action.trade': 'Сделка',
+    'page.body.wallets.action.buy': 'купить',
     
     'page.body.wallets.estimated_value': 'Оценочная стоимость',
     'page.body.wallets.input.search.placeholder': 'Поиск',
@@ -261,8 +263,11 @@ export const ru: LangType = {
     'page.body.wallets.beneficiaries.failAddModal.button': 'Confirm phone',
 
     'page.body.swap.title.swap': 'Поменять местами',
+    'page.body.swap.title.buy_sell': 'Купи продай',
     'page.body.swap.available': 'Доступный',
     'page.body.swap.input.swap': 'Поменять местами',
+    'page.body.swap.input.sell': 'Продать',
+    'page.body.swap.input.buy': 'купить',
     'page.body.swap.input.tag.max': 'Максимум',
     'page.body.swap.input.error1': 'Сумма должна быть больше {amount}.',
     'page.body.swap.input.error2': 'Сумма должна быть меньше {amount}.',
@@ -271,7 +276,9 @@ export const ru: LangType = {
     'page.body.swap.price': 'Цена',
     'page.body.swap.receive': 'Получить',
     'page.body.swap.button.text.swap': 'Поменять местами',
+    'page.body.swap.button.text.buy': 'купить',
     'page.body.swap.history.title.swap_history': 'История обмена',
+    'page.body.swap.history.title.buy_sell_history': 'История покупок / продаж',
     'page.body.swap.history.table.column.sell': 'Продать',
     'page.body.swap.history.table.column.amount': 'Количество',
     'page.body.swap.history.table.column.buy': 'купить',

@@ -21,7 +21,32 @@ import { Withdraw, WithdrawProps } from '../../containers';
 import { ModalWithdrawConfirmation } from '../../containers/ModalWithdrawConfirmation';
 import { ModalWithdrawSubmit } from '../../containers/ModalWithdrawSubmit';
 import { WalletItemProps, CryptoIcon } from '../../components';
-import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
+import { 
+    alertPush, 
+    beneficiariesFetch, 
+    Beneficiary, 
+    currenciesFetch, 
+    Currency, 
+    RootState, 
+    selectBeneficiariesActivateSuccess, 
+    selectBeneficiariesDeleteSuccess, 
+    selectCurrencies, 
+    selectHistory, 
+    selectMobileWalletUi, 
+    selectUserInfo, 
+    selectWalletAddress, 
+    selectWallets, 
+    selectWalletsAddressError, 
+    selectWalletsLoading, 
+    selectWithdrawSuccess, 
+    setMobileWalletUi, 
+    User, 
+    WalletHistoryList, 
+    walletsAddressFetch, 
+    walletsData, 
+    walletsFetch, 
+    walletsWithdrawCcyFetch 
+} from '../../modules';
 import { CommonError } from '../../modules/types';
 import { WalletHistory } from '../../containers/Wallets/History';
 

@@ -106,24 +106,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     walletSelect: {
         display: 'flex',
-        // width: 300,
         cursor: 'pointer',
-        // margin:' 8px 0px',
         padding: `12px ${theme.spacing(1)}px`,
         borderRadius: '4px',
         borderWidth: '1px',
         borderColor: 'rgb(230, 232, 234)',
         borderStyle: 'solid',
-        // [theme.breakpoints.only('sm')]: {
-        //     width: 'auto',
-        // },
-        // [theme.breakpoints.only('xs')]: {
-        //     width: 'auto',
-        // },
     },
     fromWalletSelect: {
         cursor: 'pointer',
-        // width: '200px',
         [theme.breakpoints.only('sm')]: {
             width: 'auto',
         },
@@ -358,17 +349,18 @@ const SwapComponent = (props: Props) => {
         return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError; 
     }
     const handleSwapButtonClick = async () => {
-        props.exchangeRequest({
+        const requestData = {
             base_currency: selectedWalletToCurrency,
             quote_currency: selectedWalletFromCurrency,
             quote_amount: walletsFromAmount
-        });
+        };
+        props.exchangeRequest(requestData);
     }
 
     const fetchExchangeHistory = async () => {
         try {
             const data = await getExchangeHistory();
-            if (data.length > 0){
+            if (data.length > 0) {
                 setExchangeHistory(data);
             }
 
@@ -484,7 +476,7 @@ const SwapComponent = (props: Props) => {
                     <Grid container>
                         <Grid item md={12}>
                             <Typography variant="h4" display="inline">
-                                <FormattedMessage id={'page.body.swap.title.swap'} />
+                                <FormattedMessage id={'page.body.swap.title.buy_sell'} />
                             </Typography>
                         </Grid>
                     </Grid>
@@ -508,12 +500,12 @@ const SwapComponent = (props: Props) => {
                                         </div>
                                         <div className={classes.swapFromFields}>
                                             <FormControl variant="outlined" fullWidth className={classes.formControl } error={walletsFromError}>
-                                                <InputLabel htmlFor="swap">
-                                                    <FormattedMessage id={'page.body.swap.input.swap'} />
+                                                <InputLabel htmlFor="sell">
+                                                    <FormattedMessage id={'page.body.swap.input.sell'} />
                                                 </InputLabel>
                                                 <OutlinedInput
-                                                    id="swap"
-                                                    label={<FormattedMessage id={'page.body.swap.input.swap'} />}
+                                                    id="sell"
+                                                    label={<FormattedMessage id={'page.body.swap.input.sell'} />}
                                                     placeholder={selectedWalletFromOption ? `${selectedWalletFromOption.minSwapAmount} - ${selectedWalletFromOption.maxSwapAmount}` : ''}
                                                     type='number'
                                                     value={walletsFromAmount}
@@ -521,7 +513,7 @@ const SwapComponent = (props: Props) => {
                                                     onChange={(e) => {
                                                         handleWalletsFromAmountChange(e)
                                                     }}
-                                                    aria-describedby="swap-text"
+                                                    aria-describedby="sell-text"
                                                     endAdornment={
                                                         <InputAdornment position="end">
                                                             <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
@@ -534,14 +526,17 @@ const SwapComponent = (props: Props) => {
                                                         </InputAdornment>
                                                     }
                                                 />
-                                                {walletsFromError && <FormHelperText id="swap-text">{walletsFromErrorMessage}</FormHelperText>}
+                                                {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
                                             </FormControl>
                                         </div>
                                         <div className={classes.swapFields}>
-                                            <FormControl variant="filled" fullWidth className={classes.formControl }>
-                                                {/* <InputLabel htmlFor="receive">Receive</InputLabel> */}
+                                            <FormControl variant="outlined" fullWidth className={classes.formControl }>
+                                                <InputLabel htmlFor="buy">
+                                                    <FormattedMessage id={'page.body.swap.input.buy'} />
+                                                </InputLabel>
                                                 <OutlinedInput
-                                                    id="receive"
+                                                    id="buy"
+                                                    label={<FormattedMessage id={'page.body.swap.input.buy'} />}
                                                     placeholder={isFetchingRate ? 'Loading...' : '0.00'}
                                                     type='number'
                                                     value={walletsToAmount}
@@ -574,7 +569,7 @@ const SwapComponent = (props: Props) => {
                                             onClick={handleSwapButtonClick}
                                             disabled={isValidForm()}
                                         >
-                                            <FormattedMessage id={'page.body.swap.button.text.swap'} />
+                                            <FormattedMessage id={'page.body.swap.button.text.buy'} />
                                         </Button>
                                     </div>
                                 </Grid>
