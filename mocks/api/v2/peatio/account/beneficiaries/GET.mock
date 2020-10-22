@@ -6,5 +6,44 @@ Access-Control-Max-Age: 3600
 Access-Control-Allow-Credentials: true
 
 [
-  {"id":9,"currency":"btc","name":"Mom","description":null,"data":{"address":"1MM67SnmHrRcuRtbQunU2HUkembjxuzrgD"},"state":"active"},
+  {
+    "id":9,
+    "currency":"btc",
+    "name":"Mom",
+    "description":null,
+    "data":{
+      "address":"1MM67SnmHrRcuRtbQunU2HUkembjxuzrgD"
+    },
+    "state":"active"
+  },
+  {
+    "id":10,
+    "currency":"usd",
+    "name":"option1",
+    "description":null,
+    "data":{
+      "address":"1MM67SnmHrRcuRtbQunU2HUkembjxuzrgD"
+    },
+    "state":"active"
+  },
+  {
+    "id":11,
+    "currency":"usd",
+    "name":"option2",
+    "description":null,
+    "data":{
+      "address":"1MM67SnmHrRcuRtbQunU2HUkembjxuzrgD"
+    },
+    "state":"active"
+  },
+  {
+    "id":12,
+    "currency":"usd",
+    "name":"option3",
+    "description":null,
+    "data":{
+      "address":"1MM67SnmHrRcuRtbQunU2HUkembjxuzrgD"
+    },
+    "state":"active"
+  }
 ]

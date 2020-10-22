@@ -26,6 +26,8 @@ import {
     RootState, 
     alertPush,
     selectUserInfo, 
+    selectWalletAddressLoading,
+    selectWalletAddressSuccess,
     selectWalletAddress, 
     selectWallets, 
     selectWalletsAddressError, 
@@ -48,10 +50,12 @@ interface ReduxProps {
     addressDepositError?: CommonError;
     walletsLoading?: boolean;
     selectedWalletAddress: string;
+    walletAddressLoading: boolean;
+    walletAddressSuccess: boolean;
 }
 
 interface DispatchProps {
-    fetchSuccess: typeof alertPush;
+    fetchAlert: typeof alertPush;
     fetchWallets: typeof walletsFetch;
     fetchAddress: typeof walletsAddressFetch;
 }
@@ -186,7 +190,7 @@ const DepositWalletCrypto = (props: Props) => {
     const defaultWalletCurrency = 'btc';
     //Props
     const classes = useStyles();
-    const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
+    const { addressDepositError, wallets, user, selectedWalletAddress, currencies, walletAddressLoading, walletAddressSuccess } = props;
 
     //Params
     let params = useParams();
@@ -198,6 +202,7 @@ const DepositWalletCrypto = (props: Props) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
+
     //UseEffect
     React.useEffect(() => {
         if (!wallets.length) {
@@ -222,15 +227,13 @@ const DepositWalletCrypto = (props: Props) => {
 
     React.useEffect(() => {
         if(selectedWalletOption) {
-            selectedWalletOption.type === 'coin' && selectedWalletOption.balance && props.fetchAddress({ currency: selectedWalletOption.currency });
+            selectedWalletOption.type === 'coin' && props.fetchAddress({ currency: selectedWalletOption.currency });
         }
     }, [selectedWalletOption]);
 
     React.useEffect(() => {
-        if(selectedWalletAddress) {
-            const formatedWalletAddress = formatCCYAddress(currency, selectedWalletAddress);
-            setWalletAddress(formatedWalletAddress);
-        }
+        const formatedWalletAddress = formatCCYAddress(currency, selectedWalletAddress);
+        setWalletAddress(formatedWalletAddress);
     }, [selectedWalletAddress]);
 
     //Addtional Methods
@@ -249,7 +252,7 @@ const DepositWalletCrypto = (props: Props) => {
     };
 
     const handleOnCopy = () => {
-        props.fetchSuccess({ message: ['page.body.wallets.tabs.deposit.ccy.message.success'], type: 'success'});
+        props.fetchAlert({ message: ['page.body.wallets.tabs.deposit.ccy.message.success'], type: 'success'});
     };
 
     const handleGenerateAddress = () => {
@@ -264,8 +267,6 @@ const DepositWalletCrypto = (props: Props) => {
 
     const popperOpen = Boolean(anchorEl);
     const popperId = popperOpen ? 'wallet-currencies' : undefined;
-
-    const isAccountActivated = (selectedWalletOption && selectedWalletOption.balance) ? true : false;
 
     const currencyItem = ((currencies && selectedWalletOption) && currencies.find(currency => currency.id === selectedWalletOption.currency)) || { min_confirmations: 6 };
     const text = props.intl.formatMessage({ id: 'page.body.wallets.tabs.deposit.ccy.message.submit' }, { confirmations: currencyItem.min_confirmations });
@@ -404,7 +405,7 @@ const DepositWalletCrypto = (props: Props) => {
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} className={classes.depositCol}>
                             <DepositCrypto
-                                data={walletAddress.split('?dt=').length === 2 ? walletAddress.split('?dt=')[0] : walletAddress}
+                                address={walletAddress}
                                 handleOnCopy={handleOnCopy}
                                 error={error}
                                 text={text}
@@ -412,8 +413,9 @@ const DepositWalletCrypto = (props: Props) => {
                                 copiableTextFieldText={translate('page.body.wallets.tabs.deposit.ccy.message.address')}
                                 copyButtonText={translate('page.body.wallets.tabs.deposit.ccy.message.button')}
                                 handleGenerateAddress={handleGenerateAddress}
+                                walletAddressLoading={walletAddressLoading}
+                                // walletAddressSuccess={walletAddressSuccess}
                                 buttonLabel={buttonLabel}
-                                isAccountActivated={isAccountActivated}
                                 currency={selectedWalletOption ? selectedWalletOption.currency : ''}
                             />
                         </Grid>
@@ -436,9 +438,11 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     walletsLoading: selectWalletsLoading(state),
     addressDepositError: selectWalletsAddressError(state),
     selectedWalletAddress: selectWalletAddress(state),
+    walletAddressLoading: selectWalletAddressLoading(state),
+    walletAddressSuccess: selectWalletAddressSuccess(state),
 });
 const mapDispatchToProps = dispatch => ({
-    fetchSuccess: payload => dispatch(alertPush(payload)),
+    fetchAlert: payload => dispatch(alertPush(payload)),
     fetchWallets: () => dispatch(walletsFetch()),
     fetchAddress: ({ currency }) => dispatch(walletsAddressFetch({ currency })),
 });

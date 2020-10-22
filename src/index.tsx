@@ -41,13 +41,6 @@ let theme = createMuiTheme({
     overrides: {
         MuiButton: {
           root: {
-            // "&:hover": {
-            //   textDecoration: "none",
-            //   color: '#fff',
-            //   "@media (hover: none)": {
-            //     backgroundColor: "#3C37D"
-            //   }
-            // },
           },
           containedPrimary: {
             color: "#fff",

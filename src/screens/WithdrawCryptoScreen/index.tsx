@@ -27,7 +27,22 @@ import { Withdraw, WithdrawProps } from '../../containers';
 import { ModalWithdrawConfirmation } from '../../containers/ModalWithdrawConfirmation';
 import { ModalWithdrawSubmit } from '../../containers/ModalWithdrawSubmit';
 import { WalletItemProps, CryptoIcon } from '../../components';
-import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
+import { 
+    selectUserInfo,
+    beneficiariesFetch, 
+    Beneficiary, 
+    RootState, 
+    selectBeneficiariesActivateSuccess, 
+    selectBeneficiariesDeleteSuccess, 
+    selectWallets, 
+    selectWalletsLoading, 
+    selectWithdrawProcessing,
+    selectWithdrawSuccess, 
+    User, 
+    walletsData, 
+    walletsFetch, 
+    walletsWithdrawCcyFetch
+} from '../../modules';
 import { CommonError } from '../../modules/types';
 import { WalletHistory } from '../../containers/Wallets/History';
 
@@ -38,26 +53,18 @@ import {
 interface ReduxProps {
     user: User;
     wallets: WalletItemProps[];
+    withdrawProcessing: boolean;
     withdrawSuccess: boolean;
-    addressDepositError?: CommonError;
     walletsLoading?: boolean;
-    historyList: WalletHistoryList;
-    mobileWalletChosen: string;
-    selectedWalletAddress: string;
     beneficiariesActivateSuccess: boolean;
     beneficiariesDeleteSuccess: boolean;
-    currencies: Currency[];
 }
 
 interface DispatchProps {
     fetchBeneficiaries: typeof beneficiariesFetch;
     fetchWallets: typeof walletsFetch;
-    fetchAddress: typeof walletsAddressFetch;
     clearWallets: () => void;
     walletsWithdrawCcy: typeof walletsWithdrawCcyFetch;
-    fetchSuccess: typeof alertPush;
-    setMobileWalletUi: typeof setMobileWalletUi;
-    currenciesFetch: typeof currenciesFetch;
 }
 
 const defaultBeneficiary: Beneficiary = {
@@ -182,11 +189,10 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
 const WithdrawCryptoComponent = (props: Props) => {
-    const defaultWalletCurrencyType = 'crypto';
     const defaultWalletCurrency = 'btc';
     //Props
     const classes = useStyles();
-    const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
+    const { wallets, user, withdrawSuccess } = props;
 
     //Params
     let params = useParams();
@@ -216,13 +222,6 @@ const WithdrawCryptoComponent = (props: Props) => {
             props.fetchWallets();
         }
     }, [wallets]);
-
-    
-    React.useEffect(() => {
-        if (!currencies.length) {
-            props.currenciesFetch();
-        }
-    }, [currencies]);
 
     React.useEffect(() => {
         if(wallets.length > 0) {
@@ -277,7 +276,6 @@ const WithdrawCryptoComponent = (props: Props) => {
         const { otpCode, beneficiary, rid, total } = withdrawCryptostate;
 
         const currency = selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency;
-        console.log(currency);
 
         if (selectedWalletOption && selectedWalletOption.type === 'coin') {
             const withdrawRequest = {
@@ -298,6 +296,10 @@ const WithdrawCryptoComponent = (props: Props) => {
         }
         toggleConfirmModal();
     };
+
+    const resetForm = () => {
+        props.fetchWallets()
+    }
     const toggleSubmitModal = () => {
         
         setWithdrawCryptoState({
@@ -308,7 +310,6 @@ const WithdrawCryptoComponent = (props: Props) => {
     };
 
     const toggleConfirmModal = (rid?: string, amount?: string, total?: string, beneficiary?: Beneficiary, otpCode?: string) => {
-        console.log('submit');
 
         setWithdrawCryptoState({
             ...withdrawCryptostate,
@@ -348,9 +349,8 @@ const WithdrawCryptoComponent = (props: Props) => {
 
     const renderWithdrawContent = () => {
     
-        const { user: { level, otp }, wallets } = props;
-        // const wallet = selectedWalletOption;
-        // const { currency, fee, type } = wallet;
+        const { user: { level, otp }, wallets, withdrawProcessing, withdrawSuccess } = props;
+        
         const currency = selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency;
         const fee = selectedWalletOption ? selectedWalletOption.fee : 0;
         const type = selectedWalletOption ? selectedWalletOption.type : 'coin';
@@ -366,6 +366,9 @@ const WithdrawCryptoComponent = (props: Props) => {
             twoFactorAuthRequired: isTwoFactorAuthRequired(level, otp),
             fixed,
             type,
+            withdrawProcessing,
+            withdrawSuccess,
+            resetForm: resetForm,
             withdrawAddressLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.address' }),
             withdrawAmountLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.amount' }),
             withdraw2faLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.code2fa' }),
@@ -530,24 +533,16 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     user: selectUserInfo(state),
     wallets: selectWallets(state),
     walletsLoading: selectWalletsLoading(state),
-    addressDepositError: selectWalletsAddressError(state),
+    withdrawProcessing: selectWithdrawProcessing(state),
     withdrawSuccess: selectWithdrawSuccess(state),
-    historyList: selectHistory(state),
-    mobileWalletChosen: selectMobileWalletUi(state),
-    selectedWalletAddress: selectWalletAddress(state),
     beneficiariesActivateSuccess: selectBeneficiariesActivateSuccess(state),
     beneficiariesDeleteSuccess: selectBeneficiariesDeleteSuccess(state),
-    currencies: selectCurrencies(state),
 });
 const mapDispatchToProps = dispatch => ({
     fetchBeneficiaries: () => dispatch(beneficiariesFetch()),
     fetchWallets: () => dispatch(walletsFetch()),
-    fetchAddress: ({ currency }) => dispatch(walletsAddressFetch({ currency })),
     walletsWithdrawCcy: params => dispatch(walletsWithdrawCcyFetch(params)),
     clearWallets: () => dispatch(walletsData([])),
-    fetchSuccess: payload => dispatch(alertPush(payload)),
-    setMobileWalletUi: payload => dispatch(setMobileWalletUi(payload)),
-    currenciesFetch: () => dispatch(currenciesFetch()),
 });
 
 export const WithdrawCryptoScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(WithdrawCryptoComponent))

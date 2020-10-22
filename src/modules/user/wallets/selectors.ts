@@ -8,6 +8,9 @@ export const selectWallets = (state: RootState): Wallet[] =>
 export const selectWalletsLoading = (state: RootState): boolean =>
     state.user.wallets.wallets.loading;
 
+export const selectWithdrawProcessing = (state: RootState): boolean =>
+    state.user.wallets.wallets.withdrawProcessing;
+
 export const selectWithdrawSuccess = (state: RootState): boolean =>
     state.user.wallets.wallets.withdrawSuccess;
 
@@ -17,5 +20,11 @@ export const selectWalletsAddressError = (state: RootState): CommonError | undef
 export const selectMobileWalletUi = (state: RootState): string =>
     state.user.wallets.wallets.mobileWalletChosen;
 
+export const selectWalletAddressLoading = (state: RootState): boolean =>
+    state.user.wallets.wallets.walletAddressLoading;
+
 export const selectWalletAddress = (state: RootState): string =>
     state.user.wallets.wallets.selectedWalletAddress;
+
+export const selectWalletAddressSuccess = (state: RootState): boolean =>
+    state.user.wallets.wallets.walletAddressSuccess;

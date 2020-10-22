@@ -12,7 +12,7 @@ import {
 const walletsWithdrawCcyOptions = (csrfToken?: string): RequestOptions => {
     return {
         apiVersion: 'peatio',
-        headers: { 'X-CSRF-Token': csrfToken },
+        // headers: { 'X-CSRF-Token': csrfToken },
     };
 };
 

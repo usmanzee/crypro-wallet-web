@@ -1,7 +1,4 @@
-// import classnames from 'classnames';
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
-import { CopyableTextField } from '../CopyableTextField';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { QRCode } from '../QRCode';
 
@@ -10,24 +7,28 @@ import {
     Paper,
     Typography,
     Tooltip,
-    Button as MaterialButton
+    Button
 } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
+import { walletsAddressData } from '../../modules';
 
 export interface DepositCryptoProps {
     /**
-     * Data which is used to generate QR code
+     * address which is used to generate QR code
      */
-    data: string;
+    address: string;
     /**
      * Define if wallet account has been activated
      */
-    isAccountActivated: boolean;
+    // isAccountActivated: boolean;
     /**
      * Generate wallet address for selected wallet
      */
     handleGenerateAddress: () => void;
+    walletAddressLoading?: boolean;
+    generatingWalletAddress?: boolean;
     /**
      * Data which is used to display error if data is undefined
      */
@@ -111,7 +112,7 @@ type Props = DepositCryptoProps & InjectedIntlProps;
 const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (props: Props) => {
     const QR_SIZE = 118;
     const {
-        data,
+        address,
         dimensions,
         error,
         text,
@@ -120,12 +121,12 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         handleOnCopy,
         disabled,
         handleGenerateAddress,
+        walletAddressLoading,
         buttonLabel,
         isAccountActivated,
         currency,
     } = props;
 
-    console.log(props);
     const size = dimensions || QR_SIZE;
 
     const addressText = props.intl.formatMessage({ id: 'page.body.deposit.network.address.text' }, { currency: currency ? currency.toUpperCase(): '' });
@@ -135,7 +136,6 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
     const [copyTooltipText, setCopyTooltipText] = React.useState<string>("Copy");
 
     const translate = (id: string) => props.intl.formatMessage({ id });
-    // const onCopy = !disabled ? handleOnCopy : undefined;
     const onCopy = (textToCopy) => {
         copyToClipboard(textToCopy);
         handleOnCopy();
@@ -155,7 +155,6 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
     }
 
     const classes = useStyles();
-    // const className = classnames({'cr-copyable-text-field__disabled': data === ''});
 
     const LightTooltip = withStyles((theme: Theme) => ({
         tooltip: {
@@ -178,78 +177,49 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                             </LightTooltip>
                         </Typography>
                     </div>
-                    {isAccountActivated ? 
-                    (
+                    {!walletAddressLoading ? 
                         <>
-                            <div className={classes.networkPaperContent}>
-                                <Typography variant='body1' component='div'>
-                                    {addressText}
-                                </Typography>
-                                <div className={classes.qrCode}>
-                                    {data ? <QRCode dimensions={size} data={data}/> : null}
-                                </div>
-                                <Typography variant='body2' component='div' display='inline' className={classes.addressText}>
-                                    {data ? data : error}
-                                </Typography>
-                                <Typography variant='body2' component='div' display='inline' onClick={() => onCopy(data)} onMouseOut={setCopyTooltipTextOnMouseOut}>
-                                    <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
-                                        <FileCopyOutlinedIcon className={classes.copyIcon}/>
-                                    </LightTooltip>
-                                </Typography>
-                            </div>
-                            <div style={{ marginTop: '24px' }}>
-                                <Typography variant='subtitle2' component='div' display='block'>
-                                    {addressInstructionsTitle}
-                                </Typography>
-                                <Typography variant='caption' component='div' display='block'>
-                                    {addressInstructionsDescription}
-                                </Typography>
-                            </div>
-                        </>
-                    ) :
-                    (
-                        <>
-                            <div className={classes.networkPaperContent}>
-                                <MaterialButton variant="contained" color="secondary" onClick={handleGenerateAddress}>
-                                    {buttonLabel ? buttonLabel : 'Generate deposit address'}
-                                </MaterialButton>
-                            </div>
-
-                            {/* <div className="cr-deposit-crypto__create">
-                                <div className="cr-deposit-crypto__create-btn">
-                                    <Button
-                                        block={true}
-                                        type="button"
-                                        onClick={handleGenerateAddress}
-                                        size="lg"
-                                        variant="primary"
-                                    >
-                                        {buttonLabel ? buttonLabel : 'Generate deposit address'}
-                                    </Button>
-                                </div>
-                            </div> */}
-                        </>
-                    )
+                            {address ? 
+                                <>
+                                    <div className={classes.networkPaperContent}>
+                                        <Typography variant='body1' component='div'>
+                                            {addressText}
+                                        </Typography>
+                                        <div className={classes.qrCode}>
+                                            {address ? <QRCode dimensions={size} data={address}/> : null}
+                                        </div>
+                                        <Typography variant='body2' component='div' display='inline' className={classes.addressText}>
+                                            {address ? address : error}
+                                        </Typography>
+                                        <Typography variant='body2' component='div' display='inline' onClick={() => onCopy(address)} onMouseOut={setCopyTooltipTextOnMouseOut}>
+                                            <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                                                <FileCopyOutlinedIcon className={classes.copyIcon}/>
+                                            </LightTooltip>
+                                        </Typography>
+                                    </div>
+                                    <div style={{ marginTop: '24px' }}>
+                                        <Typography variant='subtitle2' component='div' display='block'>
+                                            {addressInstructionsTitle}
+                                        </Typography>
+                                        <Typography variant='caption' component='div' display='block'>
+                                            {addressInstructionsDescription}
+                                        </Typography>
+                                    </div>
+                                </>:
+                                <>
+                                    <div className={classes.networkPaperContent}>
+                                        <Button variant="contained" color="secondary" onClick={handleGenerateAddress}>
+                                            {buttonLabel ? buttonLabel : 'Generate deposit address'}
+                                        </Button>
+                                    </div>
+                                </>
+                            }
+                        </> : 
+                        <div className={classes.networkPaperContent}>
+                            <CircularProgress color="secondary"/>
+                        </div>
                     }
                 </Paper>
-                {/* <div>
-                    <p className={'cr-deposit-info'}>{text}</p>
-                    {data ? <div className="d-none d-md-block qr-code-wrapper"><QRCode dimensions={size} data={data}/></div> : null}
-                </div>
-                <div>
-                    <form className={'cr-deposit-crypto__copyable'}>
-                        <fieldset className={'cr-copyable-text-field'} onClick={onCopy}>
-                            <CopyableTextField
-                                className={'cr-deposit-crypto__copyable-area'}
-                                value={data ? data : error}
-                                fieldId={data ? 'copy_deposit_1' : 'copy_deposit_2'}
-                                copyButtonText={copyButtonText}
-                                disabled={disabled}
-                                label={copiableTextFieldText ? copiableTextFieldText : 'Deposit by Wallet Address'}
-                            />
-                        </fieldset>
-                    </form>
-                </div> */}
             </>
         );
         
@@ -259,11 +229,6 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         <div>
             {getContent()}
         </div>
-        // <div className={className}>
-        //     <div className={'cr-deposit-crypto'}>
-        //         {getContent()}
-        //     </div>
-        // </div>
     );
 };
 

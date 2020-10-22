@@ -7,6 +7,20 @@ import { ChevronIcon } from '../../assets/images/ChevronIcon';
 import { PlusIcon } from '../../assets/images/PlusIcon';
 import { TipIcon } from '../../assets/images/TipIcon';
 import { TrashBin } from '../../assets/images/TrashBin';
+
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import {FormControl as MaterialFromControl} from '@material-ui/core';
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import InputBase from '@material-ui/core/InputBase';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 //import { CustomInput } from '../../components';
 import {
     beneficiariesDelete,
@@ -62,6 +76,16 @@ const defaultBeneficiary: Beneficiary = {
     },
 };
 
+
+const useStyles = theme => ({
+    addAddressButton: {
+        '.MuiButton-label' : {
+            display: 'block'
+        }
+    }
+    
+});
+
 type Props = ReduxProps & DispatchProps & OwnProps & InjectedIntlProps;
 
 // tslint:disable jsx-no-multiline-js
@@ -82,6 +106,7 @@ class BeneficiariesComponent extends React.Component<Props, State> {
         const { currency, beneficiaries, memberLevels } = this.props;
         if (currency && beneficiaries.length) {
             const filtredBeneficiaries = this.handleFilterByState(this.handleFilterByCurrency(beneficiaries, currency));
+            console.log('filtredBeneficiaries: ', filtredBeneficiaries);
             if (filtredBeneficiaries.length) {
                 this.handleSetCurrentAddress(filtredBeneficiaries[0]);
             }
@@ -111,6 +136,7 @@ class BeneficiariesComponent extends React.Component<Props, State> {
             type,
             beneficiaries,
             beneficiariesAddData,
+            classes
         } = this.props;
         const {
             currentWithdrawalBeneficiary,
@@ -118,8 +144,11 @@ class BeneficiariesComponent extends React.Component<Props, State> {
             isOpenConfirmationModal,
             isOpenFailModal,
         } = this.state;
+
+        console.log(currentWithdrawalBeneficiary);
         const filtredBeneficiaries = this.handleFilterByState(this.handleFilterByCurrency(beneficiaries, currency));
 
+        console.log('filtredBeneficiaries: ', filtredBeneficiaries);
         return (
             <div className="pg-beneficiaries">
                 <span className="pg-beneficiaries__title">{type === 'coin' ? this.translate('page.body.wallets.beneficiaries.title') : this.translate('page.body.wallets.beneficiaries.fiat.title')}</span>
@@ -146,11 +175,25 @@ class BeneficiariesComponent extends React.Component<Props, State> {
     }
 
     private renderAddAddress = () => {
+        const {classes}  = this.props;
         return (
+            <>
+                {/* <Button
+                    variant="contained"
+                    color="secondary"
+                    size="large"
+                    fullWidth={true}
+                    className={classes.addAddressButton}
+                    endIcon={<AddIcon />}
+                    onClick={this.handleClickToggleAddAddressModal()}
+                >
+                    {this.translate('page.body.wallets.beneficiaries.addAddress')}
+                </Button> */}
             <div className="pg-beneficiaries__add" onClick={this.handleClickToggleAddAddressModal()}>
                 <span className="pg-beneficiaries__add__label">{this.translate('page.body.wallets.beneficiaries.addAddress')}</span>
                 <PlusIcon className="pg-beneficiaries__add__icon" />
             </div>
+            </>
         );
     };
 
@@ -277,9 +320,36 @@ class BeneficiariesComponent extends React.Component<Props, State> {
 
         if (type === 'fiat') {
             return (
-                <div className={dropdownClassName}>
+                <>
+                <div style={{ display: 'block'}}>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        size="medium"
+                        endIcon={<AddIcon />}
+                        style={{ margin: '0px 8px 8px' }}
+                        onClick={this.handleClickToggleAddAddressModal()}
+                    >
+                        {this.translate('page.body.wallets.beneficiaries.addAddress')}
+                    </Button>
+                    <Autocomplete
+                        fullWidth
+                        disableClearable
+                        options={beneficiaries}
+                        onChange={(event: any, newValue: Beneficiary) => {
+                            this.handleSetCurrentAddress(newValue)
+                        }}
+                        getOptionLabel={(option) => option.name}
+                        value={currentWithdrawalBeneficiary}
+                        style={{ padding: '8px 8px' }}
+                        renderInput={(params) => (
+                            <TextField {...params} variant="outlined" label="Select Beneficiary" placeholder="Favorites" />
+                        )}
+                    />
+                </div>
+                {/* <div className={dropdownClassName}>
                     <div className="pg-beneficiaries__dropdown__select fiat-select select" onClick={this.handleToggleDropdown}>
-                        <div className="select__left">
+                    <div className="select__left">
                             <span className="select__left__title">{this.translate('page.body.wallets.beneficiaries.dropdown.fiat.name')}</span>
                             <span className="select__left__address">{currentWithdrawalBeneficiary.name}</span>
                             <span className="select__left__title">{this.translate('page.body.wallets.beneficiaries.dropdown.fiat.fullName')}</span>
@@ -293,7 +363,8 @@ class BeneficiariesComponent extends React.Component<Props, State> {
                     </div>
                     {isOpenDropdown && this.renderDropdownBody(beneficiaries, type)}
                     {isOpenTip && this.renderDropdownTipFiat(currentWithdrawalBeneficiary)}
-                </div>
+                </div> */}
+                </>
             );
         }
 
@@ -331,6 +402,7 @@ class BeneficiariesComponent extends React.Component<Props, State> {
     };
 
     private handleClickSelectAddress = (item: Beneficiary) => () => {
+        console.log(item);
         this.handleSetCurrentAddress(item);
     };
 
@@ -354,7 +426,7 @@ class BeneficiariesComponent extends React.Component<Props, State> {
 
      private handleFilterByCurrency = (beneficiaries: Beneficiary[], currency: string) => {
          if (beneficiaries.length && currency) {
-            // return beneficiaries.filter(item => item.currency.toLowerCase() === currency.toLowerCase());
+            return beneficiaries.filter(item => item.currency.toLowerCase() === currency.toLowerCase());
          }
 
          return [];
@@ -424,4 +496,4 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({
 });
 
 // tslint:disable-next-line:no-any
-export const Beneficiaries = injectIntl(connect(mapStateToProps, mapDispatchToProps)(BeneficiariesComponent) as any);
+export const Beneficiaries = injectIntl(withStyles(useStyles as {})(connect(mapStateToProps, mapDispatchToProps)(BeneficiariesComponent) as any));

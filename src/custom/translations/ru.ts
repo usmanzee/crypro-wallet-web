@@ -853,6 +853,7 @@ export const ru: LangType = {
     'public.k_line.invalid_limit': 'Неверный лимит',
 
     'server.internal_error': 'Внутренняя ошибка сервера',
+    'Server error': 'Внутренняя ошибка сервера',
 
     'password.strength.tip.influence': 'What influence on password strength',
     'password.strength.tip.number.characters': 'At least 8 characters',

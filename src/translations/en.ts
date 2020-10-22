@@ -851,6 +851,7 @@ export const en = {
     'public.k_line.invalid_limit': 'Invalid limit',
 
     'server.internal_error': 'Internal Server Error',
+    'Server error': 'Internal Server Error',
 
     'password.strength.tip.influence': 'What influence on password strength',
     'password.strength.tip.number.characters': 'At least 8 characters',

@@ -20,10 +20,13 @@ export interface WalletsState {
     wallets: {
         list: Wallet[];
         loading: boolean;
+        withdrawProcessing: boolean;
         withdrawSuccess: boolean;
         error?: CommonError;
         mobileWalletChosen: string;
         selectedWalletAddress: string;
+        walletAddressLoading: boolean;
+        walletAddressSuccess: boolean;
     };
 }
 
@@ -31,15 +34,22 @@ export const initialWalletsState: WalletsState = {
     wallets: {
         list: [],
         loading: false,
+        withdrawProcessing: false,
         withdrawSuccess: false,
         mobileWalletChosen: '',
         selectedWalletAddress: '',
+        walletAddressLoading: false,
+        walletAddressSuccess: false,
     },
 };
 
 const walletsListReducer = (state: WalletsState['wallets'], action: WalletsAction): WalletsState['wallets'] => {
     switch (action.type) {
         case WALLETS_ADDRESS_FETCH:
+            return {
+                ...state,
+                walletAddressLoading: true,
+            };
         case WALLETS_FETCH:
             return {
                 ...state,
@@ -49,6 +59,7 @@ const walletsListReducer = (state: WalletsState['wallets'], action: WalletsActio
             return {
                 ...state,
                 loading: true,
+                withdrawProcessing: true,
                 withdrawSuccess: false,
             };
         case WALLETS_DATA: {
@@ -104,6 +115,7 @@ const walletsListReducer = (state: WalletsState['wallets'], action: WalletsActio
                     ...state,
                     loading: false,
                     selectedWalletAddress: action.payload.address,
+                    walletAddressLoading: false,
                 };
             }
 
@@ -116,16 +128,24 @@ const walletsListReducer = (state: WalletsState['wallets'], action: WalletsActio
             return {
                 ...state,
                 loading: false,
+                withdrawProcessing: false,
                 withdrawSuccess: true,
             };
         case WALLETS_WITHDRAW_CCY_ERROR:
             return {
                 ...state,
                 loading: false,
+                withdrawProcessing: false,
                 withdrawSuccess: false,
                 error: action.payload,
             };
         case WALLETS_ADDRESS_ERROR:
+            return {
+                ...state,
+                selectedWalletAddress: '',
+                walletAddressLoading: false,
+                walletAddressSuccess: false
+            }
         case WALLETS_ERROR:
             return {
                 ...state,
@@ -165,9 +185,12 @@ export const walletsReducer = (state = initialWalletsState, action: WalletsActio
                 wallets: {
                     list: [],
                     loading: false,
+                    withdrawProcessing: false,
                     withdrawSuccess: false,
                     mobileWalletChosen: '',
                     selectedWalletAddress: '',
+                    walletAddressLoading: false,
+                    walletAddressSuccess: false
                 },
             };
         default:

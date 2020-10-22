@@ -38,6 +38,7 @@ import {
     selectWallets, 
     selectWalletsAddressError, 
     selectWalletsLoading, 
+    selectWithdrawProcessing,
     selectWithdrawSuccess, 
     setMobileWalletUi, 
     User, 
@@ -60,6 +61,7 @@ interface ReduxProps {
     withdrawSuccess: boolean;
     addressDepositError?: CommonError;
     walletsLoading?: boolean;
+    withdrawProcessing: boolean;
     historyList: WalletHistoryList;
     mobileWalletChosen: string;
     selectedWalletAddress: string;
@@ -178,11 +180,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
-    cryptoTips: {
-        backgroundColor: 'rgb(245, 245, 245)',
-        borderRadius: '4px',
-        padding: '16px'
-    },
     withdrawCol: {
         [theme.breakpoints.up('lg')]: {
             padding: `0px ${theme.spacing(1)}px`,
@@ -232,6 +229,8 @@ const WithdrawFiatComponent = (props: Props) => {
     React.useEffect(() => {
         if (!wallets.length) {
             props.fetchWallets();
+        } else {
+            props.fetchBeneficiaries();
         }
     }, [wallets]);
 
@@ -293,7 +292,6 @@ const WithdrawFiatComponent = (props: Props) => {
         const { otpCode, beneficiary, rid, total } = withdrawCryptostate;
 
         const currency = selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency;
-        console.log(currency);
 
         if (selectedWalletOption && selectedWalletOption.type === 'coin') {
             const withdrawRequest = {
@@ -314,6 +312,10 @@ const WithdrawFiatComponent = (props: Props) => {
         }
         toggleConfirmModal();
     };
+
+    const resetForm = () => {
+        props.fetchWallets()
+    }
     const toggleSubmitModal = () => {
         
         setWithdrawCryptoState({
@@ -364,9 +366,7 @@ const WithdrawFiatComponent = (props: Props) => {
 
     const renderWithdrawContent = () => {
     
-        const { user: { level, otp }, wallets } = props;
-        // const wallet = selectedWalletOption;
-        // const { currency, fee, type } = wallet;
+        const { user: { level, otp }, wallets, withdrawProcessing, withdrawSuccess  } = props;
         const currency = selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency;
         const fee = selectedWalletOption ? selectedWalletOption.fee : 0;
         const type = selectedWalletOption ? selectedWalletOption.type : 'coin';
@@ -382,6 +382,9 @@ const WithdrawFiatComponent = (props: Props) => {
             twoFactorAuthRequired: isTwoFactorAuthRequired(level, otp),
             fixed,
             type,
+            withdrawProcessing,
+            withdrawSuccess,
+            resetForm: resetForm,
             withdrawAddressLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.address' }),
             withdrawAmountLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.amount' }),
             withdraw2faLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.code2fa' }),
@@ -491,26 +494,6 @@ const WithdrawFiatComponent = (props: Props) => {
                                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
-                            {/* <Paper elevation={0} className={classes.cryptoTips}>
-                                <Typography variant="h6" component="div"><EmojiObjectsIcon />
-                                    <FormattedMessage id={'page.body.withdraw.tips.title'} />
-                                </Typography>
-                                <List component="ul" aria-label="contacts">
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <StarIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={<FormattedMessage id={'page.body.withdraw.tips.tip1'} />} />
-                                    </ListItem>
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <StarIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={<FormattedMessage id={'page.body.withdraw.tips.tip2'} />} />
-                                    </ListItem>
-                                   
-                                </List>
-                            </Paper> */}
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} className={classes.withdrawCol}>
                             {renderWithdrawContent()}
@@ -546,8 +529,9 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     user: selectUserInfo(state),
     wallets: selectWallets(state),
     walletsLoading: selectWalletsLoading(state),
-    addressDepositError: selectWalletsAddressError(state),
+    withdrawProcessing: selectWithdrawProcessing(state),
     withdrawSuccess: selectWithdrawSuccess(state),
+    addressDepositError: selectWalletsAddressError(state),
     historyList: selectHistory(state),
     mobileWalletChosen: selectMobileWalletUi(state),
     selectedWalletAddress: selectWalletAddress(state),
