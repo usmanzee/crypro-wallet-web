@@ -22,11 +22,12 @@ import TableRow from '@material-ui/core/TableRow/TableRow';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import {DropzoneArea} from 'material-ui-dropzone';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Papa from 'papaparse';
-import { postMassWithdraws } from '../../apis/withdraw';
+import { massWithdraws } from '../../apis/withdraw';
+import axios from 'axios';
 
-import { withStyles, Theme } from '@material-ui/core/styles';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { 
     alertPush, 
     currenciesFetch, 
@@ -71,6 +72,9 @@ const useStyles = (theme: Theme) => ({
         alignItems: 'center',
         margin: theme.spacing(1)
     },
+    table: {
+        margin: theme.spacing(1)
+    },
     defaultRow: {
 
     },
@@ -98,13 +102,13 @@ class MasspayComponent extends React.Component<Props> {
         responseData: [],
         otp:'',
         submitted: false,
-        formatedData: []
+        formatedData: [],
+        massWithdrawProcessing: false,
     };
 
     constructor(props) {
         super(props);
     }
-
     public componentDidMount() {
         const { currencies, currenciesFetch } = this.props;
 
@@ -126,6 +130,29 @@ class MasspayComponent extends React.Component<Props> {
             header: true,
             download: false,
             skipEmptyLines: true,
+            transformHeader:function(h) {
+                let newColumnName = h;
+                if(h === 'BTC_Address') {
+                    newColumnName = 'address';
+                }
+                if(h === 'Amount') {
+                    newColumnName = 'amount';
+                }
+                if(h === 'Currency') {
+                    newColumnName = 'currency';
+                }
+                if(h === 'W_ID') {
+                    newColumnName = 'w_id';
+                }
+                if(h === 'B4U_ID') {
+                    newColumnName = 'b4u_id';
+                }
+                if(h === 'User_Name') {
+                    newColumnName = 'name';
+                }
+                // console.log(newColumnName);
+                return newColumnName;
+            },
             complete: (results) => {
                 const fileData = results.data;
                 this.setState({
@@ -177,16 +204,34 @@ class MasspayComponent extends React.Component<Props> {
             formatedData: formatedCurrenciesData
         });
 
-        const response = await postMassWithdraws({
-            otp: this.state.otp,
-            data: this.state.formatedData
+        this.setState({ massWithdrawProcessing: true }, async () => {
+            try {
+                
+                const response = await massWithdraws({
+                    otp: this.state.otp,
+                    data: this.state.formatedData
+                });
+                
+                if(response.status === 200) {
+                    this.resetDropzone();
+                    this.setState({modalOpen: false, responseData: response.data})
+                    this.downloadCSV()
+                    this.setState({otp: ''})
+                    this.setState({submitted: false})
+                    this.setState({massWithdrawProcessing: false});
+                    this.props.fetchAlert({message: ['Request processed successfully'], type: 'success'});
+                } else {
+                    this.setState({submitted: false})
+                    this.setState({massWithdrawProcessing: false});
+                    this.props.fetchAlert({message: response.data.errors, type: 'error'});
+                }
+
+            } catch (error) {
+                this.setState({massWithdrawProcessing: false});
+                this.props.fetchAlert({message: error, type: 'error'});
+            }
         });
-        if(response.data) {
-            this.resetDropzone();
-            this.setState({modalOpen: false, responseData: response.data})
-            this.downloadCSV()
-            this.setState({submitted: false})
-        }
+
 
     }
 
@@ -206,7 +251,7 @@ class MasspayComponent extends React.Component<Props> {
             // @ts-ignore
             const dataInfo = rows.filter((row) => {
                 // @ts-ignore
-                return row.Currency === currency.id.toUpperCase() && row.BTC_Address != ''
+                return row.currency === currency.id.toUpperCase() && row.btc_address != ''
             });
 
             return ({
@@ -242,10 +287,18 @@ class MasspayComponent extends React.Component<Props> {
         }
     }
 
-    render() {
-        const {fileData, otp} = this.state;
-        const {currencies, classes} = this.props;
+    private StyledTableCell = withStyles((theme: Theme) =>
+        createStyles({
+            head: {
+                backgroundColor: "rgb(228 224 224)",
+                color: theme.palette.common.black,
+            }
+        }),
+    )(TableCell);
 
+    render() {
+        const {fileData, otp, massWithdrawProcessing} = this.state;
+        const {currencies, classes} = this.props;
 
         return (
             <Container className={classes.container}>
@@ -309,9 +362,9 @@ class MasspayComponent extends React.Component<Props> {
                             <Table className={classes.table}>
                                 <TableHead style={{alignItems: 'center'}}>
                                     <TableRow>
-                                        <TableCell padding="none">Currency</TableCell>
-                                        <TableCell padding="none">Address</TableCell>
-                                        <TableCell padding="none">Amount</TableCell>
+                                        <this.StyledTableCell padding="none">Currency</this.StyledTableCell>
+                                        <this.StyledTableCell padding="none">Address</this.StyledTableCell>
+                                        <this.StyledTableCell padding="none">Amount</this.StyledTableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -319,21 +372,21 @@ class MasspayComponent extends React.Component<Props> {
                                         fileData.map((ad, index) =>
                                             <TableRow key={index} className={
                                                 // @ts-ignore
-                                                ad.BTC_Address ? classes.defaultRow : classes.redRow}>
+                                                ad.address ? classes.defaultRow : classes.redRow}>
                                                 
-                                                <TableCell padding="none">{
+                                                <this.StyledTableCell padding="none">{
                                                     // @ts-ignore
-                                                ad.Currency
-                                                }</TableCell>
-                                                <TableCell padding="none">{
+                                                ad.currency
+                                                }</this.StyledTableCell>
+                                                <this.StyledTableCell padding="none">{
                                                     // @ts-ignore
-                                                ad.BTC_Address
-                                                }</TableCell>
+                                                ad.address
+                                                }</this.StyledTableCell>
                                                 
-                                                <TableCell padding="none">{
+                                                <this.StyledTableCell padding="none">{
                                                     // @ts-ignore
-                                                ad.Amount
-                                                }</TableCell>
+                                                ad.amount
+                                                }</this.StyledTableCell>
                                             </TableRow>
                                         )
                                     }
@@ -341,20 +394,25 @@ class MasspayComponent extends React.Component<Props> {
                             </Table>
                             <Typography component="h1"
                             // @ts-ignore
-                                variant="h5">Total: {fileData.reduce((partial_sum, a) => partial_sum + parseFloat(a.Amount), 0)}</Typography>
+                                variant="h5">Total: {fileData.reduce((partial_sum, a) => partial_sum + parseFloat(a.amount), 0)}</Typography>
 
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={this.handleModalClose} color="primary">
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={this.handleRequestSubmit}
-                                disabled={this.isRequestFormValid()}
-                                color="primary"
-                            >
-                                Submit
-                            </Button>
+                            {massWithdrawProcessing ? 
+                                    <CircularProgress className={classes.buttonProgress} size={18} /> :
+                                <>
+                                    <Button onClick={this.handleModalClose} color="primary">
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        onClick={this.handleRequestSubmit}
+                                        disabled={this.isRequestFormValid()}
+                                        color="primary"
+                                    >
+                                        Submit
+                                    </Button>
+                                </>
+                            }
                         </DialogActions>
                     </Dialog>
 

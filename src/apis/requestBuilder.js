@@ -12,13 +12,13 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   response => {
-    console.log("response",response)
+    // console.log("response",response)
     return response;
   }, error => {
-    //console.log("request builder",error.response.data.errors[0])
+    // console.log("request builder",error.response)
     
 
-    //return error;
+    return error.response;
         return console.log(error)
 });
 

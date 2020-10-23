@@ -9,6 +9,10 @@ export const postMassWithdraws = (data) => {
   .then(response => response);
 };
 
+export const massWithdraws = (data) => {
+  return axiosInstance.post('/account/withdraws/masspay', data)
+};
+
 export const codeWithdraws = () => {
   return axiosInstance.get('/account/withdraws/code')
 };
