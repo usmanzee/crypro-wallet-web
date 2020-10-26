@@ -1,5 +1,4 @@
 import * as React from "react";
-import "./buyCrypto.css";
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { 
     Box, 
@@ -17,6 +16,13 @@ import {
     Checkbox,
     Button,
  } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+import { TransitionProps } from '@material-ui/core/transitions';
  import Autocomplete from '@material-ui/lab/Autocomplete';
  import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 //  import CheckIcon from '@material-ui/icons/Check';
@@ -27,7 +33,6 @@ import {
 } from '@material-ui/lab';
 
 import Axios from "axios";
-import { AnyARecord } from "dns";
 
 interface Currency {
     id: string;
@@ -124,8 +129,24 @@ const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: "rgb(111 33 88)",
         },
     },
+    iframe: {
+        position: 'absolute',
+        left: '0',
+        right: '0',
+        bottom: '0',
+        top: '0',
+        border: '0',
+    }
   }),
 );
+
+
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & { children?: React.ReactElement<any, any> },
+    ref: React.Ref<unknown>,
+  ) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const BuyCryptoScreen = () => {
     const classes = useStyles();
@@ -143,6 +164,7 @@ const BuyCryptoScreen = () => {
     
     const [paymentMethod, setPaymentMethod] = React.useState<string | null>(paymentMethods[0]['value']);
 
+    const [buyCryptoDialogOpen, setBuyCryptoDialogOpen] = React.useState(false);
 
 
     React.useEffect(() => {
@@ -157,6 +179,14 @@ const BuyCryptoScreen = () => {
             setCryptoCurrencyOption(cryptoCurrencies[0]);
         }
     }, [fiatCurrencies, cryptoCurrencies]);
+
+    const handleClickOpen = () => {
+        setBuyCryptoDialogOpen(true);
+      };
+    
+      const handleClose = () => {
+        setBuyCryptoDialogOpen(false);
+      };
 
     
     const getCurrencies = async () => {
@@ -224,13 +254,66 @@ const BuyCryptoScreen = () => {
         }
     }
 
+    const iframeStyle = 'width: auto; height: 50vh; border: none';
+    const url = 'https://buy-staging.moonpay.io?apiKey=pk_test_4tW5NgbaBAFE8nhJKXt3razQZqVnL1Ul&defaultCurrencyCode=eth&colorCode=%236F2158'; 
+    const buyCryptoIframe = `<iframe style="${iframeStyle}" src="${url}" allow="accelerometer; autoplay; camera; gyroscope; payment" frameborder="0"></iframe>`;
+
+    const bcrpyo = `<div>
+                        <iframe id="iFrame1" src="${url}" frameborder="0" style="box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12); height:100vh;width:auto;"></iframe>
+                    </div>`
+
+    const Iframe = (props) => {
+        return (
+          <div
+            dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : "" }}
+          />
+        );
+      }
+
     return (
         <>
             <Box className={classes.root}>
                 <Container className={classes.container}>
                     <Paper elevation={5} className={classes.paper}>
-                        <Typography variant="h5" component="div" color="primary" className={classes.pageHeader} gutterBottom>Buy Crypto</Typography>
-                        <Typography component="div" className={classes.pageContent}>
+                        <Typography variant="h5" component="div" className={classes.pageHeader} gutterBottom>Buy Crypto</Typography>
+
+                        <div className={classes.pageContent}>
+
+                            <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                                Slide in alert dialog
+                            </Button>
+                            <Dialog
+                                open={buyCryptoDialogOpen}
+                                TransitionComponent={Transition}
+                                keepMounted
+                                onClose={handleClose}
+                                aria-labelledby="alert-dialog-slide-title"
+                                aria-describedby="alert-dialog-slide-description"
+                            >
+                                <DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
+                                <DialogContent>
+                                <DialogContentText id="alert-dialog-slide-description">
+                                    {/* Let Google help apps determine location. This means sending anonymous location data to
+                                    Google, even when no apps are running. */}
+                                    <Iframe iframe={buyCryptoIframe}/>
+                                </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                <Button onClick={handleClose} color="primary">
+                                    Disagree
+                                </Button>
+                                <Button onClick={handleClose} color="primary">
+                                    Agree
+                                </Button>
+                                </DialogActions>
+                            </Dialog>
+                            {/* <Grid container>
+                                <Grid item md={4}></Grid>
+                                <Grid item md={4}>
+                                    <Iframe iframe={buyCryptoIframe}/>
+                                </Grid>
+                                <Grid item md={4}></Grid>
+                            </Grid> */}
                             <Grid item container>
                                 <Grid item md={4}>
                                 <TextField
@@ -308,7 +391,6 @@ const BuyCryptoScreen = () => {
                                     }}
                                     renderOption={(option) => (
                                         <>
-                                          {/* <img src={option.icon_url} style={{ width: "10%", marginRight: "5px" }}/> */}
                                           <span>{ option ? option.code.toUpperCase() : "" }</span>
                                         </>
                                     )}
@@ -324,14 +406,6 @@ const BuyCryptoScreen = () => {
                                                     shrink: true 
                                                 }} 
                                                 variant="outlined"
-                                                // InputProps={{
-                                                //     ...params.InputProps,
-                                                //     startAdornment: (
-                                                //       <InputAdornment position="start">
-                                                //         <img src={selectedCryptoIcon} style={{ width: "2em", height: "2em" }}/>
-                                                //       </InputAdornment>
-                                                //     )
-                                                //   }}
                                             />
                                             )
                                             }}
@@ -376,7 +450,7 @@ const BuyCryptoScreen = () => {
                                                 </ToggleButton>
                                             )
                                         })}   
-                                    </ToggleButtonGroup>  
+                                    </ToggleButtonGroup>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Paper variant="outlined" className={classes.paymentDetails}>
@@ -420,7 +494,7 @@ const BuyCryptoScreen = () => {
                                     </Paper>
                                 </Grid>
                             </Grid>
-                        </Typography>
+                        </div>
                        
                     </Paper>
                 </Container>

@@ -1,8 +1,0 @@
-.list_item_text {
-    box-sizing: border-box;
-    min-width: 0px;
-    display: flex;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-    margin: 0px 0px 12px;
-}
