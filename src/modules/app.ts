@@ -39,6 +39,10 @@ import { userActivityReducer  } from './user/userActivity';
 import { walletsReducer  } from './user/wallets';
 import { withdrawLimitReducer  } from './user/withdrawLimit';
 import { exchangeReducer  } from './user/Exchange';
+import { merchantProfileReducer  } from './user/merchantProfile';
+import { merchantKeyReducer  } from './user/merchantKey';
+import { merchantWebsiteReducer  } from './user/merchantWebsite';
+import { merchantPaymentsReducer  } from './user/merchantPayments';
 
 export const publicReducer = combineReducers({
     colorTheme: changeColorThemeReducer,
@@ -80,4 +84,8 @@ export const userReducer = combineReducers({
     captchaKeys: getGeetestCaptchaReducer,
     withdrawLimit: withdrawLimitReducer,
     exchange: exchangeReducer,
+    merchantProfile: merchantProfileReducer,
+    merchantKey: merchantKeyReducer,
+    merchantWebsite: merchantWebsiteReducer,
+    merchantPayments: merchantPaymentsReducer,
 });

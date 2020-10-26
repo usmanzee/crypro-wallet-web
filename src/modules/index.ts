@@ -42,6 +42,10 @@ import { rootUserActivitySaga, UserActivityState } from './user/userActivity';
 import { rootWalletsSaga, WalletsState } from './user/wallets';
 import { rootWithdrawLimitSaga, WithdrawLimitState } from './user/withdrawLimit';
 import { rootExchangeSaga, ExchangeState } from './user/Exchange';
+import { MerchanProfileState,  rootMerchantProfileSaga} from './user/merchantProfile';
+import { MerchantKeyState, rootMerchantKeySaga } from './user/merchantKey';
+import { MerchantWebsiteState, rootMerchantWebsiteSaga } from './user/merchantWebsite';
+import { MerchantPaymentsState, rootMerchantPaymentsSaga } from './user/merchantPayments';
 
 export * from './public/markets';
 export * from './public/orderBook';
@@ -71,6 +75,11 @@ export * from './user/emailVerification';
 export * from './user/withdrawLimit';
 export * from './public/memberLevels';
 export * from './user/Exchange';
+
+export * from './user/merchantProfile';
+export * from './user/merchantKey';
+export * from './user/merchantWebsite';
+export * from './user/merchantPayments';
 
 export interface RootState {
     public: {
@@ -112,6 +121,10 @@ export interface RootState {
         captchaKeys: GeetestCaptchaState;
         withdrawLimit: WithdrawLimitState;
         exchange: ExchangeState;
+        merchantProfile: MerchanProfileState;
+        merchantKey: MerchantKeyState;
+        merchantWebsite: MerchantWebsiteState;
+        merchantPayments: MerchantPaymentsState;
     };
 }
 
@@ -152,5 +165,9 @@ export function* rootSaga() {
         call(rootWalletsSaga),
         call(rootWithdrawLimitSaga),
         call(rootExchangeSaga),
+        call(rootMerchantProfileSaga),
+        call(rootMerchantKeySaga),
+        call(rootMerchantWebsiteSaga),
+        call(rootMerchantPaymentsSaga),
     ]);
 }

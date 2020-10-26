@@ -20,3 +20,5 @@ export * from "./DepositFiatScreen";
 export * from "./WithdrawCryptoScreen";
 export * from "./WithdrawFiatScreen";
 export * from "./SwapScreen";
+export * from "./MerchantScreen";
+export * from "./BuyCryptoScreen";
