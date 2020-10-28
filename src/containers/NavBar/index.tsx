@@ -96,9 +96,11 @@ class NavBarComponent extends React.Component<Props, IState> {
 
         try {
             await ExchangeApi.getNotifications().then((responseData) => {
-                this.setState({
-                    notifications: responseData
-                });
+                if(responseData) {
+                    this.setState({
+                        notifications: responseData
+                    });
+                }
               });
         } catch (error) {
           console.log(error);
@@ -233,7 +235,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                     <div className="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" style={{ minWidth: '300px' }}>
                         <h6 className="p-3" style={{ fontSize: '16px' }}>Notifications</h6>
                         <div className="dropdown-divider"></div>
-                        {notifications && notifications.length ? 
+                        {notifications.length ? 
                             <>
                                 {notifications.map((notification, index) => {
                                     return (
