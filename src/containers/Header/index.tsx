@@ -33,19 +33,15 @@ const useStyles = theme => ({
         padding: theme.spacing(1),
         color: '#000',
         margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
-        // [theme.breakpoints.only('lg')]: {
-        //     backgroundColor: 'yellow',
-        // },
-        // [theme.breakpoints.only('md')]: {
-        //     backgroundColor: 'red',
-        // },
-        // [theme.breakpoints.only('sm')]: {
-        //     backgroundColor: 'white',
-        // },
         [theme.breakpoints.only('xs')]: {
-            margin: `${theme.spacing(12)}px 0px ${theme.spacing(1)}px`,
+            margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
         },
-      },
+    },
+    toolbarDiv: {
+        [theme.breakpoints.only('xs')]: {
+            display: 'none'
+        },
+    }
 });
 
 
@@ -106,7 +102,9 @@ class Head extends React.Component<Props> {
                                             {this.renderMarketToggler()}
                                         </Grid>
                                         <Grid item md={11}>
-                                            {this.renderMarketToolbar()}
+                                            <div className={classes.toolbarDiv}>
+                                                {this.renderMarketToolbar()}
+                                            </div>
                                         </Grid>
                                     </Grid>
                                 </Paper>
