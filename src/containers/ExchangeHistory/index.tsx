@@ -66,7 +66,7 @@ const ExchangeHistoryComponent = (props: Props) => {
   return (
       <>
         <Box mt={2}>
-            <Paper className={classes.tablePaper}>
+            <Paper className={classes.tablePaper} variant="outlined">
                 <Typography variant="h4" gutterBottom>
                     <FormattedMessage id={'page.body.swap.history.title.buy_sell_history'} />
                 </Typography>

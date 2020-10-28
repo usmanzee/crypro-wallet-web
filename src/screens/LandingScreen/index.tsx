@@ -6,6 +6,7 @@ import { Link, RouteProps, withRouter } from 'react-router-dom';
 //import {B4uLogo} from '../../assets/images/B4uLogo';
 //import Logo from '../../assets/images/logo.png';
 import WalletLogo from '../../assets/images/B4uwallet.svg';
+import { Footer } from '../../containers/Footer';
 import { MarketsTable } from '../../containers';
 import {
     RootState,
@@ -247,7 +248,7 @@ class Landing extends React.Component<Props> {
                         <div className="pg-landing-screen__footer__wrap__navigation__col">
                             <Link to="/trading/">{this.translate('page.body.landing.footer.exchange')}</Link>
                             <Link to="/wallets">{this.translate('page.body.landing.footer.wallets')}</Link>
-                            <Link to="/">{this.translate('page.body.landing.footer.fees')}</Link>
+                            <Link to="/fee">{this.translate('page.body.landing.footer.fees')}</Link>
                         </div>
                         <div className="pg-landing-screen__footer__wrap__navigation__col">
                             <Link to="/">{this.translate('page.body.landing.footer.faq')}</Link>
@@ -290,7 +291,7 @@ class Landing extends React.Component<Props> {
                 {this.renderFeaturesBlock()}
                 {this.renderTradeOnTheGoBlock()}
                 {this.renderStartTradingBlock()}
-                {this.renderFooter()}
+                {/* {this.renderFooter()} */}
             </div>
         );
     }

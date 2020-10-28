@@ -251,7 +251,7 @@ class MasspayComponent extends React.Component<Props> {
             // @ts-ignore
             const dataInfo = rows.filter((row) => {
                 // @ts-ignore
-                return row.currency === currency.id.toUpperCase() && row.btc_address != ''
+                return row.currency === currency.id.toUpperCase() && row.address != ''
             });
 
             return ({

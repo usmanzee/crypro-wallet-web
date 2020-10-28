@@ -76,14 +76,10 @@ let theme = createMuiTheme({
         }
       },
       typography: {
-        // fontFamily: "",
-        // The default font size of the Material Specification.
-        fontSize: 16, // px
+        fontSize: 16,
         fontWeightLight: 300,
         fontWeightRegular: 400,
         fontWeightMedium: 500,
-        // Tell Material-UI what's the font-size on the html element.
-        // 16px is the default font-size used by browsers.
         htmlFontSize: 16
       }
   });

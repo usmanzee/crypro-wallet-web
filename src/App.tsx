@@ -74,8 +74,8 @@ class AppLayout extends React.Component<Props, {}, {}> {
                                     <CustomizationContainer/>
                                     <AlertsContainer/>
                                     <LayoutContainer/>
-                                    {/* <FooterContainer/> */}
                                 </div>
+                                <FooterContainer/>
                             </div>
                         </React.Suspense>
                     </ErrorWrapper>

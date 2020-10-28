@@ -41,7 +41,6 @@ import { alertPush,
     selectExchangeSuccess,
     selectExchangeLoading
 } from '../../modules';
-import { stat } from 'fs';
 
 interface ReduxProps {
     user: User;

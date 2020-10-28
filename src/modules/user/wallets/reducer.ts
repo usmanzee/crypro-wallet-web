@@ -109,19 +109,20 @@ const walletsListReducer = (state: WalletsState['wallets'], action: WalletsActio
             const walletIndex = state.list.findIndex(
                 wallet => wallet.currency.toLowerCase() === action.payload.currency.toLowerCase(),
             );
-
-            if (walletIndex !== -1) {
-                return {
-                    ...state,
-                    loading: false,
-                    selectedWalletAddress: action.payload.address,
-                    walletAddressLoading: false,
-                };
-            }
+            // if (walletIndex !== -1) {
+            //     return {
+            //         ...state,
+            //         loading: false,
+            //         selectedWalletAddress: action.payload.address,
+            //         walletAddressLoading: false,
+            //     };
+            // }
 
             return {
                 ...state,
                 loading: false,
+                selectedWalletAddress: action.payload.address,
+                walletAddressLoading: false,
             };
         }
         case WALLETS_WITHDRAW_CCY_DATA:

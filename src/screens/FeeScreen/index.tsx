@@ -1,5 +1,4 @@
 import * as React from 'react';
-import "./fee.css";
 
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 
