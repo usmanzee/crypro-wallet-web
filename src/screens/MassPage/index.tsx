@@ -25,7 +25,6 @@ import {DropzoneArea} from 'material-ui-dropzone';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Papa from 'papaparse';
 import { massWithdraws } from '../../apis/withdraw';
-import axios from 'axios';
 
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { 
@@ -38,7 +37,6 @@ import {
     User, 
 } from '../../modules';
 import { CurrencyInfo } from '../../components';
-import { exit } from 'process';
 
 interface ReduxProps {
     user: User;
@@ -88,6 +86,9 @@ const useStyles = (theme: Theme) => ({
     },
     withdrawalAmount: {
         width: '100%'
+    },
+    buttonProgress: {
+        margin: `${theme.spacing(1)}px ${theme.spacing(3)}px`
     }
 });
 
@@ -399,7 +400,7 @@ class MasspayComponent extends React.Component<Props> {
                         </DialogContent>
                         <DialogActions>
                             {massWithdrawProcessing ? 
-                                    <CircularProgress className={classes.buttonProgress} size={18} /> :
+                                    <CircularProgress className={classes.buttonProgress} size={25} /> :
                                 <>
                                     <Button onClick={this.handleModalClose} color="primary">
                                         Cancel
