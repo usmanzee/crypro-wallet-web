@@ -22,6 +22,8 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import Button from 'react-bootstrap/Button'
 import { headerRoutes, headerProfileRoutes } from '../../constants';
 
+import Typography from '@material-ui/core/Typography';
+
 import {
     changeColorTheme,
     RootState,
@@ -229,24 +231,34 @@ class NavBarComponent extends React.Component<Props, IState> {
                         <span className="count-symbol bg-danger"></span>
                     </a>
                     <div className="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" style={{ minWidth: '300px' }}>
-                        <h6 className="p-3 mb-0 bg-primary-dull text-white py-4" style={{ fontSize: '1.3rem' }}>Notifications</h6>
-                        {notifications.map((notification, index) => {
-                            return (
-                                <>
-                                    <div className="dropdown-divider"></div>
-                                    <a className="dropdown-item preview-item">
-                                        <div className="preview-item-content d-flex align-items-start flex-column justify-content-center">
-                                            <h6 className="preview-subject font-weight-normal mb-1" style={{ fontSize: "1.2rem" }}>{ notification.subject }</h6>
-                                            <p className="text-gray ellipsis mb-0" style={{ fontSize: "1rem" }}>  {notification.body} </p>
-                                        </div>
-                                    </a>
-                                    <div className="dropdown-divider"></div>
-                                </>
-                            );
-                        })}
-                        <a href="#" className="text-primary">
-                            <h6 className="p-3 mb-0 text-center" style={{ fontSize: '1.2rem' }}>See all notifications</h6>
-                        </a>
+                        <h6 className="p-3" style={{ fontSize: '16px' }}>Notifications</h6>
+                        <div className="dropdown-divider"></div>
+                        {notifications && notifications.length ? 
+                            <>
+                                {notifications.map((notification, index) => {
+                                    return (
+                                        <>
+                                            <a className="dropdown-item preview-item">
+                                                <div className="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                                                    <h6 className="preview-subject font-weight-normal mb-1" style={{ fontSize: "1.2rem" }}>{ notification.subject }</h6>
+                                                    <p className="text-gray ellipsis mb-0" style={{ fontSize: "1rem" }}>  {notification.body} </p>
+                                                </div>
+                                            </a>
+                                            <div className="dropdown-divider"></div>
+                                        </>
+                                    );
+                                })}
+                            </> :
+                            <>
+                                <div style={{ padding: '24px', textAlign: 'center', fontSize: '14px' }}>
+                                    <Typography variant="h6">You're up to date!</Typography>
+                                    <Typography variant="body1">Visit every day for crypto news, price alerts, and more</Typography>
+                                </div>
+                            </>
+                        }
+                        {/* <a href="#" className="text-primary">
+                            <h6 className="p-3 mb-0 bg-primary text-white text-center" style={{ fontSize: '14px' }}>See all notifications</h6>
+                        </a> */}
                     </div>
                 </li>
             </>
