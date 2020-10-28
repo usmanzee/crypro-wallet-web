@@ -1,5 +1,5 @@
 import * as React from "react";
-import { injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 
 import { fade, makeStyles, createStyles, withStyles, Theme } from '@material-ui/core/styles';
@@ -31,6 +31,7 @@ import { CryptoIcon } from '../../components';
 
 import { 
     RootState, 
+    selectCurrentLanguage,
     selectUserInfo, 
     User, 
 } from '../../modules';
@@ -50,6 +51,7 @@ import {
 
 interface ReduxProps {
     user: User;
+    lang: string;
 }
 
 interface Currency {
@@ -94,10 +96,11 @@ const useStyles = makeStyles((theme: Theme) =>
     pageContent: {
         padding: "20px 0px",
     },
-    pageContnetText: {
+    pageContentText: {
         alignItems: 'center', 
         maxWidth: '400px', 
         margin: 'auto',
+        padding: '96px 0px',
         [theme.breakpoints.only('sm')]: {
             display: 'none',
         },
@@ -267,7 +270,7 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-type Props = ReduxProps;
+type Props = ReduxProps & InjectedIntlProps;
 const BuyCryptoComponent = (props: Props) => {
     const classes = useStyles();
 
@@ -289,13 +292,13 @@ const BuyCryptoComponent = (props: Props) => {
     const [paymentMethod, setPaymentMethod] = React.useState<string | null>(paymentMethods[0]['value']);
 
     const [buyCryptoDialogOpen, setBuyCryptoDialogOpen] = React.useState(false);
-    const [fetchingRate, setFetchingRate] = React.useState(true);
+    const [fetchingRate, setFetchingRate] = React.useState(false);
     
     const [moonPayURL, setMoonPayURL] = React.useState<string>('');
     const [showIframe, setShowIframe] = React.useState<boolean>(false);
     const [iframeLoading, setIframeLoading] = React.useState<boolean>(true);
 
-    let url = `${MOON_PAY_URL}?apiKey=${MOON_PAY_PUBLIC_KEY}&colorCode=%236F2158&walletAddress=bchtest:qrn45hfjpqd0w5p7dur5a2aasgp3nj8d8qh4exym5k`;
+    let url = `${MOON_PAY_URL}?apiKey=${MOON_PAY_PUBLIC_KEY}&colorCode=%236F2158&walletAddress=bchtest:qrn45hfjpqd0w5p7dur5a2aasgp3nj8d8qh4exym5k&language=${props.lang}`;
 
     const selectedFiatCurrencyCode = fiatCurrencyOption && fiatCurrencyOption.code ? fiatCurrencyOption.code : '';
     const selectedCryptoCurrencyCode = cryptoCurrencyOption && cryptoCurrencyOption.code ? cryptoCurrencyOption.code : '';
@@ -368,7 +371,7 @@ const BuyCryptoComponent = (props: Props) => {
                 setRate(response.data);
             }
         } else {
-            // setFetchingRate(false);
+            setFetchingRate(false);
             setRate('');
         }
     }
@@ -402,7 +405,7 @@ const BuyCryptoComponent = (props: Props) => {
             if(amount < baseCurrency.minAmount) {
                 setShowAmountError(true);
                 setAmountErrorMessage("Amount entered may not be suffecient for current payment channel.");
-                setChannelErrorMessage(`Insufficient amount. Minimum limit is ${baseCurrency.minAmount} ${baseCurrency.code.toUpperCase()}`);
+                setChannelErrorMessage(props.intl.formatMessage({ id: 'page.body.buy_crypto.field.error1' }, { amount: baseCurrency.minAmount, currencyCode: baseCurrency.code.toUpperCase() }));
                 return;
             } else {
                 setShowAmountError(false);
@@ -413,7 +416,7 @@ const BuyCryptoComponent = (props: Props) => {
             if(amount > baseCurrency.maxAmount) {
                 setShowAmountError(true);
                 setAmountErrorMessage("Amount entered may exceed the limit of current payment channel.");
-                setChannelErrorMessage(`Limit exceeded. Maximum limit per transaction is 17000 EUR ${baseCurrency.maxAmount} ${baseCurrency.code.toUpperCase()}`);
+                setChannelErrorMessage(props.intl.formatMessage({ id: 'page.body.buy_crypto.field.error2' }, { amount: baseCurrency.maxAmount, currencyCode: baseCurrency.code.toUpperCase() }));
                 return;
             } else {
                 setShowAmountError(false);
@@ -454,7 +457,6 @@ const BuyCryptoComponent = (props: Props) => {
     }
 
     const handleFromSubmit = () => {
-        // updateMoonPayURL();
         setShowIframe(true);
         handleBuyModalOpen();
     }
@@ -464,6 +466,7 @@ const BuyCryptoComponent = (props: Props) => {
 
     const fiatPopperOpen = Boolean(fiatAnchorEl);
     const fiatPopperId = fiatPopperOpen ? 'fiat-currencies' : undefined;
+    const submitButtonText = props.intl.formatMessage({ id: 'page.body.buy_crypto.submit_button.text' }, { currencyCode: cryptoCurrencyOption && cryptoCurrencyOption.code ? cryptoCurrencyOption.code.toUpperCase() : '' });
 
     const renderFiatCurrencyDropDown = () => {
         return (
@@ -602,35 +605,35 @@ const BuyCryptoComponent = (props: Props) => {
 
     return (
         <>
-            <Box className={classes.root}>
+            <Box p={1}>
                 <Container className={classes.container}>
-                    <Paper elevation={1} className={classes.paper}>
-                        <Typography variant="h5" component="div" className={classes.pageHeader} gutterBottom>Buy Crypto</Typography>
-
+                    <Paper elevation={0} className={classes.paper}>
+                        <Typography variant="h5" component="div" className={classes.pageHeader} gutterBottom>
+                            <FormattedMessage id={'page.body.buy_crypto.title.buy_crypto'} />
+                        </Typography>
                         <div className={classes.pageContent}>
-
                             <Grid container>
-                                <Grid item md={6}>
-                                   <div className={classes.pageContnetText}>
+                                <Grid item sm= {12} md={6}>
+                                   <div className={classes.pageContentText}>
                                         <Typography variant="h4" gutterBottom>
-                                            Buy Bitcoin and other cryptocurrencies easily
+                                            <FormattedMessage id={'page.body.buy_crypto.content1'} />
                                         </Typography>
                                         <Typography variant="body1" gutterBottom>
-                                            Buy and invest in minutes using your credit card, bank transfer or Apple Pay.
+                                        <FormattedMessage id={'page.body.buy_crypto.content2'} />
                                         </Typography>
                                    </div>
                                 </Grid>
-                                <Grid item md={6}>
+                                <Grid item sm={12} md={6}>
                                     <Paper style={{ padding: '16px 24px' }}>
                                         <div className={classes.inputMargin}>
                                             <InputLabel htmlFor="buy" className={classes.inputLabel}>
-                                                I want to buy
+                                                <FormattedMessage id={'page.body.buy_crypto.fields.buy'} />
                                             </InputLabel>
                                             {renderCryptoDropdown()}
                                         </div>
                                         <div className={classes.inputMargin}>
                                             <InputLabel htmlFor="sell" className={classes.inputLabel}>
-                                                I want to spend
+                                                <FormattedMessage id={'page.body.buy_crypto.fields.spend'} />
                                             </InputLabel>
                                             <FormControl variant="outlined" fullWidth error={showAmountError}>
                                                 <OutlinedInput
@@ -656,7 +659,7 @@ const BuyCryptoComponent = (props: Props) => {
                                         </div>
                                         <div className={classes.inputMargin}>
                                             <InputLabel htmlFor="rate" className={classes.inputLabel}>
-                                                For this much
+                                                <FormattedMessage id={'page.body.buy_crypto.fields.how_much'} />
                                             </InputLabel>
                                             <FormControl variant="outlined" fullWidth>
                                                 <OutlinedInput
@@ -666,11 +669,11 @@ const BuyCryptoComponent = (props: Props) => {
                                                     disabled={true}
                                                     type='text'
                                                     aria-describedby="sell-text"
-                                                    // startAdornment={
-                                                    //     <InputAdornment position="start">
-                                                    //         {fetchingRate && <CircularProgress size={14}/>}
-                                                    //     </InputAdornment>
-                                                    // }
+                                                    startAdornment={
+                                                        <InputAdornment position="start">
+                                                            {fetchingRate && <CircularProgress size={14}/>}
+                                                        </InputAdornment>
+                                                    }
                                                     endAdornment={
                                                         <InputAdornment position="end">
                                                             <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
@@ -689,17 +692,11 @@ const BuyCryptoComponent = (props: Props) => {
                                                     onClick={handleFromSubmit}
                                                     disabled={isValidForm()}
                                                 >
-                                                Buy {cryptoCurrencyOption && cryptoCurrencyOption.code ? cryptoCurrencyOption.code.toUpperCase() : ''}
+                                                {submitButtonText}
                                                 </Button>
                                             </div>
                                         </div>
                                     </Paper>
-                                    <Button 
-                                        variant="outlined"
-                                        onClick={handleBuyModalOpen}
-                                    >
-                                        Buy Crypto
-                                    </Button>
                                 </Grid>
                             </Grid>
 
@@ -915,7 +912,7 @@ const BuyCryptoComponent = (props: Props) => {
                             fullWidth 
                             onClick={handleBuyModalClose}
                         >
-                            Exit
+                            <FormattedMessage id={'page.body.buy_crypto.modal.exit_button.text'} />
                         </Button>
                     </div>
                 </DialogContent>
@@ -926,6 +923,7 @@ const BuyCryptoComponent = (props: Props) => {
 
 const mapStateToProps = (state: RootState): ReduxProps => ({
     user: selectUserInfo(state),
+    lang: selectCurrentLanguage(state),
 });
 
 export const BuyCryptoScreen = injectIntl(connect(mapStateToProps)(BuyCryptoComponent))

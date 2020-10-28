@@ -288,6 +288,17 @@ export const en = {
     'page.body.swap.history.table.column.date': 'Date',
     'page.body.swap.history.table.pagination.text.rows_per_page': 'Rows Per Page',
 
+    'page.body.buy_crypto.title.buy_crypto': 'Buy Crypto',
+    'page.body.buy_crypto.content1': 'Buy Bitcoin and other cryptocurrencies easily',
+    'page.body.buy_crypto.content2': 'Buy and invest in minutes using your credit card, bank transfer or Apple Pay.',
+    'page.body.buy_crypto.fields.buy': 'I want to buy',
+    'page.body.buy_crypto.fields.spend': 'I want to spend',
+    'page.body.buy_crypto.fields.how_much': 'For this much',
+    'page.body.buy_crypto.submit_button.text': 'Buy {currencyCode}',
+    'page.body.buy_crypto.modal.exit_button.text': 'Exit',
+    'page.body.buy_crypto.field.error1': 'Insufficient amount. Minimum limit is {amount} {currencyCode}',
+    'page.body.buy_crypto.field.error2': 'Limit exceeded. Maximum limit per transaction is {amount} {currencyCode}',
+
     'page.body.openOrders.tab.all': 'All',
     'page.body.openOrders.tab.open': 'Open',
     'page.body.openOrders.header.orderType': 'Order Type',

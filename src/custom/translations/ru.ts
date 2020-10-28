@@ -286,6 +286,17 @@ export const ru: LangType = {
     'page.body.swap.history.table.column.date': 'Дата',
     'page.body.swap.history.table.pagination.text.rows_per_page': 'Строк на странице',
 
+    'page.body.buy_crypto.title.buy_crypto': 'Купить криптовалюту',
+    'page.body.buy_crypto.content1': 'Покупайте биткойны и другие криптовалюты легко',
+    'page.body.buy_crypto.content2': 'Покупайте и инвестируйте в минуты с помощью кредитной карты, банковского перевода или Apple Pay.',
+    'page.body.buy_crypto.fields.buy': 'я хочу купить',
+    'page.body.buy_crypto.fields.spend': 'Я хочу потратить',
+    'page.body.buy_crypto.fields.how_much': 'Для этого',
+    'page.body.buy_crypto.submit_button.text': 'Купить {currencyCode}',
+    'page.body.buy_crypto.modal.exit_button.text': 'Выход',
+    'page.body.buy_crypto.field.error1': 'Недостаточная сумма. Минимальный лимит {amount} {currencyCode}',
+    'page.body.buy_crypto.field.error2': 'Предел превышен. Максимальный лимит на транзакцию составляет {amount} {currencyCode}',
+
     'page.body.openOrders.tab.all': 'Все',
     'page.body.openOrders.tab.open': 'Открытые',
     'page.body.openOrders.header.orderType': 'Тип ордера',
