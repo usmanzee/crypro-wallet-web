@@ -22,6 +22,11 @@ export const ru: LangType = {
     'page.header.navbar.profile.api_management': 'Управление API',
     'page.header.navbar.profile.referal': 'Направления',
 
+    //Header Notification Tab
+    'page.header.navbar.notifications.title': 'Уведомления',
+    'page.header.navbar.notifications.empty.content1': 'Вы в курсе!',
+    'page.header.navbar.notifications.empty.content2': 'Посещайте каждый день, чтобы получать новости о криптовалюте, уведомления о ценах и многое другое',
+
     'page.sidebar.group.text': 'Fee Group:',
     'page.sidebar.group.value': 'Base',
 

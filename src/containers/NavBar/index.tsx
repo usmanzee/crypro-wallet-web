@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import { History } from 'history';
 import { Link } from "react-router-dom";
 import { FormattedMessage } from 'react-intl';
@@ -15,11 +15,11 @@ import { compose } from 'redux';
 //import { Sun } from '../../assets/images/Sun';
 //import { colors } from '../../constants';
 
-import logoLight from '../../assets/images/logo.png';
+// import logoLight from '../../assets/images/logo.png';
 import { languages } from '../../api/config';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import Button from 'react-bootstrap/Button'
+// import Button from 'react-bootstrap/Button'
 import { headerRoutes, headerProfileRoutes } from '../../constants';
 
 import Typography from '@material-ui/core/Typography';
@@ -37,7 +37,7 @@ import {
     User,
 } from '../../modules';
 
-import * as ExchangeApi from "../../apis/exchange";
+import {getNotifications} from "../../apis/exchange";
 // import { NotificationType } from '../../charting_library/charting_library.min';
 
 interface Notification {
@@ -92,27 +92,29 @@ class NavBarComponent extends React.Component<Props, IState> {
         };
         
     }
-    public async componentDidMount () {
-
-        try {
-            await ExchangeApi.getNotifications().then((responseData) => {
-                if(responseData) {
-                    this.setState({
-                        notifications: responseData
-                    });
-                }
-              });
-        } catch (error) {
-          console.log(error);
-        }
+    public componentDidMount () {
+        this.getNotifications();
     };
+
+    public getNotifications = async () => {
+        try {
+            const response = await getNotifications();
+            if(response.status === 200) {
+                this.setState({
+                    notifications: response.data
+                });
+            }
+
+        } catch (error) {
+        }
+    }
 
     private renderNavLinks = () => (values: string[], index: number) => {
 
-        const [name, url, img] = values;
+        const [name, url] = values;
         return (
             <React.Fragment>
-                <li className="nav-item active">
+                <li className="nav-item" key={`key_${index}`}>
                     <Link className="nav-link" to={url}>
                         <FormattedMessage id={name} />
                     </Link>
@@ -149,7 +151,7 @@ class NavBarComponent extends React.Component<Props, IState> {
         return (
             <>
                 <li className="nav-item nav-profile dropdown">
-                    <a className="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                    <a className="nav-link dropdown-toggle" id="profileDropdown" href="/" data-toggle="dropdown" aria-expanded="false">
                     <div className="nav-profile-img">
                         {/* <img src={faceImg} alt="image" /> */}
                         <AccountCircleIcon fontSize="large" />
@@ -170,10 +172,10 @@ class NavBarComponent extends React.Component<Props, IState> {
                         </div>
                         <div className="p-2">
                             <div role="separator" className="dropdown-divider"></div>
-                            <a className="dropdown-item py-1 d-flex align-items-center justify-content-between" onClick={this.props.logoutFetch}>
+                            <span className="dropdown-item py-1 d-flex align-items-center justify-content-between" style={{ cursor: 'pointer' }} onClick={this.props.logoutFetch}>
                                 <span><FormattedMessage id={'page.header.navbar.logout'} /></span>
                                 <i className="mdi mdi-logout ml-1"></i>
-                            </a>
+                            </span>
                         </div>
                     </div>
                 </li>
@@ -182,7 +184,7 @@ class NavBarComponent extends React.Component<Props, IState> {
     }
 
     public renderProfileLinks = () => (values: string[], index: number) => {
-        const [name, url, iconClassName] = values;
+        // const [name, url, iconClassName] = values;
         return (
             <React.Fragment>
                 {/* <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to={url}>
@@ -233,14 +235,17 @@ class NavBarComponent extends React.Component<Props, IState> {
                         <span className="count-symbol bg-danger"></span>
                     </a>
                     <div className="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" style={{ minWidth: '300px' }}>
-                        <h6 className="p-3" style={{ fontSize: '16px' }}>Notifications</h6>
+                        <h6 className="p-3" style={{ fontSize: '16px' }}>
+                            <FormattedMessage id={'page.header.navbar.notifications.title'} />
+                        </h6>
                         <div className="dropdown-divider"></div>
                         {notifications.length ? 
                             <>
+                            <div style={{ padding: '0px 0px 24px' }}>
                                 {notifications.map((notification, index) => {
                                     return (
                                         <>
-                                            <a className="dropdown-item preview-item">
+                                            <a className="dropdown-item preview-item" key={notification.id}>
                                                 <div className="preview-item-content d-flex align-items-start flex-column justify-content-center">
                                                     <h6 className="preview-subject font-weight-normal mb-1" style={{ fontSize: "1.2rem" }}>{ notification.subject }</h6>
                                                     <p className="text-gray ellipsis mb-0" style={{ fontSize: "1rem" }}>  {notification.body} </p>
@@ -250,11 +255,16 @@ class NavBarComponent extends React.Component<Props, IState> {
                                         </>
                                     );
                                 })}
-                            </> :
+                            </div>
+                            </>: 
                             <>
                                 <div style={{ padding: '24px', textAlign: 'center', fontSize: '14px' }}>
-                                    <Typography variant="h6">You're up to date!</Typography>
-                                    <Typography variant="body1">Visit every day for crypto news, price alerts, and more</Typography>
+                                    <Typography variant="h6">
+                                        <FormattedMessage id={'page.header.navbar.notifications.empty.content1'} />
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        <FormattedMessage id={'page.header.navbar.notifications.empty.content2'} />
+                                    </Typography>
                                 </div>
                             </>
                         }

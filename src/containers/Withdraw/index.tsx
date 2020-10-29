@@ -1,5 +1,4 @@
-import classnames from 'classnames';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import * as React from 'react';
 import {
     Beneficiaries,
@@ -103,7 +102,7 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
             });
         }
 
-        if(withdrawSuccess != nextProps.withdrawSuccess) {
+        if(withdrawSuccess !== nextProps.withdrawSuccess) {
             this.resetFormData();
         }
     }
@@ -115,15 +114,12 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
             amount,
             beneficiary,
             total,
-            withdrawAmountFocused,
             otpCode,
         } = this.state;
         const {
-            className,
             currency,
             type,
             withdrawProcessing,
-            withdrawSuccess,
             twoFactorAuthRequired,
             withdrawAddressLabel,
             withdrawAmountLabel,

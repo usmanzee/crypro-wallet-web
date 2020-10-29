@@ -1,4 +1,3 @@
-import { CommonError } from '../../types';
 import {
     EXCHANGE_RATE_FETCH,
     EXCHANGE_RATE_SUCCESS,

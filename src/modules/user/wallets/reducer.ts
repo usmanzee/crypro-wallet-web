@@ -106,9 +106,9 @@ const walletsListReducer = (state: WalletsState['wallets'], action: WalletsActio
             };
         }
         case WALLETS_ADDRESS_DATA: {
-            const walletIndex = state.list.findIndex(
-                wallet => wallet.currency.toLowerCase() === action.payload.currency.toLowerCase(),
-            );
+            // const walletIndex = state.list.findIndex(
+            //     wallet => wallet.currency.toLowerCase() === action.payload.currency.toLowerCase(),
+            // );
             // if (walletIndex !== -1) {
             //     return {
             //         ...state,

@@ -87,8 +87,9 @@ interface ReduxProps {
 
 const MerchantWebsiteComponent = (props) => {
     const classes = useStyles();
-    const { merchantWebsite } = props;
+    const { merchantWebsite, fetchMerchantWebsite } = props;
 
+    console.log(merchantWebsite);
     const [open, setOpen] = React.useState(false);
 
     const [values, setValues] = React.useState({
@@ -97,8 +98,10 @@ const MerchantWebsiteComponent = (props) => {
     });
 
     React.useEffect(() => {
-        props.fetchMerchantWebsite();
-    }, []);
+        if(!merchantWebsite.hook && !merchantWebsite.url) {
+            fetchMerchantWebsite();
+        }
+    }, [merchantWebsite, fetchMerchantWebsite]);
 
     const handleClickOpen = () => {
         if(merchantWebsite) {

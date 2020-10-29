@@ -201,7 +201,7 @@ const WithdrawFiatComponent = (props: Props) => {
     const defaultWalletCurrency = 'usd';
     //Props
     const classes = useStyles();
-    const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
+    const { wallets, user, currencies } = props;
 
     //Params
     let params = useParams();

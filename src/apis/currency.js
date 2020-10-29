@@ -1,4 +1,3 @@
-import axiosInstance from "./requestBuilder";
 import axios from "axios";
 
 export const fetchMoonpayCurrencies = () => {

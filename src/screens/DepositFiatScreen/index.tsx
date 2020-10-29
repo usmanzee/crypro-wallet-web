@@ -9,23 +9,27 @@ import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import InputBase from '@material-ui/core/InputBase';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import StarIcon from '@material-ui/icons/Star'
-import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
-import { Blur, CurrencyInfo, Decimal, DepositCrypto, DepositFiat, DepositTag, SummaryField, TabPanel, WalletItemProps, WalletList, CryptoIcon } from '../../components';
-import { alertPush, beneficiariesFetch, Beneficiary, currenciesFetch, Currency, RootState, selectBeneficiariesActivateSuccess, selectBeneficiariesDeleteSuccess, selectCurrencies, selectHistory, selectMobileWalletUi, selectUserInfo, selectWalletAddress, selectWallets, selectWalletsAddressError, selectWalletsLoading, selectWithdrawSuccess, setMobileWalletUi, User, WalletHistoryList, walletsAddressFetch, walletsData, walletsFetch, walletsWithdrawCcyFetch } from '../../modules';
-import { CommonError } from '../../modules/types';
+import { 
+    DepositFiat, 
+    WalletItemProps,
+    CryptoIcon
+} from '../../components';
+import {  
+    RootState, 
+    selectUserInfo, 
+    selectWallets, 
+    selectWalletsLoading, 
+    User, 
+    walletsData, 
+    walletsFetch, 
+} from '../../modules';
 import { WalletHistory } from '../../containers/Wallets/History';
-import { formatCCYAddress, setDocumentTitle } from '../../helpers';
 
 import {
     useParams
@@ -34,26 +38,12 @@ import {
 interface ReduxProps {
     user: User;
     wallets: WalletItemProps[];
-    withdrawSuccess: boolean;
-    addressDepositError?: CommonError;
     walletsLoading?: boolean;
-    historyList: WalletHistoryList;
-    mobileWalletChosen: string;
-    selectedWalletAddress: string;
-    beneficiariesActivateSuccess: boolean;
-    beneficiariesDeleteSuccess: boolean;
-    currencies: Currency[];
 }
 
 interface DispatchProps {
-    fetchBeneficiaries: typeof beneficiariesFetch;
     fetchWallets: typeof walletsFetch;
-    fetchAddress: typeof walletsAddressFetch;
     clearWallets: () => void;
-    walletsWithdrawCcy: typeof walletsWithdrawCcyFetch;
-    fetchSuccess: typeof alertPush;
-    setMobileWalletUi: typeof setMobileWalletUi;
-    currenciesFetch: typeof currenciesFetch;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -184,10 +174,9 @@ type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
 const DepositFiatComponent = (props: Props) => {
     const defaultFiatDepositCurrency = 'usd';
-    let history = useHistory();
     //Props
     const classes = useStyles();
-    const { addressDepositError, wallets, user, selectedWalletAddress, currencies } = props;
+    const { wallets, user, fetchWallets } = props;
 
     //Params
     let params = useParams();
@@ -199,19 +188,12 @@ const DepositFiatComponent = (props: Props) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [selectedFiatWalletOption, setSelectedFiatWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
 
-    console.log('selectedCurrency: ', selectedCurrency);
     //UseEffects
     React.useEffect(() => {
-        if (!props.wallets.length) {
-            props.fetchWallets();
+        if (!wallets.length) {
+            fetchWallets();
         }
-    }, [wallets]);
-
-    React.useEffect(() => {
-        if (!props.currencies.length) {
-            props.currenciesFetch();
-        }
-    }, [currencies]);
+    }, [wallets, fetchWallets]);
 
     React.useEffect(() => {
         if (!fiatWallets.length && wallets.length > 0) {
@@ -230,7 +212,6 @@ const DepositFiatComponent = (props: Props) => {
 
     //Addtional Methods
     const searchSelectedCurrencyInFiatWallets = (currency: string) => {
-        console.log('currency: ', currency);
         return fiatWallets.find(fiatWallet => fiatWallet.currency === currency);
     }
     const handleCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -249,7 +230,7 @@ const DepositFiatComponent = (props: Props) => {
     const popperOpen = Boolean(anchorEl);
     const popperId = popperOpen ? 'wallet-currencies' : undefined;
 
-    const pageTitle = translate('page.body.wallets.title');
+    // const pageTitle = translate('page.body.wallets.title');
     const title = translate('page.body.wallets.tabs.deposit.fiat.message1');
     const description = translate('page.body.wallets.tabs.deposit.fiat.message2');
     
@@ -288,7 +269,7 @@ const DepositFiatComponent = (props: Props) => {
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
                                 {selectedFiatWalletOption ? 
                                     (<>
-                                        {selectedFiatWalletOption.iconUrl ? (<img src={`${ selectedFiatWalletOption.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedFiatWalletOption.currency.toUpperCase()} />)}
+                                        {selectedFiatWalletOption.iconUrl ? (<img src={`${ selectedFiatWalletOption.iconUrl } `} className={classes.currencyIcon} alt="currency" />) : (<CryptoIcon code={selectedFiatWalletOption.currency.toUpperCase()} />)}
                                         <Typography variant="h6" component="div" display="inline" style={{ margin: '0px 4px' }}>
                                             { selectedFiatWalletOption.currency.toUpperCase() }
                                         </Typography>
@@ -323,7 +304,7 @@ const DepositFiatComponent = (props: Props) => {
                                     renderOption = {(option: WalletItemProps | null | undefined) => {
                                         const optionCurrency = option ? option.currency.toUpperCase() : '';
                                         return <React.Fragment>
-                                            {option && option.iconUrl ? (<img src={`${ option.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={optionCurrency} />)}
+                                            {option && option.iconUrl ? (<img src={`${ option.iconUrl } `} className={classes.currencyIcon} alt="currency"/>) : (<CryptoIcon code={optionCurrency} />)}
                                             <div>
                                                 <Typography variant="h6" component="div" display="inline" style={{ margin: '0px 4px' }}>
                                                     { option ? option.currency.toUpperCase(): '' }
@@ -353,26 +334,6 @@ const DepositFiatComponent = (props: Props) => {
                                 <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedFiatWalletbalance + selectedFiatWalletLocked }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedFiatWalletOption ? selectedFiatWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
-                            {/* <Paper elevation={0} className={classes.cryptoTips}>
-                                <Typography variant="h6" component="div"><EmojiObjectsIcon />
-                                    <FormattedMessage id={'page.body.deposit.tips.title'} />
-                                </Typography>
-                                <List component="ul" aria-label="contacts">
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <StarIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={"tip1"} />
-                                    </ListItem>
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <StarIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={"tip2"} />
-                                    </ListItem>
-                                   
-                                </List>
-                            </Paper> */}
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} className={classes.depositCol}>
                             <DepositFiat title={title} description={description} uid={user ? user.uid : ''} currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}/>
@@ -394,24 +355,10 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     user: selectUserInfo(state),
     wallets: selectWallets(state),
     walletsLoading: selectWalletsLoading(state),
-    addressDepositError: selectWalletsAddressError(state),
-    withdrawSuccess: selectWithdrawSuccess(state),
-    historyList: selectHistory(state),
-    mobileWalletChosen: selectMobileWalletUi(state),
-    selectedWalletAddress: selectWalletAddress(state),
-    beneficiariesActivateSuccess: selectBeneficiariesActivateSuccess(state),
-    beneficiariesDeleteSuccess: selectBeneficiariesDeleteSuccess(state),
-    currencies: selectCurrencies(state),
 });
 const mapDispatchToProps = dispatch => ({
-    fetchBeneficiaries: () => dispatch(beneficiariesFetch()),
     fetchWallets: () => dispatch(walletsFetch()),
-    fetchAddress: ({ currency }) => dispatch(walletsAddressFetch({ currency })),
-    walletsWithdrawCcy: params => dispatch(walletsWithdrawCcyFetch(params)),
     clearWallets: () => dispatch(walletsData([])),
-    fetchSuccess: payload => dispatch(alertPush(payload)),
-    setMobileWalletUi: payload => dispatch(setMobileWalletUi(payload)),
-    currenciesFetch: () => dispatch(currenciesFetch()),
 });
 
 export const DepositFiatScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(DepositFiatComponent))

@@ -19,11 +19,10 @@ export const codeWithdraws = () => {
     return axiosInstance.get('/account/withdraws/code')
   };
 
-  export const getExchangeHistory = () => {
+export const getExchangeHistory = () => {
     return axiosInstance.get(`account/exchanges/history`)
         .then(response => response.data);
-  };
-  export const getNotifications = () => {
+};
+export const getNotifications = () => {
     return axiosInstance.get(`account/notifications`)
-        .then(response => response.data);
-  };
+};

@@ -9,18 +9,11 @@ import { TipIcon } from '../../assets/images/TipIcon';
 import { TrashBin } from '../../assets/images/TrashBin';
 
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import {FormControl as MaterialFromControl} from '@material-ui/core';
-import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import InputBase from '@material-ui/core/InputBase';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+import { withStyles, Theme } from '@material-ui/core/styles';
 //import { CustomInput } from '../../components';
 import {
     beneficiariesDelete,
@@ -77,7 +70,7 @@ const defaultBeneficiary: Beneficiary = {
 };
 
 
-const useStyles = theme => ({
+const useStyles = (theme: Theme) => ({
     addAddressButton: {
         '.MuiButton-label' : {
             display: 'block'
@@ -106,7 +99,6 @@ class BeneficiariesComponent extends React.Component<Props, State> {
         const { currency, beneficiaries, memberLevels } = this.props;
         if (currency && beneficiaries.length) {
             const filtredBeneficiaries = this.handleFilterByState(this.handleFilterByCurrency(beneficiaries, currency));
-            console.log('filtredBeneficiaries: ', filtredBeneficiaries);
             if (filtredBeneficiaries.length) {
                 this.handleSetCurrentAddress(filtredBeneficiaries[0]);
             }
@@ -136,7 +128,6 @@ class BeneficiariesComponent extends React.Component<Props, State> {
             type,
             beneficiaries,
             beneficiariesAddData,
-            classes
         } = this.props;
         const {
             currentWithdrawalBeneficiary,
@@ -145,10 +136,8 @@ class BeneficiariesComponent extends React.Component<Props, State> {
             isOpenFailModal,
         } = this.state;
 
-        console.log(currentWithdrawalBeneficiary);
         const filtredBeneficiaries = this.handleFilterByState(this.handleFilterByCurrency(beneficiaries, currency));
 
-        console.log('filtredBeneficiaries: ', filtredBeneficiaries);
         return (
             <div className="pg-beneficiaries">
                 <span className="pg-beneficiaries__title">{type === 'coin' ? this.translate('page.body.wallets.beneficiaries.title') : this.translate('page.body.wallets.beneficiaries.fiat.title')}</span>
@@ -175,7 +164,6 @@ class BeneficiariesComponent extends React.Component<Props, State> {
     }
 
     private renderAddAddress = () => {
-        const {classes}  = this.props;
         return (
             <>
                 {/* <Button
@@ -189,10 +177,10 @@ class BeneficiariesComponent extends React.Component<Props, State> {
                 >
                     {this.translate('page.body.wallets.beneficiaries.addAddress')}
                 </Button> */}
-            <div className="pg-beneficiaries__add" onClick={this.handleClickToggleAddAddressModal()}>
-                <span className="pg-beneficiaries__add__label">{this.translate('page.body.wallets.beneficiaries.addAddress')}</span>
-                <PlusIcon className="pg-beneficiaries__add__icon" />
-            </div>
+                <div className="pg-beneficiaries__add" onClick={this.handleClickToggleAddAddressModal()}>
+                    <span className="pg-beneficiaries__add__label">{this.translate('page.body.wallets.beneficiaries.addAddress')}</span>
+                    <PlusIcon className="pg-beneficiaries__add__icon" />
+                </div>
             </>
         );
     };
@@ -402,7 +390,6 @@ class BeneficiariesComponent extends React.Component<Props, State> {
     };
 
     private handleClickSelectAddress = (item: Beneficiary) => () => {
-        console.log(item);
         this.handleSetCurrentAddress(item);
     };
 

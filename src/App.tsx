@@ -9,21 +9,6 @@ import { ErrorWrapper } from './containers';
 import { RootState } from './modules';
 import { languageMap } from './translations';
 
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
-
-const theme = createMuiTheme({
-    palette: {
-      primary: {
-        main: "rgb(111 33 88)",
-      }
-    },
-    typography: {    
-        fontSize: 16,
-    },
-  });
-  
-
 interface AppProps {
     history: History;
 }

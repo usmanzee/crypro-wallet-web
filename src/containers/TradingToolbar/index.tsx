@@ -14,11 +14,10 @@ import { HeaderToolbar } from '../HeaderToolbar';
 
 import { withStyles, Theme } from '@material-ui/core/styles';
 
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
-const useStyles = theme => ({
+const useStyles = (theme: Theme) => ({
     subHeader: {
         backgroundColor: '#fff',
         padding: theme.spacing(1),
@@ -43,7 +42,7 @@ type Props = ReduxProps & DispatchProps & InjectedIntlProps;
 class TradingToolbarContainer extends React.Component<Props> {
 
     public render() {
-        const {mobileWallet, classes } = this.props;
+        const { classes } = this.props;
 
         const shouldRenderMarketToolbar = window.location.pathname.includes('/trading/') ? true : false;
 

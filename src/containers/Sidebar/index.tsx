@@ -75,7 +75,6 @@ class SidebarContainer extends React.Component<Props, State> {
         });
         // const sideBarHidden = isActive ? false : true
         const shouldRenderSidebar = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/' && !window.location.pathname.includes('/trading');
-        console.log('shouldRenderSidebar: ', shouldRenderSidebar);
         const newSidebarClassName = classnames('sidebar sidebar-offcanvas', {
             'd-lg-none': !shouldRenderSidebar,
             '': shouldRenderSidebar,
@@ -135,11 +134,10 @@ class SidebarContainer extends React.Component<Props, State> {
         const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
             'pg-sidebar-wrapper-nav-item-img--active': isActive,
         });
-
         return (
             <React.Fragment>
-                <li className={sidebarClassName}>
-                    <Link to={path} key={index} className="nav-link">
+                <li className={sidebarClassName} key={`key_${index}`}>
+                    <Link to={path} className="nav-link">
                         <SidebarIcons
                             className={iconClassName}
                             name={img}

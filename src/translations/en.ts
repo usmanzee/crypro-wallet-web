@@ -21,6 +21,11 @@ export const en = {
     'page.header.navbar.profile.identification': 'Identification',
     'page.header.navbar.profile.api_management': 'API Management',
     'page.header.navbar.profile.referal': 'Referal',
+
+    //Header Notification Tab
+    'page.header.navbar.notifications.title': 'Notifications',
+    'page.header.navbar.notifications.empty.content1': "You're up to date!",
+    'page.header.navbar.notifications.empty.content2': 'Visit every day for crypto news, price alerts, and more',
     
 
     'page.sidebar.group.text': 'Fee Group:',

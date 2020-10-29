@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-
+import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 //Table Imports
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,6 +9,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 
 //Tabs Imports
@@ -17,6 +18,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import { CryptoIcon } from '../../components';
 
 import * as FeeApi from "../../apis/fee";
 
@@ -78,16 +80,34 @@ const StyledTableCell = withStyles((theme: Theme) =>
   }),
 )(TableCell);
 
-class FeeScreen extends React.Component<[],any> {
-    constructor(props) {
+
+const useStyles = (theme: Theme) => ({
+    pageHeader: {
+		fontWeight: 500,
+		padding: `${theme.spacing(1)}px 0px`,
+		borderBottom: "1px solid rgb(233, 236, 240)"
+	}
+});
+
+interface IState {
+    withdrawlDepositFees: any[];
+	tradingFees: any[];
+	tabValue: number;
+}
+type Props =  InjectedIntlProps;
+
+class FeeComponent extends React.Component<Props, IState> {
+	
+	constructor(props: Props) {
         super(props);
-    
+
         this.state = {
-          withdrawlDepositFees: [],
-          tradingFees: [],
-          tabValue: 0
-        };
-      }
+			withdrawlDepositFees: [],
+			tradingFees: [],
+			tabValue: 0
+		  };
+    }
+
     componentDidMount() {
       
         this.getTradingFee();
@@ -100,103 +120,116 @@ class FeeScreen extends React.Component<[],any> {
       });
     }
     getWithdrawlDepositFees() {
-      FeeApi.getWithdrawlDepositFees().then((responseData) => {
-        this.setState({
-          withdrawlDepositFees: responseData
+      	FeeApi.getWithdrawlDepositFees().then((responseData) => {
+        	this.setState({
+          	withdrawlDepositFees: responseData
         });
       });
     }
     render() {
-      
-      const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-          console.log(newValue);
-          this.setState({
-              tabValue: newValue
+      	// const {classes} = this.props;
+      	const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+          	this.setState({
+              	tabValue: newValue
             })
 
             if(newValue === 0) {
-              this.getTradingFee();
+              	this.getTradingFee();
             }
 
             if(newValue === 1) {
-              this.getWithdrawlDepositFees();
+              	this.getWithdrawlDepositFees();
             }
-          };
+        };
         return (
-          <div className="container pg-layout">
-            <AppBar position="static" color="default" style={{ boxShadow: "none" }}>
-              <AntTabs value={this.state.tabValue} onChange={handleChange} variant="fullWidth" indicatorColor="primary" centered>
-                <Tab label="Trading Fee" {...a11yProps(0)} />
-                <Tab label="Deposit & Withdrawl Fees" {...a11yProps(1)} />
-              </AntTabs>
-            </AppBar>
-            <TabPanel value={this.state.tabValue} index={0}>
-              {/* <h1>Trading Fee Schedule</h1> */}
-                <TableContainer>
-                  <Table aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <StyledTableCell>Group</StyledTableCell>
-                        <StyledTableCell>Market</StyledTableCell>
-                        <StyledTableCell>Maker</StyledTableCell>
-                        <StyledTableCell>Taker</StyledTableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {this.state.tradingFees.map((row) => (
-                        <TableRow hover key={row.id}>
-                          <StyledTableCell component="th" scope="row">
-                            {row.group}
-                          </StyledTableCell>
-                          <StyledTableCell>{row.market_id}</StyledTableCell>
-                          <StyledTableCell>{row.maker}</StyledTableCell>
-                          <StyledTableCell>{row.taker}</StyledTableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-            </TabPanel>
-            <TabPanel value={this.state.tabValue} index={1}>
-              
-              {/* <h1>Deposit & Withdrawl Fees</h1> */}
-                  <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <StyledTableCell>Coin/Token</StyledTableCell>
-                          <StyledTableCell>Name</StyledTableCell>
-                          <StyledTableCell>Withdraw Fee</StyledTableCell>
-                          <StyledTableCell>Min Withdraw Fee</StyledTableCell>
-                          <StyledTableCell>Withdraw Limit 24h</StyledTableCell>
-                          <StyledTableCell>Withdraw Limit 72h</StyledTableCell>
-                          <StyledTableCell>Deposit Fee</StyledTableCell>
-                          <StyledTableCell>Min Deposit Fee</StyledTableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {this.state.withdrawlDepositFees.map((row) => (
-                          <TableRow key={row.id}>
+          <>
+		  <Container>
+		  		<Box p={[1, 3]}>
+					<Paper>
+						{/* <Typography variant="h5" component="div" className={classes.pageHeader} gutterBottom>
+							Fee Schedule
+                        </Typography> */}
+						<AppBar position="static" color="default" style={{ boxShadow: "none" }}>
+						<AntTabs value={this.state.tabValue} onChange={handleChange} variant="fullWidth" indicatorColor="primary" centered>
+							<Tab label="Trading Fee" {...a11yProps(0)} />
+							<Tab label="Deposit & Withdrawl Fees" {...a11yProps(1)} />
+						</AntTabs>
+						</AppBar>
+						<TabPanel value={this.state.tabValue} index={0}>
+						{/* <h1>Trading Fee Schedule</h1> */}
+							<TableContainer>
+							<Table>
+								<TableHead>
+								<TableRow>
+									<StyledTableCell>Group</StyledTableCell>
+									<StyledTableCell>Market</StyledTableCell>
+									<StyledTableCell>Maker</StyledTableCell>
+									<StyledTableCell>Taker</StyledTableCell>
+								</TableRow>
+								</TableHead>
+								<TableBody>
+								{this.state.tradingFees.map((row) => (
+									<TableRow hover key={row.id}>
+									<StyledTableCell component="th" scope="row">
+										{row.group}
+									</StyledTableCell>
+									<StyledTableCell>{row.market_id}</StyledTableCell>
+									<StyledTableCell>{row.maker}</StyledTableCell>
+									<StyledTableCell>{row.taker}</StyledTableCell>
+									</TableRow>
+								))}
+								</TableBody>
+							</Table>
+							</TableContainer>
+						</TabPanel>
+						<TabPanel value={this.state.tabValue} index={1}>
+						
+						{/* <h1>Deposit & Withdrawl Fees</h1> */}
+							<TableContainer>
+								<Table>
+								<TableHead>
+									<TableRow>
+									<StyledTableCell>Coin/Token</StyledTableCell>
+									<StyledTableCell>Name</StyledTableCell>
+									<StyledTableCell>Withdraw Fee</StyledTableCell>
+									<StyledTableCell>Min Withdraw Fee</StyledTableCell>
+									<StyledTableCell>Withdraw Limit 24h</StyledTableCell>
+									<StyledTableCell>Withdraw Limit 72h</StyledTableCell>
+									<StyledTableCell>Deposit Fee</StyledTableCell>
+									<StyledTableCell>Min Deposit Fee</StyledTableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{this.state.withdrawlDepositFees.map((row) => (
+									<TableRow key={row.id}>
 
-                            <StyledTableCell><img style={{maxWidth: "20px"}} src={row.icon_url}/>  {row.id.toUpperCase()}</StyledTableCell>
-                            <StyledTableCell>{row.name}</StyledTableCell>
-                            <StyledTableCell>{row.withdraw_fee}</StyledTableCell>
-                            <StyledTableCell>{row.min_withdraw_amount}</StyledTableCell>
-                            <StyledTableCell>{row.withdraw_limit_24h}</StyledTableCell>
-                            <StyledTableCell>{row.withdraw_limit_72h}</StyledTableCell>
-                            <StyledTableCell>{row.deposit_fee}</StyledTableCell>
-                            <StyledTableCell>{row.min_deposit_amount}</StyledTableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-            </TabPanel>
-          </div>
+										<StyledTableCell>
+											{row.icon_url ? 
+											<img width="25" src={row.icon_url} style={{ marginRight: '4px' }}/>
+											:
+											<CryptoIcon width="25" code={row.id.toUpperCase()} />
+											}
+											{row.id.toUpperCase()}
+										</StyledTableCell>
+										<StyledTableCell>{row.name}</StyledTableCell>
+										<StyledTableCell>{row.withdraw_fee}</StyledTableCell>
+										<StyledTableCell>{row.min_withdraw_amount}</StyledTableCell>
+										<StyledTableCell>{row.withdraw_limit_24h}</StyledTableCell>
+										<StyledTableCell>{row.withdraw_limit_72h}</StyledTableCell>
+										<StyledTableCell>{row.deposit_fee}</StyledTableCell>
+										<StyledTableCell>{row.min_deposit_amount}</StyledTableCell>
+									</TableRow>
+									))}
+								</TableBody>
+								</Table>
+							</TableContainer>
+						</TabPanel>
+				  	</Paper>
+				</Box>
+			</Container>
+          </>
         )
     }
-  }
+}
 
-export {
-  FeeScreen,
-};
+export const FeeScreen = injectIntl(withStyles(useStyles as {})(FeeComponent) as any);

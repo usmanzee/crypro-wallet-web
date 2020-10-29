@@ -190,7 +190,7 @@ const DepositWalletCrypto = (props: Props) => {
     const defaultWalletCurrency = 'btc';
     //Props
     const classes = useStyles();
-    const { addressDepositError, wallets, user, selectedWalletAddress, currencies, walletAddressLoading, walletAddressSuccess } = props;
+    const { addressDepositError, wallets, fetchWallets, selectedWalletAddress, currencies, walletAddressLoading } = props;
 
     //Params
     let params = useParams();
@@ -206,9 +206,9 @@ const DepositWalletCrypto = (props: Props) => {
     //UseEffect
     React.useEffect(() => {
         if (!wallets.length) {
-            props.fetchWallets();
+            fetchWallets();
         }
-    }, [wallets]);
+    }, [wallets, fetchWallets]);
 
     React.useEffect(() => {
         if (cryptoWallets.length === 0 && wallets.length > 0) {

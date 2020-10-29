@@ -201,7 +201,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
         } = this.props;
         const { isShownExpSessionModal } = this.state;
 
-        const tradingCls = window.location.pathname.includes('/trading') ? 'trading-layout' : '';
+        // const tradingCls = window.location.pathname.includes('/trading') ? 'trading-layout' : '';
         toggleColorTheme(colorTheme);
 
         return (

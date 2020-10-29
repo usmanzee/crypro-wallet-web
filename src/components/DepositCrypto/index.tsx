@@ -12,7 +12,6 @@ import {
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import { walletsAddressData } from '../../modules';
 
 export interface DepositCryptoProps {
     /**
@@ -115,15 +114,10 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         address,
         dimensions,
         error,
-        text,
-        copiableTextFieldText,
-        copyButtonText,
         handleOnCopy,
-        disabled,
         handleGenerateAddress,
         walletAddressLoading,
         buttonLabel,
-        isAccountActivated,
         currency,
     } = props;
 
@@ -135,7 +129,6 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
 
     const [copyTooltipText, setCopyTooltipText] = React.useState<string>("Copy");
 
-    const translate = (id: string) => props.intl.formatMessage({ id });
     const onCopy = (textToCopy) => {
         copyToClipboard(textToCopy);
         handleOnCopy();

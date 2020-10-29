@@ -98,14 +98,14 @@ export interface WalletDropdownProps {
     walletDropdownClose(event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason): void;
 }
 export const WalletsDropdown = (props: WalletDropdownProps) => {
-    const { anchorEl, setAnchorEl, popperId, popperOpen, wallets, selectedWallet, setSelectedWallet, walletDropdownClick, walletDropdownChange, walletDropdownClose } = props;
+    const { anchorEl, popperId, popperOpen, wallets, selectedWallet, walletDropdownClick, walletDropdownChange, walletDropdownClose } = props;
     const classes = useStyles();
     return (
         <>
         <div onClick={walletDropdownClick} className={classes.currencySelect}>
             {selectedWallet ? 
                 (<>
-                    {selectedWallet.iconUrl ? (<img src={`${ selectedWallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={selectedWallet.currency.toUpperCase()} />)}
+                    {selectedWallet.iconUrl ? (<img src={`${ selectedWallet.iconUrl } `} className={classes.currencyIcon} alt="currency"/>) : (<CryptoIcon code={selectedWallet.currency.toUpperCase()} />)}
                     <Typography variant="h6" component="div" display="inline" className={classes.walletCurrencyTag}>
                         { selectedWallet.currency.toUpperCase() }
                     </Typography>
@@ -141,7 +141,7 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
                     renderOption = {(option: WalletItemProps) => {
                         const optionCurrency = option ? option.currency.toUpperCase() : '';
                         return <React.Fragment>
-                            {option && option.iconUrl ? (<img src={`${ option.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon code={optionCurrency} />)}
+                            {option && option.iconUrl ? (<img src={`${ option.iconUrl } `} className={classes.currencyIcon} alt="currency"/>) : (<CryptoIcon code={optionCurrency} />)}
                             <div>
                                 <Typography variant="h6" component="div" display="inline" className={classes.walletCurrencyTag}>
                                     { option ? option.currency.toUpperCase(): '' }

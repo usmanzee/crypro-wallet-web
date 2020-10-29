@@ -152,89 +152,57 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 				{detail.banks && detail.banks.map((bank) => {
 					return (
 					<>
-					<List className={classes.list} disablePadding={true}>
-						<ListItem disableGutters>
-							<Typography variant="button" display="inline" gutterBottom>
-								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
-							</Typography>
-						</ListItem>
-						<ListItem disableGutters>
-						<Typography variant="body1" display="inline" gutterBottom>
-								{bank.title}
-							</Typography>
-						</ListItem>
-					</List>
-					<List className={classes.list} disablePadding={true}>
-						<ListItem disableGutters>
-						<Typography variant="button" display="inline" gutterBottom>
-									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
+						<List className={classes.list} disablePadding={true}>
+							<ListItem disableGutters>
+								<Typography variant="button" display="inline" gutterBottom>
+									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
 								</Typography>
-						</ListItem>
-						<ListItem disableGutters>
-						<Typography variant="body1" display="inline" gutterBottom>
-									{bank.accountNumber}
-								</Typography>
-						</ListItem>
-					</List>
-					<List className={classes.list} disablePadding={true}>
-						<ListItem disableGutters>
-							<Typography variant="button" display="inline" gutterBottom>
-								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />
-							</Typography>
-						</ListItem>
-						<ListItem disableGutters>
+							</ListItem>
+							<ListItem disableGutters>
 							<Typography variant="body1" display="inline" gutterBottom>
-								{bank.name}
-							</Typography>
-						</ListItem>
-					</List>
-					<List className={classes.list} disablePadding={true}>
-						<ListItem disableGutters>
+									{bank.title}
+								</Typography>
+							</ListItem>
+						</List>
+						<List className={classes.list} disablePadding={true}>
+							<ListItem disableGutters>
 							<Typography variant="button" display="inline" gutterBottom>
-								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
-							</Typography>
-						</ListItem>
-						<ListItem disableGutters>
+										<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
+									</Typography>
+							</ListItem>
+							<ListItem disableGutters>
 							<Typography variant="body1" display="inline" gutterBottom>
-								{uid}
-							</Typography>
-						</ListItem>
-					</List>
-						{/* <div className="cr-deposit-fiat-detail" key={bank.title}>
-							<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
-								<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
-							</Typography>
-							<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
-								{bank.title}
-							</Typography>
-							</div>
-							<div className="cr-deposit-fiat-detail" key={bank.accountNumber}>
-								<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
-									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
-								</Typography>
-								<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
-									{bank.accountNumber}
-								</Typography>
-							</div>
-							<div className="cr-deposit-fiat-detail" key={bank.name}>
-								<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+										{bank.accountNumber}
+									</Typography>
+							</ListItem>
+						</List>
+						<List className={classes.list} disablePadding={true}>
+							<ListItem disableGutters>
+								<Typography variant="button" display="inline" gutterBottom>
 									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />
 								</Typography>
-								<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+							</ListItem>
+							<ListItem disableGutters>
+								<Typography variant="body1" display="inline" gutterBottom>
 									{bank.name}
 								</Typography>
-							</div>
-							<div className="cr-deposit-fiat-detail" key={bank.uid}>
-								<Typography className="cr-deposit-fiat-detail__label" variant="button" display="inline" gutterBottom>
+							</ListItem>
+						</List>
+						<List className={classes.list} disablePadding={true}>
+							<ListItem disableGutters>
+								<Typography variant="button" display="inline" gutterBottom>
 									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
 								</Typography>
-								<Typography className="cr-deposit-fiat-detail__value" variant="body1" display="inline" gutterBottom>
+							</ListItem>
+							<ListItem disableGutters>
+								<Typography variant="body1" display="inline" gutterBottom>
 									{uid}
 								</Typography>
-							</div> */}
-							<Divider className={classes.BanksDivider}/>
-						</>
-					)
+							</ListItem>
+						</List>
+						<Divider className={classes.BanksDivider}/>
+					</>
+				)
 			  })}
 			</>
 		  );
