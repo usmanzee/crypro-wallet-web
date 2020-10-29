@@ -14,7 +14,7 @@ import {
     // setDepositStatusColor,
     // setWithdrawStatusColor,
     // uppercase,
- } from '../../helpers';
+} from '../../helpers';
 import LaunchIcon from '@material-ui/icons/Launch';
 import {
     currenciesFetch,
@@ -58,9 +58,24 @@ interface DispatchProps {
     resetHistory: typeof resetHistory;
 }
 
+interface IState {
+    historyListData: WalletHistoryList;
+    historyListDataLoading: boolean;
+}
+
 export type Props = HistoryProps & ReduxProps & DispatchProps & InjectedIntlProps;
 
-export class WalletTable extends React.Component<Props> {
+export class WalletTable extends React.Component<Props, IState> {
+
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            historyListData: [],
+            historyListDataLoading: true
+        };
+    }
+
     public componentDidMount() {
         const {
             currencies,
@@ -79,7 +94,16 @@ export class WalletTable extends React.Component<Props> {
             currencies,
             currency,
             type,
+            list,
         } = this.props;
+
+        if (list.length === 0 && nextProps.list.length > 0) {
+            this.setState({
+                historyListData: nextProps.list,
+                historyListDataLoading: true,
+            });
+        }
+
         if (nextProps.currency !== currency || nextProps.type !== type) {
             this.props.resetHistory();
             this.props.fetchHistory({ page: 0, currency: nextProps.currency, type, limit: 6 });
@@ -96,6 +120,7 @@ export class WalletTable extends React.Component<Props> {
 
     public render() {
         const { label, list, firstElemIndex, lastElemIndex, page, nextPageExists } = this.props;
+        const { historyListData } = this.state;
 
         if (!list.length) {
             return null;
@@ -107,7 +132,7 @@ export class WalletTable extends React.Component<Props> {
                         {this.props.intl.formatMessage({ id: `page.body.history.${label}` })}
                     </strong>
                 </div>
-                <History headers={this.getHeaders()} data={this.retrieveData(list)} />
+                <History headers={this.getHeaders()} data={this.retrieveData(historyListData)} />
                 <Pagination
                     firstElemIndex={firstElemIndex}
                     lastElemIndex={lastElemIndex}

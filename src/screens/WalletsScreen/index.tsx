@@ -519,7 +519,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
     private filteredRecords = () => {
         const {wallets} = this.props;
-        const { searchedValue, hideSmallBalances, walletsData } = this.state;
+        const { searchedValue, hideSmallBalances } = this.state;
         let filteredData = [];
 
         filteredData = wallets.filter(e => {
