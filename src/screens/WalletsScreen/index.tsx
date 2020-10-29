@@ -20,30 +20,29 @@ import {
 } from '../../modules';
 
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
-import {
-    Box,
-    Grid,
-    Paper,
-    Typography,
-    Button as MaterialButton,
-    TextField,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TablePagination,
-    Collapse,
-    Checkbox,
-    FormGroup,
-    FormControlLabel,
-    InputAdornment,
-    IconButton
-} from '@material-ui/core';
+
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
+import Collapse from '@material-ui/core/Collapse';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 interface ReduxProps {
     user: User;
@@ -203,14 +202,14 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                             </Grid>
                             <Grid className={classes.headeractionButton} item xs={8} sm={6} md={4} lg={2}>
                                 <Link to="/wallet/deposit/crypto" style={{ textDecoration: 'none' }}>
-                                    <MaterialButton variant="contained" color="secondary" size="small">
+                                    <Button variant="contained" color="secondary" size="small">
                                         <FormattedMessage id={'page.body.wallets.action.deposit'} />
-                                    </MaterialButton>
+                                    </Button>
                                 </Link>
                                 <Link to="/wallet/withdraw/crypto" style={{ textDecoration: 'none' }}>
-                                    <MaterialButton className={classes.withdrawButton} variant="outlined" color="secondary" size="small">
+                                    <Button className={classes.withdrawButton} variant="outlined" color="secondary" size="small">
                                         <FormattedMessage id={'page.body.wallets.action.withdraw'} />
-                                    </MaterialButton>
+                                    </Button>
                                 </Link>
                             </Grid>
                         </Grid>
@@ -470,9 +469,9 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
-                                        <this.StyledTableCell>Total</this.StyledTableCell>
-                                        <this.StyledTableCell>Available</this.StyledTableCell>
-                                        <this.StyledTableCell>Locked</this.StyledTableCell>
+                                        <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.total'} /></this.StyledTableCell>
+                                        <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.available'} /></this.StyledTableCell>
+                                        <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.locked'} /></this.StyledTableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

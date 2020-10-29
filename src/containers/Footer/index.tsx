@@ -33,7 +33,7 @@ class FooterComponent extends React.Component<Props> {
         return (
             <React.Fragment>
                 {/* <footer className="pg-footer"> */}
-                <Paper style={{ margin: '8px 0px' }}>
+                <Paper>
 
                     <div className="pg-landing-screen__footer">
                         <div className="pg-landing-screen__footer__wrap">

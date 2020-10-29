@@ -71,7 +71,7 @@
     "start-mock": "npm-run-all -p watch:css start-js mockAPI mockWS",
     "start-js": "react-scripts start",
     "build-js": "react-app-rewired build --scripts-version react-scripts build",
-    "build": "npm-run-all build:css build-js clean:mapfiles",
+    "build": "npm-run-all build:css build-js",
     "clean:mapfiles": "find build -name '*.map' -exec rm {} ';'",
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --collectCoverage=true",
@@ -79,7 +79,7 @@
     "spec:integration": "cypress open",
     "eject": "react-scripts eject",
     "clean": "rimraf build",
-    "analyze": "source-map-explorer build/static/js/main.*"
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "devDependencies": {
     "@openware/coding-standards": "2.3.0",
