@@ -6,7 +6,10 @@ import { connect, MapStateToProps } from 'react-redux';
 import { Router } from 'react-router';
 import { gaTrackerKey } from './api';
 import { ErrorWrapper } from './containers';
-import { RootState } from './modules';
+import { 
+    RootState, 
+    selectUserLoggedIn
+} from './modules';
 import { languageMap } from './translations';
 
 interface AppProps {
@@ -15,6 +18,7 @@ interface AppProps {
 
 interface ReduxProps {
     lang: string;
+    isLoggedIn: boolean;
 }
 
 const gaKey = gaTrackerKey();
@@ -27,6 +31,9 @@ if (gaKey) {
         ReactGA.pageview(location.pathname);
     });
 }
+interface IState {
+    mobileOpen: boolean;
+}
 
 type Props = AppProps & ReduxProps;
 
@@ -38,30 +45,50 @@ const SidebarContainer = React.lazy(() => import('./containers/Sidebar').then(({
 const TradingToolbarContainer = React.lazy(() => import('./containers/TradingToolbar').then(({ TradingToolbar }) => ({ default: TradingToolbar })));
 const LayoutContainer = React.lazy(() => import('./routes').then(({ Layout }) => ({ default: Layout })));
 
-class AppLayout extends React.Component<Props, {}, {}> {
+class AppLayout extends React.Component<Props, IState> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+           mobileOpen: false,
+        };
+    }
     public componentDidMount() {
         ReactGA.pageview(history.location.pathname);
     }
 
+    public handleDrawerToggle = () => {
+        this.setState({
+            mobileOpen: !this.state.mobileOpen
+        });
+    };
+
+
     public render() {
         const { lang } = this.props;
+        const { mobileOpen } = this.state;
         const shouldRenderMarketToolbar = window.location.pathname.includes('/trading/') ? true : false;
         return (
             <IntlProvider locale={lang} messages={languageMap[lang]} key={lang}>
                 <Router history={history}>
                     <ErrorWrapper>
                         <React.Suspense fallback={null}>
-                            <div className="container-scroller">
-                                <HeaderContainer/>
+                            <div style={{ display: 'flex' }}>
+                                <HeaderContainer 
+                                    handleDrawerToggle = {this.handleDrawerToggle} 
+                                />
                                 {/* {shouldRenderMarketToolbar && <TradingToolbarContainer />} */}
-                                <div className="container-fluid page-body-wrapper">
-                                    <SidebarContainer/>
+                                {/* <div className="container-fluid page-body-wrapper"> */}
+                                    <SidebarContainer
+                                        mobileOpen = {mobileOpen} 
+                                        handleDrawerToggle = {this.handleDrawerToggle} 
+                                    />
                                     <CustomizationContainer/>
                                     <AlertsContainer/>
                                     <LayoutContainer/>
-                                </div>
-                                <FooterContainer/>
+                                {/* </div> */}
                             </div>
+                            <FooterContainer/>
                         </React.Suspense>
                     </ErrorWrapper>
                 </Router>
@@ -73,6 +100,7 @@ class AppLayout extends React.Component<Props, {}, {}> {
 const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> =
     (state: RootState): ReduxProps => ({
         lang: state.public.i18n.lang,
+        isLoggedIn: selectUserLoggedIn(state),
     });
 
 // tslint:disable-next-line:no-any

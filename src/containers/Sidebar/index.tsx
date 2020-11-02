@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { History } from 'history';
 import * as React from 'react';
 import { Dropdown } from 'react-bootstrap';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect, MapDispatchToPropsFunction } from 'react-redux';
 import { Link, RouteProps, withRouter } from 'react-router-dom';
 import { languages } from '../../api/config';
@@ -10,6 +10,39 @@ import { LogoutIcon } from '../../assets/images/sidebar/LogoutIcon';
 import { ProfileIcon } from '../../assets/images/sidebar/ProfileIcon';
 import { SidebarIcons } from '../../assets/images/sidebar/SidebarIcons';
 import { pgRoutes } from '../../constants';
+
+
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Badge from '@material-ui/core/Badge';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MailIcon from '@material-ui/icons/Mail';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
+import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
+
+import Popover from '@material-ui/core/Popover';
+import { withStyles, Theme } from '@material-ui/core/styles';
+
 import {
     changeLanguage,
     changeUserDataFetch,
@@ -25,6 +58,51 @@ import {
     toggleSidebar,
     User,
 } from '../../modules';
+
+const drawerWidth = 240;
+const useStyles = (theme: Theme) => ({
+    drawer: {
+        [theme.breakpoints.up('sm')]: {
+          width: drawerWidth,
+          flexShrink: 0,
+        },
+      },
+      appBar: {
+        [theme.breakpoints.up('sm')]: {
+          width: `calc(100%)`,
+          // marginLeft: drawerWidth,
+          zIndex: theme.zIndex.drawer + 1
+        }
+      
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up('sm')]: {
+          display: 'none',
+        },
+    },
+    // necessary for content to be below app bar
+    toolbar: theme.mixins.toolbar,
+    drawerPaper: {
+        width: drawerWidth,
+    },
+
+    subHeader: {
+        backgroundColor: '#fff',
+        padding: theme.spacing(1),
+        color: '#000',
+        margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
+        [theme.breakpoints.only('xs')]: {
+            margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
+        },
+    },
+    toolbarDiv: {
+        [theme.breakpoints.only('xs')]: {
+            display: 'none'
+        },
+    }
+});
+
 
 interface State {
     isOpenLanguage: boolean;
@@ -49,6 +127,10 @@ interface OwnProps {
     onLinkChange?: () => void;
     history: History;
     changeUserDataFetch: typeof changeUserDataFetch;
+    classes?: any;
+
+    mobileOpen: boolean;
+    handleDrawerToggle: () => void;
 }
 
 type Props = OwnProps & ReduxProps & RouteProps & DispatchProps;
@@ -59,7 +141,7 @@ class SidebarContainer extends React.Component<Props, State> {
     };
 
     public render() {
-        const { isLoggedIn, isActive, lang } = this.props;
+        const { isLoggedIn, isActive, lang, classes, mobileOpen, handleDrawerToggle } = this.props;
         const { isOpenLanguage } = this.state;
 
         const address = this.props.history.location ? this.props.history.location.pathname : '';
@@ -82,39 +164,68 @@ class SidebarContainer extends React.Component<Props, State> {
 
         return (
             <>
-                <nav className={newSidebarClassName}>
+                {/* <nav className={newSidebarClassName}>
                     <ul className="nav">
                         {this.renderNewProfileLink()}
                         {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
                     </ul>
+                </nav> */}
+                <nav className={classes.drawer} aria-label="mailbox folders">
+                    <Hidden smUp implementation="css">
+                    <Drawer
+                        variant="temporary"
+                        open={mobileOpen}
+                        onClose={handleDrawerToggle}
+                        classes={{
+                        paper: classes.drawerPaper,
+                        }}
+                        ModalProps={{
+                        keepMounted: true,
+                        }}
+                    >
+                        <this.DrawerContent />
+                    </Drawer>
+                    </Hidden>
+                    <Hidden xsDown implementation="css">
+                    <Drawer
+                        classes={{
+                        paper: classes.drawerPaper,
+                        }}
+                        variant="permanent"
+                        open
+                    >
+                        <this.DrawerContent />
+                    </Drawer>
+                    </Hidden>
                 </nav>
-            {/* {shouldRenderSidebar && 
-            } */}
-            
-            {/* <div className={sidebarClassName}>
-                {this.renderProfileLink()}
-                <div className="pg-sidebar-wrapper-nav">
-                    {pgRoutes(isLoggedIn).map(this.renderNavItems(address))}
-                </div>
-                <div className="pg-sidebar-wrapper-lng">
-                    <div className="btn-group pg-navbar__header-settings__account-dropdown dropdown-menu-language-container">
-                        <Dropdown>
-                            <Dropdown.Toggle variant="primary" id={languageClassName}>
-                                <img
-                                    src={this.tryRequire(lang) && require(`../../assets/images/sidebar/${lang}.svg`)}
-                                    alt={`${lang}-flag-icon`}
-                                />
-                                <span className="dropdown-menu-language-selected">{languageName}</span>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                {this.getLanguageDropdownItems()}
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </div>
-                </div>
-                {this.renderLogout()}
-            </div> */}
             </>
+        );
+    }
+
+    public DrawerContent = () => {
+        const { classes } = this.props;
+        return (  
+            <div>
+                <div className={classes.toolbar} />
+                <Divider />
+                <List>
+                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                    <ListItem button key={text}>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                        <ListItemText primary={text} />
+                    </ListItem>
+                    ))}
+                </List>
+                <Divider />
+                <List>
+                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                    <ListItem button key={text}>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                        <ListItemText primary={text} />
+                    </ListItem>
+                    ))}
+                </List>
+            </div>
         );
     }
 
@@ -311,8 +422,8 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
         changeUserDataFetch: payload => dispatch(changeUserDataFetch(payload)),
     });
 
-// tslint:disable no-any
-const Sidebar = withRouter(connect(mapStateToProps, mapDispatchToProps)(SidebarContainer) as any) as any;
+    const Sidebar = injectIntl(withStyles(useStyles as {})(withRouter(connect(mapStateToProps, mapDispatchToProps)(SidebarContainer) as any)));
+// const Sidebar = withRouter(connect(mapStateToProps, mapDispatchToProps)(SidebarContainer) as any) as any;
 
 export {
     Sidebar,

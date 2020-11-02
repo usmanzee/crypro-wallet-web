@@ -22,12 +22,65 @@ import logoLight from '../../assets/images/logo.png';
 import { HeaderToolbar } from '../HeaderToolbar';
 import { NavBar } from '../NavBar';
 
-import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
-
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
-const useStyles = theme => ({
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Badge from '@material-ui/core/Badge';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MailIcon from '@material-ui/icons/Mail';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
+import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
+
+import Popover from '@material-ui/core/Popover';
+import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
+
+const drawerWidth = 240;
+const useStyles = (theme: Theme) => ({
+    drawer: {
+        [theme.breakpoints.up('sm')]: {
+          width: drawerWidth,
+          flexShrink: 0,
+        },
+      },
+      appBar: {
+        [theme.breakpoints.up('sm')]: {
+          width: `calc(100%)`,
+          // marginLeft: drawerWidth,
+          zIndex: theme.zIndex.drawer + 1
+        }
+      
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up('sm')]: {
+          display: 'none',
+        },
+    },
+    // necessary for content to be below app bar
+    toolbar: theme.mixins.toolbar,
+    drawerPaper: {
+        width: drawerWidth,
+    },
+
     subHeader: {
         backgroundColor: '#fff',
         padding: theme.spacing(1),
@@ -62,6 +115,7 @@ interface DispatchProps {
 
 interface HistoryProps {
     history: History;
+    handleDrawerToggle: () => void;
 }
 
 type Props = ReduxProps & HistoryProps & DispatchProps & InjectedIntlProps;
@@ -69,7 +123,7 @@ type Props = ReduxProps & HistoryProps & DispatchProps & InjectedIntlProps;
 class Head extends React.Component<Props> {
 
     public render() {
-        const {mobileWallet, classes } = this.props;
+        const {mobileWallet, classes, handleDrawerToggle } = this.props;
         
         const tradingCls = window.location.pathname.includes('/trading') ? 'pg-container-trading' : '';
         const shouldRenderHeader = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/';
@@ -80,14 +134,50 @@ class Head extends React.Component<Props> {
             {shouldRenderHeader &&
                 (
                     <>
-                        <div className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ display: 'block' }}>
+                        <AppBar position="fixed" className={classes.appBar}>
+                            <Toolbar>
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="open drawer"
+                                    edge="start"
+                                    onClick={handleDrawerToggle}
+                                    className={classes.menuButton}
+                                >
+                                    <MenuIcon />
+                                </IconButton>
+                                <Typography variant="h6" className={classes.title}>
+                                    B4U Wallet
+                                </Typography>
+                                <div>
+                                    <List style={{ display: 'flex' }}>
+                                        <ListItem button>
+                                            <ListItemText primary='list1' />
+                                        </ListItem>
+                                        <ListItem button>
+                                            <ListItemText primary='list2' />
+                                        </ListItem>
+                                        <ListItem button>
+                                            <ListItemText primary='list3' />
+                                        </ListItem>
+                                        {/* <ListItem button onClick={(e) => handleNotificationPanelClick(e)}>
+                                            <NotificationsNoneIcon />
+                                        </ListItem> */}
+                                        {/* <ListItem button>
+                                            <Button aria-describedby={notificationPanelId} variant="contained" onClick={handleNotificationPanelClick}>
+                                                Open
+                                            </Button>
+                                        </ListItem> */}
+                                    </List>
+                                </div>
+                            </Toolbar>
+                        </AppBar>
+                        {/* <div className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ display: 'block' }}>
                             <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                                 <Link className="navbar-brand brand-logo" to="/"><img src={logoLight} alt="logo" /></Link>
-                                {/* <Link className="navbar-brand brand-logo-mini" to="/"><img src={logoLight} alt="logo" /></Link> */}
                             </div>
                             <div className="navbar-menu-wrapper d-flex align-items-stretch">
                                 <NavBar onLinkChange={this.closeMenu}/>
-                                {/* Menu Opener for Mobile */}
+
                                 <button className="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
                                     <span className="mdi mdi-menu"></span>
                                 </button>
@@ -110,35 +200,8 @@ class Head extends React.Component<Props> {
                                 </Paper>
                             </>
                         )
-                        }
+                        } */}
                     </>
-                    // <header className={`pg-header`}>
-                    //     <div className={`pg-container pg-header__content ${tradingCls}`}>
-                    //         <div
-                    //             className={`pg-sidebar__toggler ${mobileWallet && 'pg-sidebar__toggler-mobile'}`}
-                    //             onClick={this.openSidebar}
-                    //         >
-                    //             <span className="pg-sidebar__toggler-item"/>
-                    //             <span className="pg-sidebar__toggler-item"/>
-                    //             <span className="pg-sidebar__toggler-item"/>
-                    //         </div>
-                    //         <div onClick={e => this.redirectToLanding()} className="pg-header__logo">
-                    //             <div className="pg-logo">
-                    //                 <img src={logoLight} className="pg-logo__img" alt="Logo" />
-                    //                 {/* <LogoIcon className="pg-logo__img" /> */}
-                    //             </div>
-                    //         </div>
-                    //         {this.renderMarketToggler()}
-                    //         <div className="pg-header__location">
-                    //             {mobileWallet ? <span>{mobileWallet}</span> : <span>{window.location.pathname.split('/')[1]}</span>}
-                    //         </div>
-                    //         {this.renderMobileWalletNav()}
-                    //         <div className="pg-header__navbar">
-                    //             {this.renderMarketToolbar()}
-                    //             <NavBar onLinkChange={this.closeMenu}/>
-                    //         </div>
-                    //     </div>
-                    // </header>
                 )
                 }
           </React.Fragment>
