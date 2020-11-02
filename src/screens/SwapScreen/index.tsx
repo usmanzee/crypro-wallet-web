@@ -132,12 +132,12 @@ type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 const SwapComponent = (props: Props) => {
     const defaultWalletsFromCurrency = 'btc';
     const defaultWalletsToCurrency = 'eth';
-    const defaultSwapFee = 0.01;
+    const defaultSwapFee = 0.02;
     const defaultMinSwapFee = 0.1;
-    const defaultMaxSwapFee = 10;
+    const defaultMaxSwapFee = 10000;
     //Props
     const classes = useStyles();
-    const { wallets, user, currencies, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading } = props;
+    const { wallets, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading } = props;
 
     //States
     const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
@@ -287,17 +287,16 @@ const SwapComponent = (props: Props) => {
     const handleWalletsFromAmountErrors = (amount) => {
         let errorMsg = '';
         if(amount) {
-            console.log(selectedWalletFromOptionMinswapAmount);
-            console.log(selectedWalletFromOptionMaxswapAmount);
-            if(Number(amount) < selectedWalletFromOptionMinswapAmount) {
-                setWalletsFromError(true);
-                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: selectedWalletFromOptionMinswapAmount });
+            // if(Number(amount) < selectedWalletFromOptionMinswapAmount) {
+            //     setWalletsFromError(true);
+            //     errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: selectedWalletFromOptionMinswapAmount });
     
-            } else if(Number(amount) > selectedWalletFromOptionMaxswapAmount) {
-                setWalletsFromError(true);
-                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: selectedWalletFromOptionMaxswapAmount });
+            // } else if(Number(amount) > selectedWalletFromOptionMaxswapAmount) {
+            //     setWalletsFromError(true);
+            //     errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: selectedWalletFromOptionMaxswapAmount });
     
-            }else if (Number(amount) > selectedWalletFromOptionBalance) {
+            // }else 
+            if (Number(amount) > selectedWalletFromOptionBalance) {
                 setWalletsFromError(true);
                 errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error3'});
             } else {
@@ -504,7 +503,7 @@ const SwapComponent = (props: Props) => {
                                                 <OutlinedInput
                                                     id="sell"
                                                     label={<FormattedMessage id={'page.body.swap.input.sell'} />}
-                                                    placeholder={selectedWalletFromOption ? `${selectedWalletFromOption.minSwapAmount} - ${selectedWalletFromOption.maxSwapAmount}` : ''}
+                                                    // placeholder={`${selectedWalletFromOptionMinswapAmount} - ${selectedWalletFromOptionMaxswapAmount}`}
                                                     type='number'
                                                     value={walletsFromAmount}
                                                     autoFocus={true}

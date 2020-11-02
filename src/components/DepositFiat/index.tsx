@@ -67,7 +67,13 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
         title,
         uid,
         currency,
-    } = props;
+	} = props;
+	
+	// console.log(values);
+
+	// {Object.entries(values).map(([key,value]) => {
+	// 	console.log(key, value);
+	// })}
 
     const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
     const depositDescription = (currency === 'usd' || currency === 'eur') ? 'Please using following to deposit using TrasferWise' : description;
@@ -151,58 +157,31 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 			<>
 				{detail.banks && detail.banks.map((bank) => {
 					return (
-					<>
-						<List className={classes.list} disablePadding={true}>
-							<ListItem disableGutters>
-								<Typography variant="button" display="inline" gutterBottom>
-									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />
-								</Typography>
-							</ListItem>
-							<ListItem disableGutters>
-							<Typography variant="body1" display="inline" gutterBottom>
-									{bank.title}
-								</Typography>
-							</ListItem>
-						</List>
-						<List className={classes.list} disablePadding={true}>
-							<ListItem disableGutters>
-							<Typography variant="button" display="inline" gutterBottom>
-										<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />
-									</Typography>
-							</ListItem>
-							<ListItem disableGutters>
-							<Typography variant="body1" display="inline" gutterBottom>
-										{bank.accountNumber}
-									</Typography>
-							</ListItem>
-						</List>
-						<List className={classes.list} disablePadding={true}>
-							<ListItem disableGutters>
-								<Typography variant="button" display="inline" gutterBottom>
-									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />
-								</Typography>
-							</ListItem>
-							<ListItem disableGutters>
-								<Typography variant="body1" display="inline" gutterBottom>
-									{bank.name}
-								</Typography>
-							</ListItem>
-						</List>
-						<List className={classes.list} disablePadding={true}>
-							<ListItem disableGutters>
-								<Typography variant="button" display="inline" gutterBottom>
-									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
-								</Typography>
-							</ListItem>
-							<ListItem disableGutters>
-								<Typography variant="body1" display="inline" gutterBottom>
-									{uid}
-								</Typography>
-							</ListItem>
-						</List>
-						<Divider className={classes.BanksDivider}/>
-					</>
-				)
+						<>
+						{Object.entries(bank).map(([key, value]) => {
+							console.log(key, value);
+							return (
+							<>
+								<List className={classes.list} disablePadding={true}>
+									<ListItem disableGutters>
+										<Typography variant="button" display="inline" gutterBottom>
+											{/* <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" /> */}
+											{key}
+										</Typography>
+									</ListItem>
+									<ListItem disableGutters>
+									<Typography variant="body1" display="inline" gutterBottom>
+										{/* @ts-ignore */}
+											{value}
+										</Typography>
+									</ListItem>
+								</List>
+							</>
+						)
+					})}
+					<Divider className={classes.BanksDivider}/>
+						</>
+					);
 			  })}
 			</>
 		  );
@@ -210,21 +189,21 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 
     return (
       <>
-      <Paper elevation={2} className={classes.networkPaper}>
-          <div className={classes.networkPaperHeader}>
-              <Typography variant="body1" component="div" display="inline">
+      	<Paper elevation={2} className={classes.networkPaper}>
+          	<div className={classes.networkPaperHeader}>
+              	<Typography variant="body1" component="div" display="inline">
                   <FormattedMessage id={'page.body.deposit.network.title'} /> 
-              </Typography>
-          </div>
-          <div className="cr-deposit-fiat">
-              <Typography variant="h6" component="div" gutterBottom>{depositTitle}</Typography>
-              <Typography variant="subtitle1" component="div" gutterBottom className={classes.depositDescription}>{depositDescription}</Typography>
-              {/* <div className="cr-deposit-fiat-credentials">{bankData(uid).map(renderDetails)}</div> */}
-              <div className="cr-deposit-fiat-credentials">
-                {bankCurrencies.map(renderDetails)}
-              </div>
-          </div>
-      </Paper>
+              	</Typography>
+          	</div>
+          	<div className="cr-deposit-fiat">
+              	<Typography variant="h6" component="div" gutterBottom>{depositTitle}</Typography>
+              	<Typography variant="subtitle1" component="div" gutterBottom className={classes.depositDescription}>{depositDescription}</Typography>
+              	{/* <div className="cr-deposit-fiat-credentials">{bankData(uid).map(renderDetails)}</div> */}
+              	<div className="cr-deposit-fiat-credentials">
+                	{bankCurrencies.map(renderDetails)}
+              	</div>
+          	</div>
+      	</Paper>
       </>
     );
 };
@@ -232,59 +211,83 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 export {
     DepositFiat,
 };
+
 const bankCurrencies = [
-  {
-    id: '1',
-    title: 'usd',
-    banks: [
-      {
-        id: '1',
-        title: 'B4u Group of Companies, S.L',
-        name: 'Bank Cod(Swift/Bic): CMFGUS33',
-        accountNumber: '831-061-555-0',
-	  },
-	  {
-        id: '1',
-        title: 'B4u Group of Companies, S.L',
-        name: 'Bank Cod(Swift/Bic): CMFGUS33',
-        accountNumber: '831-061-555-0',
-      }
-    ]
-  },
-  {
-    id: '2',
-    title: 'myr',
-    banks: [
-      {
-        id: '1',
-        title: 'BRAVO Tech Trading',
-        name: 'OCBC Bank',
-        accountNumber: '704-128-334-9',
-      }
-    ]
-  },
-  {
-    id: '3',
-    title: 'eur',
-    banks: [
-      {
-        id: '1',
-        title: 'B4U Group of Companies, S.L',
-        name: 'Bank Cod(Swift/Bic): TRWIBEB1XXX',
-        accountNumber: 'BE79-9670-5851-7133',
-      }
-    ]
-  },
-  {
-    id: '4',
-    title: 'sgd',
-    banks: [
-      {
-        id: '1',
-        title: 'BRAVO Tech Trading',
-        name: 'OCBC Bank',
-        accountNumber: '704-128-335-7',
-      }
-    ]
-  }
+	{
+		id: '1',
+		title: 'eur',
+		banks: [
+      		{
+				"Account holder": 'B4U Group of Companies, S.L',
+				"IBAN": 'BE79 9670 5851 7133',
+				"SWIFT/BIC": 'TRWIBEB1XXX',
+				"Address": 'TransferWise Europe SA \nAvenue Louise 54, Room S52\n Brussels\n 1050\n Belgium',
+				"Bank Name": 'TransferWise',
+			}
+    	]
+  	},
+	{
+		id: '2',
+		title: 'myr',
+		banks: [
+			{
+				"Account holder": 'BRAVO Tech Trading',
+				"Bank Name": 'OCBC Bank',
+				"Account Number": '704-128-334-9',
+			}
+		]
+	},
+	{
+		id: '3',
+		title: 'usd',
+		banks: [
+			{
+				"Account holder": 'B4U Group of Companies, S.L.',
+				"ACH routing number": '026073150',
+				"Wire routing number": '026073008',
+				"Account number": '8310615550',
+				"Account type": 'Checking',
+				"Address": 'TransferWise 19 W 24th Street \nNew York NY 10010\n United States\n Belgium',
+				"Bank Name": 'TransferWise',
+			}
+		]
+	},
+	{
+		id: '4',
+		title: 'sgd',
+		banks: [
+			{
+				"Account holder": 'BRAVO Tech Trading',
+				"Bank Name": 'OCBC Bank',
+				"Account Number": '704-128-335-7',
+			}
+		]
+	}
 ];
+
+const values = {
+	"localizedLastName": "King",
+	"lastName": {
+		"localized": {
+			"en_US": "King"
+		},
+		"preferredLocale": {
+			"country": "US",
+			"language": "en"
+		}
+	},
+	"firstName": {
+		"localized": {
+			"en_US": "Benn"
+		},
+		"preferredLocale": {
+			"country": "US",
+			"language": "en"
+		}
+	},
+	"profilePicture": {
+		"displayImage": "urn:li:digitalmediaAsset:C5603AQGjLGZPOyRBBA"
+	},
+	"id": "fm0B3D6y3I",
+	"localizedFirstName": "Benn"
+}
