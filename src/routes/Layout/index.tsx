@@ -10,6 +10,10 @@ import { ExpiredSessionModal } from '../../components';
 import { WalletsFetch } from '../../containers';
 import { toggleColorTheme } from '../../helpers';
 //import loadable from '@loadable/component';
+// Material UI Components
+import { withStyles, Theme } from '@material-ui/core/styles';
+//Material UI Components END
+
 import {
     configsFetch,
     logoutFetch,
@@ -94,6 +98,17 @@ interface OwnProps {
 interface LayoutState {
     isShownExpSessionModal: boolean;
 }
+
+const useStyles = (theme: Theme) => ({
+    root: {
+        display: 'flex',
+    },
+    toolbar: theme.mixins.toolbar,
+    content: {
+        flexGrow: 1,
+        // margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
+    },
+});
 
 export type LayoutProps = ReduxProps & DispatchProps & OwnProps & InjectedIntlProps;
 
@@ -198,6 +213,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
             colorTheme,
             isLoggedIn,
             userLoading,
+            classes,
         } = this.props;
         const { isShownExpSessionModal } = this.state;
 
@@ -205,9 +221,9 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
         toggleColorTheme(colorTheme);
 
         return (
-            <div className="main-panel">
-                <div className="content-wrapper">
-                    {/* <div className={`container-fluid pg-layout ${tradingCls}`}> */}
+            <>
+                    <main className={classes.content}>
+                        <div className={classes.toolbar} />
                         <Switch>
                             <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/signin" component={SignInScreen} />
                             <PublicRoute loading={userLoading} isLogged={isLoggedIn} path="/accounts/confirmation" component={VerificationScreen} />
@@ -236,9 +252,8 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                         </Switch>
                         {isLoggedIn && <WalletsFetch/>}
                         {isShownExpSessionModal && this.handleRenderExpiredSessionModal()}
-                    {/* </div> */}
-                </div>
-            </div>
+                    </main>
+            </>
         );
     }
 
@@ -346,7 +361,7 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({
 });
 
 // tslint:disable-next-line no-any
-const Layout = injectIntl(withRouter(connect(mapStateToProps, mapDispatchToProps)(LayoutComponent) as any) as any);
+const Layout = injectIntl(withStyles(useStyles as {})(withRouter(connect(mapStateToProps, mapDispatchToProps)(LayoutComponent) as any) as any));
 
 export {
     Layout,

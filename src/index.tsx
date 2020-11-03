@@ -9,9 +9,6 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { Provider } from 'react-redux';
 import { App } from './App';
 import { customLocaleData } from './custom/translations';
-import './assets/css/vendor.bundle.base.css'
-import './assets/css/materialdesignicons.min.css'
-import './assets/css/style.css'
 import './index.css';
 import { rootSaga } from './modules';
 import { rangerSagas } from './modules/public/ranger';
