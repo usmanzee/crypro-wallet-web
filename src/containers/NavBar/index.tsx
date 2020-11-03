@@ -1,9 +1,8 @@
 import * as React from 'react';
 
-// import classnames from 'classnames';
 import { History } from 'history';
 import { Link } from "react-router-dom";
-import { FormattedMessage } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import {
     connect,
     MapDispatchToPropsFunction,
@@ -11,18 +10,26 @@ import {
 } from 'react-redux';
 import { compose } from 'redux';
 
-//import { Moon } from '../../assets/images/Moon';
-//import { Sun } from '../../assets/images/Sun';
-//import { colors } from '../../constants';
-
-// import logoLight from '../../assets/images/logo.png';
 import { languages } from '../../api/config';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-// import Button from 'react-bootstrap/Button'
 import { headerRoutes, headerProfileRoutes } from '../../constants';
 
+import Popover from '@material-ui/core/Popover';
+import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import {
     changeColorTheme,
@@ -38,7 +45,6 @@ import {
 } from '../../modules';
 
 import {getNotifications} from "../../apis/exchange";
-// import { NotificationType } from '../../charting_library/charting_library.min';
 
 interface Notification {
     id: number,
@@ -70,13 +76,16 @@ export interface OwnProps {
 }
 
 
-type Props = OwnProps & ReduxProps & DispatchProps;
+type Props = OwnProps & ReduxProps & DispatchProps & InjectedIntlProps;
 
 interface IState {
     isOpenLanguage: boolean,
     showNotification: boolean,
     notifications: Notification[],
     notificationContainer: React.RefObject<HTMLInputElement>,
+
+    notificationPanelEl: HTMLElement |  null;
+    profilePanelEl: HTMLElement |  null;
 
 } 
 
@@ -88,12 +97,39 @@ class NavBarComponent extends React.Component<Props, IState> {
             isOpenLanguage: false,
             showNotification: false,
             notifications: [],
-            notificationContainer: React.createRef()
+            notificationContainer: React.createRef(),
+
+            notificationPanelEl: null,
+            profilePanelEl: null,
         };
         
     }
     public componentDidMount () {
         this.getNotifications();
+    };
+
+    public handleNotificationPanelClick = (event)  => {
+        this.setState({
+            notificationPanelEl: event.currentTarget
+        });
+    };
+    
+    public handleNotificationPanelClose = () => {
+        this.setState({
+            notificationPanelEl: null
+        });
+    };
+
+    public handleProfilePanelClick = (event)  => {
+        this.setState({
+            profilePanelEl: event.currentTarget
+        });
+    };
+    
+    public handleProfilePanelClose = () => {
+        this.setState({
+            profilePanelEl: null
+        });
     };
 
     public getNotifications = async () => {
@@ -108,6 +144,35 @@ class NavBarComponent extends React.Component<Props, IState> {
         } catch (error) {
         }
     }
+
+    public render() {
+        const { isLoggedIn } = this.props;
+        return (
+            <>
+                <List style={{ display: 'flex' }}>
+                    <ListItem button>
+                        <ListItemText primary='list1' />
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary='list2' />
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary='list3' />
+                    </ListItem>
+                </List>
+                {this.renderProfile()}
+                {this.renderNotifications()}
+                {this.renderLanguages()}
+                {/* <ul className="navbar-nav navbar-nav-right">
+                    {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
+                    {this.renderLoginRegisterLinks()}
+                </ul> */}
+            </>
+            
+        );
+    }
+
+    public translate = (id: string) => this.props.intl.formatMessage({ id });
 
     private renderNavLinks = () => (values: string[], index: number) => {
 
@@ -148,12 +213,56 @@ class NavBarComponent extends React.Component<Props, IState> {
         if (!isLoggedIn) {
             return null;
         }
+        const { profilePanelEl , notifications} = this.state;
+
+        const profilePanelOpen = Boolean(profilePanelEl);
+        const profilePanelId = profilePanelOpen ? 'profile-panel-popover' : undefined;
         return (
             <>
-                <li className="nav-item nav-profile dropdown">
+                <IconButton
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={this.handleProfilePanelClick}
+                    color="inherit"
+                >
+                    <AccountCircle />
+                    <ArrowDropDownIcon />
+                </IconButton>
+                <Popover
+                    id={profilePanelId}
+                    open={profilePanelOpen}
+                    anchorEl={profilePanelEl}
+                    onClose={this.handleProfilePanelClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                >
+                    <Paper style={{ width: '200px' }}>
+                        <List component="nav" disablePadding>
+                            <ListItem button>
+                            <ListItemAvatar>
+                                <PersonOutlineIcon />
+                            </ListItemAvatar>
+                                <ListItemText primary="Profile" />
+                            </ListItem>
+                            <ListItem button onClick={this.props.logoutFetch}>
+                                <ListItemAvatar>
+                                    <ExitToAppIcon />
+                                </ListItemAvatar>
+                                <ListItemText primary={`${this.translate('page.header.navbar.logout')}`} />
+                            </ListItem>
+                        </List>
+                    </Paper>
+                </Popover>
+                {/* <li className="nav-item nav-profile dropdown">
                     <a className="nav-link dropdown-toggle" id="profileDropdown" href="/" data-toggle="dropdown" aria-expanded="false">
                     <div className="nav-profile-img">
-                        {/* <img src={faceImg} alt="image" /> */}
                         <AccountCircleIcon fontSize="large" />
                     </div>
                     <div className="nav-profile-text">
@@ -178,10 +287,11 @@ class NavBarComponent extends React.Component<Props, IState> {
                             </span>
                         </div>
                     </div>
-                </li>
+                </li> */}
             </>
         );
     }
+    
 
     public renderProfileLinks = () => (values: string[], index: number) => {
         // const [name, url, iconClassName] = values;
@@ -201,22 +311,32 @@ class NavBarComponent extends React.Component<Props, IState> {
         
         return (
             <>
-                <li className="nav-item nav-language dropdown d-none d-md-block">
+            <IconButton
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={this.handleProfilePanelClick}
+                    color="inherit"
+                >
+                <img
+                    src={this.tryRequire(lang) && require(`../../assets/images/sidebar/${lang}.svg`)}
+                    alt={`${lang}-flag-icon`}
+                    style={{ marginRight: '8px' }}
+                />
+                <p className="mb-1" style={{ fontSize: "1.2rem" }}>{languageName}</p>
+                <ArrowDropDownIcon />
+            </IconButton>
+                {/* <li className="nav-item nav-language dropdown d-none d-md-block">
                     <a className="nav-link dropdown-toggle" id="languageDropdown" data-toggle="dropdown" aria-expanded="false">
                         <div className="nav-language-icon">
-                            <img
-                                src={this.tryRequire(lang) && require(`../../assets/images/sidebar/${lang}.svg`)}
-                                alt={`${lang}-flag-icon`}
-                            />
                         </div>
                         <div className="nav-language-text">
-                            <p className="mb-1" style={{ fontSize: "1.2rem" }}>{languageName}</p>
                         </div>
                     </a>
                     <div className="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown">
                         {this.getLanguageDropdownItems()}
                     </div>
-                </li>
+                </li> */}
             </>
         )
     };
@@ -226,71 +346,75 @@ class NavBarComponent extends React.Component<Props, IState> {
         if (!isLoggedIn) {
             return null;
         }
-        const {notifications} = this.state;
+        const {notificationPanelEl, notifications} = this.state;
+
+        const notificationPanelOpen = Boolean(notificationPanelEl);
+        const notificationPanelId = notificationPanelOpen ? 'notification-panel-popover' : undefined;
         return (
             <>
-                <li className="nav-item dropdown">
-                    <a className="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-                        <i className="mdi mdi-bell-outline"></i>
-                        <span className="count-symbol bg-danger"></span>
-                    </a>
-                    <div className="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown" style={{ minWidth: '300px' }}>
-                        <h6 className="p-3" style={{ fontSize: '16px' }}>
+                <IconButton
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={this.handleNotificationPanelClick}
+                    color="inherit"
+                >
+                    <NotificationsNoneIcon />
+                </IconButton>
+                <Popover
+                    id={notificationPanelId}
+                    open={notificationPanelOpen}
+                    anchorEl={notificationPanelEl}
+                    onClose={this.handleNotificationPanelClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                >
+                    <Paper style={{ padding: '16px' }}>
+                        <Typography variant="h6">
                             <FormattedMessage id={'page.header.navbar.notifications.title'} />
-                        </h6>
-                        <div className="dropdown-divider"></div>
+                        </Typography>
+                        <Divider />
                         {notifications.length ? 
                             <>
-                            <div style={{ padding: '0px 0px 24px' }}>
-                                {notifications.map((notification, index) => {
-                                    return (
-                                        <>
-                                            <a className="dropdown-item preview-item" key={notification.id}>
-                                                <div className="preview-item-content d-flex align-items-start flex-column justify-content-center">
-                                                    <h6 className="preview-subject font-weight-normal mb-1" style={{ fontSize: "1.2rem" }}>{ notification.subject }</h6>
-                                                    <p className="text-gray ellipsis mb-0" style={{ fontSize: "1rem" }}>  {notification.body} </p>
-                                                </div>
-                                            </a>
-                                            <div className="dropdown-divider"></div>
-                                        </>
-                                    );
-                                })}
+                                <List>
+                                    {notifications.map((notification, index) => {
+                                        return (
+                                            <>
+                                            <ListItem alignItems="flex-start" button>
+                                                <ListItemText
+                                                    primary= {`${notification.subject}`}
+                                                    secondary={
+                                                        <React.Fragment>
+                                                        {`${notification.body}`}
+                                                        </React.Fragment>
+                                                    }
+                                                />
+                                            </ListItem>
+                                            {index !== (notifications.length - 1) ? <Divider /> : ''}
+                                            </>
+                                        );
+                                    })}
+                                </List>
+                            </>:
+                            <div style={{ padding: '40px 0px', textAlign: 'center', fontSize: '14px' }}>
+                                <Typography variant="h6">
+                                    <FormattedMessage id={'page.header.navbar.notifications.empty.content1'} />
+                                </Typography>
+                                <Typography variant="body1">
+                                    <FormattedMessage id={'page.header.navbar.notifications.empty.content2'} />
+                                </Typography>
                             </div>
-                            </>: 
-                            <>
-                                <div style={{ padding: '24px', textAlign: 'center', fontSize: '14px' }}>
-                                    <Typography variant="h6">
-                                        <FormattedMessage id={'page.header.navbar.notifications.empty.content1'} />
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        <FormattedMessage id={'page.header.navbar.notifications.empty.content2'} />
-                                    </Typography>
-                                </div>
-                            </>
                         }
-                        {/* <a href="#" className="text-primary">
-                            <h6 className="p-3 mb-0 bg-primary text-white text-center" style={{ fontSize: '14px' }}>See all notifications</h6>
-                        </a> */}
-                    </div>
-                </li>
+                    </Paper>
+                </Popover>
             </>
         )
-    }
-    
-    public render() {
-        const { isLoggedIn } = this.props;
-        return (
-            <>
-                <ul className="navbar-nav navbar-nav-right">
-                    {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
-                    {this.renderLoginRegisterLinks()}
-                    {this.renderProfile()}
-                    {this.renderLanguages()}
-                    {this.renderNotifications()}
-                </ul>
-            </>
-            
-        );
     }
 
     public getLanguageDropdownItems = () => {
@@ -353,38 +477,6 @@ class NavBarComponent extends React.Component<Props, IState> {
     private redirectToLanding = () => {
         this.props.history.push('/');
     };
-
-    // private getLightDarkMode = () => {
-    //     const { colorTheme } = this.props;
-
-    //     if (colorTheme === 'basic') {
-    //         return (
-    //             <React.Fragment>
-    //                 <div className="switcher-item">
-    //                     <Sun fillColor={colors.light.navbar.sun}/>
-    //                 </div>
-    //                 <div className="switcher-item switcher-item--active">
-    //                     <Moon fillColor={colors.light.navbar.moon}/>
-    //                 </div>
-    //             </React.Fragment>
-    //         );
-    //     }
-
-    //     return (
-    //         <React.Fragment>
-    //             <div className="switcher-item switcher-item--active">
-    //                 <Sun fillColor={colors.basic.navbar.sun}/>
-    //             </div>
-    //             <div className="switcher-item">
-    //                 <Moon fillColor={colors.basic.navbar.moon}/>
-    //             </div>
-    //         </React.Fragment>
-    //     );
-    // };
-
-    // private handleChangeCurrentStyleMode = (value: string) => {
-    //     this.props.changeColorTheme(value);
-    // };
 }
 
 const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> =
@@ -403,6 +495,4 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
         changeUserDataFetch: payload => dispatch(changeUserDataFetch(payload)),
     });
 
-export const NavBar = compose(
-    connect(mapStateToProps, mapDispatchToProps),
-)(NavBarComponent) as any; // tslint:disable-line
+export const NavBar = injectIntl(compose(connect(mapStateToProps, mapDispatchToProps))(NavBarComponent)) as any;

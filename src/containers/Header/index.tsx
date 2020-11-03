@@ -64,7 +64,6 @@ const useStyles = (theme: Theme) => ({
       appBar: {
         [theme.breakpoints.up('sm')]: {
           width: `calc(100%)`,
-          // marginLeft: drawerWidth,
           zIndex: theme.zIndex.drawer + 1
         }
       
@@ -94,7 +93,10 @@ const useStyles = (theme: Theme) => ({
         [theme.breakpoints.only('xs')]: {
             display: 'none'
         },
-    }
+    },
+    title: {
+        flexGrow: 1,
+    },
 });
 
 
@@ -118,9 +120,47 @@ interface HistoryProps {
     handleDrawerToggle: () => void;
 }
 
+interface IState {
+    notificationPanelEl: HTMLElement |  null;
+    profilePanelEl: HTMLElement |  null;
+}
+
 type Props = ReduxProps & HistoryProps & DispatchProps & InjectedIntlProps;
 
-class Head extends React.Component<Props> {
+class Head extends React.Component<Props, IState> {
+
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            notificationPanelEl: null,
+            profilePanelEl: null,
+        };
+    }
+
+    public handleNotificationPanelClick = (event)  => {
+        this.setState({
+            notificationPanelEl: event.currentTarget
+        });
+    };
+    
+    public handleNotificationPanelClose = () => {
+        this.setState({
+            notificationPanelEl: null
+        });
+    };
+
+    public handleProfilePanelClick = (event)  => {
+        this.setState({
+            profilePanelEl: event.currentTarget
+        });
+    };
+    
+    public handleProfilePanelClose = () => {
+        this.setState({
+            profilePanelEl: null
+        });
+    };
 
     public render() {
         const {mobileWallet, classes, handleDrawerToggle } = this.props;
@@ -145,30 +185,13 @@ class Head extends React.Component<Props> {
                                 >
                                     <MenuIcon />
                                 </IconButton>
+                                <Link to="/">
+                                    <img src={logoLight} alt="logo" style={{ width: '50px', marginRight: '24px' }}/>
+                                </Link>
                                 <Typography variant="h6" className={classes.title}>
                                     B4U Wallet
                                 </Typography>
-                                <div>
-                                    <List style={{ display: 'flex' }}>
-                                        <ListItem button>
-                                            <ListItemText primary='list1' />
-                                        </ListItem>
-                                        <ListItem button>
-                                            <ListItemText primary='list2' />
-                                        </ListItem>
-                                        <ListItem button>
-                                            <ListItemText primary='list3' />
-                                        </ListItem>
-                                        {/* <ListItem button onClick={(e) => handleNotificationPanelClick(e)}>
-                                            <NotificationsNoneIcon />
-                                        </ListItem> */}
-                                        {/* <ListItem button>
-                                            <Button aria-describedby={notificationPanelId} variant="contained" onClick={handleNotificationPanelClick}>
-                                                Open
-                                            </Button>
-                                        </ListItem> */}
-                                    </List>
-                                </div>
+                                <NavBar />
                             </Toolbar>
                         </AppBar>
                         {/* <div className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ display: 'block' }}>

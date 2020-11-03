@@ -11,6 +11,7 @@ import {
     selectUserLoggedIn
 } from './modules';
 import { languageMap } from './translations';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 interface AppProps {
     history: History;
@@ -74,6 +75,7 @@ class AppLayout extends React.Component<Props, IState> {
                     <ErrorWrapper>
                         <React.Suspense fallback={null}>
                             <div style={{ display: 'flex' }}>
+                                <CssBaseline />
                                 <HeaderContainer 
                                     handleDrawerToggle = {this.handleDrawerToggle} 
                                 />
