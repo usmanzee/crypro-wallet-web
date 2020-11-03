@@ -10,6 +10,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import FormControl from '@material-ui/core/FormControl';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 // import Select from 'react-select';
 
@@ -54,7 +55,7 @@ const useStyles = (theme: Theme) => ({
     },
     submit: {},
     container: {
-        padding: theme.spacing(1)
+        padding: theme.spacing(2)
     },
     paper: {
         padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`
@@ -151,7 +152,6 @@ class MasspayComponent extends React.Component<Props> {
                 if(h === 'User_Name') {
                     newColumnName = 'name';
                 }
-                // console.log(newColumnName);
                 return newColumnName;
             },
             complete: (results) => {
@@ -297,128 +297,166 @@ class MasspayComponent extends React.Component<Props> {
         }),
     )(TableCell);
 
+
+    private isOtpDisabled = () => {
+        return (
+            <React.Fragment>
+                <Typography variant="body1" gutterBottom align="center">
+                    You have to enable 2FA before performaning mass withdrawl.
+                </Typography>
+                <Button
+                    onClick={this.redirectToEnable2fa}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    style= {{ margin: '24px 0px', width: '50%' }}
+                >
+                    Enable 2FA
+                </Button>
+            </React.Fragment>
+        );
+    };
+
+    private redirectToEnable2fa = () => this.props.history.push('/security/2fa', { enable2fa: true });
+
     render() {
         const {fileData, otp, massWithdrawProcessing} = this.state;
         const {currencies, classes} = this.props;
 
         return (
+            <>
             <Container className={classes.container}>
-                <Paper className={classes.paper}>
-                    <div className={classes.paperHeader}>
-                        <Typography component="h1" variant="h5">Mass Withdrawal</Typography>
-                    </div>
-                    <div className={classes.paperBody}>
+                <Grid container>
+                    <Grid item md={3}></Grid>
+                    <Grid item xs={12} sm={12} md={6}>
 
-                        <form className={classes.form}>
-                            <FormControl margin="normal" required fullWidth>
-                                <DropzoneArea
-                                    acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
-                                    clearOnUnmount={true}
-                                    maxFileSize={10000000}
-                                    dropzoneText="Drag and Drop a CSV file or Click Here"
-                                    showFileNamesInPreview={true}
-                                    filesLimit={1}
-                                    onChange={this.onFileChange.bind(this)}
-                                />
-                            </FormControl>
+                        <Paper className={classes.paper}>
+                            <div className={classes.paperHeader}>
+                                <Typography component="h1" variant="h5">Mass Withdrawal</Typography>
+                            </div>
+                            <div className={classes.paperBody}>
+                                {this.props.user.otp ? 
+                                    <>
+                                        <form className={classes.form}>
+                                            <FormControl margin="normal" required fullWidth>
+                                                <DropzoneArea
+                                                    acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
+                                                    clearOnUnmount={true}
+                                                    maxFileSize={10000000}
+                                                    dropzoneText="Drag and Drop a CSV file or Click Here"
+                                                    showFileNamesInPreview={true}
+                                                    filesLimit={1}
+                                                    onChange={this.onFileChange.bind(this)}
+                                                />
+                                            </FormControl>
 
-                            <Typography variant="h6"
-                                        style={{padding: 10, color: 'red', fontSize: '12px', textAlign: 'center'}}>
-                            </Typography>
-                            <FormControl margin="normal" required fullWidth>
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.submit}
-                                    disabled={!this.isFileFormValid()}
-                                    onClick={(e) => {
-                                        this.onFileSubmit(e)
-                                    }}
-                                >
-                                    Submit
-                                </Button>
-                            </FormControl>
+                                            <Typography variant="h6"
+                                                        style={{padding: 10, color: 'red', fontSize: '12px', textAlign: 'center'}}>
+                                            </Typography>
+                                            <FormControl margin="normal" required fullWidth>
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    color="primary"
+                                                    className={classes.submit}
+                                                    disabled={!this.isFileFormValid()}
+                                                    onClick={(e) => {
+                                                        this.onFileSubmit(e)
+                                                    }}
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </FormControl>
 
-                        </form>
-                    </div>
-                    <Dialog open={this.state.modalOpen} onClose={this.handleModalClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle id="form-dialog-title">Multiple Withdraws</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Followings are the Withdraws which are extracted from your file. Please review it
-                                carefully. Once it is submitted it could not be back
-                            </DialogContentText>
-                            <TextField
-                                label="OTP code"
-                                className={classes.withdrawalAmount}
-                                margin="dense"
-                                autoFocus
-                                fullWidth
-                                variant="outlined"
-                                onChange={event => this.handleOTPChange(event)}
-                                value={otp}
-                            />
-                            
-                            <Table className={classes.table}>
-                                <TableHead style={{alignItems: 'center'}}>
-                                    <TableRow>
-                                        <this.StyledTableCell padding="none">Currency</this.StyledTableCell>
-                                        <this.StyledTableCell padding="none">Address</this.StyledTableCell>
-                                        <this.StyledTableCell padding="none">Amount</this.StyledTableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {
-                                        fileData.map((ad, index) =>
-                                            <TableRow key={index} className={
-                                                // @ts-ignore
-                                                ad.address ? classes.defaultRow : classes.redRow}>
-                                                
-                                                <this.StyledTableCell padding="none">{
-                                                    // @ts-ignore
-                                                ad.currency
-                                                }</this.StyledTableCell>
-                                                <this.StyledTableCell padding="none">{
-                                                    // @ts-ignore
-                                                ad.address
-                                                }</this.StyledTableCell>
-                                                
-                                                <this.StyledTableCell padding="none">{
-                                                    // @ts-ignore
-                                                ad.amount
-                                                }</this.StyledTableCell>
-                                            </TableRow>
-                                        )
-                                    }
-                                </TableBody>
-                            </Table>
-                            <Typography component="h1"
-                            // @ts-ignore
-                                variant="h5">Total: {fileData.reduce((partial_sum, a) => partial_sum + parseFloat(a.amount), 0)}</Typography>
-
-                        </DialogContent>
-                        <DialogActions>
-                            {massWithdrawProcessing ? 
-                                    <CircularProgress className={classes.buttonProgress} size={25} /> :
-                                <>
-                                    <Button onClick={this.handleModalClose} color="primary">
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        onClick={this.handleRequestSubmit}
-                                        disabled={this.isRequestFormValid()}
-                                        color="primary"
-                                    >
-                                        Submit
-                                    </Button>
-                                </>
-                            }
-                        </DialogActions>
-                    </Dialog>
-
-                </Paper>
+                                        </form>
+                                    </> : 
+                                    <>
+                                        {this.isOtpDisabled()}
+                                    </>
+                                }
+                            </div>
+                        </Paper>
+                    </Grid>
+                    <Grid item md={3}></Grid>
+                </Grid>
             </Container>
+
+
+            <Dialog open={this.state.modalOpen} onClose={this.handleModalClose} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Multiple Withdraws</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Followings are the Withdraws which are extracted from your file. Please review it
+                    carefully. Once it is submitted it could not be back
+                </DialogContentText>
+                <TextField
+                    label="OTP code"
+                    className={classes.withdrawalAmount}
+                    margin="dense"
+                    autoFocus
+                    fullWidth
+                    variant="outlined"
+                    onChange={event => this.handleOTPChange(event)}
+                    value={otp}
+                />
+                
+                <Table className={classes.table}>
+                    <TableHead style={{alignItems: 'center'}}>
+                        <TableRow>
+                            <this.StyledTableCell padding="none">Currency</this.StyledTableCell>
+                            <this.StyledTableCell padding="none">Address</this.StyledTableCell>
+                            <this.StyledTableCell padding="none">Amount</this.StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            fileData.map((ad, index) =>
+                                <TableRow key={index} className={
+                                    // @ts-ignore
+                                    ad.address ? classes.defaultRow : classes.redRow}>
+                                    
+                                    <this.StyledTableCell padding="none">{
+                                        // @ts-ignore
+                                    ad.currency
+                                    }</this.StyledTableCell>
+                                    <this.StyledTableCell padding="none">{
+                                        // @ts-ignore
+                                    ad.address
+                                    }</this.StyledTableCell>
+                                    
+                                    <this.StyledTableCell padding="none">{
+                                        // @ts-ignore
+                                    ad.amount
+                                    }</this.StyledTableCell>
+                                </TableRow>
+                            )
+                        }
+                    </TableBody>
+                </Table>
+                <Typography component="h1"
+                // @ts-ignore
+                    variant="h5">Total: {fileData.reduce((partial_sum, a) => partial_sum + parseFloat(a.amount), 0)}</Typography>
+
+            </DialogContent>
+            <DialogActions>
+                {massWithdrawProcessing ? 
+                        <CircularProgress className={classes.buttonProgress} size={25} /> :
+                    <>
+                        <Button onClick={this.handleModalClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={this.handleRequestSubmit}
+                            disabled={this.isRequestFormValid()}
+                            color="primary"
+                        >
+                            Submit
+                        </Button>
+                    </>
+                }
+            </DialogActions>
+            </Dialog>
+        </>
         );
     }
 }
