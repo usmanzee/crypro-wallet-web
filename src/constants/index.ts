@@ -17,12 +17,16 @@ export const pgRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => 
     return isLoggedIn ? routes : routesUnloggedIn;
 };
 export const headerRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
-    const routes = [
+    const loggedOutroutes = [
         ['page.header.navbar.wallets', '/wallets', `wallets${isLight ? 'Light' : ''}`],
         ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`],
     ];
+    const loggedoutRoutes = [
+        ['page.header.navbar.signIn', '/signin', `signIn${isLight ? 'Light' : ''}`],
+        ['page.header.signUp', '/signup', `signUp${isLight ? 'Light' : ''}`],
+    ];
 
-    return isLoggedIn ? routes : [];
+    return isLoggedIn ? loggedOutroutes : loggedoutRoutes;
 };
 export const headerProfileRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
     const routes = [

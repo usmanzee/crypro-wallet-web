@@ -51,7 +51,7 @@ import Button from '@material-ui/core/Button';
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
 
 import Popover from '@material-ui/core/Popover';
-import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { withStyles, Theme } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
 const useStyles = (theme: Theme) => ({
@@ -84,6 +84,7 @@ const useStyles = (theme: Theme) => ({
         backgroundColor: '#fff',
         padding: theme.spacing(1),
         color: '#000',
+        zIndex: theme.zIndex.drawer + 1,
         margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
         [theme.breakpoints.only('xs')]: {
             margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
@@ -94,8 +95,11 @@ const useStyles = (theme: Theme) => ({
             display: 'none'
         },
     },
-    title: {
+    logoLink: {
         flexGrow: 1,
+        [theme.breakpoints.only('xs')]: {
+            display: 'none'
+        }
     },
 });
 
@@ -185,31 +189,16 @@ class Head extends React.Component<Props, IState> {
                                 >
                                     <MenuIcon />
                                 </IconButton>
-                                <Link to="/">
+                                <Link to="/" className={classes.logoLink}>
                                     <img src={logoLight} alt="logo" style={{ width: '50px', marginRight: '24px' }}/>
                                 </Link>
-                                <Typography variant="h6" className={classes.title}>
-                                    B4U Wallet
-                                </Typography>
                                 <NavBar />
                             </Toolbar>
                         </AppBar>
-                        {/* <div className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ display: 'block' }}>
-                            <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                                <Link className="navbar-brand brand-logo" to="/"><img src={logoLight} alt="logo" /></Link>
-                            </div>
-                            <div className="navbar-menu-wrapper d-flex align-items-stretch">
-                                <NavBar onLinkChange={this.closeMenu}/>
-
-                                <button className="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                                    <span className="mdi mdi-menu"></span>
-                                </button>
-                            </div>
-                        </div>
                         {shouldRenderMarketToolbar && 
                         (
                             <>
-                                <Paper className={classes.subHeader} elevation={1} style={{ display: 'block' }}>
+                                <AppBar position="fixed" className={classes.subHeader}>
                                     <Grid container>
                                         <Grid item md={1} style={{ marginTop: '8px' }}>
                                             {this.renderMarketToggler()}
@@ -220,10 +209,23 @@ class Head extends React.Component<Props, IState> {
                                             </div>
                                         </Grid>
                                     </Grid>
-                                </Paper>
+                                </AppBar>
                             </>
                         )
-                        } */}
+                        } 
+                        {/* <div className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ display: 'block' }}>
+                            <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                                <Link className="navbar-brand brand-logo" to="/"><img src={logoLight} alt="logo" /></Link>
+                            </div>
+                            <div className="navbar-menu-wrapper d-flex align-items-stretch">
+                            <NavBar onLinkChange={this.closeMenu}/>
+                            
+                            <button className="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                                    <span className="mdi mdi-menu"></span>
+                                </button>
+                            </div>
+                        </div>
+                        */}
                     </>
                 )
                 }

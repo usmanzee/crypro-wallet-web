@@ -106,7 +106,7 @@ const useStyles = (theme: Theme) => ({
     toolbar: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
-        padding: theme.spacing(3),
+        // margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
     },
 });
 

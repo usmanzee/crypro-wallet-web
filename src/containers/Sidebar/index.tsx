@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { History } from 'history';
 import * as React from 'react';
 import { Dropdown } from 'react-bootstrap';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
 import { connect, MapDispatchToPropsFunction } from 'react-redux';
 import { Link, RouteProps, withRouter } from 'react-router-dom';
 import { languages } from '../../api/config';
@@ -10,12 +10,6 @@ import { LogoutIcon } from '../../assets/images/sidebar/LogoutIcon';
 import { ProfileIcon } from '../../assets/images/sidebar/ProfileIcon';
 import { SidebarIcons } from '../../assets/images/sidebar/SidebarIcons';
 import { pgRoutes } from '../../constants';
-
-
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -66,40 +60,40 @@ const useStyles = (theme: Theme) => ({
           width: drawerWidth,
           flexShrink: 0,
         },
-      },
-      appBar: {
-        [theme.breakpoints.up('sm')]: {
-          width: `calc(100%)`,
-          // marginLeft: drawerWidth,
-          zIndex: theme.zIndex.drawer + 1
-        }
-      
     },
-    menuButton: {
-        marginRight: theme.spacing(2),
-        [theme.breakpoints.up('sm')]: {
-          display: 'none',
-        },
-    },
-    // necessary for content to be below app bar
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
         width: drawerWidth,
     },
-
-    subHeader: {
-        backgroundColor: '#fff',
-        padding: theme.spacing(1),
-        color: '#000',
-        margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
-        [theme.breakpoints.only('xs')]: {
-            margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
-        },
-    },
-    toolbarDiv: {
-        [theme.breakpoints.only('xs')]: {
+    drawerNone: {
+        [theme.breakpoints.up('md')]: {
             display: 'none'
         },
+    },
+    drawerLink: {
+        textDecoration: 'none',
+        color: '#000',
+        "&:hover": {
+            color: '#000',
+        }
+    },
+    drawerActiveLink: {
+        textDecoration: 'none',
+        color: '#000',
+        background: 'rgb(250, 250, 250)',
+        "&:hover": {
+            color: '#000',
+        },
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          left: 0,
+          top: '0rem',
+          bottom: 0,
+          background: 'rgb(111 33 88)',
+          width: '5px',
+          margin: `${theme.spacing(1)}px 0px`
+        }
     }
 });
 
@@ -133,7 +127,7 @@ interface OwnProps {
     handleDrawerToggle: () => void;
 }
 
-type Props = OwnProps & ReduxProps & RouteProps & DispatchProps;
+type Props = OwnProps & ReduxProps & RouteProps & DispatchProps & InjectedIntlProps;
 
 class SidebarContainer extends React.Component<Props, State> {
     public state = {
@@ -141,134 +135,93 @@ class SidebarContainer extends React.Component<Props, State> {
     };
 
     public render() {
-        const { isLoggedIn, isActive, lang, classes, mobileOpen, handleDrawerToggle } = this.props;
-        const { isOpenLanguage } = this.state;
-
-        const address = this.props.history.location ? this.props.history.location.pathname : '';
-        const languageName = lang.toUpperCase();
-
-        const languageClassName = classnames('dropdown-menu-language-field', {
-            'dropdown-menu-language-field-active': isOpenLanguage,
-        });
-
-        const sidebarClassName = classnames('pg-sidebar-wrapper', {
-            'pg-sidebar-wrapper--active': isActive,
-            'pg-sidebar-wrapper--hidden': !isActive,
-        });
-        // const sideBarHidden = isActive ? false : true
-        const shouldRenderSidebar = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/' && !window.location.pathname.includes('/trading');
-        const newSidebarClassName = classnames('sidebar sidebar-offcanvas', {
-            'd-lg-none': !shouldRenderSidebar,
-            '': shouldRenderSidebar,
-        });
-
+        const { classes, mobileOpen, handleDrawerToggle } = this.props;
+        const showSidebar = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/' && !window.location.pathname.includes('/trading');
+    
         return (
             <>
-                {/* <nav className={newSidebarClassName}>
-                    <ul className="nav">
-                        {this.renderNewProfileLink()}
-                        {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
-                    </ul>
-                </nav> */}
-                <nav className={classes.drawer} aria-label="mailbox folders">
-                    <Hidden smUp implementation="css">
-                    <Drawer
-                        variant="temporary"
-                        open={mobileOpen}
-                        onClose={handleDrawerToggle}
-                        classes={{
-                        paper: classes.drawerPaper,
-                        }}
-                        ModalProps={{
-                        keepMounted: true,
-                        }}
-                    >
-                        <this.DrawerContent />
-                    </Drawer>
-                    </Hidden>
-                    <Hidden xsDown implementation="css">
-                    <Drawer
-                        classes={{
-                        paper: classes.drawerPaper,
-                        }}
-                        variant="permanent"
-                        open
-                    >
-                        <this.DrawerContent />
-                    </Drawer>
-                    </Hidden>
-                </nav>
+                    <nav className={showSidebar ? classes.drawer : classes.drawerNone}>
+                        <Hidden smUp implementation="css">
+                        <Drawer
+                            variant="temporary"
+                            open={mobileOpen}
+                            onClose={handleDrawerToggle}
+                            classes={{
+                                paper: classes.drawerPaper,
+                            }}
+                            ModalProps={{
+                                keepMounted: true,
+                            }}
+                        >
+                            <this.DrawerContent />
+                        </Drawer>
+                        </Hidden>
+                        <Hidden xsDown implementation="css">
+                        <Drawer
+                            classes={{
+                                paper: classes.drawerPaper,
+                            }}
+                            variant="permanent"
+                            open
+                        >
+                            <this.DrawerContent />
+                        </Drawer>
+                        </Hidden>
+                    </nav>
             </>
         );
     }
 
+    public translate = (id: string) => this.props.intl.formatMessage({ id });
+
     public DrawerContent = () => {
-        const { classes } = this.props;
+        const address = this.props.history.location ? this.props.history.location.pathname : '';
+        const { isLoggedIn, classes } = this.props;
         return (  
             <div>
                 <div className={classes.toolbar} />
                 <Divider />
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                    ))}
+                    {this.renderNewProfileLink()}
                 </List>
                 <Divider />
                 <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                    ))}
+                    {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
                 </List>
             </div>
         );
     }
 
     public renderNewNavItems = (address: string) => (values: string[], index: number) => {
-        const { currentMarket } = this.props;
+        const { currentMarket, classes } = this.props;
 
         const [name, url, img] = values;
         
-        const handleLinkChange = () => this.props.toggleSidebar(false);
         const path = url.includes('/trading') && currentMarket ? `/trading/${currentMarket.id}` : url;
         const isActive = (url === '/trading/' && address.includes('/trading')) || address === url;
 
-        const sidebarClassName = classnames('nav-item', {
-            'active': isActive,
-            '': !isActive,
-        });
         const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
             'pg-sidebar-wrapper-nav-item-img--active': isActive,
         });
         return (
             <React.Fragment>
-                <li className={sidebarClassName} key={`key_${index}`}>
-                    <Link to={path} className="nav-link">
-                        <SidebarIcons
-                            className={iconClassName}
+                <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to={path}>
+                    <ListItemIcon>
+                        <SidebarIcons 
                             name={img}
+                            className={iconClassName}
                         />
-                        <FormattedMessage id={name} />
-                    </Link>
-                </li>
+                    </ListItemIcon>
+                    <ListItemText primary={this.translate(name)} />
+                </ListItem>
             </React.Fragment>
         );
     };
 
     public renderNewProfileLink = () => {
-        const { isLoggedIn, location } = this.props;
-        const handleLinkChange = () => this.props.toggleSidebar(false);
+        const { isLoggedIn, location, classes } = this.props;
         const address = location ? location.pathname : '';
         const isActive = address === '/profile';
-
-        const sideBarClassName = classnames('nav-item', {
-            'active': isActive,
-        });
 
         const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
             'pg-sidebar-wrapper-nav-item-img--active': isActive,
@@ -276,132 +229,16 @@ class SidebarContainer extends React.Component<Props, State> {
 
         return isLoggedIn && (
             <React.Fragment>
-                <li className={sideBarClassName}>
-                    <Link to="/profile" className="nav-link">
-                        <ProfileIcon className={iconClassName} />
-                        <FormattedMessage id={'page.header.navbar.profile'} />
-                    </Link>
-                </li>
+                <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to='/profile'>
+                    <ListItemIcon>
+                        <ProfileIcon 
+                            className={iconClassName}
+                        />
+                    </ListItemIcon>
+                    <ListItemText primary={this.translate('page.header.navbar.profile')} />
+                </ListItem>
             </React.Fragment>
         );
-    };
-
-    public renderNavItems = (address: string) => (values: string[], index: number) => {
-        const { currentMarket } = this.props;
-
-        const [name, url, img] = values;
-        const handleLinkChange = () => this.props.toggleSidebar(false);
-        const path = url.includes('/trading') && currentMarket ? `/trading/${currentMarket.id}` : url;
-        const isActive = (url === '/trading/' && address.includes('/trading')) || address === url;
-
-        const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
-            'pg-sidebar-wrapper-nav-item-img--active': isActive,
-        });
-
-        return (
-            <Link to={path} key={index} onClick={handleLinkChange} className={`${isActive && 'route-selected'}`}>
-                <div className="pg-sidebar-wrapper-nav-item">
-                    <div className="pg-sidebar-wrapper-nav-item-img-wrapper">
-                        <SidebarIcons
-                            className={iconClassName}
-                            name={img}
-                        />
-                    </div>
-                    <p className="pg-sidebar-wrapper-nav-item-text">
-                        <FormattedMessage id={name} />
-                    </p>
-                </div>
-            </Link>
-        );
-    };
-
-    public renderProfileLink = () => {
-        const { isLoggedIn, location } = this.props;
-        const handleLinkChange = () => this.props.toggleSidebar(false);
-        const address = location ? location.pathname : '';
-        const isActive = address === '/profile';
-
-        const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
-            'pg-sidebar-wrapper-nav-item-img--active': isActive,
-        });
-
-        return isLoggedIn && (
-            <div className="pg-sidebar-wrapper-profile">
-                <Link to="/profile" onClick={handleLinkChange} className={`${isActive && 'route-selected'}`}>
-                    <div className="pg-sidebar-wrapper-profile-link">
-                        <ProfileIcon className={iconClassName} />
-                        <p className="pg-sidebar-wrapper-profile-link-text">
-                            <FormattedMessage id={'page.header.navbar.profile'} />
-                        </p>
-                    </div>
-                </Link>
-            </div>
-        );
-    };
-
-    public renderLogout = () => {
-        const { isLoggedIn } = this.props;
-        if (!isLoggedIn) {
-            return null;
-        }
-
-        return (
-            <div className="pg-sidebar-wrapper-logout">
-                <div className="pg-sidebar-wrapper-logout-link" onClick={this.props.logoutFetch}>
-                    <LogoutIcon className="pg-sidebar-wrapper-logout-link-img" />
-                    <p className="pg-sidebar-wrapper-logout-link-text">
-                        <FormattedMessage id={'page.body.profile.content.action.logout'} />
-                    </p>
-                </div>
-            </div>
-        );
-    };
-
-    public getLanguageDropdownItems = () => {
-        return languages.map((l: string) =>
-            <Dropdown.Item onClick={e => this.handleChangeLanguage(l)}>
-                <div className="dropdown-row">
-                    <img
-                        src={this.tryRequire(l) && require(`../../assets/images/sidebar/${l}.svg`)}
-                        alt={`${l}-flag-icon`}
-                    />
-                    <span>{l.toUpperCase()}</span>
-                </div>
-            </Dropdown.Item>,
-        );
-    };
-
-    private tryRequire = (name: string) => {
-        try {
-            require(`../../assets/images/sidebar/${name}.svg`);
-
-            return true;
-        } catch (err) {
-            return false;
-        }
-    };
-
-
-    private handleChangeLanguage = (language: string) => {
-        const { user, isLoggedIn } = this.props;
-
-        if (isLoggedIn) {
-            const data = user.data && JSON.parse(user.data);
-
-            if (data && data.language && data.language !== language) {
-                const payload = {
-                    ...user,
-                    data: JSON.stringify({
-                        ...data,
-                        language,
-                    }),
-                };
-
-                this.props.changeUserDataFetch({ user: payload });
-            }
-        }
-
-        this.props.changeLanguage(language);
     };
 }
 

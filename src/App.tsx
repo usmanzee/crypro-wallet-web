@@ -79,8 +79,6 @@ class AppLayout extends React.Component<Props, IState> {
                                 <HeaderContainer 
                                     handleDrawerToggle = {this.handleDrawerToggle} 
                                 />
-                                {/* {shouldRenderMarketToolbar && <TradingToolbarContainer />} */}
-                                {/* <div className="container-fluid page-body-wrapper"> */}
                                     <SidebarContainer
                                         mobileOpen = {mobileOpen} 
                                         handleDrawerToggle = {this.handleDrawerToggle} 
@@ -88,7 +86,6 @@ class AppLayout extends React.Component<Props, IState> {
                                     <CustomizationContainer/>
                                     <AlertsContainer/>
                                     <LayoutContainer/>
-                                {/* </div> */}
                             </div>
                             <FooterContainer/>
                         </React.Suspense>

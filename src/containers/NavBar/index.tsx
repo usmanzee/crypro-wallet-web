@@ -30,6 +30,7 @@ import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { withStyles, Theme } from '@material-ui/core/styles';
 
 import {
     changeColorTheme,
@@ -75,6 +76,22 @@ export interface OwnProps {
     changeUserDataFetch: typeof changeUserDataFetch;
 }
 
+const useStyles = (theme: Theme) => ({
+    headerLink: {
+        color: "#fff",
+        whiteSpace: 'pre',
+        "&:hover": {
+            color: '#fff',
+        }
+    },
+    dropdownLink: {
+        color: "#000",
+        whiteSpace: 'pre',
+        "&:hover": {
+            color: '#000',
+        }
+    }
+});
 
 type Props = OwnProps & ReduxProps & DispatchProps & InjectedIntlProps;
 
@@ -86,6 +103,7 @@ interface IState {
 
     notificationPanelEl: HTMLElement |  null;
     profilePanelEl: HTMLElement |  null;
+    languagePanelEl: HTMLElement |  null;
 
 } 
 
@@ -101,6 +119,7 @@ class NavBarComponent extends React.Component<Props, IState> {
 
             notificationPanelEl: null,
             profilePanelEl: null,
+            languagePanelEl: null,
         };
         
     }
@@ -131,6 +150,17 @@ class NavBarComponent extends React.Component<Props, IState> {
             profilePanelEl: null
         });
     };
+    public handleLanguagePanelClick = (event)  => {
+        this.setState({
+            languagePanelEl: event.currentTarget
+        });
+    };
+    
+    public handleLanguagePanelClose = () => {
+        this.setState({
+            languagePanelEl: null
+        });
+    };
 
     public getNotifications = async () => {
         try {
@@ -150,23 +180,16 @@ class NavBarComponent extends React.Component<Props, IState> {
         return (
             <>
                 <List style={{ display: 'flex' }}>
-                    <ListItem button>
-                        <ListItemText primary='list1' />
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemText primary='list2' />
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemText primary='list3' />
-                    </ListItem>
-                </List>
-                {this.renderProfile()}
-                {this.renderNotifications()}
-                {this.renderLanguages()}
-                {/* <ul className="navbar-nav navbar-nav-right">
                     {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
-                    {this.renderLoginRegisterLinks()}
-                </ul> */}
+                    
+                </List>
+                {isLoggedIn &&
+                    <>
+                        {this.renderProfile()}
+                        {this.renderNotifications()}
+                    </>
+                }
+                {this.renderLanguages()}
             </>
             
         );
@@ -176,44 +199,20 @@ class NavBarComponent extends React.Component<Props, IState> {
 
     private renderNavLinks = () => (values: string[], index: number) => {
 
+        const {classes} = this.props;
         const [name, url] = values;
         return (
             <React.Fragment>
-                <li className="nav-item" key={`key_${index}`}>
-                    <Link className="nav-link" to={url}>
-                        <FormattedMessage id={name} />
-                    </Link>
-                </li>
+                <ListItem className={classes.headerLink} button component={Link} to={url}>
+                    <ListItemText primary={this.translate(name)} />
+                </ListItem>
             </React.Fragment>
         );
     };
 
-    private renderLoginRegisterLinks = () => {
-        const { isLoggedIn } = this.props;
-        if(isLoggedIn) {
-            return null;
-        }
-        return (
-            <>
-                <li className="nav-item">
-                    <Link className="nav-link" to="/signin">
-                        <FormattedMessage id={'page.header.navbar.signIn'} />
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <Link className="register-link" to="/signup">
-                        <FormattedMessage id={'page.header.signUp'} />
-                    </Link>
-                </li>
-            </>
-        );
-    }
     private renderProfile = () => {
-        const { isLoggedIn, user } = this.props;
-        if (!isLoggedIn) {
-            return null;
-        }
-        const { profilePanelEl , notifications} = this.state;
+        const { classes } = this.props;
+        const { profilePanelEl} = this.state;
 
         const profilePanelOpen = Boolean(profilePanelEl);
         const profilePanelId = profilePanelOpen ? 'profile-panel-popover' : undefined;
@@ -243,14 +242,15 @@ class NavBarComponent extends React.Component<Props, IState> {
                         horizontal: 'center',
                     }}
                 >
-                    <Paper style={{ width: '200px' }}>
-                        <List component="nav" disablePadding>
-                            <ListItem button>
-                            <ListItemAvatar>
-                                <PersonOutlineIcon />
-                            </ListItemAvatar>
-                                <ListItemText primary="Profile" />
+                    <Paper style={{ width: '170px' }}>
+                        <List disablePadding>
+                            <ListItem button className={classes.dropdownLink} component={Link} to='/profile'>
+                                <ListItemAvatar>
+                                    <PersonOutlineIcon />
+                                </ListItemAvatar>
+                                <ListItemText primary={this.translate('page.header.navbar.profile')} />
                             </ListItem>
+                            <Divider />
                             <ListItem button onClick={this.props.logoutFetch}>
                                 <ListItemAvatar>
                                     <ExitToAppIcon />
@@ -260,62 +260,26 @@ class NavBarComponent extends React.Component<Props, IState> {
                         </List>
                     </Paper>
                 </Popover>
-                {/* <li className="nav-item nav-profile dropdown">
-                    <a className="nav-link dropdown-toggle" id="profileDropdown" href="/" data-toggle="dropdown" aria-expanded="false">
-                    <div className="nav-profile-img">
-                        <AccountCircleIcon fontSize="large" />
-                    </div>
-                    <div className="nav-profile-text">
-                    <p className="mb-1" style={{ fontSize: "1.2rem" }}>
-                        <FormattedMessage id={'page.header.navbar.profile'} />
-                    </p>
-                    </div>
-                    </a>
-                    <div className="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
-                        <div className="p-3">
-                            <Link className="dropdown-item py-3 d-flex align-items-center justify-content-between" to="/profile">
-                                <span>{user.email}</span>
-                                <ArrowRightIcon fontSize="large"/>
-                            </Link>
-                            {headerProfileRoutes(isLoggedIn).map(this.renderProfileLinks())}
-                        </div>
-                        <div className="p-2">
-                            <div role="separator" className="dropdown-divider"></div>
-                            <span className="dropdown-item py-1 d-flex align-items-center justify-content-between" style={{ cursor: 'pointer' }} onClick={this.props.logoutFetch}>
-                                <span><FormattedMessage id={'page.header.navbar.logout'} /></span>
-                                <i className="mdi mdi-logout ml-1"></i>
-                            </span>
-                        </div>
-                    </div>
-                </li> */}
             </>
         );
     }
     
-
-    public renderProfileLinks = () => (values: string[], index: number) => {
-        // const [name, url, iconClassName] = values;
-        return (
-            <React.Fragment>
-                {/* <Link className="dropdown-item py-1 d-flex align-items-center justify-content-between" to={url}>
-                    <span><FormattedMessage id={name} /></span>
-                    <i className={iconClassName}></i>
-                </Link> */}
-            </React.Fragment>
-        );
-    }
     private renderLanguages = () => {
         
         const { lang } = this.props;
         const languageName = lang.toUpperCase();
-        
+
+        const { languagePanelEl} = this.state;
+
+        const languagePanelOpen = Boolean(languagePanelEl);
+        const languagePanelId = languagePanelOpen ? 'language-panel-popover' : undefined;
         return (
             <>
             <IconButton
                     aria-label="account of current user"
                     aria-controls="menu-appbar"
                     aria-haspopup="true"
-                    onClick={this.handleProfilePanelClick}
+                    onClick={this.handleLanguagePanelClick}
                     color="inherit"
                 >
                 <img
@@ -326,26 +290,55 @@ class NavBarComponent extends React.Component<Props, IState> {
                 <p className="mb-1" style={{ fontSize: "1.2rem" }}>{languageName}</p>
                 <ArrowDropDownIcon />
             </IconButton>
-                {/* <li className="nav-item nav-language dropdown d-none d-md-block">
-                    <a className="nav-link dropdown-toggle" id="languageDropdown" data-toggle="dropdown" aria-expanded="false">
-                        <div className="nav-language-icon">
-                        </div>
-                        <div className="nav-language-text">
-                        </div>
-                    </a>
-                    <div className="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown">
-                        {this.getLanguageDropdownItems()}
-                    </div>
-                </li> */}
+
+            <Popover
+                    id={languagePanelId}
+                    open={languagePanelOpen}
+                    anchorEl={languagePanelEl}
+                    onClose={this.handleLanguagePanelClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                >
+                    <Paper>
+                        <List style={{ width: '114px' }} disablePadding>
+                            {this.getLanguageDropdownItems()}
+                        </List>
+                    </Paper>
+                </Popover>
             </>
         )
     };
 
+    public getLanguageDropdownItems = () => {
+        return (
+            <>
+                {languages.map((language, index) => {
+                    return (
+                        <>
+                            <ListItem button onClick={e => this.handleChangeLanguage(language)}>
+                                <ListItemAvatar>
+                                    <img
+                                        src={this.tryRequire(language) && require(`../../assets/images/sidebar/${language}.svg`)}
+                                        alt={`${language}-flag-icon`}
+                                    />
+                                </ListItemAvatar>
+                                <ListItemText primary={language.toUpperCase()} />
+                            </ListItem>
+                            <Divider />
+                        </>
+                    );
+                })}
+            </>
+        );
+    };
+
     private renderNotifications = () => {
-        const { isLoggedIn } = this.props;
-        if (!isLoggedIn) {
-            return null;
-        }
         const {notificationPanelEl, notifications} = this.state;
 
         const notificationPanelOpen = Boolean(notificationPanelEl);
@@ -417,31 +410,6 @@ class NavBarComponent extends React.Component<Props, IState> {
         )
     }
 
-    public getLanguageDropdownItems = () => {
-        return (
-            <>
-                {languages.map((language, index) => {
-                    return (
-                        <>
-                            <a className="dropdown-item" onClick={e => this.handleChangeLanguage(language)}>
-                                <div className="nav-language-icon mr-2">
-                                    <img
-                                        src={this.tryRequire(language) && require(`../../assets/images/sidebar/${language}.svg`)}
-                                        alt={`${language}-flag-icon`}
-                                    />
-                                </div>
-                                <div className="nav-language-text">
-                                    <p className="mb-1 text-black">{language.toUpperCase()}</p>
-                                </div>
-                            </a>
-                            <div className="dropdown-divider"></div>
-                        </>
-                    );
-                })}
-            </>
-        );
-    };
-
     private tryRequire = (name: string) => {
         try {
             require(`../../assets/images/sidebar/${name}.svg`);
@@ -495,4 +463,4 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
         changeUserDataFetch: payload => dispatch(changeUserDataFetch(payload)),
     });
 
-export const NavBar = injectIntl(compose(connect(mapStateToProps, mapDispatchToProps))(NavBarComponent)) as any;
+export const NavBar = injectIntl(withStyles(useStyles as {})(compose(connect(mapStateToProps, mapDispatchToProps))(NavBarComponent))) as any;
