@@ -21,6 +21,19 @@ import {RangerState} from '../../modules/public/ranger/reducer';
 import {selectRanger} from '../../modules/public/ranger/selectors';
 import { OrderCommon } from '../../modules/types';
 
+import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+
 interface ReduxProps {
     list: OrderCommon[];
     rangerState: RangerState;
@@ -39,10 +52,24 @@ type Props = ReduxProps & DispatchProps & InjectedIntlProps;
 interface State {
     tab: string;
     currentTabIndex: number;
+    tabValue: number;
 }
 
 class Orders extends React.PureComponent<Props, State> {
-    public state = { tab: 'open', currentTabIndex: 0};
+    // public state = { 
+    //     tab: 'open', 
+    //     currentTabIndex: 0,
+    //     tabValue: 0
+    // };
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            tab: 'open', 
+            currentTabIndex: 0,
+            tabValue: 0
+		};
+    }
 
     public tabMapping = ['open', 'all'];
 
@@ -64,6 +91,51 @@ class Orders extends React.PureComponent<Props, State> {
         this.props.resetOrdersHistory();
     }
 
+    public MaterialTabPanel(props: TabPanelProps) {
+        const { children, value, index, ...other } = props;
+      
+        return (
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`full-width-tabpanel-${index}`}
+                aria-labelledby={`full-width-tab-${index}`}
+                {...other}
+            >
+            {value === index && (
+                <Box style={{ marginTop: "10px" }}>
+                    <Typography component="div">{children}</Typography>
+                </Box>
+            )}
+            </div>
+        );
+    }
+
+    public a11yProps(index: any) {
+        return {
+            id: `full-width-tab-${index}`,
+            'aria-controls': `full-width-tabpanel-${index}`,
+        };
+    }
+
+    public AntTabs = withStyles({
+        root: {
+            backgroundColor: "white",
+            borderBottom: '0.1rem solid rgb(170, 170, 170)',
+            fontSize: "14px !important",
+            boxShadow: "none"
+        },
+        indicator: {
+            backgroundColor: '#580e38',
+        },
+    })(Tabs);
+
+    public handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        this.setState({
+            tabValue: newValue
+        })
+    };
+
     public render() {
         const cancelAll = this.props.list.length ? (
             <React.Fragment>
@@ -75,17 +147,38 @@ class Orders extends React.PureComponent<Props, State> {
         ) : null;
 
         return (
+            <>
+
+
+                <AppBar position="static" color="default" style={{ boxShadow: "none" }}>
+                    <Tabs value={this.state.tabValue} onChange={this.handleTabChange} variant="fullWidth" indicatorColor="primary" centered>
+                        <Tab label={this.props.intl.formatMessage({ id: 'page.body.openOrders.tab.open'})} {...this.a11yProps(0)} />
+                        <Tab label={this.props.intl.formatMessage({ id: 'page.body.openOrders.tab.all'})} {...this.a11yProps(1)} />
+                    </Tabs>
+                </AppBar>
+                <this.MaterialTabPanel value={this.state.tabValue} index={0}>
+                    <OrdersElement type="open"/>
+                </this.MaterialTabPanel>
+                <this.MaterialTabPanel value={this.state.tabValue} index={1}>
+                
+                    <OrdersElement type="all"/>    
+                </this.MaterialTabPanel>     
             <div className="pg-orders-tab pg-container">
                 <div className="pg-orders-tab__tabs-content">
-                    <TabPanel
+
+
+
+
+                    {/* <TabPanel
                         panels={this.renderTabs()}
                         onTabChange={this.handleMakeRequest}
                         optionalHead={cancelAll}
                         currentTabIndex={this.state.currentTabIndex}
                         onCurrentTabChange={this.onCurrentTabChange}
-                    />
+                    /> */}
                 </div>
             </div>
+            </>
         );
     }
 
