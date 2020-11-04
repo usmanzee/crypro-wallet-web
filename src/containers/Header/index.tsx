@@ -36,14 +36,15 @@ const drawerWidth = 240;
 const useStyles = (theme: Theme) => ({
     drawer: {
         [theme.breakpoints.up('sm')]: {
-          width: drawerWidth,
-          flexShrink: 0,
+            width: drawerWidth,
+            flexShrink: 0,
+            },
         },
-      },
-      appBar: {
-        [theme.breakpoints.up('sm')]: {
-          width: `calc(100%)`,
-          zIndex: theme.zIndex.drawer + 1
+        appBar: {
+            opacity: '0.85',
+            [theme.breakpoints.up('sm')]: {
+                width: `calc(100%)`,
+                zIndex: theme.zIndex.drawer + 1
         }
       
     },

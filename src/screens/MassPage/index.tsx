@@ -228,8 +228,9 @@ class MasspayComponent extends React.Component<Props> {
                 }
 
             } catch (error) {
+                this.setState({submitted: false})
                 this.setState({massWithdrawProcessing: false});
-                this.props.fetchAlert({message: error, type: 'error'});
+                this.props.fetchAlert({message: ['Failed to submit request'], type: 'error'});
             }
         });
 

@@ -78,7 +78,6 @@ class AppLayout extends React.Component<Props, IState> {
         //@ts-ignore
         const { lang, classes } = this.props;
         const { mobileOpen } = this.state;
-        console.log(classes);
         return (
             <IntlProvider locale={lang} messages={languageMap[lang]} key={lang}>
                 <Router history={history}>
