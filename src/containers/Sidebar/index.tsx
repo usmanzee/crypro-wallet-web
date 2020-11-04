@@ -1,12 +1,9 @@
 import classnames from 'classnames';
 import { History } from 'history';
 import * as React from 'react';
-import { Dropdown } from 'react-bootstrap';
-import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, MapDispatchToPropsFunction } from 'react-redux';
 import { Link, RouteProps, withRouter } from 'react-router-dom';
-import { languages } from '../../api/config';
-import { LogoutIcon } from '../../assets/images/sidebar/LogoutIcon';
 import { ProfileIcon } from '../../assets/images/sidebar/ProfileIcon';
 import { SidebarIcons } from '../../assets/images/sidebar/SidebarIcons';
 import { pgRoutes } from '../../constants';
@@ -14,27 +11,11 @@ import { pgRoutes } from '../../constants';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MenuIcon from '@material-ui/icons/Menu';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Badge from '@material-ui/core/Badge';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MailIcon from '@material-ui/icons/Mail';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Button from '@material-ui/core/Button';
-import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
-
-import Popover from '@material-ui/core/Popover';
 import { withStyles, Theme } from '@material-ui/core/styles';
 
 import {

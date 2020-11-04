@@ -14,6 +14,7 @@ const RedditIcon = require('../../assets/images/landing/social/Reddit.svg');
 const FacebookIcon = require('../../assets/images/landing/social/Facebook.svg');
 const MediumIcon = require('../../assets/images/landing/social/Medium.svg');
 const CoinMarketIcon = require('../../assets/images/landing/social/CoinMarket.svg');
+const InstagramIcon = require('../../assets/images/landing/social/instagram-round.svg');
 
 type Props = RouterProps & InjectedIntlProps; 
 
@@ -32,10 +33,10 @@ class FooterComponent extends React.Component<Props> {
 
         return (
             <React.Fragment>
-                {/* <footer className="pg-footer"> */}
-                <Paper>
+                <footer className="pg-footer">
 
                     <div className="pg-landing-screen__footer">
+                {/* <Paper> */}
                         <div className="pg-landing-screen__footer__wrap">
                             <div className="pg-landing-screen__footer__wrap__left" onClick={e => this.handleScrollTop()}>
                                 {/* <LogoIcon /> */}
@@ -48,7 +49,7 @@ class FooterComponent extends React.Component<Props> {
                                     <Link to="/fee">{this.translate('page.body.landing.footer.fees')}</Link>
                                 </div>
                                 <div className="pg-landing-screen__footer__wrap__navigation__col">
-                                    <a href="/">{this.translate('page.body.landing.footer.faq')}</a>
+                                    <a href="https://b4uwallet.com/faq-b4u-wallet/">{this.translate('page.body.landing.footer.faq')}</a>
                                     <a href="https://b4uwallet.com/contact">{this.translate('page.body.landing.footer.support')}</a>
                                     <a href="https://b4uwallet.com/privacy-policy">{this.translate('page.body.landing.footer.privacy')}</a>
                                 </div>
@@ -74,9 +75,9 @@ class FooterComponent extends React.Component<Props> {
                                     </a>
                                 </div>
                                 <div className="pg-landing-screen__footer__wrap__social__row">
-                                    <Link to="" target="_blank">
-                                        <img src={RedditIcon} alt="Reddit" />
-                                    </Link>
+                                    <a href="https://www.instagram.com/b4uwallet/" target="_blank">
+                                        <img src={InstagramIcon} alt="InstagramIcon" />
+                                    </a>
                                     <a href="https://www.facebook.com/B4uwalletofficial" target="_blank">
                                         <img src={FacebookIcon} alt="Facebook" />
                                     </a>
@@ -90,9 +91,9 @@ class FooterComponent extends React.Component<Props> {
                             </div>
                         </div>
                         <span className="pg-landing-screen__footer__rights">{this.translate('page.body.landing.footer.rights')}</span>
+                {/* </Paper> */}
                     </div>
-                        {/* </footer> */}
-                </Paper>
+                        </footer>
             </React.Fragment>
         );
     }

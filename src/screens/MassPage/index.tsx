@@ -335,45 +335,45 @@ class MasspayComponent extends React.Component<Props> {
                                 <Typography component="h1" variant="h5">Mass Withdrawal</Typography>
                             </div>
                             <div className={classes.paperBody}>
-                                {this.props.user.otp ? 
+                                <form className={classes.form}>
+                                    <FormControl margin="normal" required fullWidth>
+                                        <DropzoneArea
+                                            acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
+                                            clearOnUnmount={true}
+                                            maxFileSize={10000000}
+                                            dropzoneText="Drag and Drop a CSV file or Click Here"
+                                            showFileNamesInPreview={true}
+                                            filesLimit={1}
+                                            onChange={this.onFileChange.bind(this)}
+                                        />
+                                    </FormControl>
+
+                                    <Typography variant="h6"
+                                                style={{padding: 10, color: 'red', fontSize: '12px', textAlign: 'center'}}>
+                                    </Typography>
+                                    <FormControl margin="normal" required fullWidth>
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            className={classes.submit}
+                                            disabled={!this.isFileFormValid()}
+                                            onClick={(e) => {
+                                                this.onFileSubmit(e)
+                                            }}
+                                        >
+                                            Submit
+                                        </Button>
+                                    </FormControl>
+
+                                </form>
+                                {/* {this.props.user.otp ? 
                                     <>
-                                        <form className={classes.form}>
-                                            <FormControl margin="normal" required fullWidth>
-                                                <DropzoneArea
-                                                    acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
-                                                    clearOnUnmount={true}
-                                                    maxFileSize={10000000}
-                                                    dropzoneText="Drag and Drop a CSV file or Click Here"
-                                                    showFileNamesInPreview={true}
-                                                    filesLimit={1}
-                                                    onChange={this.onFileChange.bind(this)}
-                                                />
-                                            </FormControl>
-
-                                            <Typography variant="h6"
-                                                        style={{padding: 10, color: 'red', fontSize: '12px', textAlign: 'center'}}>
-                                            </Typography>
-                                            <FormControl margin="normal" required fullWidth>
-                                                <Button
-                                                    type="submit"
-                                                    variant="contained"
-                                                    color="primary"
-                                                    className={classes.submit}
-                                                    disabled={!this.isFileFormValid()}
-                                                    onClick={(e) => {
-                                                        this.onFileSubmit(e)
-                                                    }}
-                                                >
-                                                    Submit
-                                                </Button>
-                                            </FormControl>
-
-                                        </form>
                                     </> : 
                                     <>
                                         {this.isOtpDisabled()}
                                     </>
-                                }
+                                } */}
                             </div>
                         </Paper>
                     </Grid>

@@ -23,34 +23,13 @@ import { HeaderToolbar } from '../HeaderToolbar';
 import { NavBar } from '../NavBar';
 
 import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Badge from '@material-ui/core/Badge';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MailIcon from '@material-ui/icons/Mail';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Button from '@material-ui/core/Button';
-import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
-
-import Popover from '@material-ui/core/Popover';
 import { withStyles, Theme } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
@@ -96,10 +75,12 @@ const useStyles = (theme: Theme) => ({
         },
     },
     logoLink: {
-        flexGrow: 1,
         [theme.breakpoints.only('xs')]: {
             display: 'none'
         }
+    },
+    emptySpaceInHeader: {
+        flexGrow: 1,
     },
 });
 
@@ -192,6 +173,7 @@ class Head extends React.Component<Props, IState> {
                                 <Link to="/" className={classes.logoLink}>
                                     <img src={logoLight} alt="logo" style={{ width: '50px', marginRight: '24px' }}/>
                                 </Link>
+                                <div className={classes.emptySpaceInHeader}></div>
                                 <NavBar />
                             </Toolbar>
                         </AppBar>
