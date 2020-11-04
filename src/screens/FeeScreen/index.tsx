@@ -105,7 +105,7 @@ class FeeComponent extends React.Component<Props, IState> {
 			withdrawlDepositFees: [],
 			tradingFees: [],
 			tabValue: 0
-		  };
+		};
     }
 
     componentDidMount() {

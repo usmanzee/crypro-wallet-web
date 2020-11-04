@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     pageContent: {
         padding: `${theme.spacing(3)}px ${theme.spacing(0)}px`,
+        textAlign: 'center'
     },
     swapFromFields: {
         margin: `0px 0px ${theme.spacing(3)}px 0px`,
@@ -142,7 +143,9 @@ const SwapComponent = (props: Props) => {
     //States
     const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
     const [walletsToCurrency, setWalletsToCurrency] = React.useState<string>(defaultWalletsToCurrency);
+    const [walletsFromLoading, setWalletsFromLoading] = React.useState<boolean>(true);
     const [walletsFrom, setWalletsFrom] = React.useState<WalletItemProps[]>([]);
+    const [walletsToLoading, setWalletsToLoading] = React.useState<boolean>(true);
     const [walletsTo, setWalletsTo] = React.useState<WalletItemProps[]>([]);
     const [walletsToanchorEl, setWalletsToAnchorEl] = React.useState<null | HTMLElement>(null);
     const [walletsFomAnchorEl, setWalletsFromAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -185,6 +188,9 @@ const SwapComponent = (props: Props) => {
     }, [wallets, walletsTo]);
 
     React.useEffect(() => {
+        if(selectedWalletFromOption) {
+            setWalletsFromLoading(false);
+        }
         setWalletsFromCurrency(selectedWalletFromOption ? selectedWalletFromOption.currency : walletsFromCurrency);
         checkWalletsFromSelectedOption();
         getExchangeRates();
@@ -192,6 +198,9 @@ const SwapComponent = (props: Props) => {
     }, [selectedWalletFromOption])
 
     React.useEffect(() => {
+        if(selectedWalletToOption) {
+            setWalletsToLoading(false);
+        }
         setWalletsToCurrency(selectedWalletToOption ? selectedWalletToOption.currency : walletsToCurrency);
         checkWalletsToSelectedOption();
         handleWalletsFromAmountErrors(walletsFromAmount);
@@ -486,89 +495,91 @@ const SwapComponent = (props: Props) => {
                             <Grid container>
                                 <Grid item md={2} lg={4}></Grid>
                                 <Grid item xs={12} sm={12} md={8} lg={4}>
-                                    {/* <div className={classes.pageTitle}>
-                                        <Typography variant="h4" gutterBottom>
-                                            Swap
-                                        </Typography>
-                                    </div> */}
-                                    <div className={classes.pageContent}>
-                                        <div style={{ float: 'right' }}>
-                                            {renderAvailableBalance()}
-                                        </div>
-                                        <div className={classes.swapFromFields}>
-                                            <FormControl variant="outlined" fullWidth className={classes.formControl } error={walletsFromError}>
-                                                <InputLabel htmlFor="sell">
-                                                    <FormattedMessage id={'page.body.swap.input.sell'} />
-                                                </InputLabel>
-                                                <OutlinedInput
-                                                    id="sell"
-                                                    label={<FormattedMessage id={'page.body.swap.input.sell'} />}
-                                                    // placeholder={`${selectedWalletFromOptionMinswapAmount} - ${selectedWalletFromOptionMaxswapAmount}`}
-                                                    type='number'
-                                                    value={walletsFromAmount}
-                                                    autoFocus={true}
-                                                    onChange={(e) => {
-                                                        handleWalletsFromAmountChange(e)
-                                                    }}
-                                                    aria-describedby="sell-text"
-                                                    endAdornment={
-                                                        <InputAdornment position="end">
-                                                            <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
-                                                                <FormattedMessage id={'page.body.swap.input.tag.max'} />
-                                                            </span>
-                                                            <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
-                                                            <div className={classes.fromWalletSelect}>
-                                                                {renderWalletsFromDropdown()}
-                                                            </div>
-                                                        </InputAdornment>
-                                                    }
-                                                />
-                                                {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
-                                            </FormControl>
-                                        </div>
-                                        <div className={classes.swapFields}>
-                                            <FormControl variant="outlined" fullWidth className={classes.formControl }>
-                                                <InputLabel htmlFor="buy">
-                                                    <FormattedMessage id={'page.body.swap.input.buy'} />
-                                                </InputLabel>
-                                                <OutlinedInput
-                                                    id="buy"
-                                                    label={<FormattedMessage id={'page.body.swap.input.buy'} />}
-                                                    placeholder={isFetchingRate ? 'Loading...' : '0.00'}
-                                                    type='number'
-                                                    value={walletsToAmount}
-                                                    onChange={handleWalletsToAmountChange}
-                                                    disabled={true}
-                                                />
-                                            </FormControl>
-                                            <div className={classes.walletSelect}>
-                                                {renderWalletsToDropdown()}
+                                <div className={classes.pageContent}>
+
+                                    {walletsFromLoading && walletsToLoading ? 
+                                        <CircularProgress size={25}/>
+                                        :
+                                        <>
+                                            <div style={{ float: 'right' }}>
+                                                {renderAvailableBalance()}
                                             </div>
-                                        </div>
-                                        {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
-                                            <>
-                                                <Box>
-                                                    {renderPrice()}
-                                                </Box>
-                                                <Box>
-                                                    {renderExchangeTradingFee()}
-                                                </Box>
-                                                <Box mb={3}>
-                                                    {renderReceivableAmount()}
-                                                </Box>
-                                            </>
-                                        )}
-                                        <Button 
-                                            variant="contained" 
-                                            color="primary"
-                                            size="large"
-                                            fullWidth={true}
-                                            onClick={handleSwapButtonClick}
-                                            disabled={isValidForm()}
-                                        >
-                                            {exchangeLoading ? <CircularProgress className={classes.buttonProgress} size={18} /> : <FormattedMessage id={'page.body.swap.button.text.buy'} />}
-                                        </Button>
-                                    </div>
+                                            <div className={classes.swapFromFields}>
+                                                <FormControl variant="outlined" fullWidth className={classes.formControl } error={walletsFromError}>
+                                                    <InputLabel htmlFor="sell">
+                                                        <FormattedMessage id={'page.body.swap.input.sell'} />
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        id="sell"
+                                                        label={<FormattedMessage id={'page.body.swap.input.sell'} />}
+                                                        // placeholder={`${selectedWalletFromOptionMinswapAmount} - ${selectedWalletFromOptionMaxswapAmount}`}
+                                                        type='number'
+                                                        value={walletsFromAmount}
+                                                        autoFocus={true}
+                                                        onChange={(e) => {
+                                                            handleWalletsFromAmountChange(e)
+                                                        }}
+                                                        aria-describedby="sell-text"
+                                                        endAdornment={
+                                                            <InputAdornment position="end">
+                                                                <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
+                                                                    <FormattedMessage id={'page.body.swap.input.tag.max'} />
+                                                                </span>
+                                                                <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
+                                                                <div className={classes.fromWalletSelect}>
+                                                                    {renderWalletsFromDropdown()}
+                                                                </div>
+                                                            </InputAdornment>
+                                                        }
+                                                    />
+                                                    {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
+                                                </FormControl>
+                                            </div>
+                                            <div className={classes.swapFields}>
+                                                <FormControl variant="outlined" fullWidth className={classes.formControl }>
+                                                    <InputLabel htmlFor="buy">
+                                                        <FormattedMessage id={'page.body.swap.input.buy'} />
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        id="buy"
+                                                        label={<FormattedMessage id={'page.body.swap.input.buy'} />}
+                                                        placeholder={isFetchingRate ? 'Loading...' : '0.00'}
+                                                        type='number'
+                                                        value={walletsToAmount}
+                                                        onChange={handleWalletsToAmountChange}
+                                                        disabled={true}
+                                                    />
+                                                </FormControl>
+                                                <div className={classes.walletSelect}>
+                                                    {renderWalletsToDropdown()}
+                                                </div>
+                                            </div>
+                                            {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
+                                                <>
+                                                    <Box>
+                                                        {renderPrice()}
+                                                    </Box>
+                                                    <Box>
+                                                        {renderExchangeTradingFee()}
+                                                    </Box>
+                                                    <Box mb={3}>
+                                                        {renderReceivableAmount()}
+                                                    </Box>
+                                                </>
+                                            )}
+                                            <Button 
+                                                variant="contained" 
+                                                color="primary"
+                                                size="large"
+                                                fullWidth={true}
+                                                onClick={handleSwapButtonClick}
+                                                disabled={isValidForm()}
+                                            >
+                                                {exchangeLoading ? <CircularProgress className={classes.buttonProgress} size={18} /> : <FormattedMessage id={'page.body.swap.button.text.buy'} />}
+                                            </Button>
+                                        </>
+                                    }
+                                </div>
                                 </Grid>
                                 <Grid item md={2} lg={4}></Grid>
                             </Grid>

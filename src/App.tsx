@@ -40,6 +40,7 @@ interface IState {
 const useStyles = (theme: Theme) => ({
    root: {
        display: 'flex',
+       minHeight: '100vh',
        [theme.breakpoints.only('xs')]: {
             display: 'block',
       },

@@ -113,9 +113,11 @@ const useStyles = (theme: Theme) => ({
 export type LayoutProps = ReduxProps & DispatchProps & OwnProps & InjectedIntlProps;
 
 const renderLoader = () => (
+    <>
     <div className="pg-loader-container">
-        <Spinner animation="border" variant="primary" />
+        <Spinner animation="border" variant="primary" style={{ position: 'absolute', top: '40%' }}/>
     </div>
+    </>
 );
 
 const STORE_KEY = 'lastAction';

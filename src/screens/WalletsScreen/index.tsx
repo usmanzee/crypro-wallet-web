@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
+
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { connect, MapDispatchToProps } from 'react-redux';
 import { RouterProps } from 'react-router';
@@ -43,6 +44,7 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface ReduxProps {
     user: User;
@@ -277,7 +279,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const { classes } = this.props;
         return (
             <>
-                <TableContainer className={classes.tableContainer}>    
+                <TableContainer className={classes.tableContainer}>
                     <Table aria-label="simple table">
                         <TableHead>
                         <TableRow>
@@ -336,7 +338,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 {walletsDataLoading ?
                                     <>
                                         <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
-                                            <Spinner animation="border" variant="primary" /> :
+                                            <CircularProgress size={20} /> :
                                         </caption>
                                     </> :
                                     <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
@@ -398,7 +400,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 {walletsDataLoading ?
                                     <>
                                         <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
-                                            <Spinner animation="border" variant="primary" /> :
+                                            <CircularProgress size={15} /> :
                                         </caption>
                                     </> :
                                     <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
@@ -522,7 +524,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         let filteredData = [];
 
         filteredData = wallets.filter(e => {
-            return (e.currency.includes(searchedValue) || e.name.toLowerCase().includes(searchedValue)) && (hideSmallBalances ? e.balance > 0 : e);
+            return (e.currency.includes(searchedValue.toLowerCase()) || e.name.toLowerCase().includes(searchedValue)) && (hideSmallBalances ? e.balance > 0 : e);
         })
         this.setState({
             walletsData: filteredData

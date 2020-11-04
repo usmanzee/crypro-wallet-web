@@ -37,6 +37,7 @@ import {
 const drawerWidth = 240;
 const useStyles = (theme: Theme) => ({
     drawer: {
+        zIndex: 0,
         [theme.breakpoints.up('sm')]: {
           width: drawerWidth,
           flexShrink: 0,
