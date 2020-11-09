@@ -165,6 +165,7 @@ class DocumentsComponent extends React.Component<Props, DocumentsState> {
                                         >
                                             <input
                                                 className="pg-confirm__content-documents-col-row-content-2-documents-input"
+                                                accept="image/*"
                                                 data-multiple-caption="files selected"
                                                 draggable={true}
                                                 multiple={true}

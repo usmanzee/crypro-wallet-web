@@ -3,8 +3,6 @@ import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, MapDispatchToPropsFunction } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-//import { LogoIcon } from '../../assets/images/LogoIcon';
-//import ReactNotificationCenter from 'react-notification-center';
 
 import {
     Market,
@@ -41,7 +39,6 @@ const useStyles = (theme: Theme) => ({
             },
         },
         appBar: {
-            opacity: '0.85',
             [theme.breakpoints.up('sm')]: {
                 width: `calc(100%)`,
                 zIndex: theme.zIndex.drawer + 1
@@ -152,7 +149,8 @@ class Head extends React.Component<Props, IState> {
         const {mobileWallet, classes, handleDrawerToggle } = this.props;
         
         const tradingCls = window.location.pathname.includes('/trading') ? 'pg-container-trading' : '';
-        const shouldRenderHeader = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/';
+        // const shouldRenderHeader = !['/confirm'].some(r => window.location.pathname.includes(r)) && window.location.pathname !== '/';
+        const shouldRenderHeader = window.location.pathname !== '/';
         const shouldRenderMarketToolbar = window.location.pathname.includes('/trading/') ? true : false;
     
         return (

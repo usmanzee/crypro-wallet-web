@@ -217,7 +217,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         </Grid>
                     </Paper>
                 </Box>
-                {wallets.length && <EstimatedValue wallets={wallets} />}
+                {wallets.length ? <EstimatedValue wallets={wallets} /> : ''}
 
                 <Box mt={2} pl={3} pr={3} alignItems="center">
                     <Paper className={classes.pagePaper}>

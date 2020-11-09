@@ -51,7 +51,7 @@ class ProfileAccountActivityComponent extends React.Component<Props> {
         const emptyMsg = this.props.intl.formatMessage({id: 'page.noDataToShow'});
 
         return (
-            <div className="pg-profile-page__activity">
+            <div className="pg-profile-page__activity" style={{ padding: '24px' }}>
                 <div className="pg-profile-page-header">
                     <h3><FormattedMessage id="page.body.profile.header.accountActivity" /></h3>
                 </div>

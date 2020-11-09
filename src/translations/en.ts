@@ -21,6 +21,7 @@ export const en = {
     'page.header.navbar.profile.identification': 'Identification',
     'page.header.navbar.profile.api_management': 'API Management',
     'page.header.navbar.profile.referal': 'Referal',
+    'page.header.navbar.profile.activities': 'Activities',
 
     //Header Notification Tab
     'page.header.navbar.notifications.title': 'Notifications',

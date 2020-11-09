@@ -1,7 +1,7 @@
 import cr from 'classnames';
 import { History } from 'history';
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
+// import { Button } from 'react-bootstrap';
 import {
     FormattedMessage,
     InjectedIntlProps,
@@ -13,6 +13,18 @@ import { ProfileTwoFactorAuth } from '../';
 import { CloseIcon } from '../../assets/images/CloseIcon';
 import { CustomInput, Modal } from '../../components';
 import { PASSWORD_REGEX } from '../../helpers';
+
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+import Button from '@material-ui/core/Button';
+import { Theme, withStyles} from '@material-ui/core/styles';
+
 import {
     RootState,
     selectUserInfo,
@@ -26,6 +38,18 @@ import {
     toggleUser2fa,
 } from '../../modules/user/profile';
 
+const useStyles = (theme: Theme) => ({
+    flexRows: {
+        display: 'flex'
+    },
+    rootSecurity: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        [theme.breakpoints.only('xs')]: {
+            display: 'block',
+        },
+    }
+});
 
 interface ReduxProps {
     user: User;
@@ -108,6 +132,7 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
     public render() {
         const {
             user,
+            classes
         } = this.props;
         const {
             oldPasswordFocus,
@@ -178,8 +203,9 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
                     <Button
                         disabled={!this.isValidForm()}
                         type="submit"
-                        variant="primary"
-                        size="lg"
+                        fullWidth
+                        variant="contained"
+                        color="primary" 
                     >
                         {this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.change' })}
                     </Button>
@@ -199,37 +225,49 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
         ) : null;
 
         return (
-            <div className="pg-profile-page__box pg-profile-page__left-col__basic">
-                <div className="pg-profile-page__box-header pg-profile-page__left-col__basic__info-row">
-                    <div className="pg-profile-page__left-col__basic__info-row__block">
-                        <div className="pg-profile-page__row pg-profile-page__details-user">
-                            <p>{user.email}</p>
+            <>
+                <Box mt={2}>
+                    <Grid container>
+                        <Grid item md={12}>
+                            <div className={classes.flexRows}>
+                                <Typography variant="h5" gutterBottom style={{ fontWeight: 500 }}>UID:</Typography>
+                                <Typography variant="h5" gutterBottom style={{ marginLeft: '8px' }}>{user.uid}</Typography>
+                            </div>
+                            <div className={classes.flexRows}>
+                                <Typography variant="h5" gutterBottom style={{ fontWeight: 500 }}>Email:</Typography>
+                                <Typography variant="h5" gutterBottom style={{ marginLeft: '8px' }}>{user.email}</Typography>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box mt={2}>
+                    <Paper variant="outlined" style={{ padding: '8px' }}>
+                        <div className={classes.rootSecurity}>
+                            <div style={{ display: 'block' }}>
+                                <Typography variant="h5" gutterBottom style={{ fontWeight: 500 }}>
+                                    {this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password'})}
+                                </Typography>
+                                <Typography variant="h5" gutterBottom>
+                                    ************
+                                </Typography>
+                            </div>
+                            <div style={{ margin: '16px 0px 0px' }}>
+                                <Button
+                                    onClick={this.showChangeModal}
+                                    variant="contained"
+                                    color="primary"
+                                    size="large"
+                                >
+                                    {this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.change'})}
+                                </Button>
+                            </div>
                         </div>
-                        <div className="pg-profile-page__row">
-                            <h2>UID: {user.uid}</h2>
-                        </div>
-                    </div>
-                </div>
-                <div className="pg-profile-page__row">
-                    <div>
-                        <div className="pg-profile-page__label">
-                            {this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password'})}
-                        </div>
-                        <div>
-                            ************
-                        </div>
-                    </div>
-                    <Button
-                        className="btn-block mt-3 mb-3 btn-lg btn btn-primary w-25"
-                        onClick={this.showChangeModal}
-                        size="lg"
-                        variant="primary"
-                    >
-                        {this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.change'})}
-                    </Button>
-                    {modal}
-                </div>
+                    </Paper>
+                </Box>
+                {modal}
                 {this.renderProfileTwoFactor()}
+                 <div className="pg-profile-page__box pg-profile-page__left-col__basic">
+
                 <Modal
                     className="pg-profile-page__disable-2fa-modal"
                     show={this.state.showModal}
@@ -237,16 +275,59 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
                     content={this.renderModalBody()}
                     footer={this.renderModalFooter()}
                 />
-            </div>
+                 </div>
+                {/* <div className="pg-profile-page__box pg-profile-page__left-col__basic">
+                    <div className="pg-profile-page__box-header pg-profile-page__left-col__basic__info-row">
+                        <div className="pg-profile-page__left-col__basic__info-row__block">
+                            <div className="pg-profile-page__row pg-profile-page__details-user">
+                                <div style={{ fontSize: '24px', fontWeight: 500 }}>Email: </div>
+                                {user.email}
+                            </div>
+                            <div className="pg-profile-page__row">
+                                <div style={{ fontSize: '24px', fontWeight: 500 }}>UID: </div>
+                                <p>{user.uid}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="pg-profile-page__row">
+                        <div>
+                            <div className="pg-profile-page__label">
+                                {this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password'})}
+                            </div>
+                            <div>
+                                ************
+                            </div>
+                        </div>
+                        <Button
+                           onClick={this.showChangeModal}
+                           variant="contained"
+                           color="primary"
+                           size="large"
+                        >
+                            {this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.change'})}
+                        </Button>
+                        {modal}
+                    </div>
+                    {this.renderProfileTwoFactor()}
+                    <Modal
+                        className="pg-profile-page__disable-2fa-modal"
+                        show={this.state.showModal}
+                        header={this.renderModalHeader()}
+                        content={this.renderModalBody()}
+                        footer={this.renderModalFooter()}
+                    />
+                </div> */}
+            </>
         );
     }
 
     private renderProfileTwoFactor = () => {
         return (
             <React.Fragment>
-                <div className="pg-profile-page__row">
+                {/* <div className="pg-profile-page__row">
                     <ProfileTwoFactorAuth is2faEnabled={this.props.user.otp} navigateTo2fa={this.handleNavigateTo2fa}/>
-                </div>
+                </div> */}
+                <ProfileTwoFactorAuth is2faEnabled={this.props.user.otp} navigateTo2fa={this.handleNavigateTo2fa}/>
             </React.Fragment>
         );
     };
@@ -300,11 +381,11 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
         return (
             <div className="pg-exchange-modal-submit-footer">
                 <Button
-                    block={true}
                     disabled={!isValid2FA}
                     onClick={this.handleDisable2FA}
-                    size="lg"
-                    variant="primary"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
                 >
                     {this.props.intl.formatMessage({id: 'page.body.profile.header.account.content.twoFactorAuthentication.disable'})}
                 </Button>
@@ -437,10 +518,5 @@ const mapDispatchToProps = dispatch => ({
     toggleUser2fa: () => dispatch(toggleUser2fa()),
 });
 
-const ProfileAuthDetailsConnected = injectIntl(connect(mapStateToProps, mapDispatchToProps)(ProfileAuthDetailsComponent));
-// tslint:disable-next-line:no-any
-const ProfileAuthDetails = withRouter(ProfileAuthDetailsConnected as any);
 
-export {
-    ProfileAuthDetails,
-};
+export const ProfileAuthDetails = injectIntl(withStyles(useStyles as {})(withRouter(connect(mapStateToProps, mapDispatchToProps)(ProfileAuthDetailsComponent) as any)));

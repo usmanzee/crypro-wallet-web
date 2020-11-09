@@ -8,6 +8,11 @@ import { connect, MapDispatchToPropsFunction } from 'react-redux';
 import { languages } from '../../../api/config';
 import { CustomInput, DropdownComponent } from '../../../components';
 import { formatDate, isDateInFuture } from '../../../helpers';
+
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { withStyles, Theme } from '@material-ui/core/styles';
+
 import {
     Label,
     labelFetch,
@@ -58,7 +63,19 @@ interface IdentityState {
     lastNameFocused: boolean;
     postcodeFocused: boolean;
     residentialAddressFocused: boolean;
+
+    dataNationalities: string[];
+    dataCountries: string[];
 }
+
+const useStyles = (theme: Theme) => ({
+    autocompleteInput: {
+        '& .MuiSvgIcon-root': {
+            marginRight: theme.spacing(2)
+        }
+    }
+    
+});
 
 type Props = ReduxProps & DispatchProps & InjectedIntlProps;
 
@@ -80,7 +97,39 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
         lastNameFocused: false,
         postcodeFocused: false,
         residentialAddressFocused: false,
+
+        dataNationalities: [],
+        dataCountries: []
     };
+
+    public componentDidMount = () => {
+        const { lang } = this.props;
+        this.formatCountriesData();
+        this.formatNationalitiesData();
+    }
+
+    public formatCountriesData = () => {
+        const { lang } = this.props;
+        this.setState({
+            dataCountries: Object.values(countries.getNames(lang))
+        }, () => {
+            this.setState({
+                countryOfBirth: this.state.dataCountries[0]
+            })
+        });
+    }
+
+    public formatNationalitiesData = () => {
+        const { lang } = this.props;
+
+        this.setState({
+            dataNationalities:  nationalities.map(value => this.translate(value))
+        }, () => {
+            this.setState({
+                metadata: { nationality: this.state.dataNationalities[0] },
+            })
+        });
+    }
 
     public translate = (e: string) => {
         return this.props.intl.formatMessage({id: e});
@@ -111,7 +160,11 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
             residentialAddressFocused,
             countryOfBirth,
             metadata,
+
+            dataCountries,
+            dataNationalities
         } = this.state;
+        const { classes } = this.props;
 
         const cityGroupClass = cr('pg-confirm__content-identity-col-row-content', {
             'pg-confirm__content-identity-col-row-content--focused': cityFocused,
@@ -143,9 +196,9 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
             'pg-confirm__content-identity-col-row-content--wrong': residentialAddress && !this.handleValidateInput('residentialAddress', residentialAddress),
         });
 
-        const dataNationalities = nationalities.map(value => {
-            return this.translate(value);
-        });
+        // const dataNationalities = nationalities.map(value => {
+        //     return this.translate(value);
+        // });
         const onSelectNationality = value => this.selectNationality(dataNationalities[value]);
 
         /* tslint:disable */
@@ -153,7 +206,8 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
 
         /* tslint:enable */
 
-        const dataCountries = Object.values(countries.getNames(lang));
+        // const dataCountries = Object.values(countries.getNames(lang));
+        
         const onSelectCountry = value => this.selectCountry(dataCountries[value]);
 
         return (
@@ -203,7 +257,25 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
                         </fieldset>
                     </div>
                     <div className="pg-confirm__content-identity-col-row">
-                        <div className="pg-confirm__content-identity-col-row-content">
+                        <Autocomplete
+                            fullWidth
+                            disableClearable
+                            options={dataNationalities}
+                            onChange={(event: any, newValue: any) => {
+                                this.selectNationality(newValue)
+                            }}
+                            getOptionLabel={(option) => option}
+                            value={metadata.nationality}
+                            renderInput={(params) => (
+                                <TextField 
+                                    {...params} 
+                                    variant="outlined" 
+                                    className={classes.autocompleteInput}
+                                    label={this.translate('page.body.kyc.identity.nationality')}
+                                />
+                            )}
+                        />
+                        {/* <div className="pg-confirm__content-identity-col-row-content">
                             <div className="pg-confirm__content-identity-col-row-content-label">
                                 {metadata.nationality && this.translate('page.body.kyc.identity.nationality')}
                             </div>
@@ -213,7 +285,7 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
                                 onSelect={onSelectNationality}
                                 placeholder={this.translate('page.body.kyc.identity.nationality')}
                             />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <div className="pg-confirm__content-identity-col pg-confirm__content-identity-col-right">
@@ -231,7 +303,27 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
                         </fieldset>
                     </div>
                     <div className="pg-confirm__content-identity-col-row">
-                        <div className="pg-confirm__content-identity-col-row-content">
+                        <Autocomplete
+                            fullWidth
+                            disableClearable
+                            options={dataCountries}
+                            onChange={(event: any, newValue: any) => {
+                                this.selectCountry(newValue)
+                            }}
+                            getOptionLabel={(option) => {
+                                return option;
+                            }}
+                            value={countryOfBirth}
+                            renderInput={(params) => (
+                                <TextField 
+                                    {...params} 
+                                    variant="outlined" 
+                                    className={classes.autocompleteInput}
+                                    label={this.translate('page.body.kyc.identity.CoR')}
+                                />
+                            )}
+                        />
+                        {/* <div className="pg-confirm__content-identity-col-row-content">
                             <div className="pg-confirm__content-identity-col-row-content-label">
                                 {countryOfBirth && this.translate('page.body.kyc.identity.CoR')}
                             </div>
@@ -241,7 +333,7 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
                                 onSelect={onSelectCountry}
                                 placeholder={this.translate('page.body.kyc.identity.CoR')}
                             />
-                        </div>
+                        </div> */}
                     </div>
                     <div className="pg-confirm__content-identity-col-row">
                         <fieldset className={cityGroupClass}>
@@ -367,7 +459,8 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
 
     private selectCountry = (value: string) => {
         this.setState({
-            countryOfBirth: countries.getAlpha2Code(value, this.props.lang),
+            // countryOfBirth: countries.getAlpha2Code(value, this.props.lang),
+            countryOfBirth: value,
         });
     };
 
@@ -469,4 +562,4 @@ const mapDispatchProps: MapDispatchToPropsFunction<DispatchProps, {}> =
     });
 
 // tslint:disable-next-line
-export const Identity = injectIntl(connect(mapStateToProps, mapDispatchProps)(IdentityComponent) as any);
+export const Identity = injectIntl(withStyles(useStyles as {})(connect(mapStateToProps, mapDispatchProps)(IdentityComponent) as any));

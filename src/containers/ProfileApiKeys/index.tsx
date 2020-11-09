@@ -87,7 +87,7 @@ class ProfileApiKeysComponent extends React.Component<Props, ProfileApiKeysState
         ) : null;
 
         return (
-            <div className="pg-profile-page__api-keys">
+            <div className="pg-profile-page__api-keys" style={{ padding: '24px' }}>
                 <div className="pg-profile-page-header">
                     <div className="pg-profile-page__api-keys__header">
                         <h3>{this.t('page.body.profile.apiKeys.header')}</h3>

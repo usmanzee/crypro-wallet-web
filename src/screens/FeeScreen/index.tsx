@@ -151,8 +151,8 @@ class FeeComponent extends React.Component<Props, IState> {
                         </Typography> */}
 						<AppBar position="static" color="default" style={{ boxShadow: "none" }}>
 						<AntTabs value={this.state.tabValue} onChange={handleChange} variant="fullWidth" indicatorColor="primary" centered>
-							<Tab label="Trading Fee" {...a11yProps(0)} />
-							<Tab label="Deposit & Withdrawl Fees" {...a11yProps(1)} />
+							<Tab component="a" label="Trading Fee" {...a11yProps(0)} />
+							<Tab component="a" label="Deposit & Withdrawl Fees" {...a11yProps(1)} />
 						</AntTabs>
 						</AppBar>
 						<TabPanel value={this.state.tabValue} index={0}>

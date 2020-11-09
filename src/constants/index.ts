@@ -28,15 +28,16 @@ export const headerRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][]
 
     return isLoggedIn ? loggedOutroutes : loggedoutRoutes;
 };
-export const headerProfileRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
-    const routes = [
-        ['page.header.navbar.profile.security', '/profile', 'mdi mdi-shield-outline'],
-        ['page.header.navbar.profile.identification', '/profile', 'mdi mdi-folder-account'],
-        ['page.header.navbar.profile.api_management', '/profile', 'mdi mdi-settings'],
-        ['page.header.navbar.profile.referal', '/profile', 'mdi mdi-account-plus'],
+
+export const profileTabs = (): string[][] => {
+    const tabs = [
+        ['Profile', '/profile'],
+        ['Security', '/profile/security'],
+        ['Identification', '/profile/identification'],
+        ['Activities', '/profile/activities'],
     ];
 
-    return isLoggedIn ? routes : [];
+    return tabs;
 };
 
 export const DEFAULT_CCY_PRECISION = 4;

@@ -166,21 +166,22 @@ class BeneficiariesComponent extends React.Component<Props, State> {
     private renderAddAddress = () => {
         return (
             <>
-                {/* <Button
-                    variant="contained"
-                    color="secondary"
-                    size="large"
-                    fullWidth={true}
-                    className={classes.addAddressButton}
-                    endIcon={<AddIcon />}
-                    onClick={this.handleClickToggleAddAddressModal()}
-                >
-                    {this.translate('page.body.wallets.beneficiaries.addAddress')}
-                </Button> */}
-                <div className="pg-beneficiaries__add" onClick={this.handleClickToggleAddAddressModal()}>
+                <div>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        size="medium"
+                        endIcon={<AddIcon />}
+                        style={{ margin: '0px 8px 8px' }}
+                        onClick={this.handleClickToggleAddAddressModal()}
+                    >
+                        {this.translate('page.body.wallets.beneficiaries.addAddress')}
+                    </Button>
+                </div>
+                {/* <div className="pg-beneficiaries__add" onClick={this.handleClickToggleAddAddressModal()}>
                     <span className="pg-beneficiaries__add__label">{this.translate('page.body.wallets.beneficiaries.addAddress')}</span>
                     <PlusIcon className="pg-beneficiaries__add__icon" />
-                </div>
+                </div> */}
             </>
         );
     };

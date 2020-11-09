@@ -15,6 +15,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import { withStyles, Theme } from '@material-ui/core/styles';
 
@@ -31,6 +32,7 @@ import {
     selectUserInfo,
     selectUserLoggedIn,
     toggleSidebar,
+    selectUserFetching,
     User,
 } from '../../modules';
 
@@ -55,8 +57,14 @@ const useStyles = (theme: Theme) => ({
     drawerLink: {
         textDecoration: 'none',
         color: '#000',
+        opacity: '0.85',
         "&:hover": {
-            color: '#000',
+            color: theme.palette.secondary.main,
+            '& svg': {
+                '& path': {
+                    fill: theme.palette.secondary.main,
+                }
+            }
         }
     },
     drawerActiveLink: {
@@ -64,17 +72,25 @@ const useStyles = (theme: Theme) => ({
         color: '#000',
         background: 'rgb(250, 250, 250)',
         "&:hover": {
-            color: '#000',
+            color: theme.palette.text.primary,
+        },
+        '& svg': {
+            '& path': {
+                fill: theme.palette.text.primary,
+            }
         },
         '&::before': {
-          content: '""',
-          position: 'absolute',
-          left: 0,
-          top: '0rem',
-          bottom: 0,
-          background: 'rgb(111 33 88)',
-          width: '5px',
-          margin: `${theme.spacing(1)}px 0px`
+            content: '""',
+            position: 'absolute',
+            left: 0,
+            top: '0rem',
+            bottom: 0,
+            background: theme.palette.secondary.main,
+            width: '5px',
+            height: '44px',
+            [theme.breakpoints.only('xs')]: {
+                height: '48px',
+            },
         }
     }
 });
@@ -96,6 +112,7 @@ interface ReduxProps {
     isLoggedIn: boolean;
     currentMarket: Market | undefined;
     isActive: boolean;
+    userLoading?: boolean;
     user: User;
 }
 
@@ -122,34 +139,34 @@ class SidebarContainer extends React.Component<Props, State> {
     
         return (
             <>
-                    <nav className={showSidebar ? classes.drawer : classes.drawerNone}>
-                        <Hidden smUp implementation="css">
-                        <Drawer
-                            variant="temporary"
-                            open={mobileOpen}
-                            onClose={handleDrawerToggle}
-                            classes={{
-                                paper: classes.drawerPaper,
-                            }}
-                            ModalProps={{
-                                keepMounted: true,
-                            }}
-                        >
-                            <this.DrawerContent />
-                        </Drawer>
-                        </Hidden>
-                        <Hidden xsDown implementation="css">
-                        <Drawer
-                            classes={{
-                                paper: classes.drawerPaper,
-                            }}
-                            variant="permanent"
-                            open
-                        >
-                            <this.DrawerContent />
-                        </Drawer>
-                        </Hidden>
-                    </nav>
+                <nav className={showSidebar ? classes.drawer : classes.drawerNone}>
+                    <Hidden smUp implementation="css">
+                    <Drawer
+                        variant="temporary"
+                        open={mobileOpen}
+                        onClose={handleDrawerToggle}
+                        classes={{
+                            paper: classes.drawerPaper,
+                        }}
+                        ModalProps={{
+                            keepMounted: true,
+                        }}
+                    >
+                        <this.DrawerContent />
+                    </Drawer>
+                    </Hidden>
+                    <Hidden xsDown implementation="css">
+                    <Drawer
+                        classes={{
+                            paper: classes.drawerPaper,
+                        }}
+                        variant="permanent"
+                        open
+                    >
+                        <this.DrawerContent />
+                    </Drawer>
+                    </Hidden>
+                </nav>
             </>
         );
     }
@@ -164,23 +181,24 @@ class SidebarContainer extends React.Component<Props, State> {
                 <div className={classes.toolbar} />
                 <Divider />
                 <List>
-                    {this.renderNewProfileLink()}
+                    {this.renderProfileLink()}
+                    <Divider />
                 </List>
-                <Divider />
                 <List>
-                    {pgRoutes(isLoggedIn).map(this.renderNewNavItems(address))}
+                    {pgRoutes(isLoggedIn).map(this.renderNavItems(address))}
                 </List>
             </div>
         );
     }
 
-    public renderNewNavItems = (address: string) => (values: string[], index: number) => {
-        const { currentMarket, classes } = this.props;
+    public renderNavItems = (address: string) => (values: string[], index: number) => {
 
+        const { currentMarket, classes, userLoading } = this.props;
+        
         const [name, url, img] = values;
         
         const path = url.includes('/trading') && currentMarket ? `/trading/${currentMarket.id}` : url;
-        const isActive = (url === '/trading/' && address.includes('/trading')) || address === url;
+        const isActive = (url === '/trading/' && address.includes('/trading')) || address.includes(url);
 
         const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
             'pg-sidebar-wrapper-nav-item-img--active': isActive,
@@ -189,21 +207,24 @@ class SidebarContainer extends React.Component<Props, State> {
             <React.Fragment>
                 <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to={path}>
                     <ListItemIcon>
-                        <SidebarIcons 
-                            name={img}
-                            className={iconClassName}
-                        />
+                        {userLoading ? 
+                            <Skeleton width={50}/> :
+                            <SidebarIcons 
+                                name={img}
+                                className={iconClassName}
+                            />
+                        }
                     </ListItemIcon>
-                    <ListItemText primary={this.translate(name)} />
+                    <ListItemText primary={userLoading ? <Skeleton /> : this.translate(name)} />
                 </ListItem>
             </React.Fragment>
         );
     };
 
-    public renderNewProfileLink = () => {
-        const { isLoggedIn, location, classes } = this.props;
+    public renderProfileLink = () => {
+        const { isLoggedIn, location, classes, userLoading } = this.props;
         const address = location ? location.pathname : '';
-        const isActive = address === '/profile';
+        const isActive = address.includes('/profile');
 
         const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
             'pg-sidebar-wrapper-nav-item-img--active': isActive,
@@ -213,12 +234,15 @@ class SidebarContainer extends React.Component<Props, State> {
             <React.Fragment>
                 <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to='/profile'>
                     <ListItemIcon>
-                        <ProfileIcon 
-                            className={iconClassName}
-                        />
+                        {userLoading ? 
+                            <Skeleton width={50}/> :
+                            <ProfileIcon 
+                                className={iconClassName}
+                            />
+                        }
                     </ListItemIcon>
-                    <ListItemText primary={this.translate('page.header.navbar.profile')} />
-                </ListItem>
+                    <ListItemText primary={userLoading ? <Skeleton /> : this.translate('page.header.navbar.profile')} />
+                </ListItem>                    
             </React.Fragment>
         );
     };
@@ -230,6 +254,7 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     currentMarket: selectCurrentMarket(state),
     lang: selectCurrentLanguage(state),
     isActive: selectSidebarState(state),
+    userLoading: selectUserFetching(state),
     user: selectUserInfo(state),
 });
 

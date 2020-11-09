@@ -68,12 +68,6 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
         uid,
         currency,
 	} = props;
-	
-	// console.log(values);
-
-	// {Object.entries(values).map(([key,value]) => {
-	// 	console.log(key, value);
-	// })}
 
     const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
     const depositDescription = (currency === 'usd' || currency === 'eur') ? 'Please using following to deposit using TrasferWise' : description;
@@ -159,7 +153,6 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 					return (
 						<>
 						{Object.entries(bank).map(([key, value]) => {
-							console.log(key, value);
 							return (
 							<>
 								<List className={classes.list} disablePadding={true}>

@@ -12,8 +12,7 @@ import { compose } from 'redux';
 
 import { languages } from '../../api/config';
 
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import { headerRoutes, headerProfileRoutes } from '../../constants';
+import { headerRoutes } from '../../constants';
 
 import Popover from '@material-ui/core/Popover';
 import Paper from '@material-ui/core/Paper';
@@ -31,6 +30,14 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { withStyles, Theme } from '@material-ui/core/styles';
+import Skeleton from '@material-ui/lab/Skeleton';
+import Icon from '@material-ui/core/Icon'
+
+import SecurityIcon from '@material-ui/icons/Security';
+import PermIdentityIcon from '@material-ui/icons/PermIdentity';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import SettingsInputHdmiIcon from '@material-ui/icons/SettingsInputHdmi';
+import LocalActivityIcon from '@material-ui/icons/LocalActivity';
 
 import {
     changeColorTheme,
@@ -42,6 +49,7 @@ import {
     logoutFetch,
     selectUserInfo,
     selectUserLoggedIn,
+    selectUserFetching,
     User,
 } from '../../modules';
 
@@ -61,6 +69,7 @@ export interface ReduxProps {
     colorTheme: string;
     lang: string;
     isLoggedIn: boolean;
+    userLoading?: boolean;
     user: User;
 }
 
@@ -88,8 +97,14 @@ const useStyles = (theme: Theme) => ({
         color: "#000",
         whiteSpace: 'pre',
         "&:hover": {
-            color: '#000',
-        }
+            color: theme.palette.secondary.main,
+            '& svg': {
+                color: theme.palette.secondary.main,
+            }
+        },
+    },
+    headerContentLoader: {
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
     }
 });
 
@@ -181,7 +196,6 @@ class NavBarComponent extends React.Component<Props, IState> {
             <>
                 <List style={{ display: 'flex' }}>
                     {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
-                    
                 </List>
                 {isLoggedIn &&
                     <>
@@ -199,67 +213,117 @@ class NavBarComponent extends React.Component<Props, IState> {
 
     private renderNavLinks = () => (values: string[], index: number) => {
 
-        const {classes} = this.props;
+        const { userLoading, classes } = this.props;
         const [name, url] = values;
         return (
             <React.Fragment>
                 <ListItem className={classes.headerLink} button component={Link} to={url}>
-                    <ListItemText primary={this.translate(name)} />
+                    <ListItemText primary={userLoading ? <Skeleton width={50} className={classes.headerContentLoader}/> : this.translate(name)} />
                 </ListItem>
             </React.Fragment>
         );
     };
 
     private renderProfile = () => {
-        const { classes } = this.props;
+        const { userLoading, isLoggedIn, classes } = this.props;
         const { profilePanelEl} = this.state;
 
         const profilePanelOpen = Boolean(profilePanelEl);
         const profilePanelId = profilePanelOpen ? 'profile-panel-popover' : undefined;
         return (
             <>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={this.handleProfilePanelClick}
-                    color="inherit"
-                >
-                    <AccountCircle />
-                    <ArrowDropDownIcon />
-                </IconButton>
-                <Popover
-                    id={profilePanelId}
-                    open={profilePanelOpen}
-                    anchorEl={profilePanelEl}
-                    onClose={this.handleProfilePanelClose}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center',
-                    }}
-                >
-                    <Paper style={{ width: '170px' }}>
-                        <List disablePadding>
-                            <ListItem button className={classes.dropdownLink} component={Link} to='/profile'>
-                                <ListItemAvatar>
-                                    <PersonOutlineIcon />
-                                </ListItemAvatar>
-                                <ListItemText primary={this.translate('page.header.navbar.profile')} />
+                {userLoading ? <Skeleton width={50} /> :
+                    <>
+                        <IconButton
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={this.handleProfilePanelClick}
+                            color="inherit"
+                        >
+                            <AccountCircle />
+                            <ArrowDropDownIcon />
+                        </IconButton>
+                        <Popover
+                            id={profilePanelId}
+                            open={profilePanelOpen}
+                            anchorEl={profilePanelEl}
+                            onClose={this.handleProfilePanelClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                        >
+                            <Paper>
+                                <List disablePadding>
+                                    {this.renderProfileLinks()}
+                                    <ListItem className={classes.dropdownLink} button onClick={this.props.logoutFetch}>
+                                        <ListItemIcon>
+                                            <ExitToAppIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={`${this.translate('page.header.navbar.logout')}`} />
+                                    </ListItem>
+                                </List>
+                            </Paper>
+                        </Popover>
+                    </>
+                }
+            </>
+        );
+    }
+
+    private renderProfileLinks = () => {
+        const { classes } = this.props;    
+        const profileLinks = [
+            {
+                name: 'page.header.navbar.profile.security',
+                url: '/profile/security',
+                iconComponent: <SecurityIcon/>
+            },
+            {
+                
+                name: 'page.header.navbar.profile.identification',
+                url: '/profile/identification',
+                iconComponent: <PermIdentityIcon/>
+            },
+            {
+                
+                name: 'page.header.navbar.profile.referal',
+                url: '/profile/referral',
+                iconComponent: <GroupAddIcon/>
+            },
+            {
+                
+                name: 'page.header.navbar.profile.api_management',
+                url: '/profile/api_management',
+                iconComponent: <SettingsInputHdmiIcon/>
+            },
+            {
+                
+                name: 'page.header.navbar.profile.activities',
+                url: '/profile/activities',
+                iconComponent: <LocalActivityIcon/>
+            }
+        ];
+        return (
+            <>  
+                {profileLinks.map((profileLink) => {
+                    return (
+                        <>
+                            <ListItem button className={classes.dropdownLink} component={Link} to={profileLink.url}>
+                                <ListItemIcon>
+                                    {profileLink.iconComponent}
+                                </ListItemIcon>
+                                <ListItemText primary={`${this.translate(profileLink.name)}`} />
                             </ListItem>
                             <Divider />
-                            <ListItem button onClick={this.props.logoutFetch}>
-                                <ListItemAvatar>
-                                    <ExitToAppIcon />
-                                </ListItemAvatar>
-                                <ListItemText primary={`${this.translate('page.header.navbar.logout')}`} />
-                            </ListItem>
-                        </List>
-                    </Paper>
-                </Popover>
+                        </>
+                    );
+                })}
             </>
         );
     }
@@ -316,12 +380,13 @@ class NavBarComponent extends React.Component<Props, IState> {
     };
 
     public getLanguageDropdownItems = () => {
+        const { classes } = this.props;
         return (
             <>
                 {languages.map((language, index) => {
                     return (
                         <>
-                            <ListItem button onClick={e => this.handleChangeLanguage(language)}>
+                            <ListItem className={classes.dropdownLink} button onClick={e => this.handleChangeLanguage(language)}>
                                 <ListItemAvatar>
                                     <img
                                         src={this.tryRequire(language) && require(`../../assets/images/sidebar/${language}.svg`)}
@@ -339,73 +404,78 @@ class NavBarComponent extends React.Component<Props, IState> {
     };
 
     private renderNotifications = () => {
+        const { userLoading, classes } = this.props;
         const {notificationPanelEl, notifications} = this.state;
 
         const notificationPanelOpen = Boolean(notificationPanelEl);
         const notificationPanelId = notificationPanelOpen ? 'notification-panel-popover' : undefined;
         return (
             <>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={this.handleNotificationPanelClick}
-                    color="inherit"
-                >
-                    <NotificationsNoneIcon />
-                </IconButton>
-                <Popover
-                    id={notificationPanelId}
-                    open={notificationPanelOpen}
-                    anchorEl={notificationPanelEl}
-                    onClose={this.handleNotificationPanelClose}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center',
-                    }}
-                >
-                    <Paper style={{ padding: '16px' }}>
-                        <Typography variant="h6">
-                            <FormattedMessage id={'page.header.navbar.notifications.title'} />
-                        </Typography>
-                        <Divider />
-                        {notifications.length ? 
-                            <>
-                                <List>
-                                    {notifications.map((notification, index) => {
-                                        return (
-                                            <>
-                                            <ListItem alignItems="flex-start" button>
-                                                <ListItemText
-                                                    primary= {`${notification.subject}`}
-                                                    secondary={
-                                                        <React.Fragment>
-                                                        {`${notification.body}`}
-                                                        </React.Fragment>
-                                                    }
-                                                />
-                                            </ListItem>
-                                            {index !== (notifications.length - 1) ? <Divider /> : ''}
-                                            </>
-                                        );
-                                    })}
-                                </List>
-                            </>:
-                            <div style={{ padding: '40px 0px', textAlign: 'center', fontSize: '14px' }}>
+                {userLoading ? <Skeleton width={50} className={classes.headerContentLoader}/> :
+                    <>
+                        <IconButton
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={this.handleNotificationPanelClick}
+                            color="inherit"
+                        >
+                            <NotificationsNoneIcon />
+                        </IconButton>
+                        <Popover
+                            id={notificationPanelId}
+                            open={notificationPanelOpen}
+                            anchorEl={notificationPanelEl}
+                            onClose={this.handleNotificationPanelClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                        >
+                            <Paper style={{ padding: '16px' }}>
                                 <Typography variant="h6">
-                                    <FormattedMessage id={'page.header.navbar.notifications.empty.content1'} />
+                                    <FormattedMessage id={'page.header.navbar.notifications.title'} />
                                 </Typography>
-                                <Typography variant="body1">
-                                    <FormattedMessage id={'page.header.navbar.notifications.empty.content2'} />
-                                </Typography>
-                            </div>
-                        }
-                    </Paper>
-                </Popover>
+                                <Divider />
+                                {notifications.length ? 
+                                    <>
+                                        <List>
+                                            {notifications.map((notification, index) => {
+                                                return (
+                                                    <>
+                                                    <ListItem alignItems="flex-start" button>
+                                                        <ListItemText
+                                                            primary= {`${notification.subject}`}
+                                                            secondary={
+                                                                <React.Fragment>
+                                                                {`${notification.body}`}
+                                                                </React.Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem>
+                                                    {index !== (notifications.length - 1) ? <Divider /> : ''}
+                                                    </>
+                                                );
+                                            })}
+                                        </List>
+                                    </>:
+                                    <div style={{ padding: '40px 0px', textAlign: 'center', fontSize: '14px' }}>
+                                        <Typography variant="h6">
+                                            <FormattedMessage id={'page.header.navbar.notifications.empty.content1'} />
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            <FormattedMessage id={'page.header.navbar.notifications.empty.content2'} />
+                                        </Typography>
+                                    </div>
+                                }
+                            </Paper>
+                        </Popover>
+                    </>
+                }
             </>
         )
     }
@@ -451,6 +521,7 @@ const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> =
     (state: RootState): ReduxProps => ({
         colorTheme: selectCurrentColorTheme(state),
         lang: selectCurrentLanguage(state),
+        userLoading: selectUserFetching(state),
         user: selectUserInfo(state),
         isLoggedIn: selectUserLoggedIn(state),
     });

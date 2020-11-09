@@ -21,6 +21,7 @@ export const ru: LangType = {
     'page.header.navbar.profile.identification': 'Идентификация',
     'page.header.navbar.profile.api_management': 'Управление API',
     'page.header.navbar.profile.referal': 'Направления',
+    'page.header.navbar.profile.activities': 'мероприятия',
 
     //Header Notification Tab
     'page.header.navbar.notifications.title': 'Уведомления',

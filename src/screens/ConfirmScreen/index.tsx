@@ -89,7 +89,7 @@ class ConfirmComponent extends React.Component<Props, ConfirmState> {
             userData,
             labels,
         } = this.props;
-        const isProfileVerified = labels.length && labels.find(l => l.key === 'profile' && l.value === 'verified' && l.scope === 'private');
+        const isProfileVerified = labels.length && labels.find(l => l.key === 'profile' && (l.value === 'verified' || l.value === 'submitted') && l.scope === 'private');
         const currentProfileLevel = userData.level;
         const cx = classnames('pg-confirm__progress-items', {
             'pg-confirm__progress-first': currentProfileLevel === 1,
@@ -103,9 +103,9 @@ class ConfirmComponent extends React.Component<Props, ConfirmState> {
 
         return (
             <div className="pg-wrapper">
-                <div className="pg-logo">
-                <img src={logoLight} className="pg-logo__img" alt="Logo" />
-                </div>
+                {/* <div className="pg-logo">
+                    <img src={logoLight} className="pg-logo__img" alt="Logo" />
+                </div> */}
                 <div className="pg-confirm">
                     <div className="pg-confirm-box">
                         <div onClick={this.goBack} className="pg-confirm-box-close">
@@ -160,7 +160,7 @@ class ConfirmComponent extends React.Component<Props, ConfirmState> {
         const isProfileSubmitted = labels.length && labels.find(l => l.key === 'profile' && l.value === 'submitted' && l.scope === 'private');
         const isDocumentPending = labels.length && labels.find(l => l.key === 'document' && l.value === 'pending' && l.scope === 'private');
 
-        if (isProfileSubmitted || isDocumentPending) {
+        if (isProfileSubmitted && isDocumentPending) {
             this.handleRedirectToProfile();
         }
     };

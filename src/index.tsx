@@ -28,10 +28,14 @@ let theme = createMuiTheme({
     },
     palette: {
       primary: {
-        main: "rgb(111, 33, 88)",
+        light: 'rgb(111, 33, 88, 0.6)',
+        main: "rgb(111, 33, 88, 0.85)",
+        dark: "rgb(111, 33, 88)",
       },
       secondary: {
-        main: "#f58220",
+        light: 'rgb(245, 130, 32, 0.6)',
+        main: "rgb(245, 130, 32, 0.85)",
+        dark: "rgb(245, 130, 32)",
       },
     },
 
