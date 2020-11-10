@@ -21,6 +21,23 @@ import {RangerState} from '../../modules/public/ranger/reducer';
 import {selectRanger} from '../../modules/public/ranger/selectors';
 import { OrderCommon } from '../../modules/types';
 
+import Box from '@material-ui/core/Box';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import CloseIcon from '@material-ui/icons/Close';
+import { withStyles } from '@material-ui/core/styles';
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+
 interface ReduxProps {
     list: OrderCommon[];
     rangerState: RangerState;
@@ -39,10 +56,66 @@ type Props = ReduxProps & DispatchProps & InjectedIntlProps;
 interface State {
     tab: string;
     currentTabIndex: number;
+    tabValue: number;
 }
 
+const useStyles = theme => ({
+    pageHeader: {
+        padding: "32px 20px"
+    },
+    pageContent: {
+        padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
+        '& .cr-table-header__content': {
+            display: 'none'
+        },
+        '& tr': {
+            borderBottom: '1px solid #ddd',
+            height: '50px',
+            '& svg': {
+                cursor: 'pointer',
+                '&:hover': {
+                    '& path': {
+                        fill: theme.palette.secondary.main,
+                    },
+                },
+            }
+        }
+    },
+    cancelAllLink: {
+        margin: '16px 0 0 auto',
+        '&:focus': {
+            outline: 'none',
+            background: '#fff'
+        },
+        '&:hover': {
+            color: theme.palette.secondary.main,
+            background: '#fff'
+        },
+        [theme.breakpoints.only('xs')]: {
+            margin: '8px 0 0 auto',
+        },
+
+    },
+    tableContainer: {
+        paddingTop: theme.spacing(2)
+    },
+});
+
 class Orders extends React.PureComponent<Props, State> {
-    public state = { tab: 'open', currentTabIndex: 0};
+    // public state = { 
+    //     tab: 'open', 
+    //     currentTabIndex: 0,
+    //     tabValue: 0
+    // };
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            tab: 'open', 
+            currentTabIndex: 0,
+            tabValue: 0
+		};
+    }
 
     public tabMapping = ['open', 'all'];
 
@@ -64,28 +137,115 @@ class Orders extends React.PureComponent<Props, State> {
         this.props.resetOrdersHistory();
     }
 
+    public MaterialTabPanel(props: TabPanelProps) {
+        const { children, value, index, ...other } = props;
+      
+        return (
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`full-width-tabpanel-${index}`}
+                aria-labelledby={`full-width-tab-${index}`}
+                {...other}
+            >
+            {value === index && (
+                <Box style={{ marginTop: "10px" }}>
+                    <Typography component="div">{children}</Typography>
+                </Box>
+            )}
+            </div>
+        );
+    }
+
+    public a11yProps(index: any) {
+        return {
+            id: `full-width-tab-${index}`,
+            'aria-controls': `full-width-tabpanel-${index}`,
+        };
+    }
+
+    public AntTabs = withStyles({
+        root: {
+            backgroundColor: "white",
+            borderBottom: '0.1rem solid rgb(170, 170, 170)',
+            boxShadow: "none"
+          }
+    })(Tabs);
+
+    public handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        this.setState({
+            tabValue: newValue
+        })
+    };
+
     public render() {
+        const { classes } = this.props;
         const cancelAll = this.props.list.length ? (
             <React.Fragment>
-                <span onClick={this.handleCancelAll}>
+                {/* <span onClick={this.handleCancelAll}>
                     <FormattedMessage id="page.body.openOrders.header.button.cancelAll" />
                     <span className="pg-orders-tab__close" />
-                </span>
+                </span> */}
+                <Button 
+                    onClick={this.handleCancelAll} 
+                    className={ classes.cancelAllLink }
+                    endIcon={<CloseIcon />}
+                >
+                    <FormattedMessage id="page.body.openOrders.header.button.cancelAll" />
+                </Button>
             </React.Fragment>
         ) : null;
 
         return (
-            <div className="pg-orders-tab pg-container">
-                <div className="pg-orders-tab__tabs-content">
-                    <TabPanel
-                        panels={this.renderTabs()}
-                        onTabChange={this.handleMakeRequest}
-                        optionalHead={cancelAll}
-                        currentTabIndex={this.state.currentTabIndex}
-                        onCurrentTabChange={this.onCurrentTabChange}
-                    />
-                </div>
-            </div>
+            <>
+                <Box>
+                    <Paper className={classes.pageHeader}>
+                        <Grid container>
+                            <Grid item md={12}>
+                                <Typography variant="h4" display="inline">Orders</Typography>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+                </Box>
+                <Box mt={3} pl={3} pr={3} alignItems="center">
+                    <Paper className={classes.pageContent}>
+                        <AppBar position="static" color="default" style={{ boxShadow: "none" }}>
+                            <this.AntTabs 
+                                value={this.state.tabValue} 
+                                onChange={this.handleTabChange} 
+                                indicatorColor="secondary"
+                                textColor="secondary"
+                                variant="scrollable"
+                            >
+                                <Tab component="a" label={this.props.intl.formatMessage({ id: 'page.body.openOrders.tab.open'})} {...this.a11yProps(0)} />
+                                <Tab component="a" label={this.props.intl.formatMessage({ id: 'page.body.openOrders.tab.all'})} {...this.a11yProps(1)} />
+                                {cancelAll}
+                                
+                            </this.AntTabs>
+                        </AppBar>
+                        <this.MaterialTabPanel value={this.state.tabValue} index={0}>
+                            <OrdersElement type="open"/>
+                        </this.MaterialTabPanel>
+                        <this.MaterialTabPanel value={this.state.tabValue} index={1}>
+                        
+                            <OrdersElement type="all"/>
+                        </this.MaterialTabPanel>
+                        {/* <div className="pg-orders-tab">
+                            <div className="pg-orders-tab__tabs-content">
+                                <TabPanel
+                                    panels={this.renderTabs()}
+                                    onTabChange={this.handleMakeRequest}
+                                    optionalHead={cancelAll}
+                                    currentTabIndex={this.state.currentTabIndex}
+                                    onCurrentTabChange={this.onCurrentTabChange}
+                                />
+                            </div>
+                        </div> */}
+                    </Paper>
+                </Box>
+
+                
+            </>
         );
     }
 
@@ -132,7 +292,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
         rangerConnect: (payload: RangerConnectFetch['payload']) => dispatch(rangerConnectFetch(payload)),
     });
 
-const OrdersTabScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(Orders));
+const OrdersTabScreen = injectIntl(withStyles(useStyles as {})(connect(mapStateToProps, mapDispatchToProps)(Orders)));
 
 export {
     OrdersTabScreen,

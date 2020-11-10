@@ -7,6 +7,16 @@ import { CloseIcon } from '../../assets/images/CloseIcon';
 import { History, Pagination } from '../../components';
 import { Decimal } from '../../components/Decimal';
 import { localeDate, setTradeColor } from '../../helpers';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+
 import {
     Market,
     ordersHistoryCancelFetch,
@@ -49,6 +59,11 @@ interface OrdersState {
     orderType: boolean;
 }
 
+const useStyles = theme => ({
+    tableContainer: {
+        paddingTop: theme.spacing(2)
+    },
+});
 
 type Props = OrdersProps & ReduxProps & DispatchProps & InjectedIntlProps;
 
@@ -94,6 +109,19 @@ class OrdersComponent extends React.PureComponent<Props, OrdersState>  {
             </React.Fragment>
         );
     };
+
+    private StyledTableCell = withStyles((theme: Theme) =>
+        createStyles({
+            head: {
+                backgroundColor: "rgb(228 224 224)",
+                color: theme.palette.common.black,
+                fontSize: 14,
+            },
+            body: {
+                fontSize: 14,
+            },
+        }),
+    )(TableCell);
 
     private onClickPrevPage = () => {
         const { pageIndex, type } = this.props;
@@ -223,7 +251,5 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
         userOrdersHistoryFetch: payload => dispatch(userOrdersHistoryFetch(payload)),
     });
 
-export const OrdersElement = compose(
-    injectIntl,
-    connect(mapStateToProps, mapDispatchToProps),
-)(OrdersComponent) as any; // tslint:disable-line
+
+export const OrdersElement = injectIntl(withStyles(useStyles as {})(connect(mapStateToProps, mapDispatchToProps)(OrdersComponent) as any));
