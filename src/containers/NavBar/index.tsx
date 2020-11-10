@@ -54,6 +54,7 @@ import {
 } from '../../modules';
 
 import {getNotifications} from "../../apis/exchange";
+import { lang } from 'moment';
 
 interface Notification {
     id: number,
@@ -235,7 +236,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                 {userLoading ? <Skeleton width={50} /> :
                     <>
                         <IconButton
-                            aria-label="account of current user"
+                            aria-label="user"
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             onClick={this.handleProfilePanelClick}
@@ -251,7 +252,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                             onClose={this.handleProfilePanelClose}
                             anchorOrigin={{
                                 vertical: 'bottom',
-                                horizontal: 'left',
+                                horizontal: 'center',
                             }}
                             transformOrigin={{
                                 vertical: 'top',
@@ -340,7 +341,7 @@ class NavBarComponent extends React.Component<Props, IState> {
         return (
             <>
             <IconButton
-                    aria-label="account of current user"
+                    aria-label="languages"
                     aria-controls="menu-appbar"
                     aria-haspopup="true"
                     onClick={this.handleLanguagePanelClick}
@@ -380,13 +381,18 @@ class NavBarComponent extends React.Component<Props, IState> {
     };
 
     public getLanguageDropdownItems = () => {
-        const { classes } = this.props;
+        const { lang, classes } = this.props;
         return (
             <>
                 {languages.map((language, index) => {
                     return (
                         <>
-                            <ListItem className={classes.dropdownLink} button onClick={e => this.handleChangeLanguage(language)}>
+                            <ListItem 
+                                className={classes.dropdownLink} 
+                                button 
+                                onClick={e => this.handleChangeLanguage(language)}
+                                selected={language === lang}
+                            >
                                 <ListItemAvatar>
                                     <img
                                         src={this.tryRequire(language) && require(`../../assets/images/sidebar/${language}.svg`)}
@@ -414,7 +420,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                 {userLoading ? <Skeleton width={50} className={classes.headerContentLoader}/> :
                     <>
                         <IconButton
-                            aria-label="account of current user"
+                            aria-label="notifications"
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             onClick={this.handleNotificationPanelClick}
