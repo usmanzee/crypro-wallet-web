@@ -43,6 +43,7 @@ const useStyles = (theme: Theme) => ({
        minHeight: '100vh',
        [theme.breakpoints.only('xs')]: {
             display: 'block',
+            minHeight: '0vh',
       },
    }
 });

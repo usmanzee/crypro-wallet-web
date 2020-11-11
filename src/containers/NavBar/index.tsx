@@ -106,6 +106,11 @@ const useStyles = (theme: Theme) => ({
     },
     headerContentLoader: {
         backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    },
+    notificationContainer: {
+        [theme.breakpoints.only('xs')]: {
+            display: 'none'
+        },
     }
 });
 
@@ -192,7 +197,7 @@ class NavBarComponent extends React.Component<Props, IState> {
     }
 
     public render() {
-        const { isLoggedIn } = this.props;
+        const { isLoggedIn, classes } = this.props;
         return (
             <>
                 <List style={{ display: 'flex' }}>
@@ -204,7 +209,9 @@ class NavBarComponent extends React.Component<Props, IState> {
                         {this.renderNotifications()}
                     </>
                 }
-                {this.renderLanguages()}
+                <div className={ classes.notificationContainer }>
+                    {this.renderLanguages()}
+                </div>
             </>
             
         );

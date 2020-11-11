@@ -49,9 +49,14 @@ interface DispatchProps {
 }
 
 const useStyles = theme => ({
+    pageRoot: {
+        padding: `${theme.spacing(2)}px ${theme.spacing(2)}px 0px`,
+        [theme.breakpoints.only('xs')]: {
+            padding: `${theme.spacing(1)}px ${theme.spacing(1)}px 0px`,
+        },
 
-    pagePaper: {
-        // height: "120px", 
+    },
+    pageContent: {
         padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
     }
 });
@@ -115,8 +120,8 @@ class EstimatedValueContainer extends React.Component<Props> {
         const { classes } = this.props;
         return (
             <>
-             <Box mt={2} pl={3} pr={3} alignItems="center">
-                <Paper className={classes.pagePaper}>
+             <Box className={classes.pageRoot} alignItems="center">
+                <Paper className={classes.pageContent}>
                     <Grid container>
                         <Grid item md={12}>
                             <Typography variant="subtitle1" display="block">

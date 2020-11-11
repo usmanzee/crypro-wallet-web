@@ -91,7 +91,6 @@ export class WalletTable extends React.Component<Props, IState> {
     }
 
     public componentWillReceiveProps(nextProps) {
-        console.log('nextProps: ', nextProps);
         const {
             currencies,
             currency,

@@ -20,7 +20,10 @@ const useStyles = (theme: Theme) => ({
     networkPaper: {
         padding: `${theme.spacing(3)}px ${theme.spacing(3)}px`,
         margin: `${theme.spacing(2)}px 0px`,
-        borderRadius: '4px'
+        borderRadius: '4px',
+        [theme.breakpoints.only('xs')]: {
+            padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
+        }
     },
     networkPaperHeader: {
         paddingBottom: theme.spacing(1),

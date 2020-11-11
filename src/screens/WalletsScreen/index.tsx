@@ -10,6 +10,7 @@ import {
     CryptoIcon 
 } from '../../components';
 import { EstimatedValue } from '../../containers/Wallets/EstimatedValue';
+import { PageHeader } from '../../containers/PageHeader';
 import { setDocumentTitle } from '../../helpers';
 import { 
     RootState, 
@@ -45,6 +46,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { globalStyle } from '../../screens/materialUIGlobalStyle';
 
 interface ReduxProps {
     user: User;
@@ -68,15 +70,7 @@ interface WalletsState {
 }
 
 const useStyles = theme => ({
-    headerPaper: {
-        padding: "32px 20px"
-    },
-    withdrawButton: {
-        margin: `0px ${theme.spacing(1)}px`,
-    },
-    pagePaper: {
-        padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
-    },
+    ...globalStyle(theme),
     tableContainer: {
         paddingTop: theme.spacing(2)
     },
@@ -193,34 +187,19 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             hideSmallBalances,
         } = this.state;
 
+        const headerActionLinks = [
+            ['page.body.wallets.action.deposit', '/wallet/deposit/crypto'],
+            ['page.body.wallets.action.withdraw', '/wallet/withdraw/crypto'],
+        ];
+
         const searchInputPlaceHolder = this.props.intl.formatMessage({ id: 'page.body.wallets.input.search.placeholder' })
         return (
             <React.Fragment>
-                <Box>
-                    <Paper className={classes.headerPaper}>
-                        <Grid container>
-                            <Grid item xs={4} sm={6} md={8} lg={10}>
-                                <Typography variant="h4" display="inline">{this.pageTitle}</Typography>
-                            </Grid>
-                            <Grid className={classes.headeractionButton} item xs={8} sm={6} md={4} lg={2}>
-                                <Link to="/wallet/deposit/crypto" style={{ textDecoration: 'none' }}>
-                                    <Button variant="contained" color="secondary" size="small">
-                                        <FormattedMessage id={'page.body.wallets.action.deposit'} />
-                                    </Button>
-                                </Link>
-                                <Link to="/wallet/withdraw/crypto" style={{ textDecoration: 'none' }}>
-                                    <Button className={classes.withdrawButton} variant="outlined" color="secondary" size="small">
-                                        <FormattedMessage id={'page.body.wallets.action.withdraw'} />
-                                    </Button>
-                                </Link>
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                </Box>
+                <PageHeader pageTitle={this.pageTitle} actionsLinks= {headerActionLinks} />
                 {wallets.length ? <EstimatedValue wallets={wallets} /> : ''}
 
-                <Box mt={2} pl={3} pr={3} alignItems="center">
-                    <Paper className={classes.pagePaper}>
+                <Box className={classes.pageRoot} alignItems="center">
+                    <Paper className={classes.pageContent}>
                          <FormGroup row>
                             <TextField 
                                 placeholder={searchInputPlaceHolder || 'Search'}

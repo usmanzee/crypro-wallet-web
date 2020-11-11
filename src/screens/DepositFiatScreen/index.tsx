@@ -30,6 +30,8 @@ import {
     walletsFetch, 
 } from '../../modules';
 import { WalletHistory } from '../../containers/Wallets/History';
+import { PageHeader } from '../../containers/PageHeader';
+import { globalStyle } from '../../screens/materialUIGlobalStyle';
 
 import {
     useParams
@@ -48,19 +50,7 @@ interface DispatchProps {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    headerPaper: {
-        height: "100px", 
-        padding: "32px 20px"
-    },
-    pagePaper: {
-        padding: `${theme.spacing(3)}px ${theme.spacing(3)}px`,
-    },
-    pagePaperHeader: {
-        paddingBottom: theme.spacing(1),
-        borderWidth: '0px 0px 1px',
-        borderStyle: 'solid',
-        borderColor: 'rgb(234, 236, 239)'
-    },
+    ...globalStyle(theme),
     activePage: {
         color: '#000',
         marginRight: theme.spacing(2),
@@ -236,22 +226,13 @@ const DepositFiatComponent = (props: Props) => {
     
     const selectedFiatWalletbalance: number = selectedFiatWalletOption && selectedFiatWalletOption.balance ? +selectedFiatWalletOption.balance : 0.0000;
     const selectedFiatWalletLocked: number = selectedFiatWalletOption && selectedFiatWalletOption.locked ? +selectedFiatWalletOption.locked : 0.0000;
+    const pageTitle = translate('page.body.deposit.header.title');
     return (
         <>
-            <Box>
-                <Paper className={classes.headerPaper}>
-                    <Grid container>
-                        <Grid item md={12}>
-                            <Typography variant="h4" display="inline">
-                                <FormattedMessage id={'page.body.deposit.header.title'} />
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Box>
-            <Box mt={2} pl={3} pr={3} alignItems="center">
-                <Paper className={classes.pagePaper}>
-                    <div className={classes.pagePaperHeader}>
+            <PageHeader pageTitle={pageTitle} />
+            <Box className={classes.pageRoot} alignItems="center">
+                <Paper className={classes.pageContent} >
+                    <div className={classes.pageContentHeader}>
                         <Link to="/wallet/deposit/crypto" className={classes.inActivePage}>
                             <Typography variant="h6" component="div" display="inline" >
                                 <FormattedMessage id={'page.body.deposit.tabs.crypto'} />

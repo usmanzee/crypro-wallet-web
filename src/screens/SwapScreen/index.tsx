@@ -25,6 +25,8 @@ import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
 import { WalletItemProps, WalletsDropdown, Decimal } from '../../components';
 import { ExchangeHistory, ExchangeHistoryProps } from '../../containers/ExchangeHistory';
+import { PageHeader } from '../../containers/PageHeader';
+import { globalStyle } from '../../screens/materialUIGlobalStyle';
 import { alertPush, 
     RootState, 
     selectUserInfo, 
@@ -60,20 +62,7 @@ interface DispatchProps {
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    headerPaper: {
-        height: "100px", 
-        padding: "32px 20px"
-    },
-    page: {
-        padding: `${theme.spacing(3)}px ${theme.spacing(4)}px`,
-    },
-    pageTitle: {
-        textAlign: 'center'
-    },
-    pageContent: {
-        padding: `${theme.spacing(3)}px ${theme.spacing(0)}px`,
-        textAlign: 'center'
-    },
+    ...globalStyle(theme),
     swapFromFields: {
         margin: `0px 0px ${theme.spacing(3)}px 0px`,
     },
@@ -475,28 +464,18 @@ const SwapComponent = (props: Props) => {
         />
     }
 
+    const pageTitle = translate('page.body.swap.title.buy_sell');
     return (
         <>
-            <Box>
-                <Paper className={classes.headerPaper}>
-                    <Grid container>
-                        <Grid item md={12}>
-                            <Typography variant="h4" display="inline">
-                                <FormattedMessage id={'page.body.swap.title.buy_sell'} />
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Box>
-            <Box mt={3} pl={3} pr={3}>
+            <PageHeader pageTitle={pageTitle} />
+            <Box className={classes.pageRoot}>
                 <Grid container>
                     <Grid item xs={12} sm ={12} md={12} lg={12}>
-                        <Paper className={classes.page}>
+                        <Paper className={classes.pageContent}>
                             <Grid container>
                                 <Grid item md={2} lg={4}></Grid>
                                 <Grid item xs={12} sm={12} md={8} lg={4}>
-                                <div className={classes.pageContent}>
-
+                                <div>
                                     {walletsFromLoading && walletsToLoading ? 
                                         <CircularProgress size={25}/>
                                         :

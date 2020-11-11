@@ -8,6 +8,7 @@ import { ProfileAccountActivity } from '../../containers/ProfileAccountActivity'
 import { ProfileAuthDetails } from '../../containers/ProfileAuthDetails';
 import { ReferralProgram } from '../../containers/ReferralProgram';
 import { setDocumentTitle } from '../../helpers';
+import { PageHeader } from '../../containers/PageHeader';
 
 import {
     Box,
@@ -22,22 +23,11 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import { Theme, withStyles} from '@material-ui/core/styles';
+import { globalStyle } from '../../screens/materialUIGlobalStyle';
 import { profileTabs } from '../../constants';
 
 const useStyles = (theme: Theme) => ({
-    headerPaper: {
-        height: "100px", 
-        padding: "32px 20px"
-    },
-    pagePaper: {
-        padding: `${theme.spacing(2)}px`,
-    },
-    pagePaperHeader: {
-        // display: 'flex',
-        borderWidth: '0px 0px 1px',
-        borderStyle: 'solid',
-        borderColor: 'rgb(234, 236, 239)'
-    },
+    ...globalStyle(theme),
     activePage: {
         color: '#000',
         marginRight: theme.spacing(5),
@@ -168,22 +158,12 @@ class ProfileComponent extends React.Component<Props, IState> {
     public render() {
         const { classes } = this.props;
         const address = this.props.history.location ? this.props.history.location.pathname : '';
+        const pageTitle = 'Profile Management';
         return (
             <>
-            <Box>
-                <Paper className={classes.headerPaper}>
-                    <Grid container>
-                        <Grid item md={12}>
-                            <Typography variant="h4" display="inline">
-                                Profile Management
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Box>
-            <Box mt={2} pl={3} pr={3} alignItems="center">
-                <Paper className={classes.pagePaper}>
-                    <div className={classes.pagePaperHeader}>
+            <PageHeader pageTitle={pageTitle} />
+            <Box className={classes.pageRoot} alignItems="center">
+                <Paper className={classes.pageContent} >
                         <AppBar position="static" color="default" style={{ boxShadow: "none" }}>
                             <AntTabs 
                                 value={this.state.tabValue} 
@@ -191,6 +171,7 @@ class ProfileComponent extends React.Component<Props, IState> {
                                 indicatorColor="secondary"
                                 textColor="secondary"
                                 variant="scrollable"
+                                scrollButtons="on"
                             >
                                 <Tab component="a" label="Profile / Security" {...a11yProps(0)} />
                                 <Tab component="a" label="Identification" {...a11yProps(1)} />
@@ -214,8 +195,6 @@ class ProfileComponent extends React.Component<Props, IState> {
                         <TabPanel value={this.state.tabValue} index={4}>
                             <ProfileAccountActivity/>
                         </TabPanel>
-                        {/* {profileTabs().map(this.renderTabs(address))} */}
-                    </div>
                     </Paper>
                 </Box>
                 {/* <div className="container pg-profile-page">

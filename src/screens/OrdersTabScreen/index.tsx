@@ -20,6 +20,7 @@ import {RangerConnectFetch, rangerConnectFetch} from '../../modules/public/range
 import {RangerState} from '../../modules/public/ranger/reducer';
 import {selectRanger} from '../../modules/public/ranger/selectors';
 import { OrderCommon } from '../../modules/types';
+import { PageHeader } from '../../containers/PageHeader';
 
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
@@ -31,6 +32,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
+import { globalStyle } from '../../screens/materialUIGlobalStyle';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -60,11 +62,8 @@ interface State {
 }
 
 const useStyles = theme => ({
-    pageHeader: {
-        padding: "32px 20px"
-    },
+    ...globalStyle(theme),
     pageContent: {
-        padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
         '& .cr-table-header__content': {
             display: 'none'
         },
@@ -142,18 +141,18 @@ class Orders extends React.PureComponent<Props, State> {
 
     public MaterialTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
-      
+
         return (
             <div
-                role="tabpanel"
-                hidden={value !== index}
-                id={`full-width-tabpanel-${index}`}
-                aria-labelledby={`full-width-tab-${index}`}
-                {...other}
+            role="tabpanel"
+            hidden={value !== index}
+            id={`scrollable-auto-tabpanel-${index}`}
+            aria-labelledby={`scrollable-auto-tab-${index}`}
+            {...other}
             >
             {value === index && (
-                <Box style={{ marginTop: "10px" }}>
-                    <Typography component="div">{children}</Typography>
+                <Box p={3}>
+                <Typography>{children}</Typography>
                 </Box>
             )}
             </div>
@@ -162,8 +161,8 @@ class Orders extends React.PureComponent<Props, State> {
 
     public a11yProps(index: any) {
         return {
-            id: `full-width-tab-${index}`,
-            'aria-controls': `full-width-tabpanel-${index}`,
+            id: `scrollable-auto-tab-${index}`,
+            'aria-controls': `scrollable-auto-tabpanel-${index}`,
         };
     }
 
@@ -200,20 +199,12 @@ class Orders extends React.PureComponent<Props, State> {
 
     public render() {
         const { classes } = this.props;
-
+        const pageTitle = 'Orders';
         return (
             <>
-                <Box>
-                    <Paper className={classes.pageHeader}>
-                        <Grid container>
-                            <Grid item md={12}>
-                                <Typography variant="h4" display="inline">Orders</Typography>
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                </Box>
-                <Box mt={3} pl={3} pr={3} alignItems="center">
-                    <Paper className={classes.pageContent}>
+                <PageHeader pageTitle={pageTitle} />
+                <Box className={classes.pageRoot} alignItems="center">
+                    <Paper className={classes.pageContent} >
                         <AppBar position="static" color="default" style={{ boxShadow: "none" }}>
                             <this.AntTabs 
                                 value={this.state.tabValue} 
@@ -221,6 +212,7 @@ class Orders extends React.PureComponent<Props, State> {
                                 indicatorColor="secondary"
                                 textColor="secondary"
                                 variant="scrollable"
+                                scrollButtons="on"
                             >
                                 <Tab component="a" label={this.props.intl.formatMessage({ id: 'page.body.openOrders.tab.open'})} {...this.a11yProps(0)} />
                                 <Tab component="a" label={this.props.intl.formatMessage({ id: 'page.body.openOrders.tab.all'})} {...this.a11yProps(1)} />
@@ -235,19 +227,19 @@ class Orders extends React.PureComponent<Props, State> {
                         
                             <OrdersElement type="all"/>
                         </this.MaterialTabPanel>
-                        {/* <div className="pg-orders-tab">
-                            <div className="pg-orders-tab__tabs-content">
-                                <TabPanel
-                                    panels={this.renderTabs()}
-                                    onTabChange={this.handleMakeRequest}
-                                    optionalHead={this.cancelAll}
-                                    currentTabIndex={this.state.currentTabIndex}
-                                    onCurrentTabChange={this.onCurrentTabChange}
-                                />
-                            </div>
-                        </div> */}
                     </Paper>
-                </Box>        
+                </Box>
+                {/* <div className="pg-orders-tab pg-container">
+                    <div className="pg-orders-tab__tabs-content">
+                        <TabPanel
+                            panels={this.renderTabs()}
+                            onTabChange={this.handleMakeRequest}
+                            optionalHead={this.cancelAll}
+                            currentTabIndex={this.state.currentTabIndex}
+                            onCurrentTabChange={this.onCurrentTabChange}
+                        />
+                    </div>
+                </div> */}
             </>
         );
     }

@@ -20,7 +20,10 @@ import { connect } from 'react-redux';
 import { Withdraw, WithdrawProps } from '../../containers';
 import { ModalWithdrawConfirmation } from '../../containers/ModalWithdrawConfirmation';
 import { ModalWithdrawSubmit } from '../../containers/ModalWithdrawSubmit';
+import { PageHeader } from '../../containers/PageHeader';
 import { WalletItemProps, CryptoIcon } from '../../components';
+
+import { globalStyle } from '../../screens/materialUIGlobalStyle';
 import { 
     alertPush, 
     beneficiariesFetch, 
@@ -93,19 +96,7 @@ const defaultBeneficiary: Beneficiary = {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    headerPaper: {
-        height: "100px", 
-        padding: "32px 20px"
-    },
-    pagePaper: {
-        padding: `${theme.spacing(3)}px ${theme.spacing(3)}px`,
-    },
-    pagePaperHeader: {
-        paddingBottom: theme.spacing(1),
-        borderWidth: '0px 0px 1px',
-        borderStyle: 'solid',
-        borderColor: 'rgb(234, 236, 239)'
-    },
+    ...globalStyle(theme),
     activePage: {
         color: '#000',
         marginRight: theme.spacing(2),
@@ -396,34 +387,25 @@ const WithdrawFiatComponent = (props: Props) => {
         return otp ? <Withdraw {...withdrawProps} /> : isOtpDisabled();
     };
 
+    const pageTitle = translate('page.body.withdraw.header.title');
+
     return (
         <>
-            <Box>
-                <Paper className={classes.headerPaper}>
-                    <Grid container>
-                        <Grid item md={12}>
-                            <Typography variant="h4" display="inline">
-                                <FormattedMessage id={'page.body.withdraw.header.title'} />
+            <PageHeader pageTitle={pageTitle} />
+            <Box className={classes.pageRoot} alignItems="center">
+                <Paper className={classes.pageContent} >
+                    <div className={classes.pageContentHeader}>
+                        <Link to="/wallet/withdraw/crypto" className={classes.inActivePage}>
+                                <Typography variant="h6" component="div" display="inline" >
+                                    <FormattedMessage id={'page.body.withdraw.tabs.crypto'} />
+                                </Typography>
+                        </Link>
+                        <Link to="/wallet/withdraw/fiat" className={classes.activePage}>
+                            <Typography variant="h6" component="div"  display="inline">
+                                <FormattedMessage id={'page.body.withdraw.tabs.fiat'} />
                             </Typography>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Box>
-            <Box mt={2} pl={3} pr={3} alignItems="center">
-                <Paper className={classes.pagePaper}>
-                    <div className={classes.pagePaperHeader}>
-                    <Link to="/wallet/withdraw/crypto" className={classes.inActivePage}>
-                            <Typography variant="h6" component="div" display="inline" >
-                                <FormattedMessage id={'page.body.withdraw.tabs.crypto'} />
-                            </Typography>
-                    </Link>
-                    <Link to="/wallet/withdraw/fiat" className={classes.activePage}>
-                        <Typography variant="h6" component="div"  display="inline">
-                            <FormattedMessage id={'page.body.withdraw.tabs.fiat'} />
-                        </Typography>
-                    </Link>
+                        </Link>
                     </div>
-
                     <Grid container>
                         <Grid item xs={12} sm ={12} md={6} lg={6}>
                             <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
