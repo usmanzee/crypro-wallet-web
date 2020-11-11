@@ -201,7 +201,7 @@ const WithdrawFiatComponent = (props: Props) => {
     const defaultWalletCurrency = 'usd';
     //Props
     const classes = useStyles();
-    const { wallets, user, currencies } = props;
+    const { wallets, user, currencies, withdrawSuccess } = props;
 
     //Params
     let params = useParams();
@@ -501,8 +501,8 @@ const WithdrawFiatComponent = (props: Props) => {
                     </Grid>
                     <Divider className={classes.historyDivider}/>
                     <Grid container>
-                        <Grid item md={12}>
-                            {user.otp && selectedWalletOption && <WalletHistory label="withdraw" type="withdraws" currency={selectedWalletOption.currency} />}
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            {user.otp && selectedWalletOption && <WalletHistory label="withdraw" type="withdraws" currency={selectedWalletOption.currency} withdrawSuccess={withdrawSuccess} />}
                         </Grid>
                     </Grid>
                 </Paper>

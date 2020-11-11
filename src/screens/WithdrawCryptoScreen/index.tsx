@@ -192,7 +192,7 @@ const WithdrawCryptoComponent = (props: Props) => {
     const defaultWalletCurrency = 'btc';
     //Props
     const classes = useStyles();
-    const { wallets, user, withdrawSuccess } = props;
+    const { wallets, user, withdrawSuccess, withdrawProcessing } = props;
 
     //Params
     let params = useParams();
@@ -505,8 +505,8 @@ const WithdrawCryptoComponent = (props: Props) => {
                     </Grid>
                     <Divider className={classes.historyDivider}/>
                     <Grid container>
-                        <Grid item md={12}>
-                            {user.otp && selectedWalletOption && <WalletHistory label="withdraw" type="withdraws" currency={selectedWalletOption.currency} />}
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            {user.otp && selectedWalletOption && <WalletHistory label="withdraw" type="withdraws" currency={selectedWalletOption.currency} withdrawSuccess={withdrawSuccess}/>}
                         </Grid>
                     </Grid>
                 </Paper>

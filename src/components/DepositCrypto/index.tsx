@@ -94,7 +94,8 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: `${theme.spacing(4)}px 0px`,
     },
     addressText: {
-        marginRight: theme.spacing(1)
+        marginRight: theme.spacing(1),
+        wordBreak: 'break-all'
     },
     copyIcon: {
         color: theme.palette.primary.main,
@@ -175,26 +176,26 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                             {address ? 
                                 <>
                                     <div className={classes.networkPaperContent}>
-                                        <Typography variant='body1' component='div'>
+                                        <Typography variant='body1'>
                                             {addressText}
                                         </Typography>
                                         <div className={classes.qrCode}>
                                             {address ? <QRCode dimensions={size} data={address}/> : null}
                                         </div>
-                                        <Typography variant='body2' component='div' display='inline' className={classes.addressText}>
+                                        <Typography variant='body2' display='inline' className={classes.addressText}>
                                             {address ? address : error}
                                         </Typography>
-                                        <Typography variant='body2' component='div' display='inline' onClick={() => onCopy(address)} onMouseOut={setCopyTooltipTextOnMouseOut}>
+                                        <Typography variant='body2' display='inline' onClick={() => onCopy(address)} onMouseOut={setCopyTooltipTextOnMouseOut}>
                                             <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
                                                 <FileCopyOutlinedIcon className={classes.copyIcon}/>
                                             </LightTooltip>
                                         </Typography>
                                     </div>
                                     <div style={{ marginTop: '24px' }}>
-                                        <Typography variant='subtitle2' component='div' display='block'>
+                                        <Typography variant='subtitle2' display='block'>
                                             {addressInstructionsTitle}
                                         </Typography>
-                                        <Typography variant='caption' component='div' display='block'>
+                                        <Typography variant='caption' display='block'>
                                             {addressInstructionsDescription}
                                         </Typography>
                                     </div>

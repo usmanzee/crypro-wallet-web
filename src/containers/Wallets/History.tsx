@@ -39,6 +39,7 @@ export interface HistoryProps {
     label: string;
     type: string;
     currency: string;
+    withdrawSuccess?: boolean;
 }
 
 export interface ReduxProps {
@@ -90,11 +91,13 @@ export class WalletTable extends React.Component<Props, IState> {
     }
 
     public componentWillReceiveProps(nextProps) {
+        console.log('nextProps: ', nextProps);
         const {
             currencies,
             currency,
             type,
             list,
+            withdrawSuccess
         } = this.props;
 
         if (list.length === 0 && nextProps.list.length > 0) {
@@ -104,7 +107,7 @@ export class WalletTable extends React.Component<Props, IState> {
             });
         }
 
-        if (nextProps.currency !== currency || nextProps.type !== type) {
+        if (nextProps.currency !== currency || nextProps.type !== type || (nextProps.withdrawSuccess !== withdrawSuccess && nextProps.withdrawSuccess === true)) {
             this.props.resetHistory();
             this.props.fetchHistory({ page: 0, currency: nextProps.currency, type, limit: 6 });
         }

@@ -195,10 +195,10 @@ class SidebarContainer extends React.Component<Props, State> {
 
         const { currentMarket, classes, userLoading } = this.props;
         
-        const [name, url, img] = values;
+        const [name, url, img, optionalURL] = values;
         
         const path = url.includes('/trading') && currentMarket ? `/trading/${currentMarket.id}` : url;
-        const isActive = (url === '/trading/' && address.includes('/trading')) || address.includes(url);
+        const isActive = (address.includes(url) || address.includes(optionalURL))
 
         const iconClassName = classnames('pg-sidebar-wrapper-nav-item-img', {
             'pg-sidebar-wrapper-nav-item-img--active': isActive,

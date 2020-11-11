@@ -2,11 +2,11 @@ export const PG_TITLE_PREFIX = 'B4U Wallet';
 
 export const pgRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
     const routes = [
-        ['page.header.navbar.trade', '/trading/', `trade${isLight ? 'Light' : ''}`],
-        ['page.header.navbar.wallets', '/wallets', `wallets${isLight ? 'Light' : ''}`],
-        ['page.header.navbar.buy_sell', '/swap', `swap${isLight ? 'Light' : ''}`],
-        ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`],
-        ['page.header.navbar.history', '/history', `history${isLight ? 'Light' : ''}`],
+        ['page.header.navbar.trade', '/trading/', `trade${isLight ? 'Light' : ''}`, '/trading'],
+        ['page.header.navbar.wallets', '/wallets', `wallets${isLight ? 'Light' : ''}`, '/wallet'],
+        ['page.header.navbar.buy_sell', '/swap', `swap${isLight ? 'Light' : ''}`, '/swap'],
+        ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`, '/orders'],
+        ['page.header.navbar.history', '/history', `history${isLight ? 'Light' : ''}`, '/history'],
     ];
     const routesUnloggedIn = [
         ['page.header.navbar.signIn', '/signin', `signin${isLight ? 'Light' : ''}`],
