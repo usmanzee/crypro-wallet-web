@@ -85,6 +85,7 @@ const useStyles = theme => ({
         background: '#fff',
     },
     cancelAllLink: {
+        marginRight: theme.spacing(3),
         '&:focus': {
             outline: 'none',
             background: '#fff'
