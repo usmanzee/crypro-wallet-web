@@ -334,6 +334,7 @@ export const ru: LangType = {
     'page.body.history.deposit.content.status.canceled': 'Отменен',
     'page.body.history.deposit.content.status.rejected': 'Отвергнут',
     'page.body.history.deposit.content.status.skipped': 'Пропущен',
+    'page.body.history.deposit.content.status.succeed': 'Добиться успеха',
 
     'page.body.history.withdraw': 'История выводов',
     'page.body.history.withdraw.header.id': 'ID',
@@ -355,6 +356,7 @@ export const ru: LangType = {
     'page.body.history.withdraw.content.status.failed': 'Неудачный',
     'page.body.history.withdraw.content.status.confirming': 'Подтверждается',
     'page.body.history.withdraw.content.status.errored': 'Ошибка',
+    'page.body.history.withdraw.content.status.collected': 'Собрано',
 
     'page.body.history.trade': 'История ордеров',
     'page.body.history.trade.header.id': 'ID',

@@ -336,6 +336,7 @@ export const en = {
     'page.body.history.deposit.content.status.canceled': 'Cancelled',
     'page.body.history.deposit.content.status.rejected': 'Rejected',
     'page.body.history.deposit.content.status.skipped': 'Skipped',
+    'page.body.history.deposit.content.status.succeed': 'Succceed',
 
     'page.body.history.withdraw': 'Withdrawal History',
     'page.body.history.withdraw.header.id': 'ID',
@@ -357,6 +358,7 @@ export const en = {
     'page.body.history.withdraw.content.status.failed': 'Failed',
     'page.body.history.withdraw.content.status.confirming': 'Confirming',
     'page.body.history.withdraw.content.status.errored': 'Error',
+    'page.body.history.withdraw.content.status.collected': 'Collected',
 
     'page.body.history.trade': 'Trade History',
     'page.body.history.trade.header.id': 'ID',

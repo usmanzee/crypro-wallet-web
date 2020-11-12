@@ -336,6 +336,7 @@ export const es: LangType = {
     'page.body.history.deposit.content.status.canceled': 'Cancelado',
     'page.body.history.deposit.content.status.rejected': 'Rechazado',
     'page.body.history.deposit.content.status.skipped': 'Omitido',
+    'page.body.history.deposit.content.status.succeed': 'Tener éxito',
 
     'page.body.history.withdraw': 'Historial de retiros',
     'page.body.history.withdraw.header.id': 'ID',
@@ -357,6 +358,7 @@ export const es: LangType = {
     'page.body.history.withdraw.content.status.failed': 'Fallido',
     'page.body.history.withdraw.content.status.confirming': 'Confirmando',
     'page.body.history.withdraw.content.status.errored': 'Error',
+    'page.body.history.withdraw.content.status.collected': 'Recogida',
 
     'page.body.history.trade': 'Hisorial de operaciones',
     'page.body.history.trade.header.id': 'ID',

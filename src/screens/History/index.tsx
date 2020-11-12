@@ -9,6 +9,7 @@ import {
 } from 'react-redux';
 import { TabPanel } from '../../components';
 import { HistoryElement } from '../../containers/HistoryElement';
+import { PageHeader } from '../../containers/PageHeader';
 import { setDocumentTitle } from '../../helpers';
 import {
     fetchHistory,
@@ -24,9 +25,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
+import { globalStyle } from '../../screens/materialUIGlobalStyle';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -50,11 +50,9 @@ interface State {
 }
 
 const useStyles = theme => ({
-    pageHeader: {
-        padding: "32px 20px"
-    },
+    ...globalStyle(theme),
     pageContent: {
-        padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
+        // padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
         '& .cr-table-header__content': {
             display: 'none'
         },
@@ -103,15 +101,15 @@ class History extends React.Component<Props, State> {
 
         return (
             <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`scrollable-auto-tabpanel-${index}`}
-            aria-labelledby={`scrollable-auto-tab-${index}`}
-            {...other}
+                role="tabpanel"
+                hidden={value !== index}
+                id={`scrollable-auto-tabpanel-${index}`}
+                aria-labelledby={`scrollable-auto-tab-${index}`}
+                {...other}
             >
             {value === index && (
                 <Box p={3}>
-                <Typography>{children}</Typography>
+                    {children}
                 </Box>
             )}
             </div>
@@ -141,19 +139,12 @@ class History extends React.Component<Props, State> {
 
     public render() {
         const { classes } = this.props;
+        const pageTitle = 'History';
         return (
             <> 
-                <Box>
-                    <Paper className={classes.pageHeader}>
-                        <Grid container>
-                            <Grid item md={12}>
-                                <Typography variant="h4" display="inline">History</Typography>
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                </Box>
-                <Box mt={3} pl={3} pr={3} alignItems="center">
-                    <Paper className={classes.pageContent}>
+                <PageHeader pageTitle={pageTitle} />
+                <Box className={classes.pageRoot} alignItems="center">
+                    <Paper className={classes.pageContent} >
                         <AppBar position="static" color="default" style={{ boxShadow: "none" }}>
                             <this.AntTabs 
                                 value={this.state.tabValue} 
