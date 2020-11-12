@@ -266,23 +266,23 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                 <TableContainer className={classes.tableContainer}>
                     <Table aria-label="simple table">
                         <TableHead>
-                        <TableRow>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.coin'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.total'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.available'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.locked'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.actions'} />
-                            </this.StyledTableCell>
-                        </TableRow>
+                            <TableRow>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.coin'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.total'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.available'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.locked'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.actions'} />
+                                </this.StyledTableCell>
+                            </TableRow>
                         </TableHead>
                         {walletsData.length ? 
 

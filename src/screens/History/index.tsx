@@ -59,8 +59,13 @@ const useStyles = theme => ({
         '& tr': {
             borderBottom: '1px solid #ddd',
             height: '50px',
+            '& svg': {
+                '&:hover': {
+                    color: theme.palette.secondary.main,
+                },
+            },
             '& a': {
-                color: theme.palette.text.secondary,
+                color: theme.palette.text.primary,
                 '&:hover': {
                     color: theme.palette.secondary.main,
                 },

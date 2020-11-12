@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import * as React from 'react';
 import { CellData, Table } from '../Table';
+import { MaterialTable } from '../MaterialTable';
 
 export interface HistoryProps {
     /**
@@ -22,7 +23,7 @@ export class History extends React.PureComponent<HistoryProps> {
         const tableData = this.props.data.map(row => row.map(this.mapRows));
 
         return (
-            <Table
+            <MaterialTable
                 data={tableData}
                 header={headers}
                 titleComponent={this.title}
