@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
+import Alert from '@material-ui/lab/Alert';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 import {
     Paper,
@@ -15,7 +16,8 @@ export interface DepositFiatProps {
     /**
      * Sets helper description
      */
-    description: string;
+	description: string;
+	referenceTip?: string;
     /**
      * Sets title describing the data displayed in children
      */
@@ -66,11 +68,12 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
         description,
         title,
         uid,
-        currency,
+		currency,
+		referenceTip
 	} = props;
 
-    const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
-    const depositDescription = (currency === 'usd' || currency === 'eur') ? 'Please using following to deposit using TrasferWise' : description;
+    // const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
+    // const depositDescription = (currency === 'usd' || currency === 'eur') ? 'Please using following to deposit using TrasferWise' : description;
 
 //@ts-ignore
     const bank_account = (id) =>{
@@ -185,16 +188,37 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
       	<Paper elevation={2} className={classes.networkPaper}>
           	<div className={classes.networkPaperHeader}>
               	<Typography variant="body1" component="div" display="inline">
-                  <FormattedMessage id={'page.body.deposit.network.title'} /> 
+                  	<FormattedMessage id={'page.body.deposit.network.title'} /> 
               	</Typography>
-          	</div>
+          	</div> 
           	<div className="cr-deposit-fiat">
-              	<Typography variant="h6" component="div" gutterBottom>{depositTitle}</Typography>
-              	<Typography variant="subtitle1" component="div" gutterBottom className={classes.depositDescription}>{depositDescription}</Typography>
-              	{/* <div className="cr-deposit-fiat-credentials">{bankData(uid).map(renderDetails)}</div> */}
-              	<div className="cr-deposit-fiat-credentials">
-                	{bankCurrencies.map(renderDetails)}
-              	</div>
+              	<Typography variant="h6" component="div" gutterBottom>
+					  {title}
+				</Typography>
+              	<Typography variant="subtitle1" component="div" gutterBottom className={classes.depositDescription}>
+					  {description}
+				</Typography>
+				 <Alert severity="warning" className={classes.depositDescription}>
+					<Typography variant="button" component="div">
+						{referenceTip}
+					</Typography>
+				</Alert>
+
+				<List className={classes.list} disablePadding={true}>
+					<ListItem disableGutters>
+						<Typography variant="h6" display="inline" gutterBottom>
+							Reference ID
+						</Typography>
+					</ListItem>
+					<ListItem disableGutters>
+						<Typography variant="h6" display="inline" gutterBottom>
+							{uid}
+						</Typography>
+					</ListItem>
+				</List>
+				<Divider className={classes.BanksDivider}/>
+				
+				{bankCurrencies.map(renderDetails)}
           	</div>
       	</Paper>
       </>

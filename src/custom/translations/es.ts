@@ -193,7 +193,9 @@ export const es: LangType = {
     'page.body.wallets.tabs.deposit.ccy.button.address': 'dirección',
 
     'page.body.wallets.tabs.deposit.fiat.message1': 'Depositar usando transferencia bancaria',
-    'page.body.wallets.tabs.deposit.fiat.message2': 'Por favor, utiliza las siguientes credenciales para iniciar tu transferencia bancaria. Tu depósito se verá reflejado den tu cuenta dentro de 2 días hábiles.',
+    'page.body.wallets.tabs.deposit.fiat.message2': 'Utilice las siguientes credenciales para iniciar su transferencia bancaria. Su depósito se verá reflejado en su cuenta en un mínimo de 2 horas.',
+    'page.body.wallets.tabs.deposit.fiat.message3': 'Utilice la siguiente identificación de referencia en su referencia de pago.',
+
     'page.body.wallets.tabs.deposit.fiat.bankName': 'Nombre del Banco',
     'page.body.wallets.tabs.deposit.fiat.accountNumber': 'Número de cuenta',
     'page.body.wallets.tabs.deposit.fiat.accountName': 'Titular de la cuenta',

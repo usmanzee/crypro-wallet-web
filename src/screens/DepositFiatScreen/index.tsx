@@ -223,6 +223,7 @@ const DepositFiatComponent = (props: Props) => {
     // const pageTitle = translate('page.body.wallets.title');
     const title = translate('page.body.wallets.tabs.deposit.fiat.message1');
     const description = translate('page.body.wallets.tabs.deposit.fiat.message2');
+    const referenceTip = translate('page.body.wallets.tabs.deposit.fiat.message3');
     
     const selectedFiatWalletbalance: number = selectedFiatWalletOption && selectedFiatWalletOption.balance ? +selectedFiatWalletOption.balance : 0.0000;
     const selectedFiatWalletLocked: number = selectedFiatWalletOption && selectedFiatWalletOption.locked ? +selectedFiatWalletOption.locked : 0.0000;
@@ -317,7 +318,7 @@ const DepositFiatComponent = (props: Props) => {
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} className={classes.depositCol}>
-                            <DepositFiat title={title} description={description} uid={user ? user.uid : ''} currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}/>
+                            <DepositFiat title={title} description={description} referenceTip={referenceTip} uid={user ? user.uid : ''} currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}/>
                         </Grid>
                     </Grid>
                     <Divider className={classes.historyDivider}/>
