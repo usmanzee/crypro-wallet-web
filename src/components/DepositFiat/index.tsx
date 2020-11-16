@@ -213,7 +213,7 @@ const bankCurrencies = [
 				"Wire routing number": '026073008',
 				"Account number": '8310615550',
 				"Account type": 'Checking',
-				"Address": 'TransferWise 19 W 24th Street \nNew York NY 10010\n United States\n Belgium',
+				"Address": 'TransferWise 19 W 24th Street \nNew York NY 10010\n United States',
 				"Bank Name": 'TransferWise',
 			}
 		]
