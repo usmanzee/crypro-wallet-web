@@ -184,11 +184,11 @@ const bankCurrencies = [
 		title: 'eur',
 		banks: [
       		{
+				"Bank Name": 'TransferWise',
 				"Account holder": 'B4U Group of Companies, S.L',
 				"IBAN": 'BE79 9670 5851 7133',
 				"SWIFT/BIC": 'TRWIBEB1XXX',
 				"Address": 'TransferWise Europe SA \nAvenue Louise 54, Room S52\n Brussels\n 1050\n Belgium',
-				"Bank Name": 'TransferWise',
 			}
     	]
   	},
@@ -197,8 +197,8 @@ const bankCurrencies = [
 		title: 'myr',
 		banks: [
 			{
-				"Account holder": 'BRAVO Tech Trading',
 				"Bank Name": 'OCBC Bank',
+				"Account holder": 'BRAVO Tech Trading',
 				"Account Number": '704-128-334-9',
 			}
 		]
@@ -208,13 +208,13 @@ const bankCurrencies = [
 		title: 'usd',
 		banks: [
 			{
+				"Bank Name": 'TransferWise',
 				"Account holder": 'B4U Group of Companies, S.L.',
 				"ACH routing number": '026073150',
 				"Wire routing number": '026073008',
 				"Account number": '8310615550',
 				"Account type": 'Checking',
 				"Address": 'TransferWise 19 W 24th Street \nNew York NY 10010\n United States',
-				"Bank Name": 'TransferWise',
 			}
 		]
 	},
