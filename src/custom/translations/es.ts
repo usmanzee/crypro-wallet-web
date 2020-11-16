@@ -4,6 +4,7 @@ import { nationalitiesNames } from '../../translations/nationalities';
 export const es: LangType = {
     //General Messages
     'no.record.found': 'Registro no encontrado.',
+    'copied.to.clipboard': 'Copiada al portapapeles.',
 
     'page.header.navbar.signIn': 'Sign In',
     'page.header.navbar.trade': 'Trade',
@@ -194,7 +195,7 @@ export const es: LangType = {
 
     'page.body.wallets.tabs.deposit.fiat.message1': 'Depositar usando transferencia bancaria',
     'page.body.wallets.tabs.deposit.fiat.message2': 'Utilice las siguientes credenciales para iniciar su transferencia bancaria. Su depósito se verá reflejado en su cuenta en un mínimo de 2 horas.',
-    'page.body.wallets.tabs.deposit.fiat.message3': 'Utilice la siguiente identificación de referencia en su referencia de pago.',
+    'page.body.wallets.tabs.deposit.fiat.message3': 'Utilice el siguiente código de referencia en su referencia de pago.',
 
     'page.body.wallets.tabs.deposit.fiat.bankName': 'Nombre del Banco',
     'page.body.wallets.tabs.deposit.fiat.accountNumber': 'Número de cuenta',
@@ -338,6 +339,7 @@ export const es: LangType = {
     'page.body.history.deposit.content.status.canceled': 'Cancelado',
     'page.body.history.deposit.content.status.rejected': 'Rechazado',
     'page.body.history.deposit.content.status.skipped': 'Omitido',
+    'page.body.history.deposit.content.status.succeed': 'Tener éxito',
 
     'page.body.history.withdraw': 'Historial de retiros',
     'page.body.history.withdraw.header.id': 'ID',
@@ -359,6 +361,7 @@ export const es: LangType = {
     'page.body.history.withdraw.content.status.failed': 'Fallido',
     'page.body.history.withdraw.content.status.confirming': 'Confirmando',
     'page.body.history.withdraw.content.status.errored': 'Error',
+    'page.body.history.withdraw.content.status.collected': 'Recogida',
 
     'page.body.history.trade': 'Hisorial de operaciones',
     'page.body.history.trade.header.id': 'ID',

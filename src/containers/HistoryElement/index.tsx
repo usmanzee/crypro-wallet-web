@@ -1,5 +1,12 @@
 import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
+
+import Button from '@material-ui/core/Button';
+import LaunchIcon from '@material-ui/icons/Launch';
+import LinkIcon from '@material-ui/icons/Link';
+import LinkOffIcon from '@material-ui/icons/LinkOff';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+
 import {
     InjectedIntlProps,
     injectIntl,
@@ -17,6 +24,7 @@ import {
     uppercase,
 } from '../../helpers';
 import {
+    alertPush,
     currenciesFetch,
     Currency,
     fetchHistory,
@@ -54,6 +62,7 @@ interface ReduxProps {
 interface DispatchProps {
     fetchCurrencies: typeof currenciesFetch;
     fetchHistory: typeof fetchHistory;
+    fetchAlert: typeof alertPush;
 }
 
 type Props = HistoryProps & ReduxProps & DispatchProps & InjectedIntlProps;
@@ -120,11 +129,11 @@ class HistoryComponent extends React.Component<Props> {
         switch (type) {
           case 'deposits':
               return [
-                  this.props.intl.formatMessage({id: 'page.body.history.deposit.header.txid'}),
                   this.props.intl.formatMessage({id: 'page.body.history.deposit.header.date'}),
                   this.props.intl.formatMessage({id: 'page.body.history.deposit.header.currency'}),
                   this.props.intl.formatMessage({id: 'page.body.history.deposit.header.amount'}),
                   this.props.intl.formatMessage({id: 'page.body.history.deposit.header.status'}),
+                  this.props.intl.formatMessage({id: 'page.body.history.deposit.header.txid'}),
               ];
           case 'withdraws':
               return [
@@ -178,11 +187,34 @@ class HistoryComponent extends React.Component<Props> {
                 );
 
                 return [
-                    <div className="pg-history-elem__hide" key={txid}><a href={blockchainLink} target="_blank" rel="noopener noreferrer">{txid}</a></div>,
                     localeDate(created_at, 'fullDate'),
                     currency && currency.toUpperCase(),
                     wallet && preciseData(amount, wallet.fixed),
                     <span style={{ color: setDepositStatusColor(item.state) }} key={txid}>{state}</span>,
+                    // <div className="pg-history-elem__hide" key={txid}>
+                    //     <a href={blockchainLink} target="_blank" rel="noopener noreferrer">{txid}</a>
+                    // </div>,
+                    <div className="pg-history-elem__hide" key={item.rid}>
+                        {txid ? 
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                style={{ marginRight: '16px', cursor: 'pointer' }} 
+                                onClick={() => this.onCopy(txid)}
+                                startIcon={<FileCopyIcon />}
+                            >
+                                Copy TxID
+                            </Button> : ''
+                        }
+                        {txid ? 
+                            <>
+                                <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
+                                    {<LaunchIcon/>}
+                                </a>
+                            </> : 
+                            <LinkOffIcon />
+                        }
+                    </div>
                 ];
             }
             case 'withdraws': {
@@ -222,6 +254,19 @@ class HistoryComponent extends React.Component<Props> {
         }
     };
 
+    public onCopy = (textToCopy) => {
+        this.copyToClipboard(textToCopy);
+        this.props.fetchAlert({message: ['page.body.wallets.tabs.deposit.ccy.message.success'], type: 'success'});
+    }
+    public copyToClipboard = (text) => {
+        var textField = document.createElement('textarea')
+        textField.innerText = text;
+        document.body.appendChild(textField)
+        textField.select()
+        document.execCommand('copy')
+        textField.remove()
+    };
+
     private getBlockchainLink = (currency: string, txid: string, rid?: string) => {
         const { wallets } = this.props;
         const currencyInfo = wallets && wallets.find(wallet => wallet.currency === currency);
@@ -256,6 +301,7 @@ export const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
     dispatch => ({
         fetchCurrencies: () => dispatch(currenciesFetch()),
         fetchHistory: params => dispatch(fetchHistory(params)),
+        fetchAlert: payload => dispatch(alertPush(payload)),
     });
 
 export const HistoryElement = compose(

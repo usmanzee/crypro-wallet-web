@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { makeStyles, withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import {
+    localeDate,
+} from '../../helpers';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -10,6 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+import { makeStyles, withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 
@@ -48,18 +51,18 @@ const StyledTableCell = withStyles((theme: Theme) =>
 
 type Props = ComponentProps & InjectedIntlProps;
 const ExchangeHistoryComponent = (props: Props) => {
-  const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const classes = useStyles();
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
 
   const {rows} = props;
 
@@ -104,7 +107,7 @@ const ExchangeHistoryComponent = (props: Props) => {
                                                 {row.status}
                                             </StyledTableCell>
                                             <StyledTableCell>
-                                                {row.created_at}
+                                                {localeDate(row.created_at, 'fullDate')}
                                             </StyledTableCell>
                                         </TableRow>
                                     );

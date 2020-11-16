@@ -11,6 +11,9 @@ import { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import Divider from '@material-ui/core/Divider';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -27,7 +30,8 @@ import { WalletItemProps, WalletsDropdown, Decimal } from '../../components';
 import { ExchangeHistory, ExchangeHistoryProps } from '../../containers/ExchangeHistory';
 import { PageHeader } from '../../containers/PageHeader';
 import { globalStyle } from '../../screens/materialUIGlobalStyle';
-import { alertPush, 
+import { 
+    alertPush, 
     RootState, 
     selectUserInfo, 
     selectWallets, 
@@ -63,12 +67,26 @@ interface DispatchProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...globalStyle(theme),
+    swapForm: {
+        textAlign: 'center',
+        width: '40%',
+        margin: '0 auto',
+        [theme.breakpoints.only('md')]: {
+            width: '80%',
+        },
+        [theme.breakpoints.only('sm')]: {
+            width: '80%',
+        },
+        [theme.breakpoints.only('xs')]: {
+            width: '100%',
+        },
+    },
     swapFromFields: {
-        margin: `0px 0px ${theme.spacing(3)}px 0px`,
+        margin: `0px 0px ${theme.spacing(2)}px 0px`,
     },
     swapFields: {
         display: 'flex',
-        margin: `0px 0px ${theme.spacing(3)}px 0px`,
+        margin: `0px 0px ${theme.spacing(2)}px 0px`,
     },
     formControl: {
         marginRight: '4px'
@@ -102,6 +120,14 @@ const useStyles = makeStyles((theme: Theme) =>
         [theme.breakpoints.only('md')]: {
             padding: `0px ${theme.spacing(1)}px`,
         }
+    },
+    list: {
+		display: 'flex',
+		flexDirection: 'row',
+		padding: 0,
+    },
+    swapInfo: {
+        background: theme.palette.action.hover
     },
     historyDivider: {
         margin: `${theme.spacing(4)}px 0px ${theme.spacing(3)}px`,
@@ -367,6 +393,7 @@ const SwapComponent = (props: Props) => {
     const renderAvailableBalance = () => {
        return (
            <>
+
                 <Typography variant="body2" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                     <FormattedMessage id={'page.body.swap.available'} />:
                 </Typography>
@@ -379,23 +406,37 @@ const SwapComponent = (props: Props) => {
         const price = Number(walletsToAmount)/Number(walletsFromAmount);
         return (
            <>
-                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
-                    <FormattedMessage id={'page.body.swap.price'} />:
-                </Typography>
-                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{`1 ${ selectedWalletFromCurrency.toUpperCase() } = ${price} ${selectedWalletToCurrency.toUpperCase()}`}</Typography>
+                <div className={classes.list}>
+                    <ListItem disableGutters dense={true}>
+                        <Typography variant="h6" color="textSecondary">
+                            <FormattedMessage id={'page.body.swap.price'} />
+                        </Typography>
+                    </ListItem>
+                    <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Typography variant="h6" style={{ marginRight: '4px' }}>
+                            {`1 ${ selectedWalletFromCurrency.toUpperCase() } = ${price} ${selectedWalletToCurrency.toUpperCase()}`}
+                        </Typography>
+                    </ListItem>
+                </div>
            </>
        );
     }
     const renderExchangeTradingFee = () => {
         return (
             <>
-                <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
-                <FormattedMessage id={'page.body.swap.fee'} />:
-                </Typography>
-                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>
-                    <Decimal fixed={5}>{selectedWalletToOptionSwapFee}</Decimal>
-                </Typography>
-                <Typography variant="h6" component="div" display="inline">{ selectedWalletToCurrency.toUpperCase() }</Typography>
+                <div className={classes.list}>
+                    <ListItem disableGutters dense={true}>
+                        <Typography variant="h6" color="textSecondary">
+                            <FormattedMessage id={'page.body.swap.fee'} /> %
+                        </Typography>
+                    </ListItem>
+                    <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Typography variant="h6" style={{ marginRight: '4px' }} >
+                            {`${selectedWalletToOptionSwapFee*100}`}
+                            {/* <Decimal fixed={5}>{selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() } */}
+                        </Typography>
+                    </ListItem>
+                </div>
             </>
         );
     };
@@ -403,7 +444,21 @@ const SwapComponent = (props: Props) => {
     const renderReceivableAmount = () => {
             return (
                 <>
-                    <Tooltip title="Estimated price of the swap, not the final price that the swap is executed." placement="right">
+                    <List className={classes.list}>
+                        <ListItem disableGutters dense={true}>
+                            <Typography variant="h6" color="textSecondary">
+                                {/* <FormattedMessage id={'page.body.swap.receive'} /> */}
+                                You will get
+                            </Typography>
+                        </ListItem>
+                        <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Typography variant="h6" style={{ marginRight: '4px' }}>
+                                <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() }
+                            </Typography>
+                        </ListItem>
+                    </List>
+
+                    {/* <Tooltip title="Estimated price of the swap, not the final price that the swap is executed." placement="right">
                         <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                         <FormattedMessage id={'page.body.swap.receive'} />:
                         </Typography>
@@ -411,7 +466,7 @@ const SwapComponent = (props: Props) => {
                     <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>
                         <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal>
                     </Typography>
-                    <Typography variant="h6" component="div" display="inline">{ selectedWalletToCurrency.toUpperCase() }</Typography>
+                    <Typography variant="h6" component="div" display="inline">{ selectedWalletToCurrency.toUpperCase() }</Typography> */}
                 </>
             );
     };
@@ -472,10 +527,7 @@ const SwapComponent = (props: Props) => {
                 <Grid container>
                     <Grid item xs={12} sm ={12} md={12} lg={12}>
                         <Paper className={classes.pageContent}>
-                            <Grid container>
-                                <Grid item md={2} lg={4}></Grid>
-                                <Grid item xs={12} sm={12} md={8} lg={4}>
-                                <div>
+                                <div className={classes.swapForm}>
                                     {walletsFromLoading && walletsToLoading ? 
                                         <CircularProgress size={25}/>
                                         :
@@ -535,14 +587,12 @@ const SwapComponent = (props: Props) => {
                                             </div>
                                             {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
                                                 <>
-                                                    <Box>
-                                                        {renderPrice()}
-                                                    </Box>
-                                                    <Box>
-                                                        {renderExchangeTradingFee()}
-                                                    </Box>
-                                                    <Box mb={3}>
-                                                        {renderReceivableAmount()}
+                                                    <Box className={classes.swapInfo} p={1} mt={2} mb={2}>
+                                                        <List disablePadding={true}>
+                                                            {renderPrice()}
+                                                            {renderExchangeTradingFee()}
+                                                            {renderReceivableAmount()}
+                                                        </List>
                                                     </Box>
                                                 </>
                                             )}
@@ -559,9 +609,6 @@ const SwapComponent = (props: Props) => {
                                         </>
                                     }
                                 </div>
-                                </Grid>
-                                <Grid item md={2} lg={4}></Grid>
-                            </Grid>
                             <Divider className={classes.historyDivider}/>
                             {renderSwapHistory()}
                         </Paper> 

@@ -2,8 +2,10 @@ import { en as customTranslations } from '../custom/translations/en';
 import { nationalitiesNames } from './nationalities';
 
 export const en = {
-    //General Messages
+    //General text
     'no.record.found': 'No Record Found.',
+    'copied.to.clipboard': 'Copied to clipboard.',
+    //End General text
 
     'page.header.navbar.signIn': 'Sign In',
     'page.header.navbar.trade': 'Trade',
@@ -186,7 +188,7 @@ export const en = {
     'page.body.wallets.tabs.deposit.disabled.message': 'Deposit was disabled by administration',
     'page.body.wallets.tabs.deposit.ccy.message.submit': 'Submit a deposit using the following address or QR code. Your deposit will be reflected in your account after {confirmations} confirmations',
     'page.body.wallets.tabs.deposit.ccy.message.address': 'Deposit Address',
-    'page.body.wallets.tabs.deposit.ccy.message.button': 'COPY',
+    'page.body.wallets.tabs.deposit.ccy.message.button': 'Copy',
     'page.body.wallets.tabs.deposit.ccy.message.success': 'Address copied',
     'page.body.wallets.tabs.deposit.ccy.message.error': 'Generating deposit address',
     'page.body.wallets.tabs.deposit.ccy.button.generate': 'Generate',
@@ -194,7 +196,7 @@ export const en = {
 
     'page.body.wallets.tabs.deposit.fiat.message1': 'Deposit using bank transfer',
     'page.body.wallets.tabs.deposit.fiat.message2': 'Please use the following credentials to initiate your bank transfer. Your deposit will be reflected in your account in minimum 2 hours.',
-    'page.body.wallets.tabs.deposit.fiat.message3': 'Use the below reference Id in your payment reference.',
+    'page.body.wallets.tabs.deposit.fiat.message3': 'Please Use the below reference code in your payment reference.',
     'page.body.wallets.tabs.deposit.fiat.bankName': 'Bank Name',
     'page.body.wallets.tabs.deposit.fiat.accountNumber': 'Account number',
     'page.body.wallets.tabs.deposit.fiat.accountName': 'Account name',
@@ -337,6 +339,7 @@ export const en = {
     'page.body.history.deposit.content.status.canceled': 'Cancelled',
     'page.body.history.deposit.content.status.rejected': 'Rejected',
     'page.body.history.deposit.content.status.skipped': 'Skipped',
+    'page.body.history.deposit.content.status.succeed': 'Succceed',
 
     'page.body.history.withdraw': 'Withdrawal History',
     'page.body.history.withdraw.header.id': 'ID',
@@ -358,6 +361,7 @@ export const en = {
     'page.body.history.withdraw.content.status.failed': 'Failed',
     'page.body.history.withdraw.content.status.confirming': 'Confirming',
     'page.body.history.withdraw.content.status.errored': 'Error',
+    'page.body.history.withdraw.content.status.collected': 'Collected',
 
     'page.body.history.trade': 'Trade History',
     'page.body.history.trade.header.id': 'ID',

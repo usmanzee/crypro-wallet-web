@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 import Alert from '@material-ui/lab/Alert';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
-import {
-    Paper,
-	Typography,
-	List,
-	ListItem,
-	ListItemText,
-	Divider
-} from '@material-ui/core';
 
 
 export interface DepositFiatProps {
@@ -23,7 +21,10 @@ export interface DepositFiatProps {
      */
     title: string;
     uid: string;
-    currency: string;
+	currency: string;
+	
+	handleOnCopy: (text: string) => void;
+
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -51,6 +52,20 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'block',
         },
 	},
+	depositInfo: {
+		padding: theme.spacing(2),
+		marginBottom: theme.spacing(2),
+        background: 'rgba(0, 0, 0, 0.01)'
+	},
+	copyTag: {
+        margin: '0px 8px', 
+        cursor: 'pointer',
+        "&:hover": {
+            '& path': {
+                fill: theme.palette.secondary.main,
+            }
+        }
+    },
 	BanksDivider: {
 		margin: `${theme.spacing(2)}px 0px`
 	}
@@ -69,80 +84,12 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
         title,
         uid,
 		currency,
-		referenceTip
+		referenceTip,
+		handleOnCopy
 	} = props;
 
     // const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
     // const depositDescription = (currency === 'usd' || currency === 'eur') ? 'Please using following to deposit using TrasferWise' : description;
-
-//@ts-ignore
-    const bank_account = (id) =>{
-
-        if(id === 'usd'){
-          return  '831-061-555-0'
-        }
-        if (id === 'myr'){
-          return '704-128-334-9'
-        }
-        if (id === 'eur'){
-          return 'BE79-9670-5851-7133'
-        }
-        if(id ==='sgd'){
-          return '704-128-335-7'
-        }
-      }
-      //@ts-ignore
-      const bank_name = (id) =>{
-        if(id === 'usd'){
-         return  "Bank Cod(Swift/Bic): CMFGUS33"
-        }
-        if (id === 'myr'){
-          return "OCBC Bank"
-        }
-        if (id === 'eur'){
-          return "Bank Cod(Swift/Bic): TRWIBEB1XXX"
-        }
-        if(id ==='sgd'){
-          return "OCBC Bank"
-        }
-    
-      }
-      //@ts-ignore
-      const bank_title = (id) =>{
-        if(id === 'usd'){
-         return  "B4U Group of Companies, S.L"
-        }
-        if (id === 'myr'){
-          return "BRAVO Tech Trading"
-        }
-        if (id === 'eur'){
-          return "B4U Group of Companies, S.L"
-        }
-        if(id ==='sgd'){
-          return "BRAVO Tech Trading"
-        }
-    
-      }
-    
-    
-    const bankData = uid => [
-        {
-            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.bankName" />,
-            value: bank_name(currency),
-        },
-        {
-            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountNumber" />,
-            value: bank_account(currency),
-        },
-        {
-            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.accountName" />,
-            value: bank_title(currency),
-        },
-        {
-            key: <FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />,
-            value: uid,
-        },
-    ];
 
     const renderDetails = (detail, index: number) => {
 
@@ -184,44 +131,46 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
     };
 
     return (
-      <>
-      	<Paper elevation={2} className={classes.networkPaper}>
-          	<div className={classes.networkPaperHeader}>
-              	<Typography variant="body1" component="div" display="inline">
-                  	<FormattedMessage id={'page.body.deposit.network.title'} /> 
-              	</Typography>
-          	</div> 
-          	<div className="cr-deposit-fiat">
-              	<Typography variant="h6" component="div" gutterBottom>
-					  {title}
-				</Typography>
-              	<Typography variant="subtitle1" component="div" gutterBottom className={classes.depositDescription}>
-					  {description}
-				</Typography>
-				 <Alert severity="warning" className={classes.depositDescription}>
-					<Typography variant="button" component="div">
-						{referenceTip}
+      	<>
+			<Paper elevation={2} className={classes.networkPaper}>
+				<div className={classes.networkPaperHeader}>
+					<Typography variant="body1" display="inline">
+						<FormattedMessage id={'page.body.deposit.network.title'} /> 
 					</Typography>
-				</Alert>
+				</div> 
+				<div className="cr-deposit-fiat">
+					<Typography variant="h6" gutterBottom>
+						{title}
+					</Typography>
+					<Typography variant="subtitle1" gutterBottom className={classes.depositDescription}>
+						{description}
+					</Typography>
+					<Paper variant="outlined" className={classes.depositInfo}>
+						<Alert severity="info" color="warning">
+							<Typography variant="button">
+								{referenceTip}
+							</Typography>
+						</Alert>
 
-				<List className={classes.list} disablePadding={true}>
-					<ListItem disableGutters>
-						<Typography variant="h6" display="inline" gutterBottom>
-							Reference ID
-						</Typography>
-					</ListItem>
-					<ListItem disableGutters>
-						<Typography variant="h6" display="inline" gutterBottom>
-							{uid}
-						</Typography>
-					</ListItem>
-				</List>
-				<Divider className={classes.BanksDivider}/>
-				
-				{bankCurrencies.map(renderDetails)}
-          	</div>
-      	</Paper>
-      </>
+						<List className={classes.list}>
+							<ListItem disableGutters>
+								<Typography variant="h6" display="inline" gutterBottom>
+									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
+								</Typography>
+							</ListItem>
+							<ListItem disableGutters>
+								<Typography variant="h6" display="inline" gutterBottom>
+									{uid}
+									<FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>handleOnCopy(uid)} />
+								</Typography>
+							</ListItem>
+						</List>
+					</Paper>
+					{/* <Divider className={classes.BanksDivider}/> */}
+					{bankCurrencies.map(renderDetails)}
+				</div>
+			</Paper>
+     	</>
     );
 };
 
@@ -281,30 +230,3 @@ const bankCurrencies = [
 		]
 	}
 ];
-
-const values = {
-	"localizedLastName": "King",
-	"lastName": {
-		"localized": {
-			"en_US": "King"
-		},
-		"preferredLocale": {
-			"country": "US",
-			"language": "en"
-		}
-	},
-	"firstName": {
-		"localized": {
-			"en_US": "Benn"
-		},
-		"preferredLocale": {
-			"country": "US",
-			"language": "en"
-		}
-	},
-	"profilePicture": {
-		"displayImage": "urn:li:digitalmediaAsset:C5603AQGjLGZPOyRBBA"
-	},
-	"id": "fm0B3D6y3I",
-	"localizedFirstName": "Benn"
-}

@@ -24,10 +24,7 @@ import {
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -269,23 +266,23 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                 <TableContainer className={classes.tableContainer}>
                     <Table aria-label="simple table">
                         <TableHead>
-                        <TableRow>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.coin'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.total'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.available'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.locked'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.actions'} />
-                            </this.StyledTableCell>
-                        </TableRow>
+                            <TableRow>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.coin'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.total'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.available'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.locked'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.actions'} />
+                                </this.StyledTableCell>
+                            </TableRow>
                         </TableHead>
                         {walletsData.length ? 
 

@@ -27,7 +27,8 @@ import {
     selectWalletsLoading, 
     User, 
     walletsData, 
-    walletsFetch, 
+    walletsFetch,
+    alertPush
 } from '../../modules';
 import { WalletHistory } from '../../containers/Wallets/History';
 import { PageHeader } from '../../containers/PageHeader';
@@ -46,6 +47,7 @@ interface ReduxProps {
 interface DispatchProps {
     fetchWallets: typeof walletsFetch;
     clearWallets: () => void;
+    pushAlert: typeof alertPush;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -215,6 +217,19 @@ const DepositFiatComponent = (props: Props) => {
         setAnchorEl(null);
     };
 
+    const onCopy = (textToCopy: string) => {
+        copyToClipboard(textToCopy);
+        props.pushAlert({message: ['copied.to.clipboard'], type: 'success'});
+    }
+    const copyToClipboard = (text) => {
+        var textField = document.createElement('textarea')
+        textField.innerText = text;
+        document.body.appendChild(textField)
+        textField.select()
+        document.execCommand('copy')
+        textField.remove()
+    };
+
     const translate = (id: string) => props.intl.formatMessage({ id });
 
     const popperOpen = Boolean(anchorEl);
@@ -318,7 +333,14 @@ const DepositFiatComponent = (props: Props) => {
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} className={classes.depositCol}>
-                            <DepositFiat title={title} description={description} referenceTip={referenceTip} uid={user ? user.uid : ''} currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}/>
+                            <DepositFiat 
+                                title={title} 
+                                description={description} 
+                                referenceTip={referenceTip} 
+                                uid={user ? user.uid : ''} 
+                                currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}
+                                handleOnCopy= {onCopy}
+                            />
                         </Grid>
                     </Grid>
                     <Divider className={classes.historyDivider}/>
@@ -341,6 +363,7 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
 const mapDispatchToProps = dispatch => ({
     fetchWallets: () => dispatch(walletsFetch()),
     clearWallets: () => dispatch(walletsData([])),
+    pushAlert: payload => dispatch(alertPush(payload)),
 });
 
 export const DepositFiatScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(DepositFiatComponent))

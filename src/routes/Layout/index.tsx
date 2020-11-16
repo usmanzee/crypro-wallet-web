@@ -11,6 +11,7 @@ import { WalletsFetch } from '../../containers';
 import { toggleColorTheme } from '../../helpers';
 //import loadable from '@loadable/component';
 // Material UI Components
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles, Theme } from '@material-ui/core/styles';
 //Material UI Components END
 
@@ -108,6 +109,10 @@ const useStyles = (theme: Theme) => ({
         flexGrow: 1,
         // margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
     },
+    loader: {
+        position: 'absolute', 
+        top: '40%'
+    }
 });
 
 export type LayoutProps = ReduxProps & DispatchProps & OwnProps & InjectedIntlProps;
@@ -115,7 +120,8 @@ export type LayoutProps = ReduxProps & DispatchProps & OwnProps & InjectedIntlPr
 const renderLoader = () => (
     <>
     <div className="pg-loader-container">
-        <Spinner animation="border" variant="primary" style={{ position: 'absolute', top: '40%' }}/>
+        {/* <Spinner className="pg-loader-container__loader" animation="border" variant="primary"/> */}
+        <CircularProgress className="pg-loader-container__loader" />
     </div>
     </>
 );

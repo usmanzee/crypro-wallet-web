@@ -109,9 +109,9 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
                     <Typography variant="h6" component="div" display="inline" className={classes.walletCurrencyTag}>
                         { selectedWallet.currency.toUpperCase() }
                     </Typography>
-                    <Typography variant="body2" component="div" display="inline" className={classes.walletCurrencyName}>
+                    {/* <Typography variant="body2" component="div" display="inline" className={classes.walletCurrencyName}>
                         { selectedWallet.name }
-                    </Typography>
+                    </Typography> */}
                     <ArrowDropDownIcon style={{ marginTop: '4px' }}/> 
                 </>) :
                 ""

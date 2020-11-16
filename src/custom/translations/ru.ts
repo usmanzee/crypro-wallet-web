@@ -4,6 +4,7 @@ import { nationalitiesNames } from '../../translations/nationalities';
 export const ru: LangType = {
     //General Messages
     'no.record.found': 'Записей не найдено.',
+    'copied.to.clipboard': 'Скопировано в буфер обмена.',
     
     'page.header.navbar.signIn': 'Войти',
     'page.header.navbar.trade': 'Биржа',
@@ -192,7 +193,7 @@ export const ru: LangType = {
 
     'page.body.wallets.tabs.deposit.fiat.message1': 'Вы можете внести депозит в банке, используя следующие реквизиты',
     'page.body.wallets.tabs.deposit.fiat.message2': 'Пожалуйста, используйте следующие учетные данные, чтобы инициировать банковский перевод. Ваш депозит будет отражен в вашем аккаунте минимум через 2 часа..',
-    'page.body.wallets.tabs.deposit.fiat.message3': 'Используйте указанный ниже идентификатор ссылки в своей платежной информации.',
+    'page.body.wallets.tabs.deposit.fiat.message3': 'Пожалуйста, используйте приведенный ниже ссылочный код в своей платежной ссылке.',
     'page.body.wallets.tabs.deposit.fiat.bankName': 'Название банка',
     'page.body.wallets.tabs.deposit.fiat.accountNumber': 'Номер счета',
     'page.body.wallets.tabs.deposit.fiat.accountName': 'Имя счета',
@@ -335,6 +336,7 @@ export const ru: LangType = {
     'page.body.history.deposit.content.status.canceled': 'Отменен',
     'page.body.history.deposit.content.status.rejected': 'Отвергнут',
     'page.body.history.deposit.content.status.skipped': 'Пропущен',
+    'page.body.history.deposit.content.status.succeed': 'Добиться успеха',
 
     'page.body.history.withdraw': 'История выводов',
     'page.body.history.withdraw.header.id': 'ID',
@@ -356,6 +358,7 @@ export const ru: LangType = {
     'page.body.history.withdraw.content.status.failed': 'Неудачный',
     'page.body.history.withdraw.content.status.confirming': 'Подтверждается',
     'page.body.history.withdraw.content.status.errored': 'Ошибка',
+    'page.body.history.withdraw.content.status.collected': 'Собрано',
 
     'page.body.history.trade': 'История ордеров',
     'page.body.history.trade.header.id': 'ID',
