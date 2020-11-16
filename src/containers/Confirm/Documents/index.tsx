@@ -134,14 +134,14 @@ class DocumentsComponent extends React.Component<Props, DocumentsState> {
                                 <fieldset className={expirationFocusedClass}>
                                     {expiration && <legend>{this.translate('page.body.kyc.documents.expiryDate')}</legend>}
                                     <MaskInput
-                                      maskString="00/00/0000"
-                                      mask="00/00/0000"
-                                      onChange={this.handleChangeExpiration}
-                                      onFocus={this.handleFieldFocus('expiration')}
-                                      onBlur={this.handleFieldFocus('expiration')}
-                                      value={expiration}
-                                      className="group-input"
-                                      placeholder={this.translate('page.body.kyc.documents.expiryDate')}
+                                        maskString="00/00/0000"
+                                        mask="00/00/0000"
+                                        onChange={this.handleChangeExpiration}
+                                        onFocus={this.handleFieldFocus('expiration')}
+                                        onBlur={this.handleFieldFocus('expiration')}
+                                        value={expiration}
+                                        className="group-input"
+                                        placeholder={this.translate('page.body.kyc.documents.expiryDate')}
                                     />
                                 </fieldset>
                             </div>

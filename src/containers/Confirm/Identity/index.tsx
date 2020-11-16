@@ -48,6 +48,7 @@ interface OnChangeEvent {
 
 interface IdentityState {
     city: string;
+    country: string;
     countryOfBirth: string;
     dateOfBirth: string;
     firstName: string;
@@ -82,6 +83,7 @@ type Props = ReduxProps & DispatchProps & InjectedIntlProps;
 class IdentityComponent extends React.Component<Props, IdentityState> {
     public state = {
         city: '',
+        country: '',
         countryOfBirth: '',
         dateOfBirth: '',
         firstName: '',
@@ -114,7 +116,8 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
             dataCountries: Object.values(countries.getNames(lang))
         }, () => {
             this.setState({
-                countryOfBirth: this.state.dataCountries[0]
+                country: this.state.dataCountries[0],
+                countryOfBirth: countries.getAlpha2Code(this.state.dataCountries[0], this.props.lang),
             })
         });
     }
@@ -147,6 +150,7 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
         const { sendSuccess, lang } = this.props;
         const {
             city,
+            country,
             dateOfBirth,
             firstName,
             lastName,
@@ -208,7 +212,9 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
 
         // const dataCountries = Object.values(countries.getNames(lang));
         
-        const onSelectCountry = value => this.selectCountry(dataCountries[value]);
+        const onSelectCountry = (value) => {   
+            this.selectCountry(dataCountries[value]);
+        }
 
         return (
           <div className="pg-confirm__content-identity">
@@ -313,7 +319,7 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
                             getOptionLabel={(option) => {
                                 return option;
                             }}
-                            value={countryOfBirth}
+                            value={country}
                             renderInput={(params) => (
                                 <TextField 
                                     {...params} 
@@ -459,8 +465,8 @@ class IdentityComponent extends React.Component<Props, IdentityState> {
 
     private selectCountry = (value: string) => {
         this.setState({
-            // countryOfBirth: countries.getAlpha2Code(value, this.props.lang),
-            countryOfBirth: value,
+            country: value,
+            countryOfBirth: countries.getAlpha2Code(value, this.props.lang),
         });
     };
 
