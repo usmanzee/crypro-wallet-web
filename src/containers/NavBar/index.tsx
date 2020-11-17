@@ -269,7 +269,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                             <Paper>
                                 <List disablePadding>
                                     {this.renderProfileLinks()}
-                                    <ListItem className={classes.dropdownLink} button onClick={this.props.logoutFetch}>
+                                    <ListItem className={classes.dropdownLink} button onClick={this.handleLogoutClick}>
                                         <ListItemIcon>
                                             <ExitToAppIcon />
                                         </ListItemIcon>
@@ -322,7 +322,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                 {profileLinks.map((profileLink) => {
                     return (
                         <>
-                            <ListItem button className={classes.dropdownLink} component={Link} to={profileLink.url}>
+                            <ListItem button className={classes.dropdownLink} component={Link} to={profileLink.url} onClick={this.handleProfilePanelClose}>
                                 <ListItemIcon>
                                     {profileLink.iconComponent}
                                 </ListItemIcon>
@@ -528,6 +528,11 @@ class NavBarComponent extends React.Component<Props, IState> {
     private redirectToLanding = () => {
         this.props.history.push('/');
     };
+
+    private handleLogoutClick = () => {
+        this.handleProfilePanelClose();
+        this.props.logoutFetch();
+    }
 }
 
 const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> =

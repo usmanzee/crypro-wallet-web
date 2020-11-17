@@ -20,6 +20,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { cleanPositiveFloatInput} from '../../helpers';
 import { fetchRate, getExchangeHistory, postExchange } from '../../apis/exchange';
@@ -151,6 +152,8 @@ const SwapComponent = (props: Props) => {
     const defaultSwapFee = 0.02;
     const defaultMinSwapFee = 0.1;
     const defaultMaxSwapFee = 10000;
+
+    const WAIT_INTERVAL = 1000;
     //Props
     const classes = useStyles();
     const { wallets, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading } = props;
@@ -173,6 +176,7 @@ const SwapComponent = (props: Props) => {
     const [walletsFromError, setWalletsFromError] = React.useState<boolean>(false);
     const [walletsFromErrorMessage, setWalletsFromErrorMessage] = React.useState<string>('');
     const [walletsToAmount, setWalletsToAmount] = React.useState<string | undefined>('');
+    const [fetchingRate, setFetchingRate] = React.useState(false);
     const [exchangeHistory, setExchangeHistory] = React.useState<ExchangeHistoryProps[]>([]);
 
     //UseEffect
@@ -228,7 +232,14 @@ const SwapComponent = (props: Props) => {
 
     React.useEffect(() => {
         handleWalletsFromAmountErrors(walletsFromAmount);
-        getExchangeRates();
+        const timeOutId = setTimeout(() => {
+            return getExchangeRates();
+        }, WAIT_INTERVAL);
+        return () => {
+            setFetchingRate(true);
+            setWalletsToAmount('');
+            return clearTimeout(timeOutId);
+        };
     }, [walletsFromAmount])
 
     React.useEffect(() => {
@@ -349,15 +360,28 @@ const SwapComponent = (props: Props) => {
     }
     
     const getExchangeRates = async () => {
-        if(walletsFromAmount && Number(walletsFromAmount) > 0) {
-            props.exchangeRateFetch({
-                base_currency: selectedWalletToCurrency,
-                qoute_currency: selectedWalletFromCurrency,
-                qoute_amount: walletsFromAmount
-            });
+        // if(walletsFromAmount && Number(walletsFromAmount) > 0) {
+        //     props.exchangeRateFetch({
+        //         base_currency: selectedWalletToCurrency,
+        //         qoute_currency: selectedWalletFromCurrency,
+        //         qoute_amount: walletsFromAmount
+        //     });
             
+        // } else {
+        //     props.exchangeRateReset();
+        // }
+
+        if(walletsFromAmount && Number(walletsFromAmount) > 0) {
+            setFetchingRate(true);
+            setWalletsToAmount('');
+            const response = await fetchRate(selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
+            if(response.data) {
+                setFetchingRate(false);
+                setWalletsToAmount(response.data);
+            }
         } else {
-            props.exchangeRateReset();
+            setFetchingRate(false);
+            setWalletsToAmount('');
         }
     }
     const isValidForm = () => {
@@ -403,7 +427,9 @@ const SwapComponent = (props: Props) => {
        );
     }
     const renderPrice = () => {
-        const price = Number(walletsToAmount)/Number(walletsFromAmount);
+        let price: any = Number(walletsToAmount)/Number(walletsFromAmount);
+        price = parseFloat(price).toFixed(5);
+        
         return (
            <>
                 <div className={classes.list}>
@@ -413,9 +439,13 @@ const SwapComponent = (props: Props) => {
                         </Typography>
                     </ListItem>
                     <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Typography variant="h6" style={{ marginRight: '4px' }}>
-                            {`1 ${ selectedWalletFromCurrency.toUpperCase() } = ${price} ${selectedWalletToCurrency.toUpperCase()}`}
-                        </Typography>
+                        <Typography variant="h6">
+                            {fetchingRate ? '--' :
+                                <>
+                                        {`1 ${ selectedWalletFromCurrency.toUpperCase() } ≃ ${price} ${selectedWalletToCurrency.toUpperCase()}`}
+                                </>
+                            }
+                            </Typography>
                     </ListItem>
                 </div>
            </>
@@ -431,8 +461,12 @@ const SwapComponent = (props: Props) => {
                         </Typography>
                     </ListItem>
                     <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Typography variant="h6" style={{ marginRight: '4px' }} >
-                            {`${selectedWalletToOptionSwapFee*100}`}
+                        <Typography variant="h6" >
+                            {fetchingRate ? '--' :
+                                <>
+                                        {`${selectedWalletToOptionSwapFee*100}`}
+                                </>
+                            }
                             {/* <Decimal fixed={5}>{selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() } */}
                         </Typography>
                     </ListItem>
@@ -452,8 +486,12 @@ const SwapComponent = (props: Props) => {
                             </Typography>
                         </ListItem>
                         <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Typography variant="h6" style={{ marginRight: '4px' }}>
-                                <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() }
+                            <Typography variant="h6">
+                                {fetchingRate ? '--' :
+                                    <>
+                                            <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() }
+                                    </>
+                                }
                             </Typography>
                         </ListItem>
                     </List>
@@ -463,7 +501,7 @@ const SwapComponent = (props: Props) => {
                         <FormattedMessage id={'page.body.swap.receive'} />:
                         </Typography>
                     </Tooltip>
-                    <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>
+                    <Typography variant="h6" component="div" display="inline">
                         <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal>
                     </Typography>
                     <Typography variant="h6" component="div" display="inline">{ selectedWalletToCurrency.toUpperCase() }</Typography> */}
@@ -483,10 +521,10 @@ const SwapComponent = (props: Props) => {
         );
     }
     const walletsFromPopperOpen = Boolean(walletsFomAnchorEl);
-    const walletsFromPopperId = walletsFromPopperOpen ? 'wallet-currencies' : undefined;
+    const walletsFromPopperId = walletsFromPopperOpen ? 'wallets-from' : undefined;
 
     const walletsToPopperOpen = Boolean(walletsToanchorEl);
-    const walletsToPopperId = walletsToPopperOpen ? 'wallet-currencies' : undefined;
+    const walletsToPopperId = walletsToPopperOpen ? 'wallets-to' : undefined;
     
     const translate = (id: string) => props.intl.formatMessage({ id });
 
@@ -574,11 +612,16 @@ const SwapComponent = (props: Props) => {
                                                     <OutlinedInput
                                                         id="buy"
                                                         label={<FormattedMessage id={'page.body.swap.input.buy'} />}
-                                                        placeholder={isFetchingRate ? 'Loading...' : '0.00'}
+                                                        placeholder={fetchingRate ? '' : ''}
                                                         type='number'
                                                         value={walletsToAmount}
                                                         onChange={handleWalletsToAmountChange}
                                                         disabled={true}
+                                                        startAdornment={
+                                                            <InputAdornment position="start">
+                                                                {fetchingRate && <CircularProgress size={14}/>}
+                                                            </InputAdornment>
+                                                        }
                                                     />
                                                 </FormControl>
                                                 <div className={classes.walletSelect}>

@@ -6,6 +6,7 @@ export const fetchRate = (base_currency, qoute_currency, qoute_amount) => {
         { base_currency, qoute_currency, qoute_amount }
     )
      //.then(response => (response.data))
+    //  .then(x => new Promise(resolve => setTimeout(() => resolve(x), 2000)))
 };
 
 export const postExchange = (base_currency, qoute_currency, qoute_amount) => {

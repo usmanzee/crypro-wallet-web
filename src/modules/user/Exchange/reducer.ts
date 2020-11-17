@@ -10,14 +10,14 @@ import {
 
 
 export interface ExchangeState {
-    isRateFetching: boolean;
+    isFetchingRate: boolean;
     loading: boolean;
     exchangeSuccess: boolean;
     rate: string;
 }
 
 export const initialExchangeState: ExchangeState = {
-    isRateFetching: false,
+    isFetchingRate: false,
     loading: false,
     exchangeSuccess: false,
     rate: '0.00'
@@ -28,18 +28,18 @@ export const exchangeReducer = (state: ExchangeState = initialExchangeState, act
         case EXCHANGE_RATE_FETCH:
             return {
                 ...state,
-                isRateFetching: true
+                isFetchingRate: true
             }
         case EXCHANGE_RATE_SUCCESS:
             return {
                 ...state,
-                isRateFetching: false,
+                isFetchingRate: false,
                 rate: action.payload.rate
             }
         case EXCHANGE_RATE_ERROR:
             return {
                 ...state,
-                isRateFetching: false,
+                isFetchingRate: false,
                 rate: '0.00',
                 error: action.payload.message
             }

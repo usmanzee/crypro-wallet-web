@@ -193,7 +193,7 @@ class SidebarContainer extends React.Component<Props, State> {
 
     public renderNavItems = (address: string) => (values: string[], index: number) => {
 
-        const { currentMarket, classes, userLoading } = this.props;
+        const { currentMarket, mobileOpen, handleDrawerToggle, classes, userLoading } = this.props;
         
         const [name, url, img, optionalURL] = values;
         
@@ -205,7 +205,7 @@ class SidebarContainer extends React.Component<Props, State> {
         });
         return (
             <React.Fragment>
-                <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to={path}>
+                <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to={path} onClick={mobileOpen ? handleDrawerToggle : undefined }>
                     <ListItemIcon>
                         {userLoading ? 
                             <Skeleton width={50}/> :
@@ -222,7 +222,7 @@ class SidebarContainer extends React.Component<Props, State> {
     };
 
     public renderProfileLink = () => {
-        const { isLoggedIn, location, classes, userLoading } = this.props;
+        const { isLoggedIn, mobileOpen, handleDrawerToggle, location, classes, userLoading } = this.props;
         const address = location ? location.pathname : '';
         const isActive = address.includes('/profile');
 
@@ -232,7 +232,7 @@ class SidebarContainer extends React.Component<Props, State> {
 
         return isLoggedIn && (
             <React.Fragment>
-                <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to='/profile'>
+                <ListItem className={isActive ? classes.drawerActiveLink : classes.drawerLink} button component={Link} to='/profile' onClick={mobileOpen ? handleDrawerToggle : undefined }>
                     <ListItemIcon>
                         {userLoading ? 
                             <Skeleton width={50}/> :

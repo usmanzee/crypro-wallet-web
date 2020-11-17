@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     currencySelect: {
         display: 'flex',
+        // width: '200px'
     },
     currencyIcon: {
         width: "25px", 
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
       border: '1px solid rgba(27,31,35,.15)',
       boxShadow: '0 3px 12px rgba(27,31,35,.15)',
       borderRadius: 3,
-    //   width: 300,
+      width: 200,
       zIndex: 1,
       fontSize: 13,
       color: '#586069',
@@ -121,7 +122,7 @@ export const WalletsDropdown = (props: WalletDropdownProps) => {
                 id={popperId}
                 open={popperOpen}
                 anchorEl={anchorEl}
-                placement="bottom-start"
+                placement="bottom"
                 className={classes.popper}
             >
                 <div className={classes.selectWalletHeader}>

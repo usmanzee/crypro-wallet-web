@@ -166,7 +166,7 @@ class EstimatedValueContainer extends React.Component<Props> {
         return (
             <>
                 <Typography variant="h5" display="inline" style={{ marginRight: '3px' }}>
-                     = 
+                    ≈
                 </Typography>
                 <Typography variant="h5" display="inline" style={{ marginRight: '3px' }}>
                     {estimatedValueSecondary}
