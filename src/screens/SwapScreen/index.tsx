@@ -353,9 +353,9 @@ const SwapComponent = (props: Props) => {
     
     const setWalletFromMaxAmount = () => {
         const maxAvailableAmount = selectedWalletFromOption ? selectedWalletFromOption.balance : '0';
-        setWalletsFromAmount(maxAvailableAmount);
         if(Number(maxAvailableAmount) > 0) {
-            getExchangeRates();
+            setWalletsFromAmount(maxAvailableAmount);
+            // getExchangeRates();
         }
     }
     
@@ -371,7 +371,7 @@ const SwapComponent = (props: Props) => {
         //     props.exchangeRateReset();
         // }
 
-        if(walletsFromAmount && Number(walletsFromAmount) > 0) {
+        if((walletsFromAmount && Number(walletsFromAmount) > 0) && (selectedWalletFromCurrency !== selectedWalletToCurrency)) {
             setFetchingRate(true);
             setWalletsToAmount('');
             const response = await fetchRate(selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
