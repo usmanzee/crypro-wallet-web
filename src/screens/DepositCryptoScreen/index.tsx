@@ -21,7 +21,7 @@ import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
-import { DepositCrypto, WalletItemProps, CryptoIcon } from '../../components';
+import { DepositCrypto, DepositTag, WalletItemProps, CryptoIcon } from '../../components';
 import { 
     RootState, 
     alertPush,
@@ -242,7 +242,7 @@ const DepositWalletCrypto = (props: Props) => {
     };
 
     const handleOnCopy = () => {
-        props.fetchAlert({ message: ['page.body.wallets.tabs.deposit.ccy.message.success'], type: 'success'});
+        props.fetchAlert({ message: ['copied.to.clipboard'], type: 'success'});
     };
 
     const handleGenerateAddress = () => {
@@ -387,7 +387,8 @@ const DepositWalletCrypto = (props: Props) => {
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} className={classes.depositCol}>
                             <DepositCrypto
-                                address={walletAddress}
+                                address={walletAddress.split('?dt=').length === 2 ? walletAddress.split('?dt=')[0] : walletAddress}
+                                tag = {walletAddress.split('?dt=')[1]}
                                 handleOnCopy={handleOnCopy}
                                 error={error}
                                 text={text}
@@ -400,6 +401,17 @@ const DepositWalletCrypto = (props: Props) => {
                                 buttonLabel={buttonLabel}
                                 currency={selectedWalletOption ? selectedWalletOption.currency : ''}
                             />
+                             {/* {walletAddress.split('?dt=').length === 2 ?
+                                <DepositTag
+                                    data={walletAddress.split('?dt=')[1]}
+                                    handleOnCopy={() => {navigator.clipboard.writeText(walletAddress.split('?dt=')[1]);}}
+                                    error={error}
+                                    text={'Add Destination Tag in your deposit'}
+                                    disabled={walletAddress === ''}
+                                    copiableTextFieldText={'Destination Tag'}
+                                    copyButtonText={translate('page.body.wallets.tabs.deposit.ccy.message.button')}
+                                />:null
+                            } */}
                         </Grid>
                     </Grid>
                     <Divider className={classes.historyDivider}/>

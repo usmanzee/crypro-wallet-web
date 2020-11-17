@@ -77,7 +77,7 @@ const DepositTag: React.FunctionComponent<DepositTagProps> = (props: DepositTagP
                                 value={data ? data : error}
                                 fieldId={data ? 'copy_deposit_1' : 'copy_deposit_2'}
                                 copyButtonText={copyButtonText}
-                                disabled={disabled}
+                                // disabled={disabled}
                             />
                             
                         </fieldset>

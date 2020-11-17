@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
 
-import Button from '@material-ui/core/Button';
 import LaunchIcon from '@material-ui/icons/Launch';
-import LinkIcon from '@material-ui/icons/Link';
 import LinkOffIcon from '@material-ui/icons/LinkOff';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 import {
     InjectedIntlProps,
@@ -13,7 +10,7 @@ import {
 } from 'react-intl';
 import {connect, MapDispatchToPropsFunction} from 'react-redux';
 import { compose } from 'redux';
-import { History, Pagination } from '../../components';
+import { History, Pagination, CopyTag } from '../../components';
 import { Decimal } from '../../components/Decimal';
 import {
     localeDate,
@@ -196,15 +193,8 @@ class HistoryComponent extends React.Component<Props> {
                     // </div>,
                     <div className="pg-history-elem__hide" key={item.rid}>
                         {txid ? 
-                            <Button
-                                variant="outlined"
-                                size="small"
-                                style={{ marginRight: '16px', cursor: 'pointer' }} 
-                                onClick={() => this.onCopy(txid)}
-                                startIcon={<FileCopyIcon />}
-                            >
-                                Copy TxID
-                            </Button> : ''
+                            <CopyTag text={txid}/>
+                            : ''
                         }
                         {txid ? 
                             <>
@@ -252,19 +242,6 @@ class HistoryComponent extends React.Component<Props> {
                 return [];
             }
         }
-    };
-
-    public onCopy = (textToCopy) => {
-        this.copyToClipboard(textToCopy);
-        this.props.fetchAlert({message: ['page.body.wallets.tabs.deposit.ccy.message.success'], type: 'success'});
-    }
-    public copyToClipboard = (text) => {
-        var textField = document.createElement('textarea')
-        textField.innerText = text;
-        document.body.appendChild(textField)
-        textField.select()
-        document.execCommand('copy')
-        textField.remove()
     };
 
     private getBlockchainLink = (currency: string, txid: string, rid?: string) => {

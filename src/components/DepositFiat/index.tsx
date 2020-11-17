@@ -146,7 +146,7 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 						{description}
 					</Typography>
 					<Paper variant="outlined" className={classes.depositInfo}>
-						<Alert severity="info" color="warning">
+						<Alert severity="info" color="error">
 							<Typography variant="button">
 								{referenceTip}
 							</Typography>

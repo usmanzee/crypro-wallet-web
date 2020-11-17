@@ -385,7 +385,9 @@ export const ru: LangType = {
     'page.body.deposit.tips.tip2': 'Пока не будет сделано {confirmations} подтверждения, эквивалентная сумма ваших активов будет временно недоступна для вывода.',
     'page.body.deposit.network.title': 'Депозитная сеть',
     'page.body.deposit.network.message': 'Пожалуйста, выберите соответствующий формат адреса депозита B4U в соответствии с типом публичной сети переведенного кошелька. Обратите внимание, что некоторые кошельки могут поддерживать несколько типов публичных цепочек передачи токенов, например, обменные кошельки обычно поддерживают депозиты из типов USDT ERC20, OMNI и TRC20. Убедитесь, что тип сети публичной сети, выбранный во время перевода, такой же, как и для B4U Deposits.',
-    'page.body.deposit.network.address.text': '{currency} адрес.',
+    'page.body.deposit.network.address.text': '{currency} адрес',
+    'page.body.deposit.network.tag.text': '{currency} тег',
+    'page.body.deposit.network.tag.instruction': 'Пожалуйста, введите данные тега и адреса, которые необходимы для успешного внесения {currency} на ваш счет B4U.',
     'page.body.deposit.network.address.instructions.title': 'Отправляйте только {currency} на этот депозитный адрес.',
     'page.body.deposit.network.address.instructions.description': 'Отправка монеты или токена, отличного от {currency}, на этот адрес может привести к потере вашего депозита.',
 

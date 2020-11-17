@@ -4,7 +4,7 @@ import {
     injectIntl,
 } from 'react-intl';
 import { connect, MapDispatchToPropsFunction } from 'react-redux';
-import { History, Pagination, WalletItemProps } from '../../components';
+import { History, Pagination, WalletItemProps, CopyTag } from '../../components';
 import { Decimal } from '../../components/Decimal';
 //import { Table, Thead,  Tr, Th, } from 'react-super-responsive-table'
 //import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
@@ -195,6 +195,7 @@ export class WalletTable extends React.Component<Props, IState> {
                 return list.sort((a, b) => {
                     return localeDate(a.created_at, 'fullDate') > localeDate(b.created_at, 'fullDate') ? -1 : 1;
                 }).map((item, index) => {
+                    console.log(item);
                     const amount = 'amount' in item ? Number(item.amount) : Number(item.price) * Number(item.volume);
                     const confirmations = type === 'deposits' && item.confirmations;
                     const itemCurrency = currencies && currencies.find(cur => cur.id === currency);
@@ -205,7 +206,12 @@ export class WalletTable extends React.Component<Props, IState> {
                         localeDate(item.created_at, 'fullDate'),
                         state,
                         <Decimal key={index} fixed={fixed}>{amount}</Decimal>,
-                        <div className="pg-history-elem__hide" key={item.rid}><a href={blockchainLink} target="_blank" rel="noopener noreferrer">{<LaunchIcon/>}</a></div>
+                        <div className="pg-history-elem__hide" key={item.rid}>
+                            <CopyTag text={item.txid} />
+                            <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
+                                {<LaunchIcon/>}
+                            </a>
+                        </div>
                     ];
                 });    
             }
@@ -226,7 +232,12 @@ export class WalletTable extends React.Component<Props, IState> {
                         state,
                         <Decimal key={index} fixed={fixed}>{amount}</Decimal>,
                         <Decimal key={index} fixed={fixed}>{item.fee}</Decimal>,
-                        <div className="pg-history-elem__hide" key={item.blockchain_txid }><a href={blockchainLink} target="_blank" rel="noopener noreferrer">{<LaunchIcon/>}</a></div>
+                        <div className="pg-history-elem__hide" key={item.blockchain_txid }>
+                            <CopyTag text={item.blockchain_txid} />
+                            <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
+                                {<LaunchIcon/>}
+                            </a>
+                        </div>
                     ];
                 });
             }

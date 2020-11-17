@@ -38,3 +38,4 @@ export * from './TwoFactorAuth';
 export * from './WalletItem';
 export * from './WalletList';
 export * from './WalletsDropdown';
+export * from './CopyTag';

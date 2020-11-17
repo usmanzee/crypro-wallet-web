@@ -386,7 +386,9 @@ export const es: LangType = {
     'page.body.deposit.tips.tip2': 'Hasta que se realicen {confirmations} confirmaciones, una cantidad equivalente de sus activos no estará disponible temporalmente para retiros.',
     'page.body.deposit.network.title': 'Red de depósito',
     'page.body.deposit.network.message': 'Selecciona el formato de dirección de depósito B4U correspondiente de acuerdo con el tipo de cadena pública de la billetera transferida. Ten en cuenta que algunas billeteras pueden admitir múltiples tipos de cadena pública de transferencia de tokens, como las billeteras de intercambio generalmente admiten depósitos de los tipos ERC20, OMNI y TRC20 de USDT. Asegúrese de que el tipo de red de cadena pública seleccionado en el momento de la transferencia sea el mismo que para los depósitos B4U.',
-    'page.body.deposit.network.address.text': 'Dirección {currency}.',
+    'page.body.deposit.network.address.text': 'Dirección {currency}',
+    'page.body.deposit.network.tag.text': 'etiqueta {currency}',
+    'page.body.deposit.network.tag.instruction': 'Ingrese los datos de la etiqueta y la dirección, que son necesarios para depositar {currency} en su cuenta B4U con éxito.',
     'page.body.deposit.network.address.instructions.title': 'Envía solo {currency} a esta dirección de depósito..',
     'page.body.deposit.network.address.instructions.description': 'El envío de monedas o tokens que no sean {currency} a esta dirección puede resultar en la pérdida de tu depósito..',
 
