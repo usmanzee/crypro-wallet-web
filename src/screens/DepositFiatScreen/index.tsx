@@ -340,6 +340,7 @@ const DepositFiatComponent = (props: Props) => {
                                 uid={user ? user.uid : ''} 
                                 currency={selectedFiatWalletOption ? selectedFiatWalletOption.currency : ''}
                                 handleOnCopy= {onCopy}
+                                depositEnabled={selectedFiatWalletOption ? selectedFiatWalletOption.depositEnabled : true}
                             />
                         </Grid>
                     </Grid>

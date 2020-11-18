@@ -1,4 +1,4 @@
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import * as React from 'react';
 import {
     Beneficiaries,
@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 const useStyles = (theme: Theme) => ({
     networkPaper: {
@@ -55,6 +56,7 @@ export interface WithdrawProps {
     withdrawTotalLabel?: string;
     withdrawButtonLabel?: string;
     withdrawDone: boolean;
+    withdrawEnabled?: boolean;
 }
 
 const defaultBeneficiary: Beneficiary = {
@@ -129,101 +131,111 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
             withdrawFeeLabel,
             withdrawTotalLabel,
             withdrawButtonLabel,
+            withdrawEnabled
         } = this.props;
 
         const { classes } = this.props;
 
         return (
             <Paper elevation={2} className={classes.networkPaper}>
-                <form id="withdrawl_form">
-                {type === 'coin' ?
-                    <>
+                {withdrawEnabled ? 
+                    <form id="withdrawl_form">
+                        {type === 'coin' ?
+                            <>
+                                <TextField
+                                    type="text"
+                                    label={withdrawAddressLabel || 'Withdrawal Address'}
+                                    value={rid}
+                                    style={{ padding: 8 }}
+                                    placeholder={withdrawAddressLabel || 'Widthdraw Address'}
+                                    fullWidth
+                                    margin="normal"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    variant="outlined"
+                                    onChange = {this.handleInputAddressChangeEvent}
+                                    autoFocus={true}
+                                    
+                                />
+                            </>
+                            : 
+                            <Beneficiaries
+                                currency={currency}
+                                type={type}
+                                onChangeValue={this.handleChangeBeneficiary}
+                            />
+                        }
+                        {currency === 'xrp' ? 
+                                <TextField
+                                    type="text"
+                                    label={'Withdrawal Tag'}
+                                    value={tag}
+                                    style={{ padding: 8 }}
+                                    placeholder={'Widthdraw Tag'}
+                                    fullWidth
+                                    margin="normal"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    variant="outlined"
+                                    onChange = {this.handleInputTagChangeEvent}
+                                    
+                                />
+                            : 
+                            null
+                        }
                         <TextField
-                            type="text"
-                            label={withdrawAddressLabel || 'Withdrawal Address'}
-                            value={rid}
+                            type="number"
+                            label={withdrawAmountLabel || 'Withdrawal Amount'}
+                            value={amount}
                             style={{ padding: 8 }}
-                            placeholder={withdrawAddressLabel || 'Widthdraw Address'}
+                            placeholder={withdrawAmountLabel || 'Amount'}
                             fullWidth
                             margin="normal"
                             InputLabelProps={{
                                 shrink: true,
                             }}
                             variant="outlined"
-                            onChange = {this.handleInputAddressChangeEvent}
-                            autoFocus={true}
+                            onChange = {this.handleInputAmountChangeEvent}
+                            error={!(Number(this.props.balance) >= Number(amount))}
                             
                         />
-                    </>
-                    : 
-                    <Beneficiaries
-                        currency={currency}
-                        type={type}
-                        onChangeValue={this.handleChangeBeneficiary}
-                    />
+                        {twoFactorAuthRequired && this.renderOtpCodeInput()}
+                        <div className={classes.withdrawFee}>
+                            <Typography variant='button' component='div' display='inline' style={{ margin: '0px 8px' }}>
+                                {withdrawFeeLabel ? withdrawFeeLabel : 'Fee'}:
+                            </Typography>
+                            <Typography variant='body2' component='div' display='inline'>
+                                {this.renderFee()}
+                            </Typography>
+                            <br />
+                            <Typography variant='button' component='div' display='inline' style={{ margin: '0px 8px' }}>
+                                {withdrawTotalLabel ? withdrawTotalLabel : 'Total Withdraw Amount'}:
+                            </Typography>
+                            <Typography variant='body2' component='div' display='inline'>
+                                {this.renderTotal()}
+                            </Typography>
+                        </div>
+                        <Button 
+                            variant="contained" 
+                            color="primary"
+                            size="large"
+                            fullWidth={true}
+                            onClick={this.handleClick}
+                            disabled={Number(total) <= 0 || !Boolean(type === 'coin' ? rid : beneficiary.id) || !Boolean(otpCode.length > 5) || !(Number(this.props.balance) >= Number(total)) || withdrawProcessing}
+                        >
+                            {withdrawProcessing ? <CircularProgress size={18} color="inherit"/> :  withdrawButtonLabel}
+                        </Button>
+                    </form>
+                    :
+                    <div style={{ textAlign: 'center' }}>
+                        <LockOutlinedIcon fontSize="large" color="primary" style={{ height: '80px', width: '80px' }} />
+                        <Typography variant="h6">
+                            <FormattedMessage id={'page.body.wallets.tabs.withdraw.disabled.message'} /> 
+                        </Typography>
+                    </div>
                 }
-                {currency === 'xrp' ? 
-                        <TextField
-                            type="text"
-                            label={'Withdrawal Tag'}
-                            value={tag}
-                            style={{ padding: 8 }}
-                            placeholder={'Widthdraw Tag'}
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            variant="outlined"
-                            onChange = {this.handleInputTagChangeEvent}
-                            
-                        />
-                    : 
-                    null
-                }
-                <TextField
-                    type="number"
-                    label={withdrawAmountLabel || 'Withdrawal Amount'}
-                    value={amount}
-                    style={{ padding: 8 }}
-                    placeholder={withdrawAmountLabel || 'Amount'}
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    variant="outlined"
-                    onChange = {this.handleInputAmountChangeEvent}
-                    error={!(Number(this.props.balance) >= Number(amount))}
-                    
-                />
-                {twoFactorAuthRequired && this.renderOtpCodeInput()}
-                <div className={classes.withdrawFee}>
-                    <Typography variant='button' component='div' display='inline' style={{ margin: '0px 8px' }}>
-                        {withdrawFeeLabel ? withdrawFeeLabel : 'Fee'}:
-                    </Typography>
-                    <Typography variant='body2' component='div' display='inline'>
-                        {this.renderFee()}
-                    </Typography>
-                    <br />
-                    <Typography variant='button' component='div' display='inline' style={{ margin: '0px 8px' }}>
-                        {withdrawTotalLabel ? withdrawTotalLabel : 'Total Withdraw Amount'}:
-                    </Typography>
-                    <Typography variant='body2' component='div' display='inline'>
-                        {this.renderTotal()}
-                    </Typography>
-                </div>
-                <Button 
-                    variant="contained" 
-                    color="primary"
-                    size="large"
-                    fullWidth={true}
-                    onClick={this.handleClick}
-                    disabled={Number(total) <= 0 || !Boolean(type === 'coin' ? rid : beneficiary.id) || !Boolean(otpCode.length > 5) || !(Number(this.props.balance) >= Number(total)) || withdrawProcessing}
-                >
-                    {withdrawProcessing ? <CircularProgress size={18} color="inherit"/> :  withdrawButtonLabel}
-                </Button>
-                </form>
             </Paper>
         );
     }

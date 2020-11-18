@@ -7,6 +7,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 
 
@@ -22,6 +23,7 @@ export interface DepositFiatProps {
     title: string;
     uid: string;
 	currency: string;
+	depositEnabled?: boolean;
 	
 	handleOnCopy: (text: string) => void;
 
@@ -85,7 +87,8 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
         uid,
 		currency,
 		referenceTip,
-		handleOnCopy
+		handleOnCopy,
+		depositEnabled
 	} = props;
 
     // const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
@@ -139,35 +142,47 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 					</Typography>
 				</div> 
 				<div className="cr-deposit-fiat">
-					<Typography variant="h6" gutterBottom>
-						{title}
-					</Typography>
-					<Typography variant="subtitle1" gutterBottom className={classes.depositDescription}>
-						{description}
-					</Typography>
-					<Paper variant="outlined" className={classes.depositInfo}>
-						<Alert severity="info" color="error">
-							<Typography variant="button">
-								{referenceTip}
+					{depositEnabled ? 
+						<>
+							<Typography variant="h6" gutterBottom>
+								{title}
 							</Typography>
-						</Alert>
+							<Typography variant="subtitle1" gutterBottom className={classes.depositDescription}>
+								{description}
+							</Typography>
+							<Paper variant="outlined" className={classes.depositInfo}>
+								<Alert severity="info" color="error">
+									<Typography variant="button">
+										{referenceTip}
+									</Typography>
+								</Alert>
 
-						<List className={classes.list}>
-							<ListItem disableGutters>
-								<Typography variant="h6" display="inline" gutterBottom>
-									<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
+								<List className={classes.list}>
+									<ListItem disableGutters>
+										<Typography variant="h6" display="inline" gutterBottom>
+											<FormattedMessage id="page.body.wallets.tabs.deposit.fiat.referenceCode" />
+										</Typography>
+									</ListItem>
+									<ListItem disableGutters>
+										<Typography variant="h6" display="inline" gutterBottom>
+											{uid}
+											<FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>handleOnCopy(uid)} />
+										</Typography>
+									</ListItem>
+								</List>
+							</Paper>
+							{/* <Divider className={classes.BanksDivider}/> */}
+							{bankCurrencies.map(renderDetails)}
+						</> :
+						<>
+							<div style={{ textAlign: 'center' }}>
+								<LockOutlinedIcon fontSize="large" color="primary" style={{ height: '80px', width: '80px' }} />
+								<Typography variant="h6">
+									<FormattedMessage id={'page.body.wallets.tabs.deposit.disabled.message'} /> 
 								</Typography>
-							</ListItem>
-							<ListItem disableGutters>
-								<Typography variant="h6" display="inline" gutterBottom>
-									{uid}
-									<FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>handleOnCopy(uid)} />
-								</Typography>
-							</ListItem>
-						</List>
-					</Paper>
-					{/* <Divider className={classes.BanksDivider}/> */}
-					{bankCurrencies.map(renderDetails)}
+							</div>
+						</>
+					}
 				</div>
 			</Paper>
      	</>

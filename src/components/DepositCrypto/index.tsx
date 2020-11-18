@@ -1,19 +1,20 @@
 import * as React from 'react';
+import classnames from 'classnames';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { QRCode } from '../QRCode';
-
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
-import {
-    Paper,
-    Typography,
-    Tooltip,
-    Button
-} from '@material-ui/core';
+
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
+import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert';
 import Divider from '@material-ui/core/Divider';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
+// import { Blur } from '../Blur';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 export interface DepositCryptoProps {
     /**
@@ -76,6 +77,8 @@ export interface DepositCryptoProps {
      */
 
     currency?: string;
+
+    depositEnabled?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -95,6 +98,9 @@ const useStyles = makeStyles((theme: Theme) =>
     networkPaperContent: {
         textAlign: 'center',
         margin: `${theme.spacing(4)}px 0px`,
+    },
+    networkPaperFooter: {
+        marginTop: theme.spacing(3)
     },
     tagInstruction: {
         margin: `${theme.spacing(4)}px 0px`
@@ -144,6 +150,7 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
         walletAddressLoading,
         buttonLabel,
         currency,
+        depositEnabled,
     } = props;
 
     const size = dimensions || QR_SIZE;
@@ -155,6 +162,10 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
     const addressInstructionsDescription = props.intl.formatMessage({ id: 'page.body.deposit.network.address.instructions.description' }, { currency: currency ? currency.toUpperCase(): '' });
 
     const [copyTooltipText, setCopyTooltipText] = React.useState<string>("Copy");
+
+    // const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
+    //     'pg-blur-deposit-crypto--active': true,
+    // });
 
     const onCopy = (textToCopy) => {
         copyToClipboard(textToCopy);
@@ -173,6 +184,8 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
     const setCopyTooltipTextOnMouseOut = () => {
         setCopyTooltipText('copy');
     }
+
+    const translate = (id: string) => props.intl.formatMessage({ id });
 
     const classes = useStyles();
 
@@ -198,82 +211,102 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                         </Typography>
                     </div>
                     <div className={classes.networkPaperContent}>
-                        {!walletAddressLoading ? 
+                        {/* {depositEnabled === false ? (
+                            <Blur
+                                className={blurCryptoClassName}
+                                text={translate('page.body.wallets.tabs.deposit.disabled.message')}
+                            />
+                        ) : null} */}
+                        {depositEnabled ? 
                             <>
-                            {address && tag ? 
-                                <Alert severity="info" color="error" className={classes.tagInstruction}>
-                                    {tagInstruction}
-                                </Alert>
-                                :
-                                ''
-                            }
-                                <div className={classes.addressTagDiv}>
-
-                                    {address ? 
-                                        <>
-                                                <div className={classes.addressDiv}>
-                                                    <Typography variant='body1'>
-                                                        {addressText}
-                                                    </Typography>
-                                                    <div className={classes.qrCode}>
-                                                        {address ? <QRCode dimensions={size} data={address}/> : null}
-                                                    </div>
-                                                    <Typography variant='body2' display='inline' className={classes.addressText}>
-                                                        {address ? address : error}
-                                                    </Typography>
-                                                    <Typography variant='body2' display='inline' onClick={() => onCopy(address)} onMouseOut={setCopyTooltipTextOnMouseOut}>
-                                                        <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
-                                                            <FileCopyOutlinedIcon className={classes.copyIcon}/>
-                                                        </LightTooltip>
-                                                    </Typography>
-                                                </div>
-
-                                                {tag ?
-                                                    <>
-                                                        <Divider orientation="vertical" flexItem />
-                                                            <div className={classes.tagDiv}>
-                                                                <Typography variant='body1'>
-                                                                    {tagText}
-                                                                </Typography>
-                                                                <div className={classes.qrCode}>
-                                                                    {tag ? <QRCode dimensions={size} data={tag}/> : null}
-                                                                </div>
-                                                                <Typography variant='body2' display='inline' className={classes.addressText}>
-                                                                    {tag ? tag : error}
-                                                                </Typography>
-                                                                <Typography variant='body2' display='inline' onClick={() => onCopy(tag)} onMouseOut={setCopyTooltipTextOnMouseOut}>
-                                                                    <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
-                                                                        <FileCopyOutlinedIcon className={classes.copyIcon}/>
-                                                                    </LightTooltip>
-                                                                </Typography>
-                                                            </div>
-                                                    </>:
-                                                    ''
-                                                }
-                                        </>:
-                                        <>
-                                                <Button variant="contained" color="secondary" onClick={handleGenerateAddress}>
-                                                    {buttonLabel ? buttonLabel : 'Generate deposit address'}
-                                                </Button>
-                                        </>
+                                {!walletAddressLoading ? 
+                                    <>
+                                    {address && tag ? 
+                                        <Alert severity="info" color="error" className={classes.tagInstruction}>
+                                            {tagInstruction}
+                                        </Alert>
+                                        :
+                                        ''
                                     }
-                                </div>
-                            </> : 
-                                <CircularProgress color="secondary"/>
+                                    <div className={classes.addressTagDiv}>
+
+                                        {address ? 
+                                            <>
+                                                    <div className={classes.addressDiv}>
+                                                        <Typography variant='body1'>
+                                                            {addressText}
+                                                        </Typography>
+                                                        <div className={classes.qrCode}>
+                                                            {address ? <QRCode dimensions={size} data={address}/> : null}
+                                                        </div>
+                                                        <Typography variant='body2' display='inline' className={classes.addressText}>
+                                                            {address ? address : error}
+                                                        </Typography>
+                                                        <Typography variant='body2' display='inline' onClick={() => onCopy(address)} onMouseOut={setCopyTooltipTextOnMouseOut}>
+                                                            <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                                                                <FileCopyOutlinedIcon className={classes.copyIcon}/>
+                                                            </LightTooltip>
+                                                        </Typography>
+                                                    </div>
+
+                                                    {tag ?
+                                                        <>
+                                                            <Divider orientation="vertical" flexItem />
+                                                                <div className={classes.tagDiv}>
+                                                                    <Typography variant='body1'>
+                                                                        {tagText}
+                                                                    </Typography>
+                                                                    <div className={classes.qrCode}>
+                                                                        {tag ? <QRCode dimensions={size} data={tag}/> : null}
+                                                                    </div>
+                                                                    <Typography variant='body2' display='inline' className={classes.addressText}>
+                                                                        {tag ? tag : error}
+                                                                    </Typography>
+                                                                    <Typography variant='body2' display='inline' onClick={() => onCopy(tag)} onMouseOut={setCopyTooltipTextOnMouseOut}>
+                                                                        <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                                                                            <FileCopyOutlinedIcon className={classes.copyIcon}/>
+                                                                        </LightTooltip>
+                                                                    </Typography>
+                                                                </div>
+                                                        </>:
+                                                        ''
+                                                    }
+                                                </>:
+                                                <>
+                                                        <Button variant="contained" color="secondary" onClick={handleGenerateAddress}>
+                                                            {buttonLabel ? buttonLabel : 'Generate deposit address'}
+                                                        </Button>
+                                                </>
+                                            }
+                                        </div>
+                                    </> : 
+                                        <CircularProgress color="secondary"/>
+                                }
+                            </> :
+                            <>
+                                <LockOutlinedIcon fontSize="large" color="primary" style={{ height: '80px', width: '80px' }} />
+                                <Typography variant="h6">
+                                    <FormattedMessage id={'page.body.wallets.tabs.deposit.disabled.message'} /> 
+                                </Typography>
+                            </>
                         }
                     </div>
 
-                    {address ? 
-
-                        <div style={{ marginTop: '24px' }}>
-                            <Typography variant='subtitle2' display='block'>
-                                {addressInstructionsTitle}
-                            </Typography>
-                            <Typography variant='caption' display='block'>
-                                {addressInstructionsDescription}
-                            </Typography>
-                        </div>
-                        :
+                    {depositEnabled ? 
+                        <>
+                            {address ? 
+                                <div className={classes.networkPaperFooter}>
+                                    <Typography variant='subtitle2' display='block'>
+                                        {addressInstructionsTitle}
+                                    </Typography>
+                                    <Typography variant='caption' display='block'>
+                                        {addressInstructionsDescription}
+                                    </Typography>
+                                </div>
+                                :
+                                ''
+                            }   
+                        </> :
                         ''
                     }
                 </Paper>

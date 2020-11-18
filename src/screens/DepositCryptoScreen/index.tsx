@@ -1,11 +1,9 @@
 import * as React from 'react';
-import {
-    Box,
-    Grid,
-    Paper,
-    Typography,
-} from '@material-ui/core';
 import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import InputBase from '@material-ui/core/InputBase';
@@ -21,7 +19,7 @@ import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
-import { DepositCrypto, DepositTag, WalletItemProps, CryptoIcon } from '../../components';
+import { DepositCrypto, Blur ,DepositTag, WalletItemProps, CryptoIcon } from '../../components';
 import { 
     RootState, 
     alertPush,
@@ -275,6 +273,7 @@ const DepositWalletCrypto = (props: Props) => {
     const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? +selectedWalletOption.locked : 0.0000;
 
     const pageTitle = translate('page.body.deposit.header.title');
+    
     return (
         <>
             <PageHeader pageTitle={pageTitle} />
@@ -400,18 +399,8 @@ const DepositWalletCrypto = (props: Props) => {
                                 // walletAddressSuccess={walletAddressSuccess}
                                 buttonLabel={buttonLabel}
                                 currency={selectedWalletOption ? selectedWalletOption.currency : ''}
+                                depositEnabled={selectedWalletOption ? selectedWalletOption.depositEnabled : true}
                             />
-                             {/* {walletAddress.split('?dt=').length === 2 ?
-                                <DepositTag
-                                    data={walletAddress.split('?dt=')[1]}
-                                    handleOnCopy={() => {navigator.clipboard.writeText(walletAddress.split('?dt=')[1]);}}
-                                    error={error}
-                                    text={'Add Destination Tag in your deposit'}
-                                    disabled={walletAddress === ''}
-                                    copiableTextFieldText={'Destination Tag'}
-                                    copyButtonText={translate('page.body.wallets.tabs.deposit.ccy.message.button')}
-                                />:null
-                            } */}
                         </Grid>
                     </Grid>
                     <Divider className={classes.historyDivider}/>

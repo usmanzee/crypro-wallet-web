@@ -363,6 +363,7 @@ const WithdrawFiatComponent = (props: Props) => {
         const type = selectedWalletOption ? selectedWalletOption.type : 'coin';
         const fixed = selectedWalletOption ? selectedWalletOption.fixed : 0;
         const balance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0;
+        const withdrawEnabled = selectedWalletOption ? selectedWalletOption.withdrawEnabled : true;
     
         const withdrawProps: WithdrawProps = {
             withdrawDone,
@@ -382,6 +383,7 @@ const WithdrawFiatComponent = (props: Props) => {
             withdrawFeeLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.fee' }),
             withdrawTotalLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.total' }),
             withdrawButtonLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.button' }),
+            withdrawEnabled: withdrawEnabled
         };
     
         return otp ? <Withdraw {...withdrawProps} /> : isOtpDisabled();
