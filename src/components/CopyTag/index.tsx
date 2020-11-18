@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
+import IconButton from '@material-ui/core/IconButton';
 
 import { 
     RootState, 
@@ -27,14 +28,15 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface CopyTagProps {
-    text: string
+    text: string;
+    disabled?: boolean;
 }
 
 type Props = CopyTagProps & DispatchProps;
 
 const CopyTagComponent = (props: Props) => {
     const classes = useStyles();
-    const { text } = props;
+    const { text, disabled } = props;
     const onCopy = (textToCopy: string) => {
         copyToClipboard(textToCopy);
         props.fetchAlert({message: ['copied.to.clipboard'], type: 'success'});
@@ -50,10 +52,21 @@ const CopyTagComponent = (props: Props) => {
 
     return (
         <>
-            <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} />
+            {disabled ? 
+                <IconButton aria-label="launch" disabled={disabled} edge="start">
+                    <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} />
+                </IconButton>
+            :
+                <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} />
+            }
         </>
     );
 }
+
+CopyTagComponent.defaultProps = {
+    disabled: false,
+};
+
 const mapDispatchToProps = dispatch => ({
     fetchAlert: payload => dispatch(alertPush(payload)),
 });

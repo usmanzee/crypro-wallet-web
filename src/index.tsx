@@ -74,7 +74,7 @@ let theme = createMuiTheme({
           colorInherit: {
             color: "#fff"
           }
-        }
+        },
       },
       typography: {
         fontSize: 16,

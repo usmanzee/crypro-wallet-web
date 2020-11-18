@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
 
+import IconButton from '@material-ui/core/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
 import LinkOffIcon from '@material-ui/icons/LinkOff';
 
@@ -140,6 +141,7 @@ class HistoryComponent extends React.Component<Props> {
                   this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.amount'}),
                   this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.fee'}),
                   this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.status'}),
+                  this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.txid'}),
               ];
           case 'trades':
               return [
@@ -193,16 +195,18 @@ class HistoryComponent extends React.Component<Props> {
                     // </div>,
                     <div className="pg-history-elem__hide" key={item.rid}>
                         {txid ? 
-                            <CopyTag text={txid}/>
+                            <CopyTag text={txid} disabled={false} />
                             : ''
                         }
                         {txid ? 
                             <>
                                 <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
-                                    {<LaunchIcon/>}
+                                    <LaunchIcon />
                                 </a>
                             </> : 
-                            <LinkOffIcon />
+                            <IconButton aria-label="launch" disabled style={{ padding: '0px' }}>
+                                <LaunchIcon />
+                            </IconButton>
                         }
                     </div>
                 ];
@@ -220,6 +224,22 @@ class HistoryComponent extends React.Component<Props> {
                     wallet && preciseData(amount, wallet.fixed),
                     fee,
                     <span style={{ color: setWithdrawStatusColor(item.state) }} key={txid || rid}>{state}</span>,
+                    <div className="pg-history-elem__hide" key={item.rid}>
+                        {txid ? 
+                            <CopyTag text={txid} disabled={false} />
+                            : ''
+                        }
+                        {txid ? 
+                            <>
+                                <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
+                                    {<LaunchIcon/>}
+                                </a>
+                            </> : 
+                            <IconButton aria-label="launch" disabled style={{ padding: '0px' }}>
+                                <LaunchIcon />
+                            </IconButton>
+                        }
+                    </div>
                 ];
             }
             case 'trades': {

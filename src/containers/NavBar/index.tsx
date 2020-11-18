@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { History } from 'history';
 import { Link } from "react-router-dom";
+import * as moment from 'moment';
+
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import {
     connect,
@@ -13,6 +15,9 @@ import { compose } from 'redux';
 import { languages } from '../../api/config';
 
 import { headerRoutes } from '../../constants';
+import {
+    localeDate,
+} from '../../helpers';
 
 import Popover from '@material-ui/core/Popover';
 import Paper from '@material-ui/core/Paper';
@@ -27,11 +32,15 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
+import Badge from '@material-ui/core/Badge';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { withStyles, Theme } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
-import Icon from '@material-ui/core/Icon'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import SecurityIcon from '@material-ui/icons/Security';
 import PermIdentityIcon from '@material-ui/icons/PermIdentity';
@@ -54,7 +63,6 @@ import {
 } from '../../modules';
 
 import {getNotifications} from "../../apis/exchange";
-import { lang } from 'moment';
 
 interface Notification {
     id: number,
@@ -111,21 +119,29 @@ const useStyles = (theme: Theme) => ({
         [theme.breakpoints.only('xs')]: {
             display: 'none'
         },
+    },
+    notificationContent: {
+        padding: '16px', 
+        maxWidth: '300px', 
+        maxHeight: '70vh'
+    },
+    learnMore: {
+        cursor: 'pointer',
+        '&:hover': {
+            color: theme.palette.secondary.dark
+        }
     }
 });
 
 type Props = OwnProps & ReduxProps & DispatchProps & InjectedIntlProps;
 
 interface IState {
-    isOpenLanguage: boolean,
-    showNotification: boolean,
     notifications: Notification[],
-    notificationContainer: React.RefObject<HTMLInputElement>,
-
     notificationPanelEl: HTMLElement |  null;
     profilePanelEl: HTMLElement |  null;
     languagePanelEl: HTMLElement |  null;
-
+    showNotificationDetail: boolean;
+    notificationDetail: Notification | null | undefined;
 } 
 
 class NavBarComponent extends React.Component<Props, IState> {
@@ -133,14 +149,12 @@ class NavBarComponent extends React.Component<Props, IState> {
         super(props);
 
         this.state = {
-            isOpenLanguage: false,
-            showNotification: false,
             notifications: [],
-            notificationContainer: React.createRef(),
-
             notificationPanelEl: null,
             profilePanelEl: null,
             languagePanelEl: null,
+            showNotificationDetail: false,
+            notificationDetail: null,
         };
         
     }
@@ -182,6 +196,26 @@ class NavBarComponent extends React.Component<Props, IState> {
             languagePanelEl: null
         });
     };
+
+    public handleNotificationDetailClickOpen = (notificationId: number) => {
+        const detail = this.searchNotfication(notificationId);
+        this.setState({
+            notificationDetail: detail
+        });
+        this.setState({
+            showNotificationDetail: true
+        });
+    };
+    
+    public handleNotificationDetailClose = () => {
+        this.setState({
+            showNotificationDetail: false
+        });
+    };
+
+    public searchNotfication = (notificationId: number) => {
+        return this.state.notifications.find(notification => notification.id === notificationId);
+    }
 
     public getNotifications = async () => {
         try {
@@ -418,7 +452,8 @@ class NavBarComponent extends React.Component<Props, IState> {
 
     private renderNotifications = () => {
         const { userLoading, classes } = this.props;
-        const {notificationPanelEl, notifications} = this.state;
+        const {notificationPanelEl, notifications, showNotificationDetail, notificationDetail} = this.state;
+        const TEXT_LENGTH = 100;
 
         const notificationPanelOpen = Boolean(notificationPanelEl);
         const notificationPanelId = notificationPanelOpen ? 'notification-panel-popover' : undefined;
@@ -433,7 +468,13 @@ class NavBarComponent extends React.Component<Props, IState> {
                             onClick={this.handleNotificationPanelClick}
                             color="inherit"
                         >
-                            <NotificationsNoneIcon />
+                            {notifications.length ? 
+                                <Badge color="error" variant="dot">
+                                    <NotificationsNoneIcon />
+                                </Badge>
+                                :
+                                <NotificationsNoneIcon />
+                            }
                         </IconButton>
                         <Popover
                             id={notificationPanelId}
@@ -449,7 +490,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                                 horizontal: 'center',
                             }}
                         >
-                            <Paper style={{ padding: '16px' }}>
+                            <Paper elevation={0} className={classes.notificationContent}>
                                 <Typography variant="h6">
                                     <FormattedMessage id={'page.header.navbar.notifications.title'} />
                                 </Typography>
@@ -458,19 +499,47 @@ class NavBarComponent extends React.Component<Props, IState> {
                                     <>
                                         <List>
                                             {notifications.map((notification, index) => {
+                                                const showLoadMore = notification.body.length > TEXT_LENGTH;
                                                 return (
                                                     <>
-                                                    <ListItem alignItems="flex-start" button>
-                                                        <ListItemText
-                                                            primary= {`${notification.subject}`}
-                                                            secondary={
-                                                                <React.Fragment>
-                                                                {`${notification.body}`}
-                                                                </React.Fragment>
-                                                            }
-                                                        />
-                                                    </ListItem>
-                                                    {index !== (notifications.length - 1) ? <Divider /> : ''}
+                                                        <ListItem alignItems="flex-start" disableGutters>
+                                                            <ListItemText
+                                                                primary= {
+                                                                    <>
+                                                                        <Typography variant="body1" color="textPrimary" style={{ cursor: 'pointer' }} onClick={() => this.handleNotificationDetailClickOpen(notification.id)}>
+                                                                            {`${notification.subject}`}
+                                                                        </Typography>
+                                                                    </>
+                                                                }
+                                                                secondary={
+                                                                    <>
+                                                                        <Typography
+                                                                            component="div"
+                                                                            variant="body2"
+                                                                            color="textSecondary"
+                                                                            style={{ margin: '8px 0px' }}
+                                                                        >
+                                                                            {`${notification.body.slice(0, TEXT_LENGTH)}`}
+                                                                            {notification.body.length > TEXT_LENGTH ?
+                                                                                    <>
+                                                                                        <Typography variant="subtitle2" component="span" color="textPrimary" className={classes.learnMore} onClick={() => this.handleNotificationDetailClickOpen(notification.id)}>
+                                                                                            <FormattedMessage id={'learn.more'} />
+                                                                                        </Typography>
+                                                                                    </>
+                                                                                    :
+                                                                                    ''
+                                                                                }
+                                                                        </Typography>
+
+                                                                            <Typography variant="body1" color="textPrimary">
+                                                                                {/* {localeDate(notification.created_at, 'fullDate')} */}
+                                                                                {moment(notification.created_at).fromNow()}
+                                                                            </Typography>
+                                                                    </>
+                                                                }
+                                                            />
+                                                        </ListItem>
+                                                        {index !== (notifications.length - 1) ? <Divider /> : ''}
                                                     </>
                                                 );
                                             })}
@@ -489,6 +558,20 @@ class NavBarComponent extends React.Component<Props, IState> {
                         </Popover>
                     </>
                 }
+
+                <Dialog
+                    open={showNotificationDetail}
+                    onClose={this.handleNotificationDetailClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{notificationDetail ? notificationDetail.subject : ''}</DialogTitle>
+                    <DialogContent dividers>
+                    <DialogContentText id="alert-dialog-description">
+                        {notificationDetail ? notificationDetail.body : ''}
+                    </DialogContentText>
+                    </DialogContent>
+                </Dialog>
             </>
         )
     }

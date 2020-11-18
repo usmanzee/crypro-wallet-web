@@ -5,6 +5,7 @@ export const es: LangType = {
     //General Messages
     'no.record.found': 'Registro no encontrado.',
     'copied.to.clipboard': 'Copiada al portapapeles.',
+    'learn.more': 'Aprende más',
 
     'page.header.navbar.signIn': 'Sign In',
     'page.header.navbar.trade': 'Trade',
@@ -349,6 +350,7 @@ export const es: LangType = {
     'page.body.history.withdraw.header.amount': 'Importe',
     'page.body.history.withdraw.header.fee': 'Tasas',
     'page.body.history.withdraw.header.status': 'Estado',
+    'page.body.history.withdraw.header.txid': 'txID',
     'page.body.history.withdraw.content.status.prepared': 'Preparado',
     'page.body.history.withdraw.content.status.submitted': 'Presentado',
     'page.body.history.withdraw.content.status.skipped': 'Omitido',

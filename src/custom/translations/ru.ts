@@ -5,6 +5,7 @@ export const ru: LangType = {
     //General Messages
     'no.record.found': 'Записей не найдено.',
     'copied.to.clipboard': 'Скопировано в буфер обмена.',
+    'learn.more': 'Учить больше',
     
     'page.header.navbar.signIn': 'Войти',
     'page.header.navbar.trade': 'Биржа',
@@ -346,6 +347,7 @@ export const ru: LangType = {
     'page.body.history.withdraw.header.amount': 'Сумма',
     'page.body.history.withdraw.header.fee': 'Комиссия',
     'page.body.history.withdraw.header.status': 'Статус',
+    'page.body.history.withdraw.header.txid': 'txID',
     'page.body.history.withdraw.content.status.prepared': 'Подготовлен',
     'page.body.history.withdraw.content.status.submitted': 'Отправлен',
     'page.body.history.withdraw.content.status.skipped': 'Принят',

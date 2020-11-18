@@ -5,6 +5,7 @@ export const en = {
     //General text
     'no.record.found': 'No Record Found.',
     'copied.to.clipboard': 'Copied to clipboard.',
+    'learn.more': 'Learn more',
     //End General text
 
     'page.header.navbar.signIn': 'Sign In',
@@ -349,6 +350,7 @@ export const en = {
     'page.body.history.withdraw.header.amount': 'Amount',
     'page.body.history.withdraw.header.fee': 'Fee',
     'page.body.history.withdraw.header.status': 'Status',
+    'page.body.history.withdraw.header.txid': 'txID',
     'page.body.history.withdraw.content.status.prepared': 'Prepared',
     'page.body.history.withdraw.content.status.submitted': 'Submitted',
     'page.body.history.withdraw.content.status.skipped': 'Skipped',

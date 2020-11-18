@@ -107,6 +107,7 @@ const useStyles = (theme: Theme) => ({
     toolbar: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
+        minHeight: 'calc(100vh - 95px)'
         // margin: `${theme.spacing(8)}px 0px ${theme.spacing(1)}px`,
     },
     loader: {
