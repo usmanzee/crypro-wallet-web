@@ -311,7 +311,7 @@ class SignUp extends React.Component<Props> {
 
         if (this.state.typingTimeout) {
             clearTimeout(this.state.typingTimeout);
-         }
+        }
 
         this.setState({
             password: value,

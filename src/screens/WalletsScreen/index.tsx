@@ -336,6 +336,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
                 {walletsData.length ? 
                     <TablePagination
+                        labelRowsPerPage={<FormattedMessage id={'page.body.swap.history.table.pagination.text.rows_per_page'} />}
                         rowsPerPageOptions={[10, 25, 100]}
                         component="div"
                         count={walletsData.length}

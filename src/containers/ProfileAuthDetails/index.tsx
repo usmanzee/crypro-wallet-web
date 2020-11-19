@@ -11,24 +11,29 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ProfileTwoFactorAuth } from '../';
 import { CloseIcon } from '../../assets/images/CloseIcon';
-import { CustomInput, Modal } from '../../components';
-import { PASSWORD_REGEX } from '../../helpers';
+import { CustomInput, Modal, PasswordStrengthMeter } from '../../components';
+import {
+    PASSWORD_REGEX,
+    passwordErrorFirstSolution,
+    passwordErrorSecondSolution,
+    passwordErrorThirdSolution,
+} from '../../helpers';
 
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import { Theme, withStyles} from '@material-ui/core/styles';
 
 import {
     RootState,
+    Configs,
+    selectConfigs,
     selectUserInfo,
     User,
+    entropyPasswordFetch,
+    selectCurrentPasswordEntropy
 } from '../../modules';
 import {
     changePasswordFetch,
@@ -52,9 +57,11 @@ const useStyles = (theme: Theme) => ({
 });
 
 interface ReduxProps {
+    configs: Configs;
     user: User;
     passwordChangeSuccess?: boolean;
     toggle2FASuccess?: boolean;
+    currentPasswordEntropy: number;
 }
 
 interface RouterProps {
@@ -72,6 +79,7 @@ interface DispatchProps {
     clearPasswordChangeError: () => void;
     toggle2fa: typeof toggle2faFetch;
     toggleUser2fa: typeof toggleUser2fa;
+    fetchCurrentPasswordEntropy: typeof entropyPasswordFetch;
 }
 
 interface ProfileProps {
@@ -89,6 +97,11 @@ interface State {
     confirmPasswordFocus: boolean;
     code2FA: string;
     code2FAFocus: boolean;
+    typingTimeout: any;
+    passwordErrorFirstSolved: boolean;
+    passwordErrorSecondSolved: boolean;
+    passwordErrorThirdSolved: boolean;
+    passwordPopUp: boolean;
 }
 
 type Props = ReduxProps & DispatchProps & RouterProps & ProfileProps & InjectedIntlProps & OnChangeEvent;
@@ -108,6 +121,11 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
             confirmPasswordFocus: false,
             code2FA: '',
             code2FAFocus: false,
+            typingTimeout: 0,
+            passwordErrorFirstSolved: false,
+            passwordErrorSecondSolved: false,
+            passwordErrorThirdSolved: false,
+            passwordPopUp: false,
         };
     }
 
@@ -128,11 +146,14 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
             this.props.toggleUser2fa();
         }
     }
+    private translate = (key: string) => this.props.intl.formatMessage({id: key});
 
     public render() {
         const {
+            configs,
             user,
-            classes
+            classes,
+            currentPasswordEntropy
         } = this.props;
         const {
             oldPasswordFocus,
@@ -141,6 +162,10 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
             oldPassword,
             newPassword,
             confirmPasswordFocus,
+            passwordErrorFirstSolved,
+            passwordErrorSecondSolved,
+            passwordErrorThirdSolved,
+            passwordPopUp
         } = this.state;
 
         const oldPasswordClass = cr('cr-email-form__group', {
@@ -184,6 +209,18 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
                         classNameInput="cr-email-form__input"
                         autoFocus={false}
                     />
+                    {newPassword ?
+                        <PasswordStrengthMeter
+                            minPasswordEntropy={configs.password_min_entropy}
+                            currentPasswordEntropy={currentPasswordEntropy}
+                            passwordExist={newPassword !== ''}
+                            passwordErrorFirstSolved={passwordErrorFirstSolved}
+                            passwordErrorSecondSolved={passwordErrorSecondSolved}
+                            passwordErrorThirdSolved={passwordErrorThirdSolved}
+                            passwordPopUp={passwordPopUp}
+                            translate={this.translate}
+                        /> : null
+                    }
                 </div>
                 <div className={confirmPasswordClass}>
                     <CustomInput
@@ -467,6 +504,49 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
     };
 
     private handleNewPassword = (value: string) => {
+        const { passwordErrorFirstSolved, passwordErrorSecondSolved, passwordErrorThirdSolved } = this.state;
+
+        if (passwordErrorFirstSolution(value) && !passwordErrorFirstSolved) {
+            this.setState({
+                passwordErrorFirstSolved: true,
+            });
+        } else if (!passwordErrorFirstSolution(value) && passwordErrorFirstSolved) {
+            this.setState({
+                passwordErrorFirstSolved: false,
+            });
+        }
+
+        if (passwordErrorSecondSolution(value) && !passwordErrorSecondSolved) {
+            this.setState({
+                passwordErrorSecondSolved: true,
+            });
+        } else if (!passwordErrorSecondSolution(value) && passwordErrorSecondSolved) {
+            this.setState({
+                passwordErrorSecondSolved: false,
+            });
+        }
+
+        if (passwordErrorThirdSolution(value) && !passwordErrorThirdSolved) {
+            this.setState({
+                passwordErrorThirdSolved: true,
+            });
+        } else if (!passwordErrorThirdSolution(value) && passwordErrorThirdSolved) {
+            this.setState({
+                passwordErrorThirdSolved: false,
+            });
+        }
+
+        if (this.state.typingTimeout) {
+            clearTimeout(this.state.typingTimeout);
+        }
+
+        this.setState({
+            newPassword: value,
+            typingTimeout: setTimeout(() => {
+                this.props.fetchCurrentPasswordEntropy({ newPassword: value });
+            }, 500),
+        });
+
         this.setState({
             newPassword: value,
         });
@@ -482,6 +562,11 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
     };
 
     private handleClickFieldFocus = (field: string) => () => {
+        if(field === 'newPasswordFocus') {
+            this.setState({
+                passwordPopUp: !this.state.passwordPopUp,
+            });
+        }
         this.handleFieldFocus(field);
     };
 
@@ -506,9 +591,11 @@ class ProfileAuthDetailsComponent extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState): ReduxProps => ({
+    configs: selectConfigs(state),
     user: selectUserInfo(state),
     passwordChangeSuccess: selectChangePasswordSuccess(state),
     toggle2FASuccess: selectTwoFactorAuthSuccess(state),
+    currentPasswordEntropy: selectCurrentPasswordEntropy(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -516,6 +603,9 @@ const mapDispatchToProps = dispatch => ({
         dispatch(changePasswordFetch({ old_password, new_password, confirm_password })),
     toggle2fa: ({ code, enable }) => dispatch(toggle2faFetch({ code, enable })),
     toggleUser2fa: () => dispatch(toggleUser2fa()),
+
+    fetchCurrentPasswordEntropy: (payload) =>
+        dispatch(entropyPasswordFetch(payload)),
 });
 
 

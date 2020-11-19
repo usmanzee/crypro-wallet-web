@@ -155,10 +155,12 @@ class ProfileComponent extends React.Component<Props, IState> {
         })
     };
 
+    public translate = (id: string) => this.props.intl.formatMessage({ id });
+    
     public render() {
         const { classes } = this.props;
         const address = this.props.history.location ? this.props.history.location.pathname : '';
-        const pageTitle = 'Profile Management';
+        const pageTitle = this.translate('page.body.profile.title');
         return (
             <>
             <PageHeader pageTitle={pageTitle} />
@@ -173,11 +175,11 @@ class ProfileComponent extends React.Component<Props, IState> {
                                 variant="scrollable"
                                 scrollButtons="on"
                             >
-                                <Tab component="a" label="Profile / Security" {...a11yProps(0)} />
-                                <Tab component="a" label="Identification" {...a11yProps(1)} />
-                                <Tab component="a" label="Referral" {...a11yProps(2)} />
-                                <Tab component="a" label="API Management" {...a11yProps(3)} />
-                                <Tab component="a" label="Activity" {...a11yProps(4)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.security')} {...a11yProps(0)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.identification')} {...a11yProps(1)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.referral')} {...a11yProps(2)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.api_management')} {...a11yProps(3)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.activity')} {...a11yProps(4)} />
                             </AntTabs>
 						</AppBar>
                         <TabPanel value={this.state.tabValue} index={0}>

@@ -1,5 +1,6 @@
 import { History } from 'history';
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, MapDispatchToPropsFunction } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
@@ -22,11 +23,11 @@ import { NavBar } from '../NavBar';
 
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
-
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import IconButton from '@material-ui/core/IconButton';
-
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
+import Slide from '@material-ui/core/Slide';
 
 import { withStyles, Theme } from '@material-ui/core/styles';
 
@@ -108,6 +109,29 @@ interface IState {
     profilePanelEl: HTMLElement |  null;
 }
 
+const HideOnScroll = (props) => {
+    const { children, window } = props;
+    // Note that you normally won't need to set the window ref as useScrollTrigger
+    // will default to window.
+    // This is only being set here because the demo is in an iframe.
+    const trigger = useScrollTrigger({ target: window ? window() : undefined });
+  
+    return (
+      <Slide appear={false} direction="down" in={!trigger}>
+        {children}
+      </Slide>
+    );
+}
+
+HideOnScroll.propTypes = {
+    children: PropTypes.element.isRequired,
+    /**
+     * Injected by the documentation to work in an iframe.
+     * You won't need it on your project.
+     */
+    window: PropTypes.func,
+};
+
 type Props = ReduxProps & HistoryProps & DispatchProps & InjectedIntlProps;
 
 class Head extends React.Component<Props, IState> {
@@ -119,7 +143,7 @@ class Head extends React.Component<Props, IState> {
             notificationPanelEl: null,
             profilePanelEl: null,
         };
-    }
+    } 
 
     public handleNotificationPanelClick = (event)  => {
         this.setState({
@@ -158,42 +182,44 @@ class Head extends React.Component<Props, IState> {
             {shouldRenderHeader &&
                 (
                     <>
-                        <AppBar position="fixed" className={classes.appBar}>
-                            <Toolbar>
-                                <IconButton
-                                    color="inherit"
-                                    aria-label="open drawer"
-                                    edge="start"
-                                    onClick={handleDrawerToggle}
-                                    className={classes.menuButton}
-                                >
-                                    <MenuIcon />
-                                </IconButton>
-                                <Link to="/" className={classes.logoLink}>
-                                    <img src={logoLight} alt="logo" style={{ width: '50px', marginRight: '24px' }}/>
-                                </Link>
-                                <div className={classes.emptySpaceInHeader}></div>
-                                <NavBar />
-                            </Toolbar>
-                        </AppBar>
-                        {shouldRenderMarketToolbar && 
-                        (
-                            <>
-                                <AppBar position="fixed" className={classes.subHeader}>
-                                    <Grid container>
-                                        <Grid item md={1} style={{ marginTop: '8px' }}>
-                                            {this.renderMarketToggler()}
+                        {/* <HideOnScroll {...this.props}> */}
+                            <AppBar position="fixed" className={classes.appBar}>
+                                <Toolbar>
+                                    <IconButton
+                                        color="inherit"
+                                        aria-label="open drawer"
+                                        edge="start"
+                                        onClick={handleDrawerToggle}
+                                        className={classes.menuButton}
+                                    >
+                                        <MenuIcon />
+                                    </IconButton>
+                                    <Link to="/" className={classes.logoLink}>
+                                        <img src={logoLight} alt="logo" style={{ width: '50px', marginRight: '24px' }}/>
+                                    </Link>
+                                    <div className={classes.emptySpaceInHeader}></div>
+                                    <NavBar />
+                                </Toolbar>
+                            </AppBar>
+                        {/* </HideOnScroll> */}
+                            {shouldRenderMarketToolbar && 
+                            (
+                                <>
+                                    <AppBar className={classes.subHeader}>
+                                        <Grid container>
+                                            <Grid item md={1} style={{ marginTop: '8px' }}>
+                                                {this.renderMarketToggler()}
+                                            </Grid>
+                                            <Grid item md={11}>
+                                                <div className={classes.toolbarDiv}>
+                                                    {this.renderMarketToolbar()}
+                                                </div>
+                                            </Grid>
                                         </Grid>
-                                        <Grid item md={11}>
-                                            <div className={classes.toolbarDiv}>
-                                                {this.renderMarketToolbar()}
-                                            </div>
-                                        </Grid>
-                                    </Grid>
-                                </AppBar>
-                            </>
-                        )
-                        } 
+                                    </AppBar>
+                                </>
+                            )
+                            } 
                         {/* <div className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style={{ display: 'block' }}>
                             <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                                 <Link className="navbar-brand brand-logo" to="/"><img src={logoLight} alt="logo" /></Link>

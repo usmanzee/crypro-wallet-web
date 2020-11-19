@@ -29,6 +29,7 @@ export const es: LangType = {
     'page.header.navbar.notifications.title': 'Notificaciones',
     'page.header.navbar.notifications.empty.content1': "¡Estás al día!",
     'page.header.navbar.notifications.empty.content2': 'Visita a diario para noticias sobre criptos, alertas de precios y más',
+    'page.header.navbar.notifications.detail.seen.button.text': 'entiendo',
     
 
     'page.sidebar.group.text': 'Grupo de Tarifas:',
@@ -404,6 +405,21 @@ export const es: LangType = {
     'page.body.withdraw.tips.tip2': "Al realizar un retiro a la dirección de un usuario de B4U Wallet, la tarifa de manejo se devolverá a la cuenta actual de forma predeterminada.",
 
     'page.body.profile.header.account': 'Perfil',
+
+    'page.body.profile.title': 'Gestión de perfiles',
+    'page.body.profile.tabs.security': 'Perfil / Seguridad',
+    'page.body.profile.tabs.identification': 'Identificación',
+    'page.body.profile.tabs.referral': 'Remisión',
+    'page.body.profile.tabs.api_management': 'Gestión de API',
+    'page.body.profile.tabs.activity': 'Actividad',
+
+    'page.body.profile.tabs.referral.title': 'Invitar a amigas y ganar cripto juntos',
+    'page.body.profile.tabs.referral.description': 'GANA HASTA UN 40% DE COMISIÓN CADA VEZ QUE TUS AMIGOS HAGAN UN COMERCIO EN B4U.',
+    'page.body.profile.tabs.referral.instruction.title': 'Invitar ahora',
+    'page.body.profile.tabs.referral.instruction.description': 'Utilice su enlace exclusivo para invitar a sus amigos por mensaje o correo electrónico. Su código de invitación predeterminado también se puede compartir en la vida real o como captura de pantalla.',
+
+    'page.body.profile.tabs.referral.id': 'ID de referencia',
+    'page.body.profile.tabs.referral.link': 'Enlace de referencia',
 
     'page.body.profile.header.account.content.password': 'Contraseña',
     'page.body.profile.header.account.content.password.button.change': 'Cambiar',

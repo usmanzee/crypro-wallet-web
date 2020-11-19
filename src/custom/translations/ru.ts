@@ -29,6 +29,7 @@ export const ru: LangType = {
     'page.header.navbar.notifications.title': 'Уведомления',
     'page.header.navbar.notifications.empty.content1': 'Вы в курсе!',
     'page.header.navbar.notifications.empty.content2': 'Посещайте каждый день, чтобы получать новости о криптовалюте, уведомления о ценах и многое другое',
+    'page.header.navbar.notifications.detail.seen.button.text': 'Я понимаю',
 
     'page.sidebar.group.text': 'Fee Group:',
     'page.sidebar.group.value': 'Base',
@@ -403,6 +404,21 @@ export const ru: LangType = {
     'page.body.withdraw.tips.tip2': 'При выводе на адрес пользователя B4U комиссия за обработку будет возвращена на Текущий счет по умолчанию.',
 
     'page.body.profile.header.account': 'Профиль',
+
+    'page.body.profile.title': 'Управление профилем',
+    'page.body.profile.tabs.security': 'Профиль / Безопасность',
+    'page.body.profile.tabs.identification': 'Идентификация',
+    'page.body.profile.tabs.referral': 'Направления',
+    'page.body.profile.tabs.api_management': 'Управление API',
+    'page.body.profile.tabs.activity': 'Деятельность',
+
+    'page.body.profile.tabs.referral.title': 'Приглашайте друзей и зарабатывайте криптовалюту вместе',
+    'page.body.profile.tabs.referral.description': 'ЗАРАБАТЫВАЙТЕ ДО 40% КОМИССИИ КАЖДЫЙ РАЗ, КОГДА ВАШИ ДРУЗЬЯ ТОРГУЮТ НА B4U.',
+    'page.body.profile.tabs.referral.instruction.title': 'Пригласить сейчас',
+    'page.body.profile.tabs.referral.instruction.description': 'Используйте свою уникальную ссылку, чтобы пригласить друзей через сообщение или электронную почту. Код приглашения по умолчанию также можно передать в реальной жизни или в виде снимка экрана.',
+
+    'page.body.profile.tabs.referral.id': 'Направление ID',
+    'page.body.profile.tabs.referral.link': 'Реферальная ссылка',
 
     'page.body.profile.header.account.content.password': 'Пароль',
     'page.body.profile.header.account.content.password.button.change': 'Изменить',

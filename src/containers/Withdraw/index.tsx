@@ -26,12 +26,6 @@ const useStyles = (theme: Theme) => ({
             padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
         }
     },
-    networkPaperHeader: {
-        paddingBottom: theme.spacing(1),
-        borderWidth: '0px 0px 1px',
-        borderStyle: 'solid',
-        borderColor: 'rgb(234, 236, 239)'
-    },
     withdrawFee: {
         padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
     },

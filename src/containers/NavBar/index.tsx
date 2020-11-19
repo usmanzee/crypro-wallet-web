@@ -41,6 +41,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 import SecurityIcon from '@material-ui/icons/Security';
 import PermIdentityIcon from '@material-ui/icons/PermIdentity';
@@ -120,10 +121,22 @@ const useStyles = (theme: Theme) => ({
             display: 'none'
         },
     },
+    notificationHeader: {
+        // borderBottom: `1px solid ${theme.palette.text.secondary}`,
+        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+        backgroundColor: theme.palette.background.default
+    },
     notificationContent: {
-        padding: '16px', 
-        maxWidth: '300px', 
-        maxHeight: '70vh'
+        maxWidth: '100%', 
+        maxHeight: '50vh',
+        overflowY: 'auto'
+    },
+    notificationBody: {
+        margin: '8px 0px',
+        width: '250px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
     },
     learnMore: {
         cursor: 'pointer',
@@ -470,7 +483,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                         >
                             {notifications.length ? 
                                 <Badge color="error" variant="dot">
-                                    <NotificationsNoneIcon />
+                                    <NotificationsNoneIcon onClick={this.handleNotificationPanelClick}/>
                                 </Badge>
                                 :
                                 <NotificationsNoneIcon />
@@ -490,71 +503,74 @@ class NavBarComponent extends React.Component<Props, IState> {
                                 horizontal: 'center',
                             }}
                         >
-                            <Paper elevation={0} className={classes.notificationContent}>
-                                <Typography variant="h6">
-                                    <FormattedMessage id={'page.header.navbar.notifications.title'} />
-                                </Typography>
-                                <Divider />
-                                {notifications.length ? 
-                                    <>
-                                        <List>
-                                            {notifications.map((notification, index) => {
-                                                const showLoadMore = notification.body.length > TEXT_LENGTH;
-                                                return (
-                                                    <>
-                                                        <ListItem alignItems="flex-start" disableGutters>
-                                                            <ListItemText
-                                                                primary= {
-                                                                    <>
-                                                                        <Typography variant="body1" color="textPrimary" style={{ cursor: 'pointer' }} onClick={() => this.handleNotificationDetailClickOpen(notification.id)}>
-                                                                            {`${notification.subject}`}
-                                                                        </Typography>
-                                                                    </>
-                                                                }
-                                                                secondary={
-                                                                    <>
-                                                                        <Typography
-                                                                            component="div"
-                                                                            variant="body2"
-                                                                            color="textSecondary"
-                                                                            style={{ margin: '8px 0px' }}
-                                                                        >
-                                                                            {`${notification.body.slice(0, TEXT_LENGTH)}`}
-                                                                            {notification.body.length > TEXT_LENGTH ?
-                                                                                    <>
-                                                                                        <Typography variant="subtitle2" component="span" color="textPrimary" className={classes.learnMore} onClick={() => this.handleNotificationDetailClickOpen(notification.id)}>
-                                                                                            <FormattedMessage id={'learn.more'} />
-                                                                                        </Typography>
-                                                                                    </>
-                                                                                    :
-                                                                                    ''
-                                                                                }
-                                                                        </Typography>
-
+                            <div>
+                                <Paper elevation={1} square className={classes.notificationHeader}>
+                                    <Typography variant="h6">
+                                        <FormattedMessage id={'page.header.navbar.notifications.title'} />
+                                    </Typography>
+                                </Paper>
+                                <Paper elevation={0} className={classes.notificationContent}>
+                                    {notifications.length ? 
+                                        <>
+                                            <List>
+                                                {notifications.map((notification, index) => {
+                                                    const showLoadMore = notification.body.length > TEXT_LENGTH;
+                                                    return (
+                                                        <>
+                                                            <ListItem alignItems="flex-start" button onClick={() => this.handleNotificationDetailClickOpen(notification.id)}>
+                                                                <ListItemText
+                                                                    primary= {
+                                                                        <>
                                                                             <Typography variant="body1" color="textPrimary">
-                                                                                {/* {localeDate(notification.created_at, 'fullDate')} */}
-                                                                                {moment(notification.created_at).fromNow()}
+                                                                                {`${notification.subject}`}
                                                                             </Typography>
-                                                                    </>
-                                                                }
-                                                            />
-                                                        </ListItem>
-                                                        {index !== (notifications.length - 1) ? <Divider /> : ''}
-                                                    </>
-                                                );
-                                            })}
-                                        </List>
-                                    </>:
-                                    <div style={{ padding: '40px 0px', textAlign: 'center', fontSize: '14px' }}>
-                                        <Typography variant="h6">
-                                            <FormattedMessage id={'page.header.navbar.notifications.empty.content1'} />
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            <FormattedMessage id={'page.header.navbar.notifications.empty.content2'} />
-                                        </Typography>
-                                    </div>
-                                }
-                            </Paper>
+                                                                        </>
+                                                                    }
+                                                                    secondary={
+                                                                        <>
+                                                                            <Typography
+                                                                                component="div"
+                                                                                variant="body2"
+                                                                                color="textSecondary"
+                                                                                className={classes.notificationBody}
+                                                                            >
+                                                                                {notification.body}
+                                                                                {/* {`${notification.body.slice(0, TEXT_LENGTH)}`}
+                                                                                {notification.body.length > TEXT_LENGTH ?
+                                                                                        <>
+                                                                                            <Typography variant="subtitle2" component="span" color="textPrimary" className={classes.learnMore}>
+                                                                                                <FormattedMessage id={'learn.more'} />
+                                                                                            </Typography>
+                                                                                        </>
+                                                                                        :
+                                                                                        ''
+                                                                                    } */}
+                                                                            </Typography>
+
+                                                                                <Typography variant="body1" color="textPrimary">
+                                                                                    {moment(notification.created_at).fromNow()}
+                                                                                </Typography>
+                                                                        </>
+                                                                    }
+                                                                />
+                                                            </ListItem>
+                                                            {index !== (notifications.length - 1) ? <Divider /> : ''}
+                                                        </>
+                                                    );
+                                                })}
+                                            </List>
+                                        </>:
+                                        <div style={{ padding: '40px 0px', textAlign: 'center', fontSize: '14px' }}>
+                                            <Typography variant="h6">
+                                                <FormattedMessage id={'page.header.navbar.notifications.empty.content1'} />
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <FormattedMessage id={'page.header.navbar.notifications.empty.content2'} />
+                                            </Typography>
+                                        </div>
+                                    }
+                                </Paper>
+                            </div>
                         </Popover>
                     </>
                 }
@@ -565,12 +581,22 @@ class NavBarComponent extends React.Component<Props, IState> {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{notificationDetail ? notificationDetail.subject : ''}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title" style={{ padding: '8px 24px' }}>
+                        {notificationDetail ? notificationDetail.subject : ''}
+                        <Typography variant="body2">
+                            {notificationDetail ? localeDate(notificationDetail.created_at, 'fullDate') : ''}
+                        </Typography>
+                    </DialogTitle>
                     <DialogContent dividers>
-                    <DialogContentText id="alert-dialog-description">
-                        {notificationDetail ? notificationDetail.body : ''}
-                    </DialogContentText>
+                        <DialogContentText id="alert-dialog-description">
+                            {notificationDetail ? notificationDetail.body : ''}
+                        </DialogContentText>
                     </DialogContent>
+                    <DialogActions style={{ flexDirection: 'column' }}>
+                        <Button variant="contained" color="secondary" fullWidth onClick={this.handleNotificationDetailClose}>
+                            <FormattedMessage id={'page.header.navbar.notifications.detail.seen.button.text'} />
+                        </Button>
+                    </DialogActions>
                 </Dialog>
             </>
         )

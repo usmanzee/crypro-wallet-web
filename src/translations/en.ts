@@ -30,6 +30,7 @@ export const en = {
     'page.header.navbar.notifications.title': 'Notifications',
     'page.header.navbar.notifications.empty.content1': "You're up to date!",
     'page.header.navbar.notifications.empty.content2': 'Visit every day for crypto news, price alerts, and more',
+    'page.header.navbar.notifications.detail.seen.button.text': 'I understand',
     
 
     'page.sidebar.group.text': 'Fee Group:',
@@ -404,6 +405,21 @@ export const en = {
     'page.body.withdraw.tips.tip2': "When withdrawing to the B4U user's address, the handling fee will be returned to the Current Account by default.",
 
     'page.body.profile.header.account': 'Profile',
+
+    'page.body.profile.title': 'Profile Management',
+    'page.body.profile.tabs.security': 'Profile / Security',
+    'page.body.profile.tabs.identification': 'Identification',
+    'page.body.profile.tabs.referral': 'Referral',
+    'page.body.profile.tabs.api_management': 'Api Management',
+    'page.body.profile.tabs.activity': 'Activity',
+
+    'page.body.profile.tabs.referral.title': 'Invite Friends & Earn Crypto Together',
+    'page.body.profile.tabs.referral.description': 'EARN UP TO 40% COMMISSION EVERY TIME YOUR FRIENDS MAKE A TRADE ON B4U.',
+    'page.body.profile.tabs.referral.instruction.title': 'Invite Now',
+    'page.body.profile.tabs.referral.instruction.description': 'Use your unique link to invite your friends over message or email. Your default invitation code can also be shared in real life or as a screenshot.',
+
+    'page.body.profile.tabs.referral.id': 'Referral ID',
+    'page.body.profile.tabs.referral.link': 'Referral Link',
 
     'page.body.profile.header.account.content.password': 'Password',
     'page.body.profile.header.account.content.password.button.change': 'Change',

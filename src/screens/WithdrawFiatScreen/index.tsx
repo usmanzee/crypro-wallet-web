@@ -10,9 +10,7 @@ import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
-
-import { Button } from 'react-bootstrap';
-
+import Button  from '@material-ui/core/Button';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
@@ -338,17 +336,19 @@ const WithdrawFiatComponent = (props: Props) => {
     const isOtpDisabled = () => {
         return (
             <React.Fragment>
-                <p className="pg-wallet__enable-2fa-message">
-                    {translate('page.body.wallets.tabs.withdraw.content.enable2fa')}
-                </p>
-                <Button
-                    block={true}
-                    onClick={redirectToEnable2fa}
-                    size="lg"
-                    variant="primary"
-                >
-                    {translate('page.body.wallets.tabs.withdraw.content.enable2faButton')}
-                </Button>
+                <Paper elevation={2} style={{ padding: '16px', margin: '16px' }}>
+                    <Typography variant="h6" style={{ marginBottom: '16px' }}>
+                        {translate('page.body.wallets.tabs.withdraw.content.enable2fa')}
+                    </Typography>
+                    <Button
+                        fullWidth
+                        onClick={redirectToEnable2fa}
+                        color="secondary"
+                        variant="contained"
+                    >
+                        {translate('page.body.wallets.tabs.withdraw.content.enable2faButton')}
+                    </Button>
+                </Paper>
             </React.Fragment>
         );
     };

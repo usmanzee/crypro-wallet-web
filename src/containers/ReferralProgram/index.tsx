@@ -100,23 +100,23 @@ class ReferralProgramClass extends React.Component<Props> {
                 <Box mt={2} mb={2}>
                         <Box p={4} className={classes.rootContent}>
                             <Typography variant="h4" gutterBottom style={{ fontWeight: 500 }}>
-                                Invite Friends & Earn Crypto Together
+                                {this.translate('page.body.profile.tabs.referral.title')}
                             </Typography>
                             <Typography variant="button" gutterBottom>
-                                Earn up to 40% commission every time your friends make a trade on B4U.
+                                {this.translate('page.body.profile.tabs.referral.description')}
                             </Typography>
                         </Box>
                         <Box p="8px 24px 0px">
                             <Typography component="h6" variant="h5" gutterBottom style={{ fontWeight: 500 }}>
-                                Invite Now
+                                {this.translate('page.body.profile.tabs.referral.instruction.title')}
                             </Typography>
                             <Typography variant="body1" gutterBottom style={{ opacity: '0.8' }}>
-                                Use your unique link to invite your friends over message or email. Your default invitation code can also be shared in real life or as a screenshot.
+                                {this.translate('page.body.profile.tabs.referral.instruction.description')}
                             </Typography>
                         </Box>
                         <Box p="8px 24px 0px">
                             <Typography component="div" variant="h6" gutterBottom style={{ opacity: '0.8' }}>
-                                Default Referral ID
+                                {this.translate('page.body.profile.tabs.referral.id')}
                             </Typography>
                             <Typography variant="body1" gutterBottom id="referral-id">
                                 {user.uid}
@@ -125,7 +125,7 @@ class ReferralProgramClass extends React.Component<Props> {
                         </Box>
                         <Box p="8px 24px 0px">
                             <Typography component="div" variant="h6" gutterBottom style={{ marginTop: '16px', opacity: '0.8' }}>
-                                Default Referral Link
+                                {this.translate('page.body.profile.tabs.referral.link')}
                             </Typography>
                             <Typography variant="body1" gutterBottom paragraph={true} style={{ wordBreak: 'break-all' }}>
                                 {referralLink}

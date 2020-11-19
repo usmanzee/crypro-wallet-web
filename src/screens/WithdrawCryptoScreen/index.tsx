@@ -16,8 +16,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import StarIcon from '@material-ui/icons/Star'
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
+import Button  from '@material-ui/core/Button';
 
-import { Button } from 'react-bootstrap';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
@@ -321,17 +321,19 @@ const WithdrawCryptoComponent = (props: Props) => {
     const isOtpDisabled = () => {
         return (
             <React.Fragment>
-                <p className="pg-wallet__enable-2fa-message">
-                    {translate('page.body.wallets.tabs.withdraw.content.enable2fa')}
-                </p>
-                <Button
-                    block={true}
-                    onClick={redirectToEnable2fa}
-                    size="lg"
-                    variant="primary"
-                >
-                    {translate('page.body.wallets.tabs.withdraw.content.enable2faButton')}
-                </Button>
+                <Paper elevation={2} style={{ padding: '16px', margin: '16px' }}>
+                    <Typography variant="h6" style={{ marginBottom: '16px' }}>
+                        {translate('page.body.wallets.tabs.withdraw.content.enable2fa')}
+                    </Typography>
+                    <Button
+                        fullWidth
+                        onClick={redirectToEnable2fa}
+                        color="secondary"
+                        variant="contained"
+                    >
+                        {translate('page.body.wallets.tabs.withdraw.content.enable2faButton')}
+                    </Button>
+                </Paper>
             </React.Fragment>
         );
     };
