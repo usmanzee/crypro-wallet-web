@@ -4,6 +4,8 @@ import { nationalitiesNames } from './nationalities';
 export const en = {
     //General text
     'no.record.found': 'No Record Found.',
+    'page.body.copy': 'Copy',
+    'page.body.copied': 'Copied',
     'copied.to.clipboard': 'Copied to clipboard.',
     'learn.more': 'Learn more',
     //End General text
@@ -288,6 +290,7 @@ export const en = {
     'page.body.swap.fee': 'Fee',
     'page.body.swap.price': 'Price',
     'page.body.swap.receive': 'Receive',
+    'page.body.swap.you_will_get': 'You will get',
     'page.body.swap.button.text.swap': 'Swap',
     'page.body.swap.button.text.buy': 'Buy',
     'page.body.swap.history.title.swap_history': 'Swap History',

@@ -4,6 +4,8 @@ import { nationalitiesNames } from '../../translations/nationalities';
 export const zh: LangType = {
     //General Messages
     'no.record.found': '没有找到记录',
+    'page.body.copy': '复制',
+    'page.body.copied': '复制的',
     'copied.to.clipboard': '复制到剪贴板.',
     'learn.more': '学到更多',
     //End General text
@@ -288,6 +290,7 @@ export const zh: LangType = {
     'page.body.swap.fee': '费用',
     'page.body.swap.price': '价钱',
     'page.body.swap.receive': '接收',
+    'page.body.swap.you_will_get': '你会得到',
     'page.body.swap.button.text.swap': '交换',
     'page.body.swap.button.text.buy': '购买',
     'page.body.swap.history.title.swap_history': '掉期历史',

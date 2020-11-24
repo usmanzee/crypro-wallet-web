@@ -481,15 +481,14 @@ const SwapComponent = (props: Props) => {
                     <List className={classes.list}>
                         <ListItem disableGutters dense={true}>
                             <Typography variant="h6" color="textSecondary">
-                                {/* <FormattedMessage id={'page.body.swap.receive'} /> */}
-                                You will get
+                                <FormattedMessage id={'page.body.swap.you_will_get'} />
                             </Typography>
                         </ListItem>
                         <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Typography variant="h6">
                                 {fetchingRate ? '--' :
                                     <>
-                                            <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() }
+                                        <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() }
                                     </>
                                 }
                             </Typography>

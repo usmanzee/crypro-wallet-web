@@ -13,6 +13,7 @@ import { Theme, withStyles} from '@material-ui/core/styles';
 
 import { connect, MapDispatchToProps } from 'react-redux';
 import { CopyableTextField } from '../../components';
+import { CopyTag } from '../../components';
 import {
     alertPush,
     RootState,
@@ -49,15 +50,6 @@ const useStyles = (theme: Theme) => ({
     rootContent: {
         background: theme.palette.primary.main,
         color: '#fff'
-    },
-    copyTag: {
-        margin: '0px 8px', 
-        cursor: 'pointer',
-        "&:hover": {
-            '& path': {
-                fill: theme.palette.secondary.main,
-            }
-        }
     }
 });
 
@@ -120,7 +112,7 @@ class ReferralProgramClass extends React.Component<Props> {
                             </Typography>
                             <Typography variant="body1" gutterBottom id="referral-id">
                                 {user.uid}
-                                <FileCopyOutlinedIcon className={classes.copyTag}  onClick={() => this.onCopy(user.uid)} />
+                                <CopyTag text={user.uid} disabled={false} />
                             </Typography>
                         </Box>
                         <Box p="8px 24px 0px">
@@ -129,7 +121,7 @@ class ReferralProgramClass extends React.Component<Props> {
                             </Typography>
                             <Typography variant="body1" gutterBottom paragraph={true} style={{ wordBreak: 'break-all' }}>
                                 {referralLink}
-                                <FileCopyOutlinedIcon className={classes.copyTag} onClick={() => this.onCopy(referralLink)}/>
+                                <CopyTag text={referralLink} disabled={false} />
                             </Typography>
                         </Box>
                 </Box> 

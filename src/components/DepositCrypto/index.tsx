@@ -1,5 +1,4 @@
 import * as React from 'react';
-import classnames from 'classnames';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { QRCode } from '../QRCode';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
@@ -12,9 +11,9 @@ import Alert from '@material-ui/lab/Alert';
 import Divider from '@material-ui/core/Divider';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 // import { Blur } from '../Blur';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { CopyTag } from '../../components';
 
 export interface DepositCryptoProps {
     /**
@@ -123,12 +122,6 @@ const useStyles = makeStyles((theme: Theme) =>
     addressText: {
         marginRight: theme.spacing(1),
         wordBreak: 'break-all'
-    },
-    copyIcon: {
-        cursor: 'pointer',
-        '&:hover': {
-            color: theme.palette.secondary.main,
-        },
     }
   }),
 );
@@ -161,29 +154,9 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
     const addressInstructionsTitle = props.intl.formatMessage({ id: 'page.body.deposit.network.address.instructions.title' }, { currency: currency ? currency.toUpperCase(): '' });
     const addressInstructionsDescription = props.intl.formatMessage({ id: 'page.body.deposit.network.address.instructions.description' }, { currency: currency ? currency.toUpperCase(): '' });
 
-    const [copyTooltipText, setCopyTooltipText] = React.useState<string>("Copy");
-
     // const blurCryptoClassName = classnames('pg-blur-deposit-crypto', {
     //     'pg-blur-deposit-crypto--active': true,
     // });
-
-    const onCopy = (textToCopy) => {
-        copyToClipboard(textToCopy);
-        handleOnCopy();
-    }
-    const copyToClipboard = (text) => {
-        var textField = document.createElement('textarea')
-        textField.innerText = text;
-        document.body.appendChild(textField)
-        textField.select()
-        document.execCommand('copy')
-        setCopyTooltipText('copied');
-        textField.remove()
-    };
-
-    const setCopyTooltipTextOnMouseOut = () => {
-        setCopyTooltipText('copy');
-    }
 
     const translate = (id: string) => props.intl.formatMessage({ id });
 
@@ -242,11 +215,7 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                                                         <Typography variant='body2' display='inline' className={classes.addressText}>
                                                             {address ? address : error}
                                                         </Typography>
-                                                        <Typography variant='body2' display='inline' onClick={() => onCopy(address)} onMouseOut={setCopyTooltipTextOnMouseOut}>
-                                                            <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
-                                                                <FileCopyOutlinedIcon className={classes.copyIcon}/>
-                                                            </LightTooltip>
-                                                        </Typography>
+                                                        <CopyTag text={address} disabled={false} />
                                                     </div>
 
                                                     {tag ?
@@ -262,11 +231,7 @@ const DepositCryptoComponent: React.FunctionComponent<DepositCryptoProps> = (pro
                                                                     <Typography variant='body2' display='inline' className={classes.addressText}>
                                                                         {tag ? tag : error}
                                                                     </Typography>
-                                                                    <Typography variant='body2' display='inline' onClick={() => onCopy(tag)} onMouseOut={setCopyTooltipTextOnMouseOut}>
-                                                                        <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
-                                                                            <FileCopyOutlinedIcon className={classes.copyIcon}/>
-                                                                        </LightTooltip>
-                                                                    </Typography>
+                                                                    <CopyTag text={tag} disabled={false} />
                                                                 </div>
                                                         </>:
                                                         ''

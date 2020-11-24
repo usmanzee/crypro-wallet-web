@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { 
     RootState, 
@@ -32,10 +34,12 @@ export interface CopyTagProps {
     disabled?: boolean;
 }
 
-type Props = CopyTagProps & DispatchProps;
+type Props = CopyTagProps & DispatchProps & InjectedIntlProps;
 
 const CopyTagComponent = (props: Props) => {
     const classes = useStyles();
+    const [copyTooltipText, setCopyTooltipText] = React.useState<string>(props.intl.formatMessage({ id: 'page.body.copy' }));
+
     const { text, disabled } = props;
     const onCopy = (textToCopy: string) => {
         copyToClipboard(textToCopy);
@@ -47,17 +51,37 @@ const CopyTagComponent = (props: Props) => {
         document.body.appendChild(textField)
         textField.select()
         document.execCommand('copy')
+        setCopyTooltipText(props.intl.formatMessage({ id: 'page.body.copied' }));
         textField.remove()
     };
+
+    const setCopyTooltipTextOnMouseOut = () => {
+        setCopyTooltipText(props.intl.formatMessage({ id: 'page.body.copy' }));
+    }
+
+    const translate = (id: string) => props.intl.formatMessage({ id });
+
+    const LightTooltip = withStyles((theme: Theme) => ({
+        tooltip: {
+          backgroundColor: theme.palette.common.white,
+          color: 'rgba(0, 0, 0, 0.87)',
+          boxShadow: theme.shadows[1],
+          fontSize: 13,
+        },
+    }))(Tooltip);
 
     return (
         <>
             {disabled ? 
-                <IconButton aria-label="launch" disabled={disabled} edge="start">
-                    <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} />
-                </IconButton>
+                <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                    <IconButton aria-label="launch" disabled={disabled} edge="start">
+                        <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} onMouseOut={setCopyTooltipTextOnMouseOut}/>
+                    </IconButton>
+                </LightTooltip>
             :
-                <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} />
+                <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                    <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} onMouseOut={setCopyTooltipTextOnMouseOut}/>
+                </LightTooltip>
             }
         </>
     );
@@ -71,4 +95,4 @@ const mapDispatchToProps = dispatch => ({
     fetchAlert: payload => dispatch(alertPush(payload)),
 });
 
-export const CopyTag = connect(null, mapDispatchToProps)(CopyTagComponent)
+export const CopyTag = injectIntl(connect(null, mapDispatchToProps)(CopyTagComponent) as any);

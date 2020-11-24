@@ -4,6 +4,8 @@ import { nationalitiesNames } from '../../translations/nationalities';
 export const es: LangType = {
     //General Messages
     'no.record.found': 'Registro no encontrado.',
+    'page.body.copy': 'Copiar',
+    'page.body.copied': 'Copiada',
     'copied.to.clipboard': 'Copiada al portapapeles.',
     'learn.more': 'Aprende más',
 
@@ -288,6 +290,7 @@ export const es: LangType = {
     'page.body.swap.fee': 'Tasas',
     'page.body.swap.price': 'Precio',
     'page.body.swap.receive': 'Recibir',
+    'page.body.swap.you_will_get': 'Conseguirás',
     'page.body.swap.button.text.swap': 'intercambiar',
     'page.body.swap.button.text.buy': 'Comprar',
     'page.body.swap.history.title.swap_history': 'Historial de intercambios',

@@ -129,7 +129,8 @@ const useStyles = (theme: Theme) => ({
     notificationContent: {
         maxWidth: '100%', 
         maxHeight: '50vh',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        padding: `0px ${theme.spacing(1)}px`
     },
     notificationBody: {
         margin: '8px 0px',

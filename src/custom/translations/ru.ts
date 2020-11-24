@@ -4,6 +4,8 @@ import { nationalitiesNames } from '../../translations/nationalities';
 export const ru: LangType = {
     //General Messages
     'no.record.found': 'Записей не найдено.',
+    'page.body.copy': 'Копировать',
+    'page.body.copied': 'Скопировано',
     'copied.to.clipboard': 'Скопировано в буфер обмена.',
     'learn.more': 'Учить больше',
     
@@ -285,6 +287,7 @@ export const ru: LangType = {
     'page.body.swap.fee': 'Гонорар',
     'page.body.swap.price': 'Цена',
     'page.body.swap.receive': 'Получить',
+    'page.body.swap.you_will_get': 'Ты получишь',
     'page.body.swap.button.text.swap': 'Поменять местами',
     'page.body.swap.button.text.buy': 'купить',
     'page.body.swap.history.title.swap_history': 'История обмена',
