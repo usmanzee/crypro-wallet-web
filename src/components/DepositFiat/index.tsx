@@ -6,9 +6,9 @@ import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
+import { CopyTag } from '../../components';
 
 
 export interface DepositFiatProps {
@@ -59,15 +59,6 @@ const useStyles = makeStyles((theme: Theme) =>
 		marginBottom: theme.spacing(2),
         background: 'rgba(0, 0, 0, 0.01)'
 	},
-	copyTag: {
-        margin: '0px 8px', 
-        cursor: 'pointer',
-        "&:hover": {
-            '& path': {
-                fill: theme.palette.secondary.main,
-            }
-        }
-    },
 	BanksDivider: {
 		margin: `${theme.spacing(2)}px 0px`
 	}
@@ -166,7 +157,7 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 									<ListItem disableGutters>
 										<Typography variant="h6" display="inline" gutterBottom>
 											{uid}
-											<FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>handleOnCopy(uid)} />
+											<CopyTag text={uid} disabled={false} />
 										</Typography>
 									</ListItem>
 								</List>
