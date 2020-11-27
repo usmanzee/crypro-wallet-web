@@ -15,7 +15,6 @@ const currenciesOptions: RequestOptions = {
 export function* walletsSaga() {
     try {
         const accounts = yield call(API.get(walletsOptions), '/account/balances');
-        console.log(accounts);
         const currencies = yield call(API.get(currenciesOptions), '/public/currencies');
 
         const accountsByCurrencies = currencies.map(currency => {

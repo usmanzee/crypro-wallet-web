@@ -7,11 +7,12 @@ import { RouterProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
 import { 
     WalletItemProps,
-    CryptoIcon 
+    CryptoIcon,
 } from '../../components';
 import { EstimatedValue } from '../../containers/Wallets/EstimatedValue';
 import { PageHeader } from '../../containers/PageHeader';
 import { setDocumentTitle } from '../../helpers';
+import { scientificToDecimal } from '../../helpers/scientificToDecimal';
 import { 
     RootState, 
     selectUserInfo, 
@@ -288,15 +289,21 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
                             <TableBody>
                                 {walletsData.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((wallet, index) => {
-                                    const walletBalance: number = wallet.balance ? +wallet.balance : 0.0000;
-                                    const walletLocked: number = wallet.locked ? +wallet.locked : 0.0000;
+                                    const walletBalance: number = Number(wallet.balance) ? Number(wallet.balance) : 0.0000;
+                                    const walletLocked: number = Number(wallet.locked) ? Number(wallet.locked) : 0.0000;
+                                    const total: number = walletBalance + walletLocked;
+
+                                    console.log('total: ', total);
+
                                     return <TableRow hover key={wallet.currency}>
                                         <this.StyledTableCell>
                                             {wallet.iconUrl ? (<img src={`${ wallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon className={classes.currencyIcon} code={wallet.currency.toUpperCase()} />)}
                                             <span style={{ margin: "0 8px" }}>{wallet.currency.toUpperCase()}</span>
                                             <small>{wallet.name}</small>
                                         </this.StyledTableCell>
-                                        <this.StyledTableCell>{+walletBalance + walletLocked}</this.StyledTableCell>
+                                        <this.StyledTableCell>
+                                            {scientificToDecimal(total)}
+                                        </this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
                                         <this.StyledTableCell>
@@ -419,8 +426,10 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const { classes } = this.props;
         const { wallet } = props;
         const [open, setOpen] = React.useState(false);
-        const walletBalance: number = wallet.balance ? +wallet.balance : 0.0000;
-        const walletLocked: number = wallet.locked ? +wallet.locked : 0.0000;
+
+        const walletBalance: number = Number(wallet.balance) ? Number(wallet.balance) : 0.0000;
+        const walletLocked: number = Number(wallet.locked) ? Number(wallet.locked) : 0.0000;
+        const total: number = walletBalance + walletLocked;
 
         return (
             <>
@@ -465,7 +474,9 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 </TableHead>
                                 <TableBody>
                                     <TableRow>
-                                        <this.StyledTableCell>{+walletBalance + walletLocked}</this.StyledTableCell>
+                                        <this.StyledTableCell>
+                                            {scientificToDecimal(total)}
+                                        </this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
                                     </TableRow>

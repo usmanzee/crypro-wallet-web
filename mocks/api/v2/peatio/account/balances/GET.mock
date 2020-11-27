@@ -13,8 +13,8 @@ Access-Control-Allow-Credentials: true
   },
   {
     "currency":"btc",
-    "balance":"0.21026373",
-    "locked":"0.0"
+    "balance":"0.00000073",
+    "locked":"0.1"
   },
   {
     "currency":"eth",

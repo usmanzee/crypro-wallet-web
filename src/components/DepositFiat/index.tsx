@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	depositInfo: {
 		padding: theme.spacing(2),
 		marginBottom: theme.spacing(2),
-        background: 'rgba(0, 0, 0, 0.01)'
+        background: theme.palette.background.default
 	},
 	BanksDivider: {
 		margin: `${theme.spacing(2)}px 0px`
