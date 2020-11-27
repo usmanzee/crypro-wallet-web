@@ -213,7 +213,7 @@ class MasspayComponent extends React.Component<Props> {
                     data: this.state.formatedData
                 });
                 
-                if(response.status === 200) {
+                if(response.status < 300) {
                     this.resetDropzone();
                     this.setState({modalOpen: false, responseData: response.data})
                     this.downloadCSV()
@@ -221,10 +221,14 @@ class MasspayComponent extends React.Component<Props> {
                     this.setState({submitted: false})
                     this.setState({massWithdrawProcessing: false});
                     this.props.fetchAlert({message: ['Request processed successfully'], type: 'success'});
-                } else {
+                } else if (response.status > 300 && response.data.errors) {
                     this.setState({submitted: false})
                     this.setState({massWithdrawProcessing: false});
                     this.props.fetchAlert({message: response.data.errors, type: 'error'});
+                } else {
+                    this.setState({submitted: false})
+                    this.setState({massWithdrawProcessing: false});
+                    this.props.fetchAlert({message: ['Incorrect response from server'], type: 'error'});
                 }
 
             } catch (error) {
