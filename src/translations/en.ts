@@ -413,7 +413,7 @@ export const en = {
     'page.body.profile.tabs.security': 'Profile / Security',
     'page.body.profile.tabs.identification': 'Identification',
     'page.body.profile.tabs.referral': 'Referral',
-    'page.body.profile.tabs.api_management': 'Api Management',
+    'page.body.profile.tabs.api_management': 'API Management',
     'page.body.profile.tabs.activity': 'Activity',
 
     'page.body.profile.tabs.referral.title': 'Invite Friends & Earn Crypto Together',

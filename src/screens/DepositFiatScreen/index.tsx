@@ -240,8 +240,12 @@ const DepositFiatComponent = (props: Props) => {
     const description = translate('page.body.wallets.tabs.deposit.fiat.message2');
     const referenceTip = translate('page.body.wallets.tabs.deposit.fiat.message3');
     
-    const selectedFiatWalletbalance: number = selectedFiatWalletOption && selectedFiatWalletOption.balance ? +selectedFiatWalletOption.balance : 0.0000;
-    const selectedFiatWalletLocked: number = selectedFiatWalletOption && selectedFiatWalletOption.locked ? +selectedFiatWalletOption.locked : 0.0000;
+    const selectedFiatWalletbalance: number = selectedFiatWalletOption && selectedFiatWalletOption.balance ? Number(selectedFiatWalletOption.balance) : 0.0000;
+    const selectedFiatWalletLocked: number = selectedFiatWalletOption && selectedFiatWalletOption.locked ? Number(selectedFiatWalletOption.locked) : 0.0000;
+    const selectedFiatWalletOptionPrecision: number = selectedFiatWalletOption && selectedFiatWalletOption.precision ? Number(selectedFiatWalletOption.precision) : 8;
+    const selectedFiatWalletOptionTotal: number = selectedFiatWalletbalance + selectedFiatWalletLocked;
+
+
     const pageTitle = translate('page.body.deposit.header.title');
     return (
         <>
@@ -328,7 +332,7 @@ const DepositFiatComponent = (props: Props) => {
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                                     <FormattedMessage id={'page.body.deposit.total_balance'} />:
                                 </Typography>
-                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedFiatWalletbalance + selectedFiatWalletLocked }</Typography>
+                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ +selectedFiatWalletOptionTotal.toFixed(selectedFiatWalletOptionPrecision) }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedFiatWalletOption ? selectedFiatWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
                         </Grid>

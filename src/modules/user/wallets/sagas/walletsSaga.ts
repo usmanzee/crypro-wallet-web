@@ -15,7 +15,6 @@ const currenciesOptions: RequestOptions = {
 export function* walletsSaga() {
     try {
         const accounts = yield call(API.get(walletsOptions), '/account/balances');
-        console.log(accounts);
         const currencies = yield call(API.get(currenciesOptions), '/public/currencies');
 
         const accountsByCurrencies = currencies.map(currency => {
@@ -38,6 +37,7 @@ export function* walletsSaga() {
                 iconUrl: currency.icon_url,
                 depositEnabled: currency.deposit_enabled,
                 withdrawEnabled: currency.withdrawal_enabled,
+                precision: currency.precision,
                 swapFee: currency.swap_fee,
                 minSwapAmount: currency.min_swap_amount,
                 maxSwapAmount: currency.max_swap_amount

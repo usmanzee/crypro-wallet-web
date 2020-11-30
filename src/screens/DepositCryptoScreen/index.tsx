@@ -269,8 +269,10 @@ const DepositWalletCrypto = (props: Props) => {
         ${translate('page.body.wallets.tabs.deposit.ccy.button.generate')} ${selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : ''} ${translate('page.body.wallets.tabs.deposit.ccy.button.address')}
     `;
 
-    const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0.0000;
-    const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? +selectedWalletOption.locked : 0.0000;
+    const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? Number(selectedWalletOption.balance) : 0.0000;
+    const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? Number(selectedWalletOption.locked) : 0.0000;
+    const selectedWalletOptionPrecision: number = selectedWalletOption && selectedWalletOption.precision ? Number(selectedWalletOption.precision) : 8;
+    const selectedWalletOptionTotal: number = selectedWalletOptionBalance + selectedWalletOptionLocked;
 
     const pageTitle = translate('page.body.deposit.header.title');
     
@@ -360,7 +362,7 @@ const DepositWalletCrypto = (props: Props) => {
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                                     <FormattedMessage id={'page.body.deposit.total_balance'} />:
                                 </Typography>
-                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
+                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ +selectedWalletOptionTotal.toFixed(selectedWalletOptionPrecision) }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
                             <Paper elevation={0} className={classes.cryptoTips}>

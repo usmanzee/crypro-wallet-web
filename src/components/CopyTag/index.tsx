@@ -73,13 +73,13 @@ const CopyTagComponent = (props: Props) => {
     return (
         <>
             {disabled ? 
-                <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                <LightTooltip title={copyTooltipText} placement="right-start" arrow>
                     <IconButton aria-label="launch" disabled={disabled} edge="start">
                         <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} onMouseOut={setCopyTooltipTextOnMouseOut}/>
                     </IconButton>
                 </LightTooltip>
             :
-                <LightTooltip style={{ marginLeft: '4px' }} title={copyTooltipText} placement="right-start">
+                <LightTooltip title={copyTooltipText} placement="right-start">
                     <FileCopyOutlinedIcon className={classes.copyTag} onClick={()=>onCopy(text)} onMouseOut={setCopyTooltipTextOnMouseOut}/>
                 </LightTooltip>
             }

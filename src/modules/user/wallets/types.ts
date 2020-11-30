@@ -12,6 +12,7 @@ export interface Wallet {
     iconUrl?: string;
     depositEnabled: boolean,
     withdrawEnabled: boolean,
+    precision: number,
     swapFee: number,
 	minSwapAmount: number,
 	maxSwapAmount: number

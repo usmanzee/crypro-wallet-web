@@ -51,6 +51,8 @@ export interface WalletItemProps {
      */
     withdrawEnabled: boolean,
 
+    precision: number;
+
     swapFee: number,
 	minSwapAmount: number,
 	maxSwapAmount: number
