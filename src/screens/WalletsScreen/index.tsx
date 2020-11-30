@@ -293,8 +293,6 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                     const walletLocked: number = Number(wallet.locked) ? Number(wallet.locked) : 0.0000;
                                     const total: number = walletBalance + walletLocked;
 
-                                    console.log('total: ', total);
-
                                     return <TableRow hover key={wallet.currency}>
                                         <this.StyledTableCell>
                                             {wallet.iconUrl ? (<img src={`${ wallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon className={classes.currencyIcon} code={wallet.currency.toUpperCase()} />)}
@@ -302,7 +300,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                             <small>{wallet.name}</small>
                                         </this.StyledTableCell>
                                         <this.StyledTableCell>
-                                            {scientificToDecimal(total)}
+                                            {+total.toFixed(wallet.precision)}
                                         </this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
@@ -475,7 +473,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 <TableBody>
                                     <TableRow>
                                         <this.StyledTableCell>
-                                            {scientificToDecimal(total)}
+                                            {+total.toFixed(wallet.precision)}
                                         </this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
                                         <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>

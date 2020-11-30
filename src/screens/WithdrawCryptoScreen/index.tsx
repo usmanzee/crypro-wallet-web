@@ -1,11 +1,9 @@
 import * as React from 'react';
-import {
-    Box,
-    Grid,
-    Paper,
-    Typography,
-} from '@material-ui/core';
 import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import InputBase from '@material-ui/core/InputBase';
@@ -25,6 +23,7 @@ import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
 import { Withdraw, WithdrawProps } from '../../containers';
 import { PageHeader } from '../../containers/PageHeader';
+import { TotalAmount } from '../../containers/Wallets/TotalAmount';
 import { ModalWithdrawConfirmation } from '../../containers/ModalWithdrawConfirmation';
 import { ModalWithdrawSubmit } from '../../containers/ModalWithdrawSubmit';
 import { WalletItemProps, CryptoIcon } from '../../components';
@@ -250,9 +249,13 @@ const WithdrawCryptoComponent = (props: Props) => {
     
     const translate = (id: string) => props.intl.formatMessage({ id });
 
-    const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? +selectedWalletOption.balance : 0.0000;
-    const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? +selectedWalletOption.locked : 0.0000;
+    const selectedWalletOptionBalance: number = selectedWalletOption && selectedWalletOption.balance ? Number(selectedWalletOption.balance) : 0.0000;
+    const selectedWalletOptionLocked: number = selectedWalletOption && selectedWalletOption.locked ? Number(selectedWalletOption.locked) : 0.0000;
+    const selectedWalletOptionPrecision: number = selectedWalletOption && selectedWalletOption.precision ? Number(selectedWalletOption.precision) : 8;
+    const selectedWalletOptionTotal: number = selectedWalletOptionBalance + selectedWalletOptionLocked;
 
+    // const selectedWalletOptionCurrency: string = selectedWalletOption && selectedWalletOption.currency ? selectedWalletOption.currency : defaultWalletCurrency;
+    
     let confirmationAddress = '';
     if (selectedWalletOption) {
         confirmationAddress = selectedWalletOption.type === 'fiat' ? (
@@ -459,10 +462,16 @@ const WithdrawCryptoComponent = (props: Props) => {
                                 />
                             </Popper>
                             <Box mt={3} mb={3}>
+                                {/* <TotalAmount
+                                    walletAvailableAmount= {selectedWalletOptionBalance}
+                                    walletLockedAmount = {selectedWalletOptionLocked}
+                                    precision = {selectedWalletOption && selectedWalletOption.precision ? selectedWalletOption.precision : 8}
+                                    currencyName=  {selectedWalletOptionCurrency}
+                                /> */}
                                 <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                                     <FormattedMessage id={'page.body.withdraw.total_balance'} />:
                                 </Typography>
-                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletOptionBalance + selectedWalletOptionLocked }</Typography>
+                                <Typography variant="h6" component="div" display="inline" style={{ marginRight: '4px' }}>{ +selectedWalletOptionTotal.toFixed(selectedWalletOptionPrecision) }</Typography>
                                 <Typography variant="h6" component="div" display="inline">{ selectedWalletOption ? selectedWalletOption.currency.toUpperCase() : '' }</Typography>
                             </Box>
                             <Paper elevation={0} className={classes.cryptoTips}>
