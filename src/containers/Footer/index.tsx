@@ -90,7 +90,7 @@ class FooterComponent extends React.Component<Props> {
                                 </div>
                             </div>
                         </div>
-                        <span className="pg-landing-screen__footer__rights">{this.translate('page.body.landing.footer.rights')}</span>
+                        <span className="pg-landing-screen__footer__rights">{this.translate('page.body.landing.footer.rights')} (Version: 0.01)</span>
                 {/* </Paper> */}
                     </div>
                         </footer>

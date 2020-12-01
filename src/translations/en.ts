@@ -164,7 +164,7 @@ export const en = {
     'page.body.landing.footer.about': 'About us',
     'page.body.landing.footer.community': 'Community',
     'page.body.landing.footer.info': 'Info',
-    'page.body.landing.footer.rights': 'B4U Wallet & Exchange © All rights reserved.',
+    'page.body.landing.footer.rights': 'B4U Wallet & Exchange © All rights reserved',
 
 
     /* Wallets */
