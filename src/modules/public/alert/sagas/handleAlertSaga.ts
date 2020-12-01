@@ -17,7 +17,7 @@ export function* handleAlertSaga(action: AlertPush) {
         switch (action.payload.code) {
             case 401:
                 if (action.payload.message.indexOf('identity.session.not_active') > -1) {
-                    yield call(API.delete(requestOptions), '/identity/sessions');
+                    // yield call(API.delete(requestOptions), '/identity/sessions');
                     yield put(userReset());
                     localStorage.removeItem('csrfToken');
                     yield put(userOpenOrdersReset());
@@ -28,7 +28,7 @@ export function* handleAlertSaga(action: AlertPush) {
                     return;
                 } else {
                     if (action.payload.message.indexOf('authz.invalid_session') > -1) {
-                        yield call(API.delete(requestOptions), '/identity/sessions');
+                        // yield call(API.delete(requestOptions), '/identity/sessions');
                         yield put(userReset());
                         localStorage.removeItem('csrfToken');
                         yield put(userOpenOrdersReset());
@@ -36,7 +36,7 @@ export function* handleAlertSaga(action: AlertPush) {
                         yield put(resetHistory());
                     } else {
                         if (action.payload.message.indexOf('authz.client_session_mismatch') > -1 || action.payload.message.indexOf('authz.csrf_token_mismatch') > -1) {
-                            yield call(API.delete(requestOptions), '/identity/sessions');
+                            // yield call(API.delete(requestOptions), '/identity/sessions');
                             yield put(userReset());
                             localStorage.removeItem('csrfToken');
                             yield put(userOpenOrdersReset());
