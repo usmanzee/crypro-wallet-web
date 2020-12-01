@@ -89,7 +89,7 @@ const MerchantWebsiteComponent = (props) => {
     const classes = useStyles();
     const { merchantWebsite, fetchMerchantWebsite } = props;
 
-    console.log(merchantWebsite);
+    // console.log(merchantWebsite);
     const [open, setOpen] = React.useState(false);
 
     const [values, setValues] = React.useState({

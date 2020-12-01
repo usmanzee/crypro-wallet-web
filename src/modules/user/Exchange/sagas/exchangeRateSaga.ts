@@ -16,7 +16,7 @@ export function* exchangeRateSaga(action) {
         const exchangeRate = yield call(API.post(options), '/account/exchanges/rate', action.payload.data);
         yield put(exchangeRateSuccess(exchangeRate))
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         yield put(exchangeRateError(error))
         // yield put(alertPush({message: error.message, code: error.code, type: 'error'}));
 

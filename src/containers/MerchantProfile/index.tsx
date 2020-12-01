@@ -133,7 +133,7 @@ const MerchantProfileComponent = (props) => {
     const handlePasswordInputChange = (prop: keyof PasswordState) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         const name = event.target.name;
-        console.log(name, value);
+        // console.log(name, value);
         setPasswordValues({ ...passwordValues, [prop]: value });
     };
 
@@ -144,7 +144,7 @@ const MerchantProfileComponent = (props) => {
             confirm_password: passwordValues.confirmPassword
         };
         MerchantApi.changeMerchantPassword(data).then((response) => {
-            console.log(response);
+            // console.log(response);
         });
         setDialogOpen(false);
     }

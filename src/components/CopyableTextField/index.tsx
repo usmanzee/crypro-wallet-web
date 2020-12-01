@@ -37,9 +37,6 @@ type CopyTypes = HTMLInputElement | null;
 
 const copy = (id: string) => {
     const copyText: CopyTypes = document.querySelector(`#${id}`);
-
-    console.log(copyText);
-
     if (copyText) {
         copyText.select();
 

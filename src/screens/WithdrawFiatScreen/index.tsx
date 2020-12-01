@@ -318,7 +318,7 @@ const WithdrawFiatComponent = (props: Props) => {
     };
 
     const toggleConfirmModal = (rid?: string, amount?: string, total?: string, beneficiary?: Beneficiary, otpCode?: string) => {
-        console.log('submit');
+        // console.log('submit');
 
         setWithdrawCryptoState({
             ...withdrawCryptostate,
