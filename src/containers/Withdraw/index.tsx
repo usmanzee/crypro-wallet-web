@@ -323,7 +323,7 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
     }
 
     private handleInputTagChangeEvent = (event) => {
-        this.setState({rid: event.target.value});
+        this.setState({tag: event.target.value});
     }
 
     private handleInputAmountChangeEvent = (event) => {
