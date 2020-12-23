@@ -8,7 +8,7 @@ access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Au
 	"uid": "ID0D2741FBCA",
 	"role": "member",
 	"level": 2,
-	"otp": false,
+	"otp": true,
 	"state": "active",
 	"referral_uid": null,
 	"csrf_token": "7791b31cba9591c8319b",

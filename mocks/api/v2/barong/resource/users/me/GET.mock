@@ -4,76 +4,53 @@ access-control-allow-methods: GET, POST, PUT, PATCH, DELETE
 access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Authorization
 
 {
-    "email": "john@barong.io",
-    "level": 2,
-    "otp": true,
-    "role": "superadmin",
-    "state": "active",
-    "uid": "ID787E383938",
-    "csrf_token": "31415926535897932384626433832795028841971",
-    "data":"{\"language\":\"en\"}",
-    "profiles": [
-        {
-            "address": null,
-            "city": null,
-            "country": null,
-            "dob": "1999-05-21",
-            "first_name": "Louisa",
-            "last_name": "Break",
-            "postcode": null,
-            "state": "verified",
-            "updated_at":"2019-01-10T17:06:37Z",
-            "created_at":"2019-01-10T17:06:37Z",
-            "metadata": "{\"nationality\": \"Ukrainian\"}"
-        },
-        {
-            "address": null,
-            "city": null,
-            "country": null,
-            "dob": "1999-05-21",
-            "first_name": "Marianna",
-            "last_name": "The Best",
-            "postcode": null,
-            "state": "verified",
-            "updated_at":"2019-02-10T17:06:37Z",
-            "created_at":"2019-02-10T17:06:37Z",
-            "metadata": "{\"nationality\": \"Ukrainian\"}"
-        },
-        {
-            "address": null,
-            "city": null,
-            "country": null,
-            "dob": "1999-05-21",
-            "first_name": "Rejected",
-            "last_name": "The Best",
-            "postcode": null,
-            "state": "rejected",
-            "updated_at":"2019-02-10T17:06:37Z",
-            "created_at":"2019-02-10T17:06:37Z",
-            "metadata": "{\"nationality\": \"Ukrainian\"}"
-        },
-        {
-            "address": null,
-            "city": null,
-            "country": null,
-            "dob": "1999-05-21",
-            "first_name": "Antoinette",
-            "last_name": "Ferguson",
-            "postcode": null,
-            "state": "verified",
-            "updated_at":"2019-03-10T17:06:37Z",
-            "created_at":"2019-03-10T17:06:37Z",
-            "metadata": "{\"nationality\": \"Ukrainian\"}"
-        }
-    ],
-     "labels": [
-        {
-            "key": "phone",
-            "value": "verify",
-            "scope": "private",
-            "created_at": "2019-05-16T14:01:49Z",
-            "updated_at": "2019-05-16T14:01:49Z"
-        }
-    ],
-    "phones": "+380501823918"
+	"email": "usman.jamil0308@gmail.com",
+	"uid": "ID0D2741FBCA",
+	"role": "member",
+	"level": 2,
+	"otp": true,
+	"state": "active",
+	"referral_uid": null,
+	"csrf_token": "7791b31cba9591c8319b",
+	"data": "{\"language\":\"en\"}",
+	"created_at": "2020-08-17T11:31:15Z",
+	"updated_at": "2020-12-09T12:44:38Z",
+	"labels": [{
+		"key": "email",
+		"value": "verified",
+		"scope": "private",
+		"created_at": "2020-08-17T11:32:23Z",
+		"updated_at": "2020-08-17T11:32:23Z"
+	}, {
+		"key": "phone",
+		"value": "verified",
+		"scope": "private",
+		"created_at": "2020-11-05T08:23:05Z",
+		"updated_at": "2020-11-05T08:23:05Z"
+	}, {
+		"key": "profile",
+		"value": "verified",
+		"scope": "private",
+		"created_at": "2020-11-23T06:46:58Z",
+		"updated_at": "2020-11-23T08:55:01Z"
+	}],
+	"phones": [{
+		"country": "PK",
+		"number": "923478451114",
+		"validated_at": "2020-11-05T08:23:05.000Z"
+	}],
+	"profiles": [{
+		"first_name": "Muhammad",
+		"last_name": "Usman",
+		"dob": "1994-08-15",
+		"address": "Johar Town, Lahore",
+		"postcode": "54000",
+		"city": "Lahore",
+		"country": "PK",
+		"state": "verified",
+		"metadata": "{\"nationality\":\"Pakistani\"}",
+		"created_at": "2020-11-23T06:46:58Z",
+		"updated_at": "2020-11-23T08:55:01Z"
+	}],
+	"data_storages": []
 }
