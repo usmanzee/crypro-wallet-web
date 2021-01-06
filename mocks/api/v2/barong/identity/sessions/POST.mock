@@ -11,6 +11,7 @@ access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Au
 	"otp": true,
 	"state": "active",
 	"referral_uid": null,
+	"token": "Nzc5MWIzMWNiYTk1OTFjODMxOWI6YWJj",
 	"csrf_token": "7791b31cba9591c8319b",
 	"data": "{\"language\":\"en\"}",
 	"created_at": "2020-08-17T11:31:15Z",

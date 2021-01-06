@@ -1,0 +1,61 @@
+[{
+    "id": "1",
+    "title": "eur",
+    "banks": [{
+        "Bank Name": "TransferWise",
+        "Account holder": "B4U Group of Companies, S.L",
+        "IBAN": "BE79 9670 5851 7133",
+        "SWIFT/BIC": "TRWIBEB1XXX",
+        "Address": "TransferWise Europe SA \nAvenue Louise 54, Room S52\n Brussels\n 1050\n Belgium"
+    }]
+},
+{
+    "id": "2",
+    "title": "myr",
+    "banks": [{
+        "Bank Name": "OCBC Bank",
+        "Account holder": "BRAVO Tech Trading",
+        "Account Number": "704-128-334-9"
+    }]
+},
+{
+    "id": "3",
+    "title": "usd",
+    "banks": [{
+        "Bank Name": "TransferWise1",
+        "Account holder": "B4U Group of Companies, S.L.",
+        "ACH routing number": "026073150",
+        "Wire routing number": "026073008",
+        "Account number": "8310615550",
+        "Account type": "Checking",
+        "Address": "TransferWise 19 W 24th Street \nNew York NY 10010\n United States"
+    },
+    {
+        "Bank Name": "TransferWise2",
+        "Account holder": "B4U Group of Companies, S.L.",
+        "ACH routing number": "026073150",
+        "Wire routing number": "026073008",
+        "Account number": "8310615550",
+        "Account type": "Checking",
+        "Address": "TransferWise 19 W 24th Street \nNew York NY 10010\n United States"
+    },
+    {
+        "Bank Name": "TransferWise3",
+        "Account holder": "B4U Group of Companies, S.L.",
+        "ACH routing number": "026073150",
+        "Wire routing number": "026073008",
+        "Account number": "8310615550",
+        "Account type": "Checking",
+        "Address": "TransferWise 19 W 24th Street \nNew York NY 10010\n United States"
+    }]
+},
+{
+    "id": "4",
+    "title": "sgd",
+    "banks": [{
+        "Account holder": "BRAVO Tech Trading",
+        "Bank Name": "OCBC Bank",
+        "Account Number": "704-128-335-7"
+    }]
+}
+]
