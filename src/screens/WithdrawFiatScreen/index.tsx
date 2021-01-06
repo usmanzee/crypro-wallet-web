@@ -47,7 +47,10 @@ import {
     walletsAddressFetch, 
     walletsData, 
     walletsFetch, 
-    walletsWithdrawCcyFetch 
+    walletsWithdrawCcyFetch,
+    MemberLevels,
+    memberLevelsFetch,
+    selectMemberLevels,
 } from '../../modules';
 import { CommonError } from '../../modules/types';
 import { WalletHistory } from '../../containers/Wallets/History';
@@ -69,6 +72,7 @@ interface ReduxProps {
     beneficiariesActivateSuccess: boolean;
     beneficiariesDeleteSuccess: boolean;
     currencies: Currency[];
+    memberLevels?: MemberLevels;
 }
 
 interface DispatchProps {
@@ -80,6 +84,7 @@ interface DispatchProps {
     fetchSuccess: typeof alertPush;
     setMobileWalletUi: typeof setMobileWalletUi;
     currenciesFetch: typeof currenciesFetch;
+    memberLevelsFetch: typeof memberLevelsFetch;
 }
 
 const defaultBeneficiary: Beneficiary = {
@@ -190,7 +195,7 @@ const WithdrawFiatComponent = (props: Props) => {
     const defaultWalletCurrency = 'usd';
     //Props
     const classes = useStyles();
-    const { wallets, user, currencies, withdrawSuccess } = props;
+    const { wallets, user, currencies, withdrawSuccess, memberLevels } = props;
 
     //Params
     let params = useParams();
@@ -222,6 +227,13 @@ const WithdrawFiatComponent = (props: Props) => {
             props.fetchBeneficiaries();
         }
     }, [wallets]);
+
+
+    React.useEffect(() => {
+        if (!memberLevels) {
+             props.memberLevelsFetch();
+         }
+     }, [memberLevels]);
 
     
     React.useEffect(() => {
@@ -356,11 +368,35 @@ const WithdrawFiatComponent = (props: Props) => {
         );
     };
 
+
+    
+    const accountNotConfirmed = () => {
+        return (
+            <React.Fragment>
+                <Paper elevation={2} style={{ padding: '16px', margin: '16px' }}>
+                    <Typography variant="h6" style={{ marginBottom: '16px' }}>
+                        {/* {translate('page.body.wallets.tabs.withdraw.content.enable2fa')} */}
+                        To withdraw you have to confirm your account
+                    </Typography>
+                    <Button
+                        fullWidth
+                        onClick={redirectToConfirm}
+                        color="secondary"
+                        variant="contained"
+                    >
+                        Confirm Account
+                        {/* {translate('page.body.wallets.tabs.withdraw.content.enable2faButton')} */}
+                    </Button>
+                </Paper>
+            </React.Fragment>
+        );
+    };
     const redirectToEnable2fa = () => props.history.push('/security/2fa', { enable2fa: true });
+    const redirectToConfirm = () => props.history.push('/confirm', { enable2fa: true });
 
     const renderWithdrawContent = () => {
     
-        const { user: { level, otp }, wallets, withdrawProcessing, withdrawSuccess  } = props;
+        const { user: { level, otp }, wallets, withdrawProcessing, withdrawSuccess, memberLevels } = props;
         const currency = selectedWalletOption ? selectedWalletOption.currency : defaultWalletCurrency;
         const fee = selectedWalletOption ? selectedWalletOption.fee : 0;
         const type = selectedWalletOption ? selectedWalletOption.type : 'coin';
@@ -389,7 +425,8 @@ const WithdrawFiatComponent = (props: Props) => {
             withdrawEnabled: withdrawEnabled
         };
     
-        return otp ? <Withdraw {...withdrawProps} /> : isOtpDisabled();
+        // return otp ? <Withdraw {...withdrawProps} /> : isOtpDisabled();
+        return otp ? ((memberLevels && user.level >= memberLevels.withdraw.minimum_level) ? <Withdraw {...withdrawProps} /> : accountNotConfirmed())  : isOtpDisabled();
     };
 
     const pageTitle = translate('page.body.withdraw.header.title');
@@ -525,6 +562,7 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     beneficiariesActivateSuccess: selectBeneficiariesActivateSuccess(state),
     beneficiariesDeleteSuccess: selectBeneficiariesDeleteSuccess(state),
     currencies: selectCurrencies(state),
+    memberLevels: selectMemberLevels(state),
 });
 const mapDispatchToProps = dispatch => ({
     fetchBeneficiaries: () => dispatch(beneficiariesFetch()),
@@ -535,6 +573,7 @@ const mapDispatchToProps = dispatch => ({
     fetchSuccess: payload => dispatch(alertPush(payload)),
     setMobileWalletUi: payload => dispatch(setMobileWalletUi(payload)),
     currenciesFetch: () => dispatch(currenciesFetch()),
+    memberLevelsFetch: () => dispatch(memberLevelsFetch()),
 });
 
 export const WithdrawFiatScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(WithdrawFiatComponent))
