@@ -6,6 +6,7 @@ export interface Config {
         rangerUrl: string;
         arkeUrl: string;
         finexUrl: string;
+        sentryPublicKey: string;
     };
     minutesUntilAutoLogout?: string;
     rangerReconnectPeriod?: string;

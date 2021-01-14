@@ -14,6 +14,7 @@ import './index.css';
 import { rootSaga } from './modules';
 import { rangerSagas } from './modules/public/ranger';
 import { rangerMiddleware, sagaMiddleware, store } from './store';
+import { sentryPublicKey } from './api';
 
 import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
 
@@ -91,7 +92,8 @@ addLocaleData([...en, ...customLocaleData]);
 sagaMiddleware.run(rootSaga);
 rangerMiddleware.run(rangerSagas);
 
-Sentry.init({ dsn: "https://62680c1c8f834779a046e567dec7503a@o175277.ingest.sentry.io/1258341" });
+const key = '62680c1c8f834779a046e567dec7503a';
+Sentry.init({ dsn: `https://${key}@o175277.ingest.sentry.io/1258341` });
 
 const render = () => ReactDOM.render(
     <Provider store={store}>

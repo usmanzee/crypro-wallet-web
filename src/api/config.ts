@@ -9,6 +9,7 @@ export const defaultConfig: Config = {
         rangerUrl: '',
         arkeUrl: '',
         finexUrl: '',
+        sentryPublicKey: '',
     },
     minutesUntilAutoLogout: '5',
     rangerReconnectPeriod: '1',
@@ -61,3 +62,4 @@ export const sessionCheckInterval = (): string => Cryptobase.config.sessionCheck
 export const balancesFetchInterval = (): string => Cryptobase.config.balancesFetchInterval || '3000';
 export const isFinexEnabled = (): boolean => Cryptobase.config.finex || false;
 export const passwordEntropyStep = ():number => Cryptobase.config.passwordEntropyStep;
+export const sentryPublicKey = ():string => Cryptobase.config.api.sentryPublicKey || '62680c1c8f834779a046e567dec7503a';
