@@ -216,6 +216,7 @@ export const es: LangType = {
     'page.body.wallets.tabs.withdraw.content.amount': 'Importe del retiro',
     'page.body.wallets.tabs.withdraw.content.code2fa': 'Código 2FA',
     'page.body.wallets.tabs.withdraw.content.fee': 'Tasa',
+    'page.body.wallets.tabs.withdraw.content.available': 'Monto disponible',
     'page.body.wallets.tabs.withdraw.content.total': 'Importe total del retiro',
     'page.body.wallets.tabs.withdraw.content.button': 'RETIRAR',
     'page.body.wallets.tabs.withdraw.disabled.message': 'Retiro fue desactivado por administración',

@@ -216,6 +216,7 @@ export const ml: LangType = {
     'page.body.wallets.tabs.withdraw.content.amount': 'Jumlah Pengeluaran',
     'page.body.wallets.tabs.withdraw.content.code2fa': 'Kod 2FA',
     'page.body.wallets.tabs.withdraw.content.fee': 'Upah',
+    'page.body.wallets.tabs.withdraw.content.available': 'Jumlah Yang Ada',
     'page.body.wallets.tabs.withdraw.content.total': 'Jumlah Keseluruhan Pengeluaran',
     'page.body.wallets.tabs.withdraw.content.button': 'PENGELUARAN',
     'page.body.wallets.tabs.withdraw.disabled.message': 'Pengeluaran tidak dibenarkan oleh pentadbir',

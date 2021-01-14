@@ -615,7 +615,7 @@ const SwapComponent = (props: Props) => {
                                                         type='number'
                                                         value={walletsToAmount}
                                                         onChange={handleWalletsToAmountChange}
-                                                        disabled={true}
+                                                        // disabled={true}
                                                         startAdornment={
                                                             <InputAdornment position="start">
                                                                 {fetchingRate && <CircularProgress size={14}/>}

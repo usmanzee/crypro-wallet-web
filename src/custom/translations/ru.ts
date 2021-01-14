@@ -213,6 +213,7 @@ export const ru: LangType = {
     'page.body.wallets.tabs.withdraw.content.amount': 'Сумма вывода',
     'page.body.wallets.tabs.withdraw.content.code2fa': '6-ти значный GAuthenticator код',
     'page.body.wallets.tabs.withdraw.content.fee': 'Комиссия',
+    'page.body.wallets.tabs.withdraw.content.available': 'Доступная сумма',
     'page.body.wallets.tabs.withdraw.content.total': 'Сумма вывода',
     'page.body.wallets.tabs.withdraw.content.button': 'ВЫВЕСТИ',
 

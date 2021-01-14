@@ -216,6 +216,7 @@ export const zh: LangType = {
     'page.body.wallets.tabs.withdraw.content.amount': '提款金额',
     'page.body.wallets.tabs.withdraw.content.code2fa': '2FA代码',
     'page.body.wallets.tabs.withdraw.content.fee': '费用',
+    'page.body.wallets.tabs.withdraw.content.available': '可用金额',
     'page.body.wallets.tabs.withdraw.content.total': '总提款金额',
     'page.body.wallets.tabs.withdraw.content.button': '收回',
     'page.body.wallets.tabs.withdraw.disabled.message': '提款已被管理部门禁用',

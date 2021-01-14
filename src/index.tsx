@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap-grid.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as Sentry from "@sentry/react";
 import { addLocaleData } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -89,6 +90,8 @@ theme = responsiveFontSizes(theme);
 addLocaleData([...en, ...customLocaleData]);
 sagaMiddleware.run(rootSaga);
 rangerMiddleware.run(rangerSagas);
+
+Sentry.init({ dsn: "https://62680c1c8f834779a046e567dec7503a@o175277.ingest.sentry.io/1258341" });
 
 const render = () => ReactDOM.render(
     <Provider store={store}>

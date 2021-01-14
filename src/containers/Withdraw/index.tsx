@@ -14,6 +14,8 @@ import {
     Button
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
+import Divider from '@material-ui/core/Divider';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
@@ -28,6 +30,18 @@ const useStyles = (theme: Theme) => ({
     },
     withdrawFee: {
         padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
+    },
+    formControl: {
+        marginRight: '4px',
+        padding: '8px'
+    },
+    divider: {
+        height: 32,
+        margin: '0px 12px'
+    },
+    maxButton: {
+         cursor: 'pointer',
+         color: theme.palette.primary.main
     },
 });
 
@@ -47,6 +61,7 @@ export interface WithdrawProps {
     withdrawAmountLabel?: string;
     withdraw2faLabel?: string;
     withdrawFeeLabel?: string;
+    withdrawAvailableLabel?: string;
     withdrawTotalLabel?: string;
     withdrawButtonLabel?: string;
     withdrawDone: boolean;
@@ -123,6 +138,7 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
             withdrawAddressLabel,
             withdrawAmountLabel,
             withdrawFeeLabel,
+            withdrawAvailableLabel,
             withdrawTotalLabel,
             withdrawButtonLabel,
             withdrawEnabled
@@ -190,9 +206,20 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            InputProps={{
+                                endAdornment:
+                                    <InputAdornment position="end">
+                                        <Divider className={classes.divider} orientation="vertical" />
+                                        <span className={classes.maxButton} onClick={this.setMaxWithdrawlAmount}>
+                                            <FormattedMessage id={'page.body.swap.input.tag.max'} />
+                                        </span>
+                                    </InputAdornment>,
+                                    classes: {adornedEnd: classes.adornedEnd}
+                                }}
                             variant="outlined"
                             onChange = {this.handleInputAmountChangeEvent}
-                            error={!(Number(this.props.balance) >= Number(amount))}
+                            helperText={(Number(this.props.balance - this.props.fee) <= Number(amount)) && 'Incorrect'}
+                            error={(Number(this.props.balance - this.props.fee) <= Number(amount))}
                             
                         />
                         {twoFactorAuthRequired && this.renderOtpCodeInput()}
@@ -202,6 +229,13 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
                             </Typography>
                             <Typography variant='body2' component='div' display='inline'>
                                 {this.renderFee()}
+                            </Typography>
+                            <br />
+                            <Typography variant='button' component='div' display='inline' style={{ margin: '0px 8px' }}>
+                                {withdrawAvailableLabel ? withdrawAvailableLabel : 'Available Amount'}:
+                            </Typography>
+                            <Typography variant='body2' component='div' display='inline'>
+                                {this.renderAvailableAmount()}
                             </Typography>
                             <br />
                             <Typography variant='button' component='div' display='inline' style={{ margin: '0px 8px' }}>
@@ -252,6 +286,16 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
         return (
             <span>
                 <Decimal fixed={fixed}>{fee.toString()}</Decimal> {currency.toUpperCase()}
+            </span>
+        );
+    };
+
+    private renderAvailableAmount = () => {
+        const { balance, fixed, currency } = this.props;
+
+        return (
+            <span>
+                <Decimal fixed={fixed}>{balance.toString()}</Decimal> {currency.toUpperCase()}
             </span>
         );
     };
@@ -347,6 +391,17 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
             });
         }
     };
+
+    private setMaxWithdrawlAmount = () => {
+        const { fixed, balance, fee } = this.props;
+        const maxWithdrawlAmount = Number(balance - fee).toFixed(fixed);
+        const total = Number(Number(maxWithdrawlAmount) + Number(fee)).toFixed(fixed);
+        console.log(String(total));
+        this.setState({
+            total: total,
+            amount: maxWithdrawlAmount,
+        });
+    }
 
     private setTotal = (value: string) => {
         this.setState({ total: value });

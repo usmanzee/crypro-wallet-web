@@ -7,7 +7,7 @@ access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Au
 	"email": "usman.jamil0308@gmail.com",
 	"uid": "ID0D2741FBCA",
 	"role": "member",
-	"level": 2,
+	"level": 3,
 	"otp": true,
 	"state": "active",
 	"referral_uid": null,

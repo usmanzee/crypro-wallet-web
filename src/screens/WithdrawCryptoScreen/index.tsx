@@ -276,7 +276,6 @@ const WithdrawCryptoComponent = (props: Props) => {
             //beneficiary.data ? (beneficiary.data.address as string) : ''
         );
     }
-
     const handleWithdraw = () => {
         const { otpCode, beneficiary, rid, total } = withdrawCryptostate;
 
@@ -404,6 +403,7 @@ const WithdrawCryptoComponent = (props: Props) => {
             withdrawAmountLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.amount' }),
             withdraw2faLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.code2fa' }),
             withdrawFeeLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.fee' }),
+            withdrawAvailableLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.available' }),
             withdrawTotalLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.total' }),
             withdrawButtonLabel: props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.content.button' }),
             withdrawEnabled: withdrawEnabled,

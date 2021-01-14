@@ -23,6 +23,7 @@ export function* beneficiariesCreateSaga(action: BeneficiariesCreate) {
         yield put(alertPush({message: ['success.beneficiaries.created'], type: 'success'}));
     } catch (error) {
         yield put(beneficiariesCreateError(error));
+        console.log(error);
         yield put(alertPush({message: error.message, code: error.code, type: 'error'}));
     }
 }
