@@ -425,6 +425,7 @@ const SwapComponent = (props: Props) => {
 
     const resetFrom = () => {
         setWalletsFromAmount('');
+        setOtpCode('');
         props.fetchWallets();
         props.exchangeRateReset();
     }
