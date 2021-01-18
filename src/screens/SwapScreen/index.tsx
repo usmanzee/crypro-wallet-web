@@ -417,7 +417,8 @@ const SwapComponent = (props: Props) => {
         const requestData = {
             base_currency: selectedWalletToCurrency,
             qoute_currency: selectedWalletFromCurrency,
-            qoute_amount: walletsFromAmount
+            qoute_amount: walletsFromAmount,
+            otp: otpCode
         };
         props.exchangeRequest(requestData);
     }
