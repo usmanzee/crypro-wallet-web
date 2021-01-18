@@ -8,6 +8,10 @@ export const ml: LangType = {
     'page.body.copied': 'Disalin',
     'copied.to.clipboard': 'Disalin ke papan keratan.',
     'learn.more': 'Learn more',
+    'need.to.enable.2fa.title': 'Anda perlu mengaktifkan 2FA sebelum menggunakan ciri ini.',
+    'need.to.enable.2fa.button.title': 'Dayakan 2FA',
+    'need.to.confirm.account': 'Anda perlu mengesahkan akaun anda sebelum menggunakan ciri ini.',
+    'need.to.confirm.account.button.title': 'Sahkan Akaun',
     //End General text
 
     'page.header.navbar.signIn': 'Log Masuk',

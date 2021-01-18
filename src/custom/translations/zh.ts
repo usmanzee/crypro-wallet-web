@@ -8,6 +8,10 @@ export const zh: LangType = {
     'page.body.copied': '复制的',
     'copied.to.clipboard': '复制到剪贴板.',
     'learn.more': '学到更多',
+    'need.to.enable.2fa.title': '使用此功能之前，您需要启用2FA。',
+    'need.to.enable.2fa.button.title': '启用2FA',
+    'need.to.confirm.account': '您需要先确认您的帐户，然后才能使用此功能。',
+    'need.to.confirm.account.button.title': '确认帐号',
     //End General text
 
     'page.header.navbar.signIn': '登入',

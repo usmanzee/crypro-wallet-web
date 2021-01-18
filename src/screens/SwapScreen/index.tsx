@@ -47,7 +47,10 @@ import {
     exchangeRateReset,
     exchangeRequest,
     selectExchangeSuccess,
-    selectExchangeLoading
+    selectExchangeLoading,
+    MemberLevels,
+    memberLevelsFetch,
+    selectMemberLevels,
 } from '../../modules';
 
 interface ReduxProps {
@@ -58,6 +61,7 @@ interface ReduxProps {
     exchangeRate: string;
     exchangeSuccess: boolean;
     exchangeLoading: boolean;
+    memberLevels?: MemberLevels;
 }
 
 interface DispatchProps {
@@ -65,6 +69,7 @@ interface DispatchProps {
     exchangeRateFetch: typeof exchangeRateFetch;
     exchangeRateReset: typeof exchangeRateReset;
     exchangeRequest: typeof exchangeRequest;
+    memberLevelsFetch: typeof memberLevelsFetch;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -157,7 +162,7 @@ const SwapComponent = (props: Props) => {
     const WAIT_INTERVAL = 1000;
     //Props
     const classes = useStyles();
-    const { wallets, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading } = props;
+    const { wallets, user: { level, otp }, memberLevels, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading} = props;
 
     //States
     const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
@@ -173,11 +178,11 @@ const SwapComponent = (props: Props) => {
     const [selectedWalletFromOption, setSelectedWalletFromOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [selectedWalletToOption, setSelectedWalletToOption] = React.useState<WalletItemProps | null | undefined>(null);
 
-    const [walletsFromAmount, setWalletsFromAmount] = React.useState<string | undefined>('');
+    const [walletsFromAmount, setWalletsFromAmount] = React.useState<string>('');
     const [walletsFromError, setWalletsFromError] = React.useState<boolean>(false);
     const [walletsFromErrorMessage, setWalletsFromErrorMessage] = React.useState<string>('');
-    const [walletsToAmount, setWalletsToAmount] = React.useState<string | undefined>('');
-    const [otpCode, setOtpCode] = React.useState<string | undefined>('');
+    const [walletsToAmount, setWalletsToAmount] = React.useState<string>('');
+    const [otpCode, setOtpCode] = React.useState<string>('');
     const [otpCodeError, setOtpCodeError] = React.useState<boolean>(false);
     const [otpCodeErrorMessage, setOtpCodeErrorMessage] = React.useState<string>('');
     const [fetchingRate, setFetchingRate] = React.useState(false);
@@ -189,6 +194,12 @@ const SwapComponent = (props: Props) => {
             props.fetchWallets();
         }
     }, [wallets]);
+
+    React.useEffect(() => {
+        if (!memberLevels) {
+             props.memberLevelsFetch();
+         }
+     }, [memberLevels]);
 
     React.useEffect(() => {
         if (wallets.length && !walletsFrom.length) {
@@ -242,6 +253,7 @@ const SwapComponent = (props: Props) => {
         return () => {
             setFetchingRate(true);
             setWalletsToAmount('');
+            isValidForm();
             return clearTimeout(timeOutId);
         };
     }, [walletsFromAmount])
@@ -249,6 +261,10 @@ const SwapComponent = (props: Props) => {
     React.useEffect(() => {
         setWalletsToAmount(exchangeRate);
     }, [exchangeRate])
+
+    React.useEffect(() => {
+        isValidForm();
+    }, [otpCode])
 
     React.useEffect(() => {
         if(exchangeSuccess) {
@@ -326,16 +342,15 @@ const SwapComponent = (props: Props) => {
     const handleWalletsFromAmountErrors = (amount) => {
         let errorMsg = '';
         if(amount) {
-            // if(Number(amount) < selectedWalletFromOptionMinswapAmount) {
-            //     setWalletsFromError(true);
-            //     errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: selectedWalletFromOptionMinswapAmount });
+            if(Number(amount) < selectedWalletFromOptionMinswapAmount) {
+                setWalletsFromError(true);
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: selectedWalletFromOptionMinswapAmount });
     
-            // } else if(Number(amount) > selectedWalletFromOptionMaxswapAmount) {
-            //     setWalletsFromError(true);
-            //     errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: selectedWalletFromOptionMaxswapAmount });
+            } else if(Number(amount) > selectedWalletFromOptionMaxswapAmount) {
+                setWalletsFromError(true);
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: selectedWalletFromOptionMaxswapAmount });
     
-            // }else 
-            if (Number(amount) > selectedWalletFromOptionBalance) {
+            }else if (Number(amount) > selectedWalletFromOptionBalance) {
                 setWalletsFromError(true);
                 errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error3'});
             } else {
@@ -371,7 +386,7 @@ const SwapComponent = (props: Props) => {
                 errorMsg = '';
             }
         } else {
-            setWalletsFromError(false);
+            setOtpCodeError(false);
             errorMsg = '';
         }
         setOtpCodeErrorMessage(`${errorMsg}`);
@@ -379,9 +394,8 @@ const SwapComponent = (props: Props) => {
     
     const setWalletFromMaxAmount = () => {
         const maxAvailableAmount = selectedWalletFromOption ? selectedWalletFromOption.balance : '0';
-        if(Number(maxAvailableAmount) > 0) {
+        if(maxAvailableAmount && Number(maxAvailableAmount) > 0) {
             setWalletsFromAmount(maxAvailableAmount);
-            // getExchangeRates();
         }
     }
     
@@ -411,7 +425,9 @@ const SwapComponent = (props: Props) => {
         }
     }
     const isValidForm = () => {
-        return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError || !(otpCode && otpCode.length == 6) || exchangeLoading; 
+        // return ((!Boolean(Number(walletsFromAmount) > 0) || walletsFromError) && (otpCode.length == 6)) || exchangeLoading; 
+        console.log((walletsFromAmount && walletsFromError) || (otpCode && otpCodeError) || exchangeLoading);
+        return (walletsFromAmount && walletsFromError) || (otpCode && otpCodeError) || exchangeLoading;
     }
     const handleSwapButtonClick = async () => {
         const requestData = {
@@ -584,132 +600,186 @@ const SwapComponent = (props: Props) => {
         />
     }
 
+    const isOtpDisabled = () => {
+        return (
+            <React.Fragment>
+                <div className={classes.swapForm}>
+                    <Typography variant="h6" style={{ marginBottom: '16px' }}>
+                        {translate('need.to.enable.2fa.title')}
+                    </Typography>
+                    <Button
+                        fullWidth
+                        onClick={redirectToEnable2fa}
+                        color="secondary"
+                        variant="contained"
+                    >
+                        {translate('need.to.enable.2fa.button.title')}
+                    </Button>
+                </div>
+            </React.Fragment>
+        );
+    };
+
+    const accountNotConfirmed = () => {
+        return (
+            <React.Fragment>
+                <div className={classes.swapForm}>
+                    <Typography variant="h6" style={{ marginBottom: '16px' }}>
+                        {translate('need.to.confirm.account')}
+                    </Typography>
+                    <Button
+                        fullWidth
+                        onClick={redirectToConfirm}
+                        color="secondary"
+                        variant="contained"
+                    >
+                        {translate('need.to.confirm.account.button.title')}
+                    </Button>
+                </div>
+            </React.Fragment>
+        );
+    };
+
+    const redirectToEnable2fa = () => props.history.push('/security/2fa', { enable2fa: true });
+    const redirectToConfirm = () => props.history.push('/confirm', { enable2fa: true });
+
+    const render = () => {
+        return (
+            <>
+            <div className={classes.swapForm}>
+                {walletsFromLoading && walletsToLoading ? 
+                    <CircularProgress size={25}/>
+                    :
+                    <>
+                        <div style={{ float: 'right' }}>
+                            {renderAvailableBalance()}
+                        </div>
+                        <div className={classes.swapFromFields}>
+                            <FormControl variant="outlined" fullWidth className={classes.formControl } error={walletsFromError}>
+                                <InputLabel htmlFor="sell">
+                                    <FormattedMessage id={'page.body.swap.input.sell'} />
+                                </InputLabel>
+                                <OutlinedInput
+                                    id="sell"
+                                    label={<FormattedMessage id={'page.body.swap.input.sell'} />}
+                                    // placeholder={`${selectedWalletFromOptionMinswapAmount} - ${selectedWalletFromOptionMaxswapAmount}`}
+                                    type='number'
+                                    value={walletsFromAmount}
+                                    autoFocus={true}
+                                    onChange={(e) => {
+                                        handleWalletsFromAmountChange(e)
+                                    }}
+                                    aria-describedby="sell-text"
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
+                                                <FormattedMessage id={'page.body.swap.input.tag.max'} />
+                                            </span>
+                                            <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
+                                            <div className={classes.fromWalletSelect}>
+                                                {renderWalletsFromDropdown()}
+                                            </div>
+                                        </InputAdornment>
+                                    }
+                                />
+                                {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
+                            </FormControl>
+                        </div>
+                        <div className={classes.swapFields}>
+                            <FormControl variant="outlined" fullWidth className={classes.formControl}>
+                                <InputLabel htmlFor="buy">
+                                    <FormattedMessage id={'page.body.swap.input.buy'} />
+                                </InputLabel>
+                                <OutlinedInput
+                                    id="buy"
+                                    label={<FormattedMessage id={'page.body.swap.input.buy'} />}
+                                    placeholder={fetchingRate ? '' : ''}
+                                    type='number'
+                                    value={walletsToAmount}
+                                    onChange={handleWalletsToAmountChange}
+                                    // disabled={true}
+                                    startAdornment={
+                                        <InputAdornment position="start">
+                                            {fetchingRate && <CircularProgress size={14}/>}
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
+                            <div className={classes.walletSelect}>
+                                {renderWalletsToDropdown()}
+                            </div>
+                        </div>
+                        <div className={classes.swapFromFields}>
+                            <FormControl variant="outlined" fullWidth className={classes.formControl } error={otpCodeError}>
+                                <InputLabel 
+                                htmlFor="opt_code" 
+                                // shrink={true} 
+                                // variant="outlined"
+                                >
+                                <FormattedMessage id={'page.body.swap.input.otp_code'} />
+                                </InputLabel>
+                                <OutlinedInput
+                                    id="opt_code"
+                                    label={<FormattedMessage id={'page.body.swap.input.otp_code'} />}
+                                    type='number'
+                                    value={otpCode}
+                                    autoFocus={false}
+                                    onChange={(e) => {
+                                        handleOtpCodeChange(e)
+                                    }}
+                                    aria-describedby="otp_code_text"
+                                />
+                                {otpCodeError && <FormHelperText id="otp_code_text">{otpCodeErrorMessage}</FormHelperText>}
+                            </FormControl>
+                        </div>
+                        {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
+                            <>
+                                <Box className={classes.swapInfo} p={1} mt={2} mb={2}>
+                                    <List disablePadding={true}>
+                                        {renderPrice()}
+                                        {renderExchangeTradingFee()}
+                                        {renderReceivableAmount()}
+                                    </List>
+                                </Box>
+                            </>
+                        )}
+                        <Button 
+                            variant="contained" 
+                            color="primary"
+                            size="large"
+                            fullWidth={true}
+                            onClick={handleSwapButtonClick}
+                            // disabled={isValidForm()}
+                            disabled={Number(walletsFromAmount) <= 0 || Boolean(otpCode.length != 6) || walletsFromError || exchangeLoading}
+                        >
+                            {exchangeLoading ? <CircularProgress className={classes.buttonProgress} size={18} /> : <FormattedMessage id={'page.body.swap.button.text.buy'} />}
+                        </Button>
+                    </>
+                }
+            </div>
+        <Divider className={classes.historyDivider}/>
+        {renderSwapHistory()}
+                
+            </>
+        );
+    }
     const pageTitle = translate('page.body.swap.title.buy_sell');
     return (
         <>
-            <PageHeader pageTitle={pageTitle} />
-            <Box className={classes.pageRoot}>
-                <Grid container>
-                    <Grid item xs={12} sm ={12} md={12} lg={12}>
-                        <Paper className={classes.pageContent}>
-                                <div className={classes.swapForm}>
-                                    {walletsFromLoading && walletsToLoading ? 
-                                        <CircularProgress size={25}/>
-                                        :
-                                        <>
-                                            <div style={{ float: 'right' }}>
-                                                {renderAvailableBalance()}
-                                            </div>
-                                            <div className={classes.swapFromFields}>
-                                                <FormControl variant="outlined" fullWidth className={classes.formControl } error={walletsFromError}>
-                                                    <InputLabel htmlFor="sell">
-                                                        <FormattedMessage id={'page.body.swap.input.sell'} />
-                                                    </InputLabel>
-                                                    <OutlinedInput
-                                                        id="sell"
-                                                        label={<FormattedMessage id={'page.body.swap.input.sell'} />}
-                                                        // placeholder={`${selectedWalletFromOptionMinswapAmount} - ${selectedWalletFromOptionMaxswapAmount}`}
-                                                        type='number'
-                                                        value={walletsFromAmount}
-                                                        autoFocus={true}
-                                                        onChange={(e) => {
-                                                            handleWalletsFromAmountChange(e)
-                                                        }}
-                                                        aria-describedby="sell-text"
-                                                        endAdornment={
-                                                            <InputAdornment position="end">
-                                                                <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
-                                                                    <FormattedMessage id={'page.body.swap.input.tag.max'} />
-                                                                </span>
-                                                                <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
-                                                                <div className={classes.fromWalletSelect}>
-                                                                    {renderWalletsFromDropdown()}
-                                                                </div>
-                                                            </InputAdornment>
-                                                        }
-                                                    />
-                                                    {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
-                                                </FormControl>
-                                            </div>
-                                            <div className={classes.swapFields}>
-                                                <FormControl variant="outlined" fullWidth className={classes.formControl}>
-                                                    <InputLabel htmlFor="buy">
-                                                        <FormattedMessage id={'page.body.swap.input.buy'} />
-                                                    </InputLabel>
-                                                    <OutlinedInput
-                                                        id="buy"
-                                                        label={<FormattedMessage id={'page.body.swap.input.buy'} />}
-                                                        placeholder={fetchingRate ? '' : ''}
-                                                        type='number'
-                                                        value={walletsToAmount}
-                                                        onChange={handleWalletsToAmountChange}
-                                                        // disabled={true}
-                                                        startAdornment={
-                                                            <InputAdornment position="start">
-                                                                {fetchingRate && <CircularProgress size={14}/>}
-                                                            </InputAdornment>
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <div className={classes.walletSelect}>
-                                                    {renderWalletsToDropdown()}
-                                                </div>
-                                            </div>
-                                            <div className={classes.swapFromFields}>
-                                                <FormControl variant="outlined" fullWidth className={classes.formControl } error={otpCodeError}>
-                                                    <InputLabel 
-                                                    htmlFor="opt_code" 
-                                                    // shrink={true} 
-                                                    // variant="outlined"
-                                                    >
-                                                       <FormattedMessage id={'page.body.swap.input.otp_code'} />
-                                                    </InputLabel>
-                                                    <OutlinedInput
-                                                        id="opt_code"
-                                                        label={<FormattedMessage id={'page.body.swap.input.otp_code'} />}
-                                                        type='number'
-                                                        value={otpCode}
-                                                        autoFocus={false}
-                                                        onChange={(e) => {
-                                                            handleOtpCodeChange(e)
-                                                        }}
-                                                        aria-describedby="otp_code_text"
-                                                    />
-                                                    {otpCodeError && <FormHelperText id="otp_code_text">{otpCodeErrorMessage}</FormHelperText>}
-                                                </FormControl>
-                                            </div>
-                                            {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
-                                                <>
-                                                    <Box className={classes.swapInfo} p={1} mt={2} mb={2}>
-                                                        <List disablePadding={true}>
-                                                            {renderPrice()}
-                                                            {renderExchangeTradingFee()}
-                                                            {renderReceivableAmount()}
-                                                        </List>
-                                                    </Box>
-                                                </>
-                                            )}
-                                            <Button 
-                                                variant="contained" 
-                                                color="primary"
-                                                size="large"
-                                                fullWidth={true}
-                                                onClick={handleSwapButtonClick}
-                                                disabled={isValidForm()}
-                                            >
-                                                {exchangeLoading ? <CircularProgress className={classes.buttonProgress} size={18} /> : <FormattedMessage id={'page.body.swap.button.text.buy'} />}
-                                            </Button>
-                                        </>
-                                    }
-                                </div>
-                            <Divider className={classes.historyDivider}/>
-                            {renderSwapHistory()}
-                        </Paper> 
-                    </Grid>
+        <PageHeader pageTitle={pageTitle} />
+        <Box className={classes.pageRoot}>
+            <Grid container>
+                <Grid item xs={12} sm ={12} md={12} lg={12}>
+                    <Paper className={classes.pageContent}>
+                    {otp ? ((memberLevels && level >= memberLevels.withdraw.minimum_level) ? render() : accountNotConfirmed())  : isOtpDisabled()}
+                    </Paper> 
                 </Grid>
-            </Box>
+            </Grid>
+        </Box>
+           
         </>
     );
+
 }
 
 const mapStateToProps = (state: RootState): ReduxProps => ({
@@ -719,7 +789,8 @@ const mapStateToProps = (state: RootState): ReduxProps => ({
     isFetchingRate: selectIsFetchingExchangeRate(state),
     exchangeRate: selectExchangeRate(state),
     exchangeSuccess: selectExchangeSuccess(state),
-    exchangeLoading: selectExchangeLoading(state)
+    exchangeLoading: selectExchangeLoading(state),
+    memberLevels: selectMemberLevels(state),
 });
 const mapDispatchToProps = dispatch => ({
     fetchWallets: () => dispatch(walletsFetch()),
@@ -730,6 +801,7 @@ const mapDispatchToProps = dispatch => ({
         dispatch(exchangeRequest(data));
     },
     exchangeRateReset: () => dispatch(exchangeRateReset()),
+    memberLevelsFetch: () => dispatch(memberLevelsFetch()),
 });
 
 export const SwapScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(SwapComponent))

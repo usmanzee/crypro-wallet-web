@@ -20,7 +20,7 @@ access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Au
    },
    {
       "key":"profile",
-      "value":"submitted",
+      "value":"drafted",
       "scope":"private",
       "created_at":"2019-02-25T12:47:07Z",
       "updated_at":"2019-02-25T12:47:07Z"

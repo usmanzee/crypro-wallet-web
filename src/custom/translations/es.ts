@@ -8,6 +8,10 @@ export const es: LangType = {
     'page.body.copied': 'Copiada',
     'copied.to.clipboard': 'Copiada al portapapeles.',
     'learn.more': 'Aprende más',
+    'need.to.enable.2fa.title': 'Debe habilitar 2FA antes de usar esta función.',
+    'need.to.enable.2fa.button.title': 'Habilitar 2FA',
+    'need.to.confirm.account': 'Debe confirmar su cuenta antes de usar esta función.',
+    'need.to.confirm.account.button.title': 'Confirmar cuenta',
 
     'page.header.navbar.signIn': 'Sign In',
     'page.header.navbar.trade': 'Trade',

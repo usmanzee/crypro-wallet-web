@@ -8,7 +8,7 @@ import { sendIdentityData, sendIdentityError, SendIdentityFetch } from '../actio
 const sessionsConfig = (csrfToken?: string): RequestOptions => {
     return {
         apiVersion: 'barong',
-        headers: { 'X-CSRF-Token': csrfToken },
+        headers: { 'X-CSRF-Token': "csrfToken" },
     };
 };
 

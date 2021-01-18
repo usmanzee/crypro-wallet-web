@@ -8,6 +8,10 @@ export const ru: LangType = {
     'page.body.copied': 'Скопировано',
     'copied.to.clipboard': 'Скопировано в буфер обмена.',
     'learn.more': 'Учить больше',
+    'need.to.enable.2fa.title': 'Перед использованием этой функции вам необходимо включить 2FA.',
+    'need.to.enable.2fa.button.title': 'Включить 2FA',
+    'need.to.confirm.account': 'Перед использованием этой функции вам необходимо подтвердить свою учетную запись.',
+    'need.to.confirm.account.button.title': 'Подтвердить Аккаунт',
     
     'page.header.navbar.signIn': 'Войти',
     'page.header.navbar.trade': 'Биржа',

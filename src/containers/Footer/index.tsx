@@ -49,7 +49,7 @@ class FooterComponent extends React.Component<Props> {
                                     <Link to="/fee">{this.translate('page.body.landing.footer.fees')}</Link>
                                 </div>
                                 <div className="pg-landing-screen__footer__wrap__navigation__col">
-                                    <a href="https://b4uwallet.com/faq-b4u-wallet/">{this.translate('page.body.landing.footer.faq')}</a>
+                                    <a href="https://b4uwallet.com/faq/">{this.translate('page.body.landing.footer.faq')}</a>
                                     <a href="https://b4uwallet.com/contact">{this.translate('page.body.landing.footer.support')}</a>
                                     <a href="https://b4uwallet.com/privacy-policy">{this.translate('page.body.landing.footer.privacy')}</a>
                                 </div>
@@ -64,7 +64,7 @@ class FooterComponent extends React.Component<Props> {
                                     <a href="https://t.me/b4uwallets" target="_blank">
                                         <img src={TelegramIcon} alt="Telegram" />
                                     </a>
-                                    <a href="https://my.linkedin.com/company/b4uwallet" target="_blank">
+                                    <a href="https://www.linkedin.com/company/b4u-wallet/" target="_blank">
                                         <img src={LinkedInIcon} alt="LinkedIn" />
                                     </a>
                                     <a href="https://twitter.com/b4uwallet_b4u" target="_blank">

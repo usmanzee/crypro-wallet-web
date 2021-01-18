@@ -8,6 +8,10 @@ export const en = {
     'page.body.copied': 'Copied',
     'copied.to.clipboard': 'Copied to clipboard.',
     'learn.more': 'Learn more',
+    'need.to.enable.2fa.title': 'You need to enable 2FA before using this feature.',
+    'need.to.enable.2fa.button.title': 'Enable 2FA',
+    'need.to.confirm.account': 'You need to confirm your account before using this feature.',
+    'need.to.confirm.account.button.title': 'Confirm Account',
     //End General text
 
     'page.header.navbar.signIn': 'Sign In',
@@ -288,7 +292,7 @@ export const en = {
     'page.body.swap.input.error1': 'The amount has to be higher than {amount}.',
     'page.body.swap.input.error2': 'The amount has to be lower than {amount}.',
     'page.body.swap.input.error3': 'Your balance is not enough.',
-    'page.body.swap.input.otp_code': 'Otp Code.',
+    'page.body.swap.input.otp_code': 'Otp Code',
     'page.body.swap.input.otp_code_error': 'Please enter a valid otp code.',
     'page.body.swap.fee': 'Fee',
     'page.body.swap.price': 'Price',
