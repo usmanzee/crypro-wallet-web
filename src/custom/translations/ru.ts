@@ -285,6 +285,8 @@ export const ru: LangType = {
     'page.body.swap.input.error1': 'Сумма должна быть больше {amount}.',
     'page.body.swap.input.error2': 'Сумма должна быть меньше {amount}.',
     'page.body.swap.input.error3': 'На вашем балансе недостаточно.',
+    'page.body.swap.input.otp_code': 'Код ОТП',
+    'page.body.swap.input.otp_code_error': 'Пожалуйста, введите действующий код OTP.',
     'page.body.swap.fee': 'Гонорар',
     'page.body.swap.price': 'Цена',
     'page.body.swap.receive': 'Получить',

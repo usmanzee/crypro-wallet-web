@@ -288,6 +288,8 @@ export const ml: LangType = {
     'page.body.swap.input.error1': 'Jumlahnya mesti lebih tinggi daripada {amount}.',
     'page.body.swap.input.error2': 'Jumlahnya mesti lebih rendah daripada {amount}.',
     'page.body.swap.input.error3': 'Baki anda tidak mencukupi.',
+    'page.body.swap.input.otp_code': 'Kod Otp',
+    'page.body.swap.input.otp_code_error': 'Sila masukkan kod otp yang sah.',
     'page.body.swap.fee': 'Fee',
     'page.body.swap.price': 'Harga',
     'page.body.swap.receive': 'Penerimaan',

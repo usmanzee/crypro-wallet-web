@@ -288,6 +288,8 @@ export const zh: LangType = {
     'page.body.swap.input.error1': '金额必须高于{amount}。',
     'page.body.swap.input.error2': '金额必须低于{amount}。',
     'page.body.swap.input.error3': '您的余额不足。',
+    'page.body.swap.input.otp_code': '密码',
+    'page.body.swap.input.otp_code_error': '请输入有效的otp码.',
     'page.body.swap.fee': '费用',
     'page.body.swap.price': '价钱',
     'page.body.swap.receive': '接收',

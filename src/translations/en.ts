@@ -288,6 +288,8 @@ export const en = {
     'page.body.swap.input.error1': 'The amount has to be higher than {amount}.',
     'page.body.swap.input.error2': 'The amount has to be lower than {amount}.',
     'page.body.swap.input.error3': 'Your balance is not enough.',
+    'page.body.swap.input.otp_code': 'Otp Code.',
+    'page.body.swap.input.otp_code_error': 'Please enter a valid otp code.',
     'page.body.swap.fee': 'Fee',
     'page.body.swap.price': 'Price',
     'page.body.swap.receive': 'Receive',

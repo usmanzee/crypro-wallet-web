@@ -15,6 +15,7 @@ const mockConfig: Config = {
         rangerUrl: '/api/v2/ranger',
         arkeUrl: '/api/v2/arke',
         finexUrl: '/api/v2/finex',
+        sentryPublicKey: '',
     },
     minutesUntilAutoLogout: '5',
     rangerReconnectPeriod: '1',

@@ -288,6 +288,8 @@ export const es: LangType = {
     'page.body.swap.input.error1': 'El importe debe ser superior a {amount}.',
     'page.body.swap.input.error2': 'El importe debe ser inferiror a {amount}.',
     'page.body.swap.input.error3': 'Tu saldo es insuficiente.',
+    'page.body.swap.input.otp_code': 'Código Otp',
+    'page.body.swap.input.otp_code_error': 'Ingrese un código otp válido.',
     'page.body.swap.fee': 'Tasas',
     'page.body.swap.price': 'Precio',
     'page.body.swap.receive': 'Recibir',

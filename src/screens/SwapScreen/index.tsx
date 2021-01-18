@@ -14,6 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
+import TextField from '@material-ui/core/TextField';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -176,6 +177,9 @@ const SwapComponent = (props: Props) => {
     const [walletsFromError, setWalletsFromError] = React.useState<boolean>(false);
     const [walletsFromErrorMessage, setWalletsFromErrorMessage] = React.useState<string>('');
     const [walletsToAmount, setWalletsToAmount] = React.useState<string | undefined>('');
+    const [otpCode, setOtpCode] = React.useState<string | undefined>('');
+    const [otpCodeError, setOtpCodeError] = React.useState<boolean>(false);
+    const [otpCodeErrorMessage, setOtpCodeErrorMessage] = React.useState<string>('');
     const [fetchingRate, setFetchingRate] = React.useState(false);
     const [exchangeHistory, setExchangeHistory] = React.useState<ExchangeHistoryProps[]>([]);
 
@@ -350,6 +354,28 @@ const SwapComponent = (props: Props) => {
     const handleWalletsToAmountChange = (event) => {
         // setWalletsToAmount(event.target.value);
     }
+    const handleOtpCodeChange = (event) => {
+        const value = event.target.value;
+        setOtpCode(value);
+        handleOtpCodeErrors(value);
+    }
+
+    const handleOtpCodeErrors = (otpCode) => {
+        let errorMsg = '';
+        if(otpCode) {
+            if (Boolean(otpCode.length !== 6)) {
+                setOtpCodeError(true);
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.otp_code_error'});
+            } else {
+                setOtpCodeError(false);
+                errorMsg = '';
+            }
+        } else {
+            setWalletsFromError(false);
+            errorMsg = '';
+        }
+        setOtpCodeErrorMessage(`${errorMsg}`);
+    }
     
     const setWalletFromMaxAmount = () => {
         const maxAvailableAmount = selectedWalletFromOption ? selectedWalletFromOption.balance : '0';
@@ -385,7 +411,7 @@ const SwapComponent = (props: Props) => {
         }
     }
     const isValidForm = () => {
-        return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError || exchangeLoading; 
+        return !walletsFromAmount || !Boolean(Number(walletsFromAmount) > 0) || walletsFromError || !(otpCode && otpCode.length == 6) || exchangeLoading; 
     }
     const handleSwapButtonClick = async () => {
         const requestData = {
@@ -604,7 +630,7 @@ const SwapComponent = (props: Props) => {
                                                 </FormControl>
                                             </div>
                                             <div className={classes.swapFields}>
-                                                <FormControl variant="outlined" fullWidth className={classes.formControl }>
+                                                <FormControl variant="outlined" fullWidth className={classes.formControl}>
                                                     <InputLabel htmlFor="buy">
                                                         <FormattedMessage id={'page.body.swap.input.buy'} />
                                                     </InputLabel>
@@ -626,6 +652,29 @@ const SwapComponent = (props: Props) => {
                                                 <div className={classes.walletSelect}>
                                                     {renderWalletsToDropdown()}
                                                 </div>
+                                            </div>
+                                            <div className={classes.swapFromFields}>
+                                                <FormControl variant="outlined" fullWidth className={classes.formControl } error={otpCodeError}>
+                                                    <InputLabel 
+                                                    htmlFor="opt_code" 
+                                                    // shrink={true} 
+                                                    // variant="outlined"
+                                                    >
+                                                       <FormattedMessage id={'page.body.swap.input.otp_code'} />
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        id="opt_code"
+                                                        label={<FormattedMessage id={'page.body.swap.input.otp_code'} />}
+                                                        type='number'
+                                                        value={otpCode}
+                                                        autoFocus={false}
+                                                        onChange={(e) => {
+                                                            handleOtpCodeChange(e)
+                                                        }}
+                                                        aria-describedby="otp_code_text"
+                                                    />
+                                                    {otpCodeError && <FormHelperText id="otp_code_text">{otpCodeErrorMessage}</FormHelperText>}
+                                                </FormControl>
                                             </div>
                                             {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
                                                 <>
