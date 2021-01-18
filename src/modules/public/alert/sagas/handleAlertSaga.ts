@@ -3,10 +3,11 @@ import { delay } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { userReset } from '../../../';
 import { API, RequestOptions, msAlertDisplayTime } from '../../../../api';
-import { alertData, alertDelete, AlertPush } from '../actions';
+import { Alert, alertData, alertDelete, AlertPush } from '../actions';
 import { signInRequire2FA } from '../../../user/auth';
 import { userOpenOrdersReset } from '../../../user/openOrders';
 import { resetHistory } from '../../../user/history';
+import { ALERT_PUSH } from '../constants';
 
 const requestOptions: RequestOptions = {
     apiVersion: 'barong',
@@ -57,7 +58,17 @@ export function* handleAlertSaga(action: AlertPush) {
                 if (action.payload.message.indexOf('jwt.decode_and_verify') > -1) {
                     yield call(callAlertData, action);
                 }
-
+            case 429:
+                const alertPayload: Alert = {
+                    type: 'error',
+                    code: 429,
+                    message: ['request.limit.exceeds'],
+                };
+                const alertPush: AlertPush = {
+                    type: ALERT_PUSH,
+                    payload: alertPayload
+                };
+                    yield call(callAlertData, alertPush);
                 return;
             case 422:
             default:

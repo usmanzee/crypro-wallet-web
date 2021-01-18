@@ -174,8 +174,8 @@ class FeeComponent extends React.Component<Props, IState> {
 										{row.group}
 									</StyledTableCell>
 									<StyledTableCell>{row.market_id}</StyledTableCell>
-									<StyledTableCell>{row.maker}</StyledTableCell>
-									<StyledTableCell>{row.taker}</StyledTableCell>
+									<StyledTableCell>{row.maker * 100}%</StyledTableCell>
+									<StyledTableCell>{row.taker * 100}%</StyledTableCell>
 									</TableRow>
 								))}
 								</TableBody>
@@ -205,7 +205,7 @@ class FeeComponent extends React.Component<Props, IState> {
 
 										<StyledTableCell>
 											{row.icon_url ? 
-											<img width="25" src={row.icon_url} style={{ marginRight: '4px' }}/>
+											<img width="25" src={row.icon_url} style={{ marginRight: '8px' }}/>
 											:
 											<CryptoIcon width="25" code={row.id.toUpperCase()} />
 											}

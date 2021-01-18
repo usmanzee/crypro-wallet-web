@@ -12,6 +12,7 @@ export const zh: LangType = {
     'need.to.enable.2fa.button.title': '启用2FA',
     'need.to.confirm.account': '您需要先确认您的帐户，然后才能使用此功能。',
     'need.to.confirm.account.button.title': '确认帐号',
+    'request.limit.exceeds': '超出请求限制。',
     //End General text
 
     'page.header.navbar.signIn': '登入',
@@ -538,13 +539,13 @@ export const zh: LangType = {
     'page.body.kyc.phone.resend': '重新发送验证码',
     'page.body.kyc.identity.firstName': '名字',
     'page.body.kyc.identity.lastName': '姓',
-    'page.body.kyc.identity.dateOfBirth': '出生日期DD / MM / YYYY',
+    'page.body.kyc.identity.dateOfBirth': '出生日期',
     'page.body.kyc.identity.residentialAddress': '居住地址',
     'page.body.kyc.identity.city': '市',
     'page.body.kyc.identity.postcode': '邮编',
     'page.body.kyc.identity.nationality': '国籍',
     'page.body.kyc.identity.CoR': '居住国家',
-    'page.body.kyc.documents.expiryDate': '到期日DD / MM / YYYY',
+    'page.body.kyc.documents.expiryDate': '到期日',
     'page.body.kyc.documents.drag': '拖放或浏览文件',
     'page.body.kyc.documents.maxFile': '档案大小上限为10MB',
     'page.body.kyc.documents.maxNum': '档案数量上限为5',

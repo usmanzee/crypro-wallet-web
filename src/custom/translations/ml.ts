@@ -12,6 +12,7 @@ export const ml: LangType = {
     'need.to.enable.2fa.button.title': 'Dayakan 2FA',
     'need.to.confirm.account': 'Anda perlu mengesahkan akaun anda sebelum menggunakan ciri ini.',
     'need.to.confirm.account.button.title': 'Sahkan Akaun',
+    'request.limit.exceeds': 'Had permintaan melebihi.',
     //End General text
 
     'page.header.navbar.signIn': 'Log Masuk',
@@ -538,13 +539,13 @@ Sekiranya anda terlupa Kunci Rahsia, sila hapuskan yang lama dan mohon semula Ku
     'page.body.kyc.phone.resend': 'HANTAR semula KOD',
     'page.body.kyc.identity.firstName': 'Nama pertama',
     'page.body.kyc.identity.lastName': 'Nama terakhir',
-    'page.body.kyc.identity.dateOfBirth': 'Tarikh Lahir DD / MM / YYYY',
+    'page.body.kyc.identity.dateOfBirth': 'Tarikh Lahir',
     'page.body.kyc.identity.residentialAddress': 'Alamat kediaman',
     'page.body.kyc.identity.city': 'Bandar',
     'page.body.kyc.identity.postcode': 'Poskod',
     'page.body.kyc.identity.nationality': 'Kewarganegaraan',
     'page.body.kyc.identity.CoR': 'Negara Tempat Tinggal',
-    'page.body.kyc.documents.expiryDate': 'Tarikh Luput DD / MM / YYYY',
+    'page.body.kyc.documents.expiryDate': 'Tarikh Luput',
     'page.body.kyc.documents.drag': 'Seret dan lepas atau semak fail',
     'page.body.kyc.documents.maxFile': 'Saiz fail maksimum ialah 10MB',
     'page.body.kyc.documents.maxNum': 'Bilangan fail maksimum ialah 5',

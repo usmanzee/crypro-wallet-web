@@ -12,6 +12,7 @@ export const en = {
     'need.to.enable.2fa.button.title': 'Enable 2FA',
     'need.to.confirm.account': 'You need to confirm your account before using this feature.',
     'need.to.confirm.account.button.title': 'Confirm Account',
+    'request.limit.exceeds': 'Request limit exceeds.',
     //End General text
 
     'page.header.navbar.signIn': 'Sign In',
@@ -538,13 +539,13 @@ export const en = {
     'page.body.kyc.phone.resend': 'RESEND CODE',
     'page.body.kyc.identity.firstName': 'First Name',
     'page.body.kyc.identity.lastName': 'Last Name',
-    'page.body.kyc.identity.dateOfBirth': 'Date of Birth DD/MM/YYYY',
+    'page.body.kyc.identity.dateOfBirth': 'Date of Birth',
     'page.body.kyc.identity.residentialAddress': 'Residential Address',
     'page.body.kyc.identity.city': 'City',
     'page.body.kyc.identity.postcode': 'Postcode',
     'page.body.kyc.identity.nationality': 'Citizenship',
     'page.body.kyc.identity.CoR': 'Country of Residence',
-    'page.body.kyc.documents.expiryDate': 'Expiration Date DD/MM/YYYY',
+    'page.body.kyc.documents.expiryDate': 'Expiration Date',
     'page.body.kyc.documents.drag': 'Drag and drop or browse files',
     'page.body.kyc.documents.maxFile': 'Maximum file size is 10MB',
     'page.body.kyc.documents.maxNum': 'Maximum number of files is 5',
