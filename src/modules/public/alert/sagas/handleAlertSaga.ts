@@ -59,15 +59,15 @@ export function* handleAlertSaga(action: AlertPush) {
                     yield call(callAlertData, action);
                 }
             case 429:
-                const alertPayload: Alert = {
-                    type: 'error',
-                    code: 429,
-                    message: ['request.limit.exceeds'],
-                };
-                const alertPush: AlertPush = {
-                    type: ALERT_PUSH,
-                    payload: alertPayload
-                };
+                    const alertPayload: Alert = {
+                        type: 'error',
+                        code: 429,
+                        message: ['request.limit.exceeds'],
+                    };
+                    const alertPush: AlertPush = {
+                        type: ALERT_PUSH,
+                        payload: alertPayload
+                    };
                     yield call(callAlertData, alertPush);
                 return;
             case 422:

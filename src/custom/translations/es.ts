@@ -225,6 +225,7 @@ export const es: LangType = {
     'page.body.wallets.tabs.withdraw.content.total': 'Importe total del retiro',
     'page.body.wallets.tabs.withdraw.content.button': 'RETIRAR',
     'page.body.wallets.tabs.withdraw.disabled.message': 'Retiro fue desactivado por administración',
+    'page.body.wallets.tabs.withdraw.amount.error': 'El monto del retiro no debe exceder el monto total del retiro. (El monto del retiro incluye una tarifa de retiro que es de {fee} {currency} por retiro)',
 
     'page.body.wallets.tabs.withdraw.modal.confirmation': 'Confirmación',
     'page.body.wallets.tabs.withdraw.modal.message1': 'Recibirás ',

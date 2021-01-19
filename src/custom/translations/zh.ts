@@ -225,6 +225,7 @@ export const zh: LangType = {
     'page.body.wallets.tabs.withdraw.content.total': '总提款金额',
     'page.body.wallets.tabs.withdraw.content.button': '收回',
     'page.body.wallets.tabs.withdraw.disabled.message': '提款已被管理部门禁用',
+    'page.body.wallets.tabs.withdraw.amount.error': '提款金额不得超过总提款金额。 （提款金额包括每次提款{fee} {currency}的提款费）',
 
     'page.body.wallets.tabs.withdraw.modal.confirmation': '确认书',
     'page.body.wallets.tabs.withdraw.modal.message1': '您将收到 ',

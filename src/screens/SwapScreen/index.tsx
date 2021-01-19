@@ -425,8 +425,6 @@ const SwapComponent = (props: Props) => {
         }
     }
     const isValidForm = () => {
-        // return ((!Boolean(Number(walletsFromAmount) > 0) || walletsFromError) && (otpCode.length == 6)) || exchangeLoading; 
-        console.log((walletsFromAmount && walletsFromError) || (otpCode && otpCodeError) || exchangeLoading);
         return (walletsFromAmount && walletsFromError) || (otpCode && otpCodeError) || exchangeLoading;
     }
     const handleSwapButtonClick = async () => {

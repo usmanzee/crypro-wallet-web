@@ -82,6 +82,8 @@ interface WithdrawState {
     rid: string;
     tag: string;
     amount: string;
+    amountError: boolean;
+    amountErrorMessage: string;
     beneficiary: Beneficiary;
     otpCode: string;
     withdrawAmountFocused: boolean;
@@ -96,6 +98,8 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
         rid:'',
         tag: '',
         amount: '',
+        amountError: false,
+        amountErrorMessage: '',
         beneficiary: defaultBeneficiary,
         otpCode: '',
         withdrawAmountFocused: false,
@@ -126,6 +130,8 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
             rid,
             tag,
             amount,
+            amountError,
+            amountErrorMessage,
             beneficiary,
             total,
             otpCode,
@@ -218,8 +224,8 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
                                 }}
                             variant="outlined"
                             onChange = {this.handleInputAmountChangeEvent}
-                            helperText={(Number(this.props.balance - this.props.fee) <= Number(amount)) && 'Incorrect'}
-                            error={(Number(this.props.balance - this.props.fee) <= Number(amount))}
+                            helperText={amountError && amountErrorMessage}
+                            error={amountError}
                             
                         />
                         {twoFactorAuthRequired && this.renderOtpCodeInput()}
@@ -389,18 +395,47 @@ class WithdrawComponent extends React.Component<Props, WithdrawState> {
             this.setState({
                 amount: convertedValue,
             });
+
+            this.setState({
+                amount: convertedValue,
+              }, () => {
+                this.handleWalletsFromAmountErrors(amount);
+              })
         }
     };
 
+    private handleWalletsFromAmountErrors = (amount) => {
+        if(amount) {
+            if (Number(amount) > (Number(this.props.balance - this.props.fee))) {
+                this.setState({
+                    amountError: true,
+                    amountErrorMessage: this.props.intl.formatMessage({ id: 'page.body.wallets.tabs.withdraw.amount.error' }, { fee: this.props.fee, currency: this.props.currency.toUpperCase() })
+                });
+                
+            } else {
+                this.setState({
+                    amountError: false,
+                    amountErrorMessage: ''
+                });
+            }
+        } else {
+            this.setState({
+                amountError: false,
+                amountErrorMessage: ''
+            });
+        }
+    }
+
     private setMaxWithdrawlAmount = () => {
         const { fixed, balance, fee } = this.props;
-        const maxWithdrawlAmount = Number(balance - fee).toFixed(fixed);
-        const total = Number(Number(maxWithdrawlAmount) + Number(fee)).toFixed(fixed);
-        console.log(String(total));
-        this.setState({
-            total: total,
-            amount: maxWithdrawlAmount,
-        });
+        if(balance > 0 && balance > fee) {
+            const maxWithdrawlAmount = Number(balance - fee).toFixed(fixed);
+            const total = Number(Number(maxWithdrawlAmount) + Number(fee)).toFixed(fixed);
+            this.setState({
+                total: total,
+                amount: maxWithdrawlAmount,
+            });
+        }
     }
 
     private setTotal = (value: string) => {

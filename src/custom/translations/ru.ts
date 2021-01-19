@@ -221,8 +221,8 @@ export const ru: LangType = {
     'page.body.wallets.tabs.withdraw.content.available': 'Доступная сумма',
     'page.body.wallets.tabs.withdraw.content.total': 'Сумма вывода',
     'page.body.wallets.tabs.withdraw.content.button': 'ВЫВЕСТИ',
-
     'page.body.wallets.tabs.withdraw.disabled.message': 'Вывод средств был отключен администрацией',
+    'page.body.wallets.tabs.withdraw.amount.error': 'Сумма вывода не должна превышать общую сумму вывода. (Сумма вывода включает комиссию за вывод, которая составляет {fee} {currency} за вывод)',
 
     'page.body.wallets.tabs.withdraw.modal.confirmation': 'Подтверждение',
     'page.body.wallets.tabs.withdraw.modal.message1': 'Вы получите ',

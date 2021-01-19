@@ -225,6 +225,7 @@ export const ml: LangType = {
     'page.body.wallets.tabs.withdraw.content.total': 'Jumlah Keseluruhan Pengeluaran',
     'page.body.wallets.tabs.withdraw.content.button': 'PENGELUARAN',
     'page.body.wallets.tabs.withdraw.disabled.message': 'Pengeluaran tidak dibenarkan oleh pentadbir',
+    'page.body.wallets.tabs.withdraw.amount.error': 'Jumlah pengeluaran tidak boleh melebihi jumlah pengeluaran. (Jumlah pengeluaran termasuk bayaran pengeluaran yang {fee} {currency} setiap pengeluaran)',
 
     'page.body.wallets.tabs.withdraw.modal.confirmation': 'Pengesahan',
     'page.body.wallets.tabs.withdraw.modal.message1': 'Anda akan menerima ',
