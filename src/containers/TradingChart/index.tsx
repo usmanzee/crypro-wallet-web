@@ -76,7 +76,13 @@ export class TradingChartComponent extends React.PureComponent<Props> {
             if (this.props.currentMarket && (this.props.currentMarket.id && this.tvWidget)) {
                 this.updateChart(next.currentMarket);
             } else {
-                this.setChart(next.markets, next.currentMarket, next.colorTheme);
+                try {
+                    this.setChart(next.markets, next.currentMarket, next.colorTheme);
+                    
+                } catch (error) {
+                    window.console.log(`TradingChart mount failed: ${error}`);
+                }
+                
             }
         }
 
