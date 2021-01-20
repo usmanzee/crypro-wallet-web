@@ -69,7 +69,12 @@ export class TradingChartComponent extends React.PureComponent<Props> {
 
     public componentWillReceiveProps(next: Props) {
         if (next.currentMarket && next.colorTheme && next.colorTheme !== this.props.colorTheme) {
-            this.setChart(next.markets, next.currentMarket, next.colorTheme);
+            try {
+                this.setChart(next.markets, next.currentMarket, next.colorTheme);
+            } catch (error) {
+                window.console.log(`TradingChart mount failed: ${error}`);
+            }
+            
         }
 
         if (next.currentMarket && (!this.props.currentMarket || next.currentMarket.id !== this.props.currentMarket.id)) {
@@ -206,8 +211,12 @@ export class TradingChartComponent extends React.PureComponent<Props> {
             } catch (error) {
                 window.console.log(`TradingChart unmount failed (Rebuild chart): ${error}`);
             }
+            try {
+                this.setChart(markets, currentMarket, colorTheme);
+            } catch (error) {
+                window.console.log(`TradingChart mount failed (Rebuild chart): ${error}`);
+            }
 
-            this.setChart(markets, currentMarket, colorTheme);
         }
     };
 
