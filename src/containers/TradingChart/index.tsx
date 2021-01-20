@@ -97,7 +97,14 @@ export class TradingChartComponent extends React.PureComponent<Props> {
         } = this.props;
 
         if (currentMarket) {
-            this.setChart(markets, currentMarket, colorTheme);
+            try {
+                this.setChart(markets, currentMarket, colorTheme);
+                
+            } catch (error) {
+                window.console.log(`TradingChart mount failed: ${error}`);
+                
+            }
+            
         }
     }
 
