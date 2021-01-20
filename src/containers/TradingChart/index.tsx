@@ -69,26 +69,15 @@ export class TradingChartComponent extends React.PureComponent<Props> {
 
     public componentWillReceiveProps(next: Props) {
         if (next.currentMarket && next.colorTheme && next.colorTheme !== this.props.colorTheme) {
-            try {
-                this.setChart(next.markets, next.currentMarket, next.colorTheme);
-            } catch (error) {
-                window.console.log(`TradingChart mount failed: ${error}`);
-            }
-            
+            this.setChart(next.markets, next.currentMarket, next.colorTheme);
         }
 
         if (next.currentMarket && (!this.props.currentMarket || next.currentMarket.id !== this.props.currentMarket.id)) {
             if (this.props.currentMarket && (this.props.currentMarket.id && this.tvWidget)) {
                 this.updateChart(next.currentMarket);
-            } //else {
-                // try {
-                //     this.setChart(next.markets, next.currentMarket, next.colorTheme);
-                    
-                // } catch (error) {
-                //     window.console.log(`TradingChart mount failed: ${error}`);
-                // }
-                
-            //}
+            } else {
+                this.setChart(next.markets, next.currentMarket, next.colorTheme);
+            }
         }
 
         if (next.kline && next.kline !== this.props.kline) {
@@ -108,14 +97,7 @@ export class TradingChartComponent extends React.PureComponent<Props> {
         } = this.props;
 
         if (currentMarket) {
-            try {
-                this.setChart(markets, currentMarket, colorTheme);
-                
-            } catch (error) {
-                window.console.log(`TradingChart mount failed: ${error}`);
-                
-            }
-            
+            this.setChart(markets, currentMarket, colorTheme);
         }
     }
 
@@ -211,12 +193,8 @@ export class TradingChartComponent extends React.PureComponent<Props> {
             } catch (error) {
                 window.console.log(`TradingChart unmount failed (Rebuild chart): ${error}`);
             }
-            try {
-                this.setChart(markets, currentMarket, colorTheme);
-            } catch (error) {
-                window.console.log(`TradingChart mount failed (Rebuild chart): ${error}`);
-            }
 
+            this.setChart(markets, currentMarket, colorTheme);
         }
     };
 
