@@ -80,15 +80,15 @@ export class TradingChartComponent extends React.PureComponent<Props> {
         if (next.currentMarket && (!this.props.currentMarket || next.currentMarket.id !== this.props.currentMarket.id)) {
             if (this.props.currentMarket && (this.props.currentMarket.id && this.tvWidget)) {
                 this.updateChart(next.currentMarket);
-            } else {
-                try {
-                    this.setChart(next.markets, next.currentMarket, next.colorTheme);
+            } //else {
+                // try {
+                //     this.setChart(next.markets, next.currentMarket, next.colorTheme);
                     
-                } catch (error) {
-                    window.console.log(`TradingChart mount failed: ${error}`);
-                }
+                // } catch (error) {
+                //     window.console.log(`TradingChart mount failed: ${error}`);
+                // }
                 
-            }
+            //}
         }
 
         if (next.kline && next.kline !== this.props.kline) {
