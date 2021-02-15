@@ -7,7 +7,7 @@ access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Au
 	"email": "usman.jamil0308@gmail.com",
 	"uid": "ID0D2741FBCA",
 	"role": "member",
-	"level": 3,
+	"level": 2,
 	"otp": true,
 	"state": "active",
 	"referral_uid": null,
@@ -21,18 +21,6 @@ access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Au
 		"scope": "private",
 		"created_at": "2020-08-17T11:32:23Z",
 		"updated_at": "2020-08-17T11:32:23Z"
-	}, {
-		"key": "phone",
-		"value": "verified",
-		"scope": "private",
-		"created_at": "2020-11-05T08:23:05Z",
-		"updated_at": "2020-11-05T08:23:05Z"
-	}, {
-		"key": "profile",
-		"value": "verified",
-		"scope": "private",
-		"created_at": "2020-11-23T06:46:58Z",
-		"updated_at": "2020-11-23T08:55:01Z"
 	}],
 	"phones": [{
 		"country": "PK",

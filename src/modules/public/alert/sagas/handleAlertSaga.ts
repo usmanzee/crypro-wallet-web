@@ -58,8 +58,9 @@ export function* handleAlertSaga(action: AlertPush) {
                 if (action.payload.message.indexOf('jwt.decode_and_verify') > -1) {
                     yield call(callAlertData, action);
                 }
+                break;
             case 429:
-                    const alertPayload: Alert = {
+                  const alertPayload: Alert = {
                         type: 'error',
                         code: 429,
                         message: ['request.limit.exceeds'],
@@ -69,7 +70,7 @@ export function* handleAlertSaga(action: AlertPush) {
                         payload: alertPayload
                     };
                     yield call(callAlertData, alertPush);
-                return;
+                    break;
             case 422:
             default:
                 yield call(callAlertData, action);

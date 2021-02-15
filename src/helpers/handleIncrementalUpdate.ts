@@ -45,7 +45,6 @@ export const handleIncrementalUpdate = (depthOld: string[][], newLevel: string[]
             break;
         }
     }
-
     return depthNew;
 };
 
@@ -54,6 +53,5 @@ export const handleIncrementalUpdateArray = (depthOld: string[][], newLevels: st
     const depthNew = newLevels.reduce((result: string[][], currentLevel: string[]) => {
         return handleIncrementalUpdate(result, currentLevel, type);
     }, depthOld);
-
     return depthNew;
 };

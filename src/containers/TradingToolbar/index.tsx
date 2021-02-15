@@ -46,8 +46,6 @@ class TradingToolbarContainer extends React.Component<Props> {
 
         const shouldRenderMarketToolbar = window.location.pathname.includes('/trading/') ? true : false;
 
-        console.log(shouldRenderMarketToolbar);
-    
         return (
             <React.Fragment>
             {shouldRenderMarketToolbar &&
