@@ -9,6 +9,7 @@ access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Au
 	"role": "member",
 	"level": 2,
 	"otp": true,
+	"fee_group": "vip-0",
 	"state": "active",
 	"referral_uid": null,
 	"token": "Nzc5MWIzMWNiYTk1OTFjODMxOWI6YWJj",

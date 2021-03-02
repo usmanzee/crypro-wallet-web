@@ -212,24 +212,24 @@ class HistoryComponent extends React.Component<Props> {
                 ];
             }
             case 'withdraws': {
-                const { txid, created_at, currency, amount, fee, rid } = item;
+                const { blockchain_txid, created_at, currency, amount, fee, rid } = item;
                 const state = intl.formatMessage({ id: `page.body.history.withdraw.content.status.${item.state}` });
-                const blockchainLink = this.getBlockchainLink(currency, txid, rid);
+                const blockchainLink = this.getBlockchainLink(currency, blockchain_txid, rid);
                 const wallet = wallets.find(obj => obj.currency === currency);
 
                 return [
-                    <div className="pg-history-elem__hide" key={txid || rid}><a href={blockchainLink} target="_blank" rel="noopener noreferrer">{txid || rid}</a></div>,
+                    <div className="pg-history-elem__hide" key={blockchain_txid || rid}><a href={blockchainLink} target="_blank" rel="noopener noreferrer">{blockchain_txid || rid}</a></div>,
                     localeDate(created_at, 'fullDate'),
                     uppercase(currency),
                     wallet && preciseData(amount, wallet.fixed),
                     fee,
-                    <span style={{ color: setWithdrawStatusColor(item.state) }} key={txid || rid}>{state}</span>,
+                    <span style={{ color: setWithdrawStatusColor(item.state) }} key={blockchain_txid || rid}>{state}</span>,
                     <div className="pg-history-elem__hide" key={item.rid}>
-                        {txid ? 
-                            <CopyTag text={txid} disabled={false} />
+                        {blockchain_txid ? 
+                            <CopyTag text={blockchain_txid} disabled={false} />
                             : ''
                         }
-                        {txid ? 
+                        {blockchain_txid ? 
                             <>
                                 <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
                                     {<LaunchIcon/>}

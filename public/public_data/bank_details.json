@@ -22,25 +22,7 @@
     "id": "3",
     "title": "usd",
     "banks": [{
-        "Bank Name": "TransferWise1",
-        "Account holder": "B4U Group of Companies, S.L.",
-        "ACH routing number": "026073150",
-        "Wire routing number": "026073008",
-        "Account number": "8310615550",
-        "Account type": "Checking",
-        "Address": "TransferWise 19 W 24th Street \nNew York NY 10010\n United States"
-    },
-    {
-        "Bank Name": "TransferWise2",
-        "Account holder": "B4U Group of Companies, S.L.",
-        "ACH routing number": "026073150",
-        "Wire routing number": "026073008",
-        "Account number": "8310615550",
-        "Account type": "Checking",
-        "Address": "TransferWise 19 W 24th Street \nNew York NY 10010\n United States"
-    },
-    {
-        "Bank Name": "TransferWise3",
+        "Bank Name": "TransferWise",
         "Account holder": "B4U Group of Companies, S.L.",
         "ACH routing number": "026073150",
         "Wire routing number": "026073008",

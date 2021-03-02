@@ -7,6 +7,5 @@ export const accumulateVolume = array => {
 
         return (Number(accumulator) + Number(currentValue));
     }, 0);
-
     return total;
 };

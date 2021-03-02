@@ -41,7 +41,6 @@ export const mapValues = (maxVolume?: number, data?: number[]) => {
         // tslint:disable-next-line:no-magic-numbers
         return { value: (currentVolume / maxVolume) * 100};
     }) : [];
-
     return resultData;
 };
 
@@ -60,7 +59,7 @@ export class OrderBook extends React.PureComponent<OrderBookProps> {
         const resultData = mapValues(maxVolume, orderBookEntry);
 
         const getRowWidth = (index: number) => {
-            if (resultData && resultData.length) {
+            if (resultData && resultData.length) {  
                 return {
                     width: `${resultData[index].value}%`,
                 };
