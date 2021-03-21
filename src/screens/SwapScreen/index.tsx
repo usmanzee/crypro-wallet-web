@@ -232,7 +232,7 @@ const SwapComponent = (props: Props) => {
      }, [memberLevels]);
 
     React.useEffect(() => {
-        if (wallets.length && markets.length) {
+        if (wallets.length && markets.length && !filteredWallets.length) {
             let filteredData = [];
             filteredData = wallets.filter(function(wallet) {
                 var exists = markets.some(function(market) {
@@ -242,7 +242,6 @@ const SwapComponent = (props: Props) => {
             });
             setFilteredWallets(filteredData);
         }
-      
      }, [wallets, markets]);
 
     React.useEffect(() => {
