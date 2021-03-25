@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fade, makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import { fade, makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import {
     Box,
     Grid,
@@ -23,24 +23,24 @@ import FormControl from '@material-ui/core/FormControl';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-import { cleanPositiveFloatInput} from '../../helpers';
+import { cleanPositiveFloatInput } from '../../helpers';
 import { fetchRate, getExchangeHistory, postExchange } from '../../apis/exchange';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
-import { WalletItemProps, WalletsDropdown, Decimal } from '../../components';
+import { WalletItemProps, WalletsDropdown, Decimal, WalletItem } from '../../components';
 import { ExchangeHistory, ExchangeHistoryProps } from '../../containers/ExchangeHistory';
 import { PageHeader } from '../../containers/PageHeader';
 import { globalStyle } from '../../screens/materialUIGlobalStyle';
-import { 
-    alertPush, 
-    RootState, 
-    selectUserInfo, 
-    selectWallets, 
-    selectWalletsLoading, 
-    selectWithdrawSuccess, 
-    User, 
-    walletsFetch, 
+import {
+    alertPush,
+    RootState,
+    selectUserInfo,
+    selectWallets,
+    selectWalletsLoading,
+    selectWithdrawSuccess,
+    User,
+    walletsFetch,
     exchangeRateFetch,
     selectIsFetchingExchangeRate,
     selectExchangeRate,
@@ -89,81 +89,81 @@ interface DispatchProps {
     orderExecute: typeof orderExecuteFetch;
 }
 const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...globalStyle(theme),
-    swapForm: {
-        textAlign: 'center',
-        width: '40%',
-        margin: '0 auto',
-        [theme.breakpoints.only('md')]: {
-            width: '80%',
+    createStyles({
+        ...globalStyle(theme),
+        swapForm: {
+            textAlign: 'center',
+            width: '40%',
+            margin: '0 auto',
+            [theme.breakpoints.only('md')]: {
+                width: '80%',
+            },
+            [theme.breakpoints.only('sm')]: {
+                width: '80%',
+            },
+            [theme.breakpoints.only('xs')]: {
+                width: '100%',
+            },
         },
-        [theme.breakpoints.only('sm')]: {
-            width: '80%',
+        swapFromFields: {
+            margin: `0px 0px ${theme.spacing(2)}px 0px`,
         },
-        [theme.breakpoints.only('xs')]: {
-            width: '100%',
+        swapFields: {
+            display: 'flex',
+            margin: `0px 0px ${theme.spacing(2)}px 0px`,
         },
-    },
-    swapFromFields: {
-        margin: `0px 0px ${theme.spacing(2)}px 0px`,
-    },
-    swapFields: {
-        display: 'flex',
-        margin: `0px 0px ${theme.spacing(2)}px 0px`,
-    },
-    formControl: {
-        marginRight: '4px'
-    },
-    maxButton: {
-         cursor: 'pointer',
-         color: theme.palette.primary.main
-    },
-    walletSelect: {
-        display: 'flex',
-        cursor: 'pointer',
-        padding: `12px ${theme.spacing(1)}px`,
-        borderRadius: '4px',
-        borderWidth: '1px',
-        borderColor: 'rgb(230, 232, 234)',
-        borderStyle: 'solid',
-    },
-    fromWalletSelect: {
-        cursor: 'pointer',
-        [theme.breakpoints.only('sm')]: {
-            width: 'auto',
+        formControl: {
+            marginRight: '4px'
         },
-        [theme.breakpoints.only('xs')]: {
-            width: 'auto',
+        maxButton: {
+            cursor: 'pointer',
+            color: theme.palette.primary.main
         },
-    },
-    withdrawCol: {
-        [theme.breakpoints.up('lg')]: {
-            padding: `0px ${theme.spacing(1)}px`,
+        walletSelect: {
+            display: 'flex',
+            cursor: 'pointer',
+            padding: `12px ${theme.spacing(1)}px`,
+            borderRadius: '4px',
+            borderWidth: '1px',
+            borderColor: 'rgb(230, 232, 234)',
+            borderStyle: 'solid',
         },
-        [theme.breakpoints.only('md')]: {
-            padding: `0px ${theme.spacing(1)}px`,
+        fromWalletSelect: {
+            cursor: 'pointer',
+            [theme.breakpoints.only('sm')]: {
+                width: 'auto',
+            },
+            [theme.breakpoints.only('xs')]: {
+                width: 'auto',
+            },
+        },
+        withdrawCol: {
+            [theme.breakpoints.up('lg')]: {
+                padding: `0px ${theme.spacing(1)}px`,
+            },
+            [theme.breakpoints.only('md')]: {
+                padding: `0px ${theme.spacing(1)}px`,
+            }
+        },
+        list: {
+            display: 'flex',
+            flexDirection: 'row',
+            padding: 0,
+        },
+        swapInfo: {
+            background: theme.palette.action.hover
+        },
+        historyDivider: {
+            margin: `${theme.spacing(4)}px 0px ${theme.spacing(3)}px`,
+        },
+        divider: {
+            height: 28,
+            margin: 4,
+        },
+        buttonProgress: {
+            color: '#fff',
         }
-    },
-    list: {
-		display: 'flex',
-		flexDirection: 'row',
-		padding: 0,
-    },
-    swapInfo: {
-        background: theme.palette.action.hover
-    },
-    historyDivider: {
-        margin: `${theme.spacing(4)}px 0px ${theme.spacing(3)}px`,
-    },
-    divider: {
-        height: 28,
-        margin: 4,
-    },
-    buttonProgress: {
-        color: '#fff',
-    }
-  }),
+    }),
 );
 
 
@@ -179,7 +179,7 @@ const SwapComponent = (props: Props) => {
     const WAIT_INTERVAL = 1000;
     //Props
     const classes = useStyles();
-    const { wallets, markets, user: { level, otp }, memberLevels, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading, executeLoading, marketTickers} = props;
+    const { wallets, markets, user: { level, otp }, memberLevels, isFetchingRate, exchangeRate, exchangeSuccess, exchangeLoading, executeLoading, marketTickers } = props;
 
     //States
     const [walletsFromCurrency, setWalletsFromCurrency] = React.useState<string>(defaultWalletsFromCurrency);
@@ -227,28 +227,28 @@ const SwapComponent = (props: Props) => {
 
     React.useEffect(() => {
         if (!memberLevels) {
-             props.memberLevelsFetch();
-         }
-     }, [memberLevels]);
+            props.memberLevelsFetch();
+        }
+    }, [memberLevels]);
 
     React.useEffect(() => {
         if (wallets.length && markets.length && !filteredWallets.length) {
             let filteredData = [];
-            filteredData = wallets.filter(function(wallet) {
-                var exists = markets.some(function(market) {
-                    return wallet.currency == market.base_unit || wallet.currency == market.quote_unit; 
+            filteredData = wallets.filter(function (wallet) {
+                var exists = markets.some(function (market) {
+                    return wallet.currency == market.base_unit || wallet.currency == market.quote_unit;
                 });
                 return exists ? true : false;
             });
-            setFilteredWallets(filteredData);
+            setFilteredWallets(wallets);
         }
-     }, [wallets, markets]);
+    }, [wallets, markets]);
 
     React.useEffect(() => {
         if (filteredWallets.length && !walletsFrom.length) {
             setWalletsFrom(filteredWallets)
-        } else if(walletsFrom.length > 0 && filteredWallets.length > 0) {
-            
+        } else if (walletsFrom.length > 0 && filteredWallets.length > 0) {
+
             // let searchedOption = searchCurrencyInWallets(walletsFromCurrency);
             setSelectedWalletFromOption(filteredWallets[0]);
         }
@@ -258,14 +258,14 @@ const SwapComponent = (props: Props) => {
     //     if (filteredWallets.length && !walletsTo.length) {
     //         setWalletsTo(filteredWallets)
     //     } else if(walletsTo.length > 0 && filteredWallets.length > 0) {
-            
+
     //         // let searchedOption = searchCurrencyInWallets(walletsToCurrency);
     //         setSelectedWalletToOption(filteredWallets[1]);
     //     }
     // }, [filteredWallets, walletsTo]);
 
     React.useEffect(() => {
-        if(selectedWalletFromOption) {
+        if (selectedWalletFromOption) {
             setWalletsFromLoading(false);
             var matchingWallets = searchToWalletsOptionsWithMactingMarkets();
             setWalletsTo(matchingWallets);
@@ -277,31 +277,43 @@ const SwapComponent = (props: Props) => {
         handleWalletsFromAmountErrors(walletsFromAmount);
     }, [selectedWalletFromOption])
 
-    const currenciesList : string[] = [];
+    const currenciesList: string[] = [];
 
-    const searchToWalletsOptionsWithMactingMarkets  = () => {
-        var marketsList = markets.filter(function(market){
+    const searchToWalletsOptionsWithMactingMarkets = () => {
+        var marketsList = markets.filter(function (market) {
             return selectedWalletFromOption ? selectedWalletFromOption.currency.toLowerCase() === market.base_unit.toLowerCase() || selectedWalletFromOption.currency.toLowerCase() === market.quote_unit.toLowerCase() : [];
         });
 
         for (var i in marketsList) {
             if (selectedWalletFromOption && marketsList[i].base_unit.toLowerCase() !=
-            selectedWalletFromOption.currency.toLowerCase()) {
+                selectedWalletFromOption.currency.toLowerCase()) {
                 currenciesList.push(marketsList[i].base_unit.toLowerCase());
             }
             if (selectedWalletFromOption && marketsList[i].quote_unit.toLowerCase() !=
-            selectedWalletFromOption.currency.toLowerCase()) {
+                selectedWalletFromOption.currency.toLowerCase()) {
                 currenciesList.push(marketsList[i].quote_unit.toLowerCase());
             }
-          }
-          var newList = filteredWallets.filter(function(wallet) {
+        }
+        var newList = filteredWallets.filter(function (wallet) {
             return currenciesList.includes(wallet.currency.toLowerCase());
-          });
-          return newList;
+        });
+        if (selectedWalletFromOption && selectedWalletFromOption.type == 'fiat') {
+            var fiatWalletsList = wallets.filter(function (wallet) {
+                return wallet.type == 'fiat' && selectedWalletFromOption.currency.toLowerCase() != wallet.currency.toLowerCase() && !checkIfWalletExistsInWallets(wallet, newList);
+            });
+            newList = [...newList, ...fiatWalletsList];
+        }
+        return newList;
+    }
+
+    const checkIfWalletExistsInWallets = (wallet, wallets) => {
+        return wallets.some(function (walletItem) {
+            return walletItem.currency.toLowerCase() == wallet.currency.toLowerCase();
+        });
     }
 
     React.useEffect(() => {
-        if(selectedWalletToOption) {
+        if (selectedWalletToOption) {
             setWalletsToLoading(false);
         }
         setWalletsToCurrency(selectedWalletToOption ? selectedWalletToOption.currency : walletsToCurrency);
@@ -336,13 +348,13 @@ const SwapComponent = (props: Props) => {
     }, [otpCode])
 
     React.useEffect(() => {
-        if(exchangeSuccess) {
+        if (exchangeSuccess) {
             resetFrom();
         }
     }, [exchangeSuccess])
 
     React.useEffect(() => {
-        if(executeLoading) {
+        if (executeLoading) {
             resetFrom();
         }
     }, [executeLoading])
@@ -377,7 +389,7 @@ const SwapComponent = (props: Props) => {
         }
         setWalletsFromAnchorEl(null);
     };
-    
+
     const handleWalletsToSelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setWalletsToAnchorEl(event.currentTarget);
     };
@@ -392,13 +404,13 @@ const SwapComponent = (props: Props) => {
         setWalletsToAnchorEl(null);
     };
     const checkWalletsFromSelectedOption = () => {
-        if(selectedWalletFromOption && selectedWalletToOption && selectedWalletFromOption.currency === selectedWalletToOption.currency) {
+        if (selectedWalletFromOption && selectedWalletToOption && selectedWalletFromOption.currency === selectedWalletToOption.currency) {
             setSelectedWalletFromOption(selectedWalletToOption);
             setSelectedWalletToOption(previousSelectedWalletFromOption);
         }
     }
     const checkWalletsToSelectedOption = () => {
-        if(selectedWalletFromOption && selectedWalletToOption && selectedWalletFromOption.currency === selectedWalletToOption.currency) {
+        if (selectedWalletFromOption && selectedWalletToOption && selectedWalletFromOption.currency === selectedWalletToOption.currency) {
             setSelectedWalletToOption(selectedWalletFromOption);
             setSelectedWalletFromOption(previousSelectedWalletToOption);
         }
@@ -416,18 +428,18 @@ const SwapComponent = (props: Props) => {
     }
     const handleWalletsFromAmountErrors = (amount) => {
         let errorMsg = '';
-        if(amount) {
-            if(Number(amount) < selectedWalletFromOptionMinswapAmount) {
+        if (amount) {
+            if (Number(amount) < selectedWalletFromOptionMinswapAmount) {
                 setWalletsFromError(true);
                 errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error1' }, { amount: selectedWalletFromOptionMinswapAmount });
-    
-            } else if(Number(amount) > selectedWalletFromOptionMaxswapAmount) {
+
+            } else if (Number(amount) > selectedWalletFromOptionMaxswapAmount) {
                 setWalletsFromError(true);
                 errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error2' }, { amount: selectedWalletFromOptionMaxswapAmount });
-    
-            }else if (Number(amount) > selectedWalletFromOptionBalance) {
+
+            } else if (Number(amount) > selectedWalletFromOptionBalance) {
                 setWalletsFromError(true);
-                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error3'});
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.error3' });
             } else {
                 setWalletsFromError(false);
                 errorMsg = '';
@@ -452,10 +464,10 @@ const SwapComponent = (props: Props) => {
 
     const handleOtpCodeErrors = (otpCode) => {
         let errorMsg = '';
-        if(otpCode) {
+        if (otpCode) {
             if (Boolean(otpCode.length !== 6)) {
                 setOtpCodeError(true);
-                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.otp_code_error'});
+                errorMsg = props.intl.formatMessage({ id: 'page.body.swap.input.otp_code_error' });
             } else {
                 setOtpCodeError(false);
                 errorMsg = '';
@@ -466,14 +478,14 @@ const SwapComponent = (props: Props) => {
         }
         setOtpCodeErrorMessage(`${errorMsg}`);
     }
-    
+
     const setWalletFromMaxAmount = () => {
         const maxAvailableAmount = selectedWalletFromOption ? selectedWalletFromOption.balance : '0';
-        if(maxAvailableAmount && Number(maxAvailableAmount) > 0) {
+        if (maxAvailableAmount && Number(maxAvailableAmount) > 0) {
             setWalletsFromAmount(maxAvailableAmount);
         }
     }
-    
+
     const getExchangeRates = async () => {
         // if(walletsFromAmount && Number(walletsFromAmount) > 0) {
         //     props.exchangeRateFetch({
@@ -481,16 +493,16 @@ const SwapComponent = (props: Props) => {
         //         qoute_currency: selectedWalletFromCurrency,
         //         qoute_amount: walletsFromAmount
         //     });
-            
+
         // } else {
         //     props.exchangeRateReset();
         // }
 
-        if((walletsFromAmount && Number(walletsFromAmount) > 0) && (selectedWalletFromCurrency !== selectedWalletToCurrency)) {
+        if ((walletsFromAmount && Number(walletsFromAmount) > 0) && (selectedWalletFromCurrency !== selectedWalletToCurrency)) {
             setFetchingRate(true);
             setWalletsToAmount('');
             const response = await fetchRate(selectedWalletToCurrency, selectedWalletFromCurrency, walletsFromAmount);
-            if(response.data) {
+            if (response.data) {
                 setFetchingRate(false);
                 setWalletsToAmount(response.data);
             }
@@ -503,7 +515,7 @@ const SwapComponent = (props: Props) => {
         return (walletsFromAmount && walletsFromError) || (otpCode && otpCodeError) || exchangeLoading;
     }
     const handleSwapButtonClick = async () => {
-        if(selectedWalletFromOption && selectedWalletFromOption.type == 'fiat' && selectedWalletToOption && selectedWalletToOption.type == 'fiat') {
+        if (selectedWalletFromOption && selectedWalletFromOption.type == 'fiat' && selectedWalletToOption && selectedWalletToOption.type == 'fiat') {
             const requestData = {
                 base_currency: selectedWalletToCurrency,
                 qoute_currency: selectedWalletFromCurrency,
@@ -514,20 +526,20 @@ const SwapComponent = (props: Props) => {
         } else {
             var orderSide = 'sell';
             var existingMarket;
-            existingMarket =  markets.find(function(market) {
-                return  market.base_unit.toLowerCase() == selectedWalletFromCurrency &&
-                market.quote_unit.toLowerCase() == selectedWalletToCurrency
+            existingMarket = markets.find(function (market) {
+                return market.base_unit.toLowerCase() == selectedWalletFromCurrency &&
+                    market.quote_unit.toLowerCase() == selectedWalletToCurrency
             });
-            if(!existingMarket) {
+            if (!existingMarket) {
                 orderSide = 'buy';
-                existingMarket =  markets.find(function(market) {
-                    return  market.quote_unit.toLowerCase() == selectedWalletFromCurrency &&
-                    market.base_unit.toLowerCase() == selectedWalletToCurrency
+                existingMarket = markets.find(function (market) {
+                    return market.quote_unit.toLowerCase() == selectedWalletFromCurrency &&
+                        market.base_unit.toLowerCase() == selectedWalletToCurrency
                 });
             }
             const currentTicker = marketTickers[existingMarket.id];
 
-    
+
             const requestData = {
                 volume: walletsFromAmount,
                 market: existingMarket.id,
@@ -557,25 +569,25 @@ const SwapComponent = (props: Props) => {
 
         }
 
-   }
+    }
     const renderAvailableBalance = () => {
-       return (
-           <>
+        return (
+            <>
 
                 <Typography variant="body2" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                     <FormattedMessage id={'page.body.swap.available'} />:
                 </Typography>
-                <Typography variant="subtitle2" component="div" display="inline" style={{ marginRight: '4px' }}>{ selectedWalletFromOption && selectedWalletFromOption.balance }</Typography>
-                <Typography variant="body2" component="div" display="inline">{ selectedWalletFromOption ? selectedWalletFromOption.currency.toUpperCase() : '' }</Typography>
-           </>
-       );
+                <Typography variant="subtitle2" component="div" display="inline" style={{ marginRight: '4px' }}>{selectedWalletFromOption && selectedWalletFromOption.balance}</Typography>
+                <Typography variant="body2" component="div" display="inline">{selectedWalletFromOption ? selectedWalletFromOption.currency.toUpperCase() : ''}</Typography>
+            </>
+        );
     }
     const renderPrice = () => {
-        let price: any = Number(walletsToAmount)/Number(walletsFromAmount);
+        let price: any = Number(walletsToAmount) / Number(walletsFromAmount);
         price = parseFloat(price).toFixed(5);
-        
+
         return (
-           <>
+            <>
                 <div className={classes.list}>
                     <ListItem disableGutters dense={true}>
                         <Typography variant="h6" color="textSecondary">
@@ -586,14 +598,14 @@ const SwapComponent = (props: Props) => {
                         <Typography variant="h6">
                             {fetchingRate ? '--' :
                                 <>
-                                        {`1 ${ selectedWalletFromCurrency.toUpperCase() } ≃ ${price} ${selectedWalletToCurrency.toUpperCase()}`}
+                                    {`1 ${selectedWalletFromCurrency.toUpperCase()} ≃ ${price} ${selectedWalletToCurrency.toUpperCase()}`}
                                 </>
                             }
-                            </Typography>
+                        </Typography>
                     </ListItem>
                 </div>
-           </>
-       );
+            </>
+        );
     }
     const renderExchangeTradingFee = () => {
         return (
@@ -608,7 +620,7 @@ const SwapComponent = (props: Props) => {
                         <Typography variant="h6" >
                             {fetchingRate ? '--' :
                                 <>
-                                        {`${selectedWalletToOptionSwapFee*100}`}
+                                    {`${selectedWalletToOptionSwapFee * 100}`}
                                 </>
                             }
                             {/* <Decimal fixed={5}>{selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() } */}
@@ -620,26 +632,26 @@ const SwapComponent = (props: Props) => {
     };
 
     const renderReceivableAmount = () => {
-            return (
-                <>
-                    <List className={classes.list}>
-                        <ListItem disableGutters dense={true}>
-                            <Typography variant="h6" color="textSecondary">
-                                <FormattedMessage id={'page.body.swap.you_will_get'} />
-                            </Typography>
-                        </ListItem>
-                        <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Typography variant="h6">
-                                {fetchingRate ? '--' :
-                                    <>
-                                        <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal> { selectedWalletToCurrency.toUpperCase() }
-                                    </>
-                                }
-                            </Typography>
-                        </ListItem>
-                    </List>
+        return (
+            <>
+                <List className={classes.list}>
+                    <ListItem disableGutters dense={true}>
+                        <Typography variant="h6" color="textSecondary">
+                            <FormattedMessage id={'page.body.swap.you_will_get'} />
+                        </Typography>
+                    </ListItem>
+                    <ListItem disableGutters dense={true} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Typography variant="h6">
+                            {fetchingRate ? '--' :
+                                <>
+                                    <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal> {selectedWalletToCurrency.toUpperCase()}
+                                </>
+                            }
+                        </Typography>
+                    </ListItem>
+                </List>
 
-                    {/* <Tooltip title="Estimated price of the swap, not the final price that the swap is executed." placement="right">
+                {/* <Tooltip title="Estimated price of the swap, not the final price that the swap is executed." placement="right">
                         <Typography variant="h6" component="div" display="inline" style={{ opacity: '0.6', marginRight: '8px' }}>
                         <FormattedMessage id={'page.body.swap.receive'} />:
                         </Typography>
@@ -648,17 +660,17 @@ const SwapComponent = (props: Props) => {
                         <Decimal fixed={5}>{Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee}</Decimal>
                     </Typography>
                     <Typography variant="h6" component="div" display="inline">{ selectedWalletToCurrency.toUpperCase() }</Typography> */}
-                </>
-            );
+            </>
+        );
     };
 
     const renderSwapHistory = () => {
         const columns = [];
         return (
             <>
-                <ExchangeHistory 
+                <ExchangeHistory
                     // columns= {columns}
-                    rows= {exchangeHistory}
+                    rows={exchangeHistory}
                 />
             </>
         );
@@ -668,35 +680,35 @@ const SwapComponent = (props: Props) => {
 
     const walletsToPopperOpen = Boolean(walletsToanchorEl);
     const walletsToPopperId = walletsToPopperOpen ? 'wallets-to' : undefined;
-    
+
     const translate = (id: string) => props.intl.formatMessage({ id });
 
     const renderWalletsFromDropdown = () => {
         return <WalletsDropdown
-            anchorEl = {walletsFomAnchorEl}
-            popperOpen= {walletsFromPopperOpen}
+            anchorEl={walletsFomAnchorEl}
+            popperOpen={walletsFromPopperOpen}
             popperId={walletsFromPopperId}
-            wallets = {walletsFrom}
-            selectedWallet = {selectedWalletFromOption}
-            setAnchorEl= {setWalletsFromAnchorEl}
-            setSelectedWallet = {setSelectedWalletFromOption}
-            walletDropdownClick = {handleWalletsFromSelectClick}
-            walletDropdownChange = {handleWalletsFromSelectChange}
-            walletDropdownClose = {handleWalletsFromSelectClose}
+            wallets={walletsFrom}
+            selectedWallet={selectedWalletFromOption}
+            setAnchorEl={setWalletsFromAnchorEl}
+            setSelectedWallet={setSelectedWalletFromOption}
+            walletDropdownClick={handleWalletsFromSelectClick}
+            walletDropdownChange={handleWalletsFromSelectChange}
+            walletDropdownClose={handleWalletsFromSelectClose}
         />
     }
     const renderWalletsToDropdown = () => {
         return <WalletsDropdown
-            anchorEl = {walletsToanchorEl}
-            popperOpen= {walletsToPopperOpen}
+            anchorEl={walletsToanchorEl}
+            popperOpen={walletsToPopperOpen}
             popperId={walletsToPopperId}
-            wallets = {walletsTo}
-            selectedWallet = {selectedWalletToOption}
-            setAnchorEl= {setWalletsToAnchorEl}
-            setSelectedWallet = {setSelectedWalletToOption}
-            walletDropdownClick = {handleWalletsToSelectClick}
-            walletDropdownChange = {handleWalletsToSelectChange}
-            walletDropdownClose = {handleWalletsToSelectClose}
+            wallets={walletsTo}
+            selectedWallet={selectedWalletToOption}
+            setAnchorEl={setWalletsToAnchorEl}
+            setSelectedWallet={setSelectedWalletToOption}
+            walletDropdownClick={handleWalletsToSelectClick}
+            walletDropdownChange={handleWalletsToSelectChange}
+            walletDropdownClose={handleWalletsToSelectClose}
         />
     }
 
@@ -746,137 +758,137 @@ const SwapComponent = (props: Props) => {
     const render = () => {
         return (
             <>
-            <div className={classes.swapForm}>
-                {walletsFromLoading && walletsToLoading ? 
-                    <CircularProgress size={25}/>
-                    :
-                    <>
-                        <div style={{ float: 'right' }}>
-                            {renderAvailableBalance()}
-                        </div>
-                        <div className={classes.swapFromFields}>
-                            <FormControl variant="outlined" fullWidth className={classes.formControl } error={walletsFromError}>
-                                <InputLabel htmlFor="sell">
-                                    <FormattedMessage id={'page.body.swap.input.sell'} />
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="sell"
-                                    label={<FormattedMessage id={'page.body.swap.input.sell'} />}
-                                    // placeholder={`${selectedWalletFromOptionMinswapAmount} - ${selectedWalletFromOptionMaxswapAmount}`}
-                                    type='number'
-                                    value={walletsFromAmount}
-                                    autoFocus={true}
-                                    onChange={(e) => {
-                                        handleWalletsFromAmountChange(e)
-                                    }}
-                                    aria-describedby="sell-text"
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
-                                                <FormattedMessage id={'page.body.swap.input.tag.max'} />
-                                            </span>
-                                            <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
-                                            <div className={classes.fromWalletSelect}>
-                                                {renderWalletsFromDropdown()}
-                                            </div>
-                                        </InputAdornment>
-                                    }
-                                />
-                                {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
-                            </FormControl>
-                        </div>
-                        <div className={classes.swapFields}>
-                            <FormControl variant="outlined" fullWidth className={classes.formControl}>
-                                <InputLabel htmlFor="buy">
-                                    <FormattedMessage id={'page.body.swap.input.buy'} />
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="buy"
-                                    label={<FormattedMessage id={'page.body.swap.input.buy'} />}
-                                    placeholder={fetchingRate ? '' : ''}
-                                    type='number'
-                                    value={walletsToAmount}
-                                    onChange={handleWalletsToAmountChange}
-                                    // disabled={true}
-                                    startAdornment={
-                                        <InputAdornment position="start">
-                                            {fetchingRate && <CircularProgress size={14}/>}
-                                        </InputAdornment>
-                                    }
-                                />
-                            </FormControl>
-                            <div className={classes.walletSelect}>
-                                {renderWalletsToDropdown()}
+                <div className={classes.swapForm}>
+                    {walletsFromLoading && walletsToLoading ?
+                        <CircularProgress size={25} />
+                        :
+                        <>
+                            <div style={{ float: 'right' }}>
+                                {renderAvailableBalance()}
                             </div>
-                        </div>
-                        <div className={classes.swapFromFields}>
-                            <FormControl variant="outlined" fullWidth className={classes.formControl } error={otpCodeError}>
-                                <InputLabel 
-                                htmlFor="opt_code" 
-                                // shrink={true} 
-                                // variant="outlined"
-                                >
-                                <FormattedMessage id={'page.body.swap.input.otp_code'} />
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="opt_code"
-                                    label={<FormattedMessage id={'page.body.swap.input.otp_code'} />}
-                                    type='number'
-                                    value={otpCode}
-                                    autoFocus={false}
-                                    onChange={(e) => {
-                                        handleOtpCodeChange(e)
-                                    }}
-                                    aria-describedby="otp_code_text"
-                                />
-                                {otpCodeError && <FormHelperText id="otp_code_text">{otpCodeErrorMessage}</FormHelperText>}
-                            </FormControl>
-                        </div>
-                        {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
-                            <>
-                                <Box className={classes.swapInfo} p={1} mt={2} mb={2}>
-                                    <List disablePadding={true}>
-                                        {renderPrice()}
-                                        {renderExchangeTradingFee()}
-                                        {renderReceivableAmount()}
-                                    </List>
-                                </Box>
-                            </>
-                        )}
-                        <Button 
-                            variant="contained" 
-                            color="primary"
-                            size="large"
-                            fullWidth={true}
-                            onClick={handleSwapButtonClick}
-                            // disabled={isValidForm()}
-                            disabled={Number(walletsFromAmount) <= 0 || Boolean(otpCode.length != 6) || walletsFromError || exchangeLoading || executeLoading}
-                        >
-                            {executeLoading || exchangeLoading ? <CircularProgress className={classes.buttonProgress} size={18} /> : <FormattedMessage id={'page.body.swap.button.text.buy'} />}
-                        </Button>
-                    </>
-                }
-            </div>
-        <Divider className={classes.historyDivider}/>
-        {renderSwapHistory()}
-                
+                            <div className={classes.swapFromFields}>
+                                <FormControl variant="outlined" fullWidth className={classes.formControl} error={walletsFromError}>
+                                    <InputLabel htmlFor="sell">
+                                        <FormattedMessage id={'page.body.swap.input.sell'} />
+                                    </InputLabel>
+                                    <OutlinedInput
+                                        id="sell"
+                                        label={<FormattedMessage id={'page.body.swap.input.sell'} />}
+                                        // placeholder={`${selectedWalletFromOptionMinswapAmount} - ${selectedWalletFromOptionMaxswapAmount}`}
+                                        type='number'
+                                        value={walletsFromAmount}
+                                        autoFocus={true}
+                                        onChange={(e) => {
+                                            handleWalletsFromAmountChange(e)
+                                        }}
+                                        aria-describedby="sell-text"
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <span className={classes.maxButton} onClick={setWalletFromMaxAmount}>
+                                                    <FormattedMessage id={'page.body.swap.input.tag.max'} />
+                                                </span>
+                                                <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }} />
+                                                <div className={classes.fromWalletSelect}>
+                                                    {renderWalletsFromDropdown()}
+                                                </div>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                    {walletsFromError && <FormHelperText id="sell-text">{walletsFromErrorMessage}</FormHelperText>}
+                                </FormControl>
+                            </div>
+                            <div className={classes.swapFields}>
+                                <FormControl variant="outlined" fullWidth className={classes.formControl}>
+                                    <InputLabel htmlFor="buy">
+                                        <FormattedMessage id={'page.body.swap.input.buy'} />
+                                    </InputLabel>
+                                    <OutlinedInput
+                                        id="buy"
+                                        label={<FormattedMessage id={'page.body.swap.input.buy'} />}
+                                        placeholder={fetchingRate ? '' : ''}
+                                        type='number'
+                                        value={walletsToAmount}
+                                        onChange={handleWalletsToAmountChange}
+                                        // disabled={true}
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                {fetchingRate && <CircularProgress size={14} />}
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                                <div className={classes.walletSelect}>
+                                    {renderWalletsToDropdown()}
+                                </div>
+                            </div>
+                            <div className={classes.swapFromFields}>
+                                <FormControl variant="outlined" fullWidth className={classes.formControl} error={otpCodeError}>
+                                    <InputLabel
+                                        htmlFor="opt_code"
+                                    // shrink={true} 
+                                    // variant="outlined"
+                                    >
+                                        <FormattedMessage id={'page.body.swap.input.otp_code'} />
+                                    </InputLabel>
+                                    <OutlinedInput
+                                        id="opt_code"
+                                        label={<FormattedMessage id={'page.body.swap.input.otp_code'} />}
+                                        type='number'
+                                        value={otpCode}
+                                        autoFocus={false}
+                                        onChange={(e) => {
+                                            handleOtpCodeChange(e)
+                                        }}
+                                        aria-describedby="otp_code_text"
+                                    />
+                                    {otpCodeError && <FormHelperText id="otp_code_text">{otpCodeErrorMessage}</FormHelperText>}
+                                </FormControl>
+                            </div>
+                            {!walletsFromAmount || Number(walletsFromAmount) > 0 && (
+                                <>
+                                    <Box className={classes.swapInfo} p={1} mt={2} mb={2}>
+                                        <List disablePadding={true}>
+                                            {renderPrice()}
+                                            {renderExchangeTradingFee()}
+                                            {renderReceivableAmount()}
+                                        </List>
+                                    </Box>
+                                </>
+                            )}
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                size="large"
+                                fullWidth={true}
+                                onClick={handleSwapButtonClick}
+                                // disabled={isValidForm()}
+                                disabled={Number(walletsFromAmount) <= 0 || Boolean(otpCode.length != 6) || walletsFromError || exchangeLoading || executeLoading}
+                            >
+                                {executeLoading || exchangeLoading ? <CircularProgress className={classes.buttonProgress} size={18} /> : <FormattedMessage id={'page.body.swap.button.text.buy'} />}
+                            </Button>
+                        </>
+                    }
+                </div>
+                <Divider className={classes.historyDivider} />
+                {renderSwapHistory()}
+
             </>
         );
     }
     const pageTitle = translate('page.body.swap.title.buy_sell');
     return (
         <>
-        <PageHeader pageTitle={pageTitle} />
-        <Box className={classes.pageRoot}>
-            <Grid container>
-                <Grid item xs={12} sm ={12} md={12} lg={12}>
-                    <Paper className={classes.pageContent}>
-                    {otp ? ((memberLevels && level >= memberLevels.withdraw.minimum_level) ? render() : accountNotConfirmed())  : isOtpDisabled()}
-                    </Paper> 
+            <PageHeader pageTitle={pageTitle} />
+            <Box className={classes.pageRoot}>
+                <Grid container>
+                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                        <Paper className={classes.pageContent}>
+                            {otp ? ((memberLevels && level >= memberLevels.withdraw.minimum_level) ? render() : accountNotConfirmed()) : isOtpDisabled()}
+                        </Paper>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Box>
-           
+            </Box>
+
         </>
     );
 
