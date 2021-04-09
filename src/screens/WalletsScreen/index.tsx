@@ -5,7 +5,7 @@ import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { connect, MapDispatchToProps } from 'react-redux';
 import { RouterProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
-import { 
+import {
     WalletItemProps,
     CryptoIcon,
 } from '../../components';
@@ -13,13 +13,13 @@ import { EstimatedValue } from '../../containers/Wallets/EstimatedValue';
 import { PageHeader } from '../../containers/PageHeader';
 import { setDocumentTitle } from '../../helpers';
 import { scientificToDecimal } from '../../helpers/scientificToDecimal';
-import { 
-    RootState, 
-    selectUserInfo, 
-    selectWallets, 
-    User, 
-    walletsData, 
-    walletsFetch 
+import {
+    RootState,
+    selectUserInfo,
+    selectWallets,
+    User,
+    walletsData,
+    walletsFetch
 } from '../../modules';
 
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
@@ -73,10 +73,10 @@ const useStyles = theme => ({
         paddingTop: theme.spacing(2)
     },
     currencyIcon: {
-        width: "2.5rem", 
+        width: "2.5rem",
         height: "2.5rem",
         [theme.breakpoints.only('xs')]: {
-            width: "1.5rem", 
+            width: "1.5rem",
             height: "1.5rem",
         },
     },
@@ -132,7 +132,7 @@ const useStyles = theme => ({
             }
         }
     }
-    
+
 });
 
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
@@ -176,9 +176,9 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const {
             wallets,
         } = this.props;
-        
+
         if (wallets.length === 0 && next.wallets.length > 0) {
-            
+
             this.setState({
                 walletsData: next.wallets,
                 walletsDataLoading: false,
@@ -187,9 +187,9 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
     }
 
     public render() {
-        const { wallets, classes} = this.props;
+        const { wallets, classes } = this.props;
         const {
-            searchedValue, 
+            searchedValue,
             hideSmallBalances,
         } = this.state;
 
@@ -201,13 +201,13 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const searchInputPlaceHolder = this.props.intl.formatMessage({ id: 'page.body.wallets.input.search.placeholder' })
         return (
             <React.Fragment>
-                <PageHeader pageTitle={this.pageTitle} actionsLinks= {headerActionLinks} />
+                <PageHeader pageTitle={this.pageTitle} actionsLinks={headerActionLinks} />
                 {wallets.length ? <EstimatedValue wallets={wallets} /> : ''}
 
                 <Box className={classes.pageRoot} alignItems="center">
                     <Paper className={classes.pageContent}>
-                         <FormGroup row>
-                            <TextField 
+                        <FormGroup row>
+                            <TextField
                                 placeholder={searchInputPlaceHolder || 'Search'}
                                 name="search"
                                 autoComplete='off'
@@ -215,20 +215,20 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 onChange={this.handleInputSearchChange}
                                 InputProps={{
                                     startAdornment: (
-                                      <InputAdornment position="start">
+                                        <InputAdornment position="start">
                                             <SearchIcon fontSize="small" />
-                                      </InputAdornment>
+                                        </InputAdornment>
                                     ),
                                 }}
                             />
                             <FormControlLabel
                                 control={
-                                <Checkbox
-                                    checked={hideSmallBalances}
-                                    onChange={this.handleHideSmallBalancesCheckboxChange}
-                                    name="hideSmallBalances"
-                                    color="primary"
-                                />
+                                    <Checkbox
+                                        checked={hideSmallBalances}
+                                        onChange={this.handleHideSmallBalancesCheckboxChange}
+                                        name="hideSmallBalances"
+                                        color="primary"
+                                    />
                                 }
                                 style={{ margin: '0px' }}
                                 label={<FormattedMessage id={'page.body.wallets.checkbox.label.hide_balance'} />}
@@ -285,7 +285,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 </this.StyledTableCell>
                             </TableRow>
                         </TableHead>
-                        {walletsData.length ? 
+                        {walletsData.length ?
 
                             <TableBody>
                                 {walletsData.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((wallet, index) => {
@@ -295,7 +295,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
                                     return <TableRow hover key={wallet.currency}>
                                         <this.StyledTableCell>
-                                            {wallet.iconUrl ? (<img src={`${ wallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon className={classes.currencyIcon} code={wallet.currency.toUpperCase()} />)}
+                                            {wallet.iconUrl ? (<img src={`${wallet.iconUrl} `} className={classes.currencyIcon} />) : (<CryptoIcon className={classes.currencyIcon} code={wallet.currency.toUpperCase()} />)}
                                             <span style={{ margin: "0 8px" }}>{wallet.currency.toUpperCase()}</span>
                                             <small>{wallet.name}</small>
                                         </this.StyledTableCell>
@@ -320,8 +320,8 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                         </this.StyledTableCell>
                                     </TableRow>
                                 })}
-                                
-                            </TableBody> 
+
+                            </TableBody>
                             :
                             <>
                                 {walletsDataLoading ?
@@ -339,7 +339,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                     </Table>
                 </TableContainer>
 
-                {walletsData.length ? 
+                {walletsData.length ?
                     <TablePagination
                         labelRowsPerPage={<FormattedMessage id={'page.body.swap.history.table.pagination.text.rows_per_page'} />}
                         rowsPerPageOptions={[10, 25, 100]}
@@ -349,7 +349,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         page={tablePage}
                         onChangePage={this.handleTablePageChange}
                         onChangeRowsPerPage={this.handleTableRowsChangePerPage}
-                    /> : 
+                    /> :
                     ""
                 }
             </>
@@ -360,20 +360,20 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         const { classes } = this.props;
         return (
             <>
-                <TableContainer className={classes.tableContainer}>    
+                <TableContainer className={classes.tableContainer}>
                     <Table aria-label="simple table">
                         <TableHead>
-                        <TableRow>
-                            <this.StyledTableCell />
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.coin'} />
-                            </this.StyledTableCell>
-                            <this.StyledTableCell>
-                                <FormattedMessage id={'page.body.wallets.table.header.actions'} />
-                            </this.StyledTableCell>
-                        </TableRow>
+                            <TableRow>
+                                <this.StyledTableCell />
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.coin'} />
+                                </this.StyledTableCell>
+                                <this.StyledTableCell>
+                                    <FormattedMessage id={'page.body.wallets.table.header.actions'} />
+                                </this.StyledTableCell>
+                            </TableRow>
                         </TableHead>
-                        {walletsData.length ? 
+                        {walletsData.length ?
 
                             <TableBody>
                                 {walletsData.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((wallet, index) => {
@@ -383,8 +383,8 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                         </>
                                     )
                                 })}
-                                
-                            </TableBody> 
+
+                            </TableBody>
                             :
                             <>
                                 {walletsDataLoading ?
@@ -402,7 +402,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                     </Table>
                 </TableContainer>
 
-                {walletsData.length ? 
+                {walletsData.length ?
                     <TablePagination
                         className={classes.mobilePagination}
                         labelRowsPerPage={<FormattedMessage id={'page.body.swap.history.table.pagination.text.rows_per_page'} />}
@@ -413,7 +413,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         page={tablePage}
                         onChangePage={this.handleTablePageChange}
                         onChangeRowsPerPage={this.handleTableRowsChangePerPage}
-                    /> : 
+                    /> :
                     ""
                 }
             </>
@@ -438,7 +438,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                         </IconButton>
                     </this.StyledTableCell>
                     <this.StyledTableCell>
-                        {wallet.iconUrl ? (<img src={`${ wallet.iconUrl } `} className={classes.currencyIcon}/>) : (<CryptoIcon className={classes.currencyIcon} code={wallet.currency.toUpperCase()} />)}
+                        {wallet.iconUrl ? (<img src={`${wallet.iconUrl} `} className={classes.currencyIcon} />) : (<CryptoIcon className={classes.currencyIcon} code={wallet.currency.toUpperCase()} />)}
                         <span style={{ margin: "0 8px" }}>{wallet.currency.toUpperCase()}</span>
                         <small>{wallet.name}</small>
                     </this.StyledTableCell>
@@ -460,28 +460,28 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
                 <TableRow key={`${wallet.currency}_mobile`}>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.total'} /></this.StyledTableCell>
-                                        <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.available'} /></this.StyledTableCell>
-                                        <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.locked'} /></this.StyledTableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <this.StyledTableCell>
-                                            {+total.toFixed(wallet.precision)}
-                                        </this.StyledTableCell>
-                                        <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
-                                        <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Box margin={1}>
+                                <Table size="small" aria-label="purchases">
+                                    <TableHead>
+                                        <TableRow>
+                                            <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.total'} /></this.StyledTableCell>
+                                            <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.available'} /></this.StyledTableCell>
+                                            <this.StyledTableCell><FormattedMessage id={'page.body.wallets.table.header.locked'} /></this.StyledTableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow>
+                                            <this.StyledTableCell>
+                                                {+total.toFixed(wallet.precision)}
+                                            </this.StyledTableCell>
+                                            <this.StyledTableCell>{wallet.balance}</this.StyledTableCell>
+                                            <this.StyledTableCell>{wallet.locked}</this.StyledTableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </Box>
+                        </Collapse>
                     </TableCell>
                 </TableRow>
             </>
@@ -489,7 +489,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
     }
 
     private handleTablePageChange = (event: unknown, newPage: number) => {
-        
+
         this.setState({
             tablePage: newPage
         });
@@ -515,7 +515,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
     }
 
     private filteredRecords = () => {
-        const {wallets} = this.props;
+        const { wallets } = this.props;
         const { searchedValue, hideSmallBalances } = this.state;
         let filteredData = [];
 
@@ -525,7 +525,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         this.setState({
             walletsData: filteredData
         });
-    
+
     }
 }
 

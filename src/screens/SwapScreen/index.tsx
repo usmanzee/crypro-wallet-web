@@ -541,7 +541,7 @@ const SwapComponent = (props: Props) => {
 
 
             const requestData = {
-                volume: walletsFromAmount,
+                volume: (Number(walletsToAmount) - Number(walletsToAmount) * selectedWalletToOptionSwapFee).toFixed(6),
                 market: existingMarket.id,
                 price: currentTicker.last,
                 side: orderSide,

@@ -30,19 +30,19 @@ import { CryptoIcon } from '../../components';
 
 import { formatCCYAddress } from '../../helpers';
 
-import { 
-    RootState, 
+import {
+    RootState,
     selectCurrentLanguage,
     User,
-    selectUserInfo, 
-    selectWalletAddress, 
+    selectUserInfo,
+    selectWalletAddress,
     walletsAddressFetch,
     selectWalletAddressLoading,
 } from '../../modules';
 
-import { 
-    MOON_PAY_URL, 
-    MOON_PAY_PUBLIC_KEY 
+import {
+    MOON_PAY_URL,
+    MOON_PAY_PUBLIC_KEY
 } from '../../constants'
 import { fetchMoonpayCurrencies } from '../../apis/currency';
 import { fetchRate } from '../../apis/exchange';
@@ -68,139 +68,139 @@ interface Currency {
 }
 
 const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    paper: {
-        padding: theme.spacing(2)
-    },
-    pageHeader: {
-        fontWeight: 500,
-        padding: `${theme.spacing(1)}px 0px`,
-        borderBottom: "1px solid rgb(233, 236, 240)"
-    },
-    pageContent: {
-        padding: "20px 0px",
-    },
-    pageContentText: {
-        alignItems: 'center', 
-        maxWidth: '400px', 
-        margin: 'auto',
-        padding: '96px 0px',
-        [theme.breakpoints.only('sm')]: {
-            display: 'none',
+    createStyles({
+        paper: {
+            padding: theme.spacing(2)
         },
-        [theme.breakpoints.only('xs')]: {
-            display: 'none',
+        pageHeader: {
+            fontWeight: 500,
+            padding: `${theme.spacing(1)}px 0px`,
+            borderBottom: "1px solid rgb(233, 236, 240)"
         },
-    },
-    inputLabel: {
-        fontWeight: 500,
-        margin: `${theme.spacing(1)}px 0px`
-    },
-    currencySelect: {
-        display: 'flex',
-        cursor: 'pointer',
-        padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
-        borderRadius: '4px',
-        borderWidth: '1px',
-        borderColor: 'rgb(230, 232, 234)',
-        borderStyle: 'solid',
-        [theme.breakpoints.only('sm')]: {
-            width: 'auto',
+        pageContent: {
+            padding: "20px 0px",
         },
-        [theme.breakpoints.only('xs')]: {
-            width: 'auto',
+        pageContentText: {
+            alignItems: 'center',
+            maxWidth: '400px',
+            margin: 'auto',
+            padding: '96px 0px',
+            [theme.breakpoints.only('sm')]: {
+                display: 'none',
+            },
+            [theme.breakpoints.only('xs')]: {
+                display: 'none',
+            },
         },
-    },
-    fiatCurrencySelect: {
-        display: 'flex',
-        cursor: 'pointer',
-        [theme.breakpoints.only('sm')]: {
-            width: 'auto',
+        inputLabel: {
+            fontWeight: 500,
+            margin: `${theme.spacing(1)}px 0px`
         },
-        [theme.breakpoints.only('xs')]: {
-            width: 'auto',
+        currencySelect: {
+            display: 'flex',
+            cursor: 'pointer',
+            padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
+            borderRadius: '4px',
+            borderWidth: '1px',
+            borderColor: 'rgb(230, 232, 234)',
+            borderStyle: 'solid',
+            [theme.breakpoints.only('sm')]: {
+                width: 'auto',
+            },
+            [theme.breakpoints.only('xs')]: {
+                width: 'auto',
+            },
         },
-    },
-    currencyIcon: {
-        width: "25px", 
-        height: '25px'
-    },
-    popper: {
-      border: '1px solid rgba(27,31,35,.15)',
-      boxShadow: '0 3px 12px rgba(27,31,35,.15)',
-      borderRadius: 3,
-      zIndex: 1,
-      fontSize: 13,
-      color: '#586069',
-      backgroundColor: '#f6f8fa',
-    },
-    header: {
-      borderBottom: '1px solid #e1e4e8',
-      padding: '8px 10px',
-      fontWeight: 600,
-    },
-    inputBase: {
-      padding: 10,
-      width: '100%',
-      borderBottom: '1px solid #dfe2e5',
-      '& input': {
-        borderRadius: 4,
-        backgroundColor: theme.palette.common.white,
-        padding: 8,
-        transition: theme.transitions.create(['border-color', 'box-shadow']),
-        border: '1px solid #ced4da',
-        fontSize: 14,
-        '&:focus': {
-          boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-          borderColor: theme.palette.primary.main,
+        fiatCurrencySelect: {
+            display: 'flex',
+            cursor: 'pointer',
+            [theme.breakpoints.only('sm')]: {
+                width: 'auto',
+            },
+            [theme.breakpoints.only('xs')]: {
+                width: 'auto',
+            },
         },
-      },
-    },
-    currencyCode: { 
-        margin: '0px 4px'
-    },
-    currencyName: { 
-        margin: '2px 1px' 
-    },
-    selectDownArrow: {
-        marginLeft:'auto', 
-        marginRight:'0'
-    },
-    gridMarginTop: {
-        marginTop: "2rem",
-    },
-    inputMargin: {
-        margin: `${theme.spacing(2)}px 0px`
-    },
-    divider: {
-        height: 28,
-        margin: 4,
-        // margin: '0px 8px'
-    },
-    iframe: {
-        width: '100%', 
-        height: '70vh', 
-        border: 'none'
-    },
-    iframeLoaderDiv: {
-        margin: '0px',
-        padding: '0px',
-        position: 'absolute',
-        right: '0px',
-        top: '0px',
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgb(255, 255, 255)',
-        opacity: '0.8',
-    }
-  }),
+        currencyIcon: {
+            width: "25px",
+            height: '25px'
+        },
+        popper: {
+            border: '1px solid rgba(27,31,35,.15)',
+            boxShadow: '0 3px 12px rgba(27,31,35,.15)',
+            borderRadius: 3,
+            zIndex: 1,
+            fontSize: 13,
+            color: '#586069',
+            backgroundColor: '#f6f8fa',
+        },
+        header: {
+            borderBottom: '1px solid #e1e4e8',
+            padding: '8px 10px',
+            fontWeight: 600,
+        },
+        inputBase: {
+            padding: 10,
+            width: '100%',
+            borderBottom: '1px solid #dfe2e5',
+            '& input': {
+                borderRadius: 4,
+                backgroundColor: theme.palette.common.white,
+                padding: 8,
+                transition: theme.transitions.create(['border-color', 'box-shadow']),
+                border: '1px solid #ced4da',
+                fontSize: 14,
+                '&:focus': {
+                    boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+                    borderColor: theme.palette.primary.main,
+                },
+            },
+        },
+        currencyCode: {
+            margin: '0px 4px'
+        },
+        currencyName: {
+            margin: '2px 1px'
+        },
+        selectDownArrow: {
+            marginLeft: 'auto',
+            marginRight: '0'
+        },
+        gridMarginTop: {
+            marginTop: "2rem",
+        },
+        inputMargin: {
+            margin: `${theme.spacing(2)}px 0px`
+        },
+        divider: {
+            height: 28,
+            margin: 4,
+            // margin: '0px 8px'
+        },
+        iframe: {
+            width: '100%',
+            height: '70vh',
+            border: 'none'
+        },
+        iframeLoaderDiv: {
+            margin: '0px',
+            padding: '0px',
+            position: 'absolute',
+            right: '0px',
+            top: '0px',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgb(255, 255, 255)',
+            opacity: '0.8',
+        }
+    }),
 );
 
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & { children?: React.ReactElement<any, any> },
     ref: React.Ref<unknown>,
-  ) {
+) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
@@ -226,7 +226,7 @@ const BuyCryptoComponent = (props: Props) => {
     const [buyCryptoDialogOpen, setBuyCryptoDialogOpen] = React.useState(false);
     const [fetchingRate, setFetchingRate] = React.useState(false);
     const [cryptoCurrencyAddress, setCryptoCurrencyAddress] = React.useState<string>('');
-    
+
     const [moonPayURL, setMoonPayURL] = React.useState<string>('');
     const [showIframe, setShowIframe] = React.useState<boolean>(false);
     const [iframeLoading, setIframeLoading] = React.useState<boolean>(true);
@@ -239,22 +239,22 @@ const BuyCryptoComponent = (props: Props) => {
 
     console.log('selectWalletAddress: ', props.selectedWalletAddress);
     React.useEffect(() => {
-        if(!supportedCurrencies.length) {
+        if (!supportedCurrencies.length) {
             getSupportedCurrencies();
         }
     }, []);
-    
+
     React.useEffect(() => {
-        if(supportedCurrencies.length > 0 && !fiatCurrencies.length) {
-            setFiatCurrencies(filterCurrencies(supportedCurrencies ,'fiat'));
+        if (supportedCurrencies.length > 0 && !fiatCurrencies.length) {
+            setFiatCurrencies(filterCurrencies(supportedCurrencies, 'fiat'));
         } else {
             setFiatCurrencyOption(fiatCurrencies[0]);
         }
     }, [supportedCurrencies, fiatCurrencies]);
 
     React.useEffect(() => {
-        if(supportedCurrencies.length > 0 && !cryptoCurrencies.length) {
-            setCryptoCurrencies(filterCurrencies(supportedCurrencies ,'crypto'));
+        if (supportedCurrencies.length > 0 && !cryptoCurrencies.length) {
+            setCryptoCurrencies(filterCurrencies(supportedCurrencies, 'crypto'));
         } else {
             setCryptoCurrencyOption(cryptoCurrencies[0]);
         }
@@ -267,7 +267,7 @@ const BuyCryptoComponent = (props: Props) => {
     }, [amount]);
 
     React.useEffect(() => {
-        if(cryptoCurrencyOption) {
+        if (cryptoCurrencyOption) {
             console.log(cryptoCurrencyOption.code);
             props.fetchAddress({ currency: cryptoCurrencyOption && cryptoCurrencyOption.code });
         }
@@ -275,7 +275,7 @@ const BuyCryptoComponent = (props: Props) => {
         fetchCurrencyRate();
         updateMoonPayURL();
     }, [cryptoCurrencyOption]);
-    
+
     React.useEffect(() => {
         checkAmountLimit();
         fetchCurrencyRate();
@@ -292,26 +292,26 @@ const BuyCryptoComponent = (props: Props) => {
     const handleBuyModalOpen = () => {
         setBuyCryptoDialogOpen(true);
     };
-    
+
     const handleBuyModalClose = () => {
         setBuyCryptoDialogOpen(false);
     };
 
-    
+
     const getSupportedCurrencies = async () => {
 
         const response = await fetchMoonpayCurrencies();
-        if(response.data) {
-            setSupportedCurrencies(response.data);    
+        if (response.data) {
+            setSupportedCurrencies(response.data);
         }
     }
 
     const fetchCurrencyRate = async () => {
-        if(selectedCryptoCurrencyCode && selectedFiatCurrencyCode && amount) {
+        if (selectedCryptoCurrencyCode && selectedFiatCurrencyCode && amount) {
             setRate('');
             setFetchingRate(true);
             const response = await fetchRate(selectedCryptoCurrencyCode, selectedFiatCurrencyCode, amount);
-            if(response.data) {
+            if (response.data) {
                 setFetchingRate(false);
                 setRate(response.data);
             }
@@ -328,7 +328,7 @@ const BuyCryptoComponent = (props: Props) => {
     }
 
     const updateMoonPayURL = () => {
-        setMoonPayURL (url + `&currencyCode=${selectedCryptoCurrencyCode.toLocaleLowerCase()}&baseCurrencyAmount=${amount}&baseCurrencyCode=${selectedFiatCurrencyCode.toLocaleLowerCase()}&email=${props.user.email}&externalCustomerId=${props.user.uid}&walletAddress=${cryptoCurrencyAddress}`);
+        setMoonPayURL(url + `&currencyCode=${selectedCryptoCurrencyCode.toLocaleLowerCase()}&baseCurrencyAmount=${amount}&baseCurrencyCode=${selectedFiatCurrencyCode.toLocaleLowerCase()}&email=${props.user.email}&externalCustomerId=${props.user.uid}&walletAddress=${cryptoCurrencyAddress}`);
     }
 
     const handleAmountChangeEvent = (event: any) => {
@@ -337,10 +337,10 @@ const BuyCryptoComponent = (props: Props) => {
     }
 
     const checkAmountLimit = () => {
-        
+
         const baseCurrency = fiatCurrencyOption;
-        if(amount && baseCurrency) {
-            if(amount < baseCurrency.minAmount) {
+        if (amount && baseCurrency) {
+            if (amount < baseCurrency.minAmount) {
                 setShowAmountError(true);
                 setAmountErrorMessage("Amount entered may not be suffecient for current payment channel.");
                 setChannelErrorMessage(props.intl.formatMessage({ id: 'page.body.buy_crypto.field.error1' }, { amount: baseCurrency.minAmount, currencyCode: baseCurrency.code.toUpperCase() }));
@@ -350,8 +350,8 @@ const BuyCryptoComponent = (props: Props) => {
                 setAmountErrorMessage("");
                 setChannelErrorMessage("");
             }
-            
-            if(amount > baseCurrency.maxAmount) {
+
+            if (amount > baseCurrency.maxAmount) {
                 setShowAmountError(true);
                 setAmountErrorMessage("Amount entered may exceed the limit of current payment channel.");
                 setChannelErrorMessage(props.intl.formatMessage({ id: 'page.body.buy_crypto.field.error2' }, { amount: baseCurrency.maxAmount, currencyCode: baseCurrency.code.toUpperCase() }));
@@ -375,23 +375,23 @@ const BuyCryptoComponent = (props: Props) => {
     const handleFiatCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setFiatAnchorEl(event.currentTarget);
     };
-    
+
     const handleCurrencySelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
         if (anchorEl) {
-          anchorEl.focus();
+            anchorEl.focus();
         }
         setAnchorEl(null);
     };
-    
+
     const handleFiatCurrencySelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
         if (fiatAnchorEl) {
-          fiatAnchorEl.focus();
+            fiatAnchorEl.focus();
         }
         setFiatAnchorEl(null);
     };
 
     const isValidForm = () => {
-        return !amount || !Boolean(Number(amount) > 0) || showAmountError || fetchingRate; 
+        return !amount || !Boolean(Number(amount) > 0) || showAmountError || fetchingRate;
     }
 
     const handleFromSubmit = () => {
@@ -410,13 +410,13 @@ const BuyCryptoComponent = (props: Props) => {
         return (
             <>
                 <div className={classes.fiatCurrencySelect} onClick={handleFiatCurrencySelectClick}>
-                    {fiatCurrencyOption ? 
+                    {fiatCurrencyOption ?
                         (<>
                             <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                                { fiatCurrencyOption.code.toUpperCase() }
+                                {fiatCurrencyOption.code.toUpperCase()}
                             </Typography>
                             <div className={classes.selectDownArrow}>
-                                <ArrowDropDownIcon /> 
+                                <ArrowDropDownIcon />
                             </div>
                         </>) :
                         ""
@@ -441,27 +441,27 @@ const BuyCryptoComponent = (props: Props) => {
                             setFiatCurrencyOption(selectedOption);
                         }}
                         noOptionsText="No Records Found"
-                        renderOption = {(option: Currency | null | undefined) => {
+                        renderOption={(option: Currency | null | undefined) => {
                             const optionCurrency = option ? option.code.toUpperCase() : '';
                             return <React.Fragment>
                                 <div style={{ display: 'flex' }}>
-                                    <Chip label={ option ? option.code.toUpperCase(): '' } className={classes.currencyCode}/>
+                                    <Chip label={option ? option.code.toUpperCase() : ''} className={classes.currencyCode} />
                                     <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        { option ? option.name : '' }
+                                        {option ? option.name : ''}
                                     </Typography>
-                                    
+
                                 </div>
                             </React.Fragment>
                         }}
                         options={fiatCurrencies}
-                        getOptionLabel={(option: Currency | null | undefined) => option ? option.name: ''}
+                        getOptionLabel={(option: Currency | null | undefined) => option ? option.name : ''}
                         renderInput={(params) => (
-                        <InputBase
-                            ref={params.InputProps.ref}
-                            inputProps={params.inputProps}
-                            autoFocus
-                            className={classes.inputBase}
-                        />
+                            <InputBase
+                                ref={params.InputProps.ref}
+                                inputProps={params.inputProps}
+                                autoFocus
+                                className={classes.inputBase}
+                            />
                         )}
                     />
                 </Popper>
@@ -473,17 +473,17 @@ const BuyCryptoComponent = (props: Props) => {
         return (
             <>
                 <div className={classes.currencySelect} onClick={handleCurrencySelectClick}>
-                    {cryptoCurrencyOption ? 
+                    {cryptoCurrencyOption ?
                         (<>
-                            <CryptoIcon code={cryptoCurrencyOption.code.toUpperCase()} width="25"/>
+                            <CryptoIcon code={cryptoCurrencyOption.code.toUpperCase()} width="25" />
                             <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                                { cryptoCurrencyOption.code.toUpperCase() }
+                                {cryptoCurrencyOption.code.toUpperCase()}
                             </Typography>
                             <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                { cryptoCurrencyOption.name }
-                            </Typography> 
+                                {cryptoCurrencyOption.name}
+                            </Typography>
                             <div className={classes.selectDownArrow}>
-                                <ArrowDropDownIcon/> 
+                                <ArrowDropDownIcon />
                             </div>
                         </>) :
                         ""
@@ -508,29 +508,29 @@ const BuyCryptoComponent = (props: Props) => {
                             setCryptoCurrencyOption(selectedOption);
                         }}
                         noOptionsText="No Records Found"
-                        renderOption = {(option: Currency | null | undefined) => {
+                        renderOption={(option: Currency | null | undefined) => {
                             const optionCurrency = option ? option.code.toUpperCase() : '';
                             return <React.Fragment>
-                                <CryptoIcon code={optionCurrency} width="25"/>
+                                <CryptoIcon code={optionCurrency} width="25" />
                                 <div style={{ display: 'flex' }}>
                                     <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                                        { option ? option.code.toUpperCase(): '' }
+                                        {option ? option.code.toUpperCase() : ''}
                                     </Typography>
                                     <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        { option ? option.name : '' }
+                                        {option ? option.name : ''}
                                     </Typography>
                                 </div>
                             </React.Fragment>
                         }}
                         options={cryptoCurrencies}
-                        getOptionLabel={(option: Currency | null | undefined) => option ? option.name: ''}
+                        getOptionLabel={(option: Currency | null | undefined) => option ? option.name : ''}
                         renderInput={(params) => (
-                        <InputBase
-                            ref={params.InputProps.ref}
-                            inputProps={params.inputProps}
-                            autoFocus
-                            className={classes.inputBase}
-                        />
+                            <InputBase
+                                ref={params.InputProps.ref}
+                                inputProps={params.inputProps}
+                                autoFocus
+                                className={classes.inputBase}
+                            />
                         )}
                     />
                 </Popper>
@@ -547,15 +547,15 @@ const BuyCryptoComponent = (props: Props) => {
                         </Typography>
                         <div className={classes.pageContent}>
                             <Grid container>
-                                <Grid item sm= {12} md={6}>
-                                   <div className={classes.pageContentText}>
+                                <Grid item sm={12} md={6}>
+                                    <div className={classes.pageContentText}>
                                         <Typography variant="h4" gutterBottom>
                                             <FormattedMessage id={'page.body.buy_crypto.content1'} />
                                         </Typography>
                                         <Typography variant="body1" gutterBottom>
-                                        <FormattedMessage id={'page.body.buy_crypto.content2'} />
+                                            <FormattedMessage id={'page.body.buy_crypto.content2'} />
                                         </Typography>
-                                   </div>
+                                    </div>
                                 </Grid>
                                 <Grid item sm={12} md={6}>
                                     <Paper style={{ padding: '16px 24px' }}>
@@ -581,7 +581,7 @@ const BuyCryptoComponent = (props: Props) => {
                                                     autoFocus={true}
                                                     endAdornment={
                                                         <InputAdornment position="end">
-                                                            <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
+                                                            <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }} />
                                                             <div>
                                                                 {renderFiatCurrencyDropDown()}
                                                             </div>
@@ -605,12 +605,12 @@ const BuyCryptoComponent = (props: Props) => {
                                                     aria-describedby="sell-text"
                                                     startAdornment={
                                                         <InputAdornment position="start">
-                                                            {fetchingRate && <CircularProgress size={14}/>}
+                                                            {fetchingRate && <CircularProgress size={14} />}
                                                         </InputAdornment>
                                                     }
                                                     endAdornment={
                                                         <InputAdornment position="end">
-                                                            <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }}/>
+                                                            <Divider className={classes.divider} orientation="vertical" style={{ margin: '0px 8px' }} />
                                                             <Typography variant="h6">{cryptoCurrencyOption && cryptoCurrencyOption.code ? cryptoCurrencyOption.code.toUpperCase() : ''}</Typography>
                                                         </InputAdornment>
                                                     }
@@ -619,21 +619,21 @@ const BuyCryptoComponent = (props: Props) => {
                                         </div>
                                         <div className={classes.inputMargin}>
                                             <div>
-                                                <Button 
-                                                    color="primary" 
+                                                <Button
+                                                    color="primary"
                                                     variant="contained"
-                                                    fullWidth 
+                                                    fullWidth
                                                     onClick={handleFromSubmit}
                                                     disabled={isValidForm()}
                                                 >
-                                                {submitButtonText}
+                                                    {submitButtonText}
                                                 </Button>
                                             </div>
                                         </div>
                                     </Paper>
                                 </Grid>
                             </Grid>
-                        </div>                  
+                        </div>
                     </Paper>
                 </Container>
             </Box>
@@ -650,18 +650,18 @@ const BuyCryptoComponent = (props: Props) => {
                     {iframeLoading ?
                         <>
                             <div className={classes.iframeLoaderDiv}>
-                                <CircularProgress style={{ position: 'absolute', left: '45%',top:'50%'  }} />
+                                <CircularProgress style={{ position: 'absolute', left: '45%', top: '50%' }} />
                             </div>
                         </>
-                    : null}
+                        : null}
                     <DialogContentText>
-                    {showIframe ? <iframe className={classes.iframe} src={testUrl} onLoad={() => setIframeLoading(false)} allow="accelerometer; autoplay; camera; gyroscope; payment"></iframe> : null}
+                        {showIframe ? <iframe className={classes.iframe} src={testUrl} onLoad={() => setIframeLoading(false)} allow="accelerometer; autoplay; camera; gyroscope; payment"></iframe> : null}
 
                     </DialogContentText>
                     <div style={{ padding: '0px 16px' }}>
-                        <Button 
+                        <Button
                             variant="outlined"
-                            fullWidth 
+                            fullWidth
                             onClick={handleBuyModalClose}
                         >
                             <FormattedMessage id={'page.body.buy_crypto.modal.exit_button.text'} />

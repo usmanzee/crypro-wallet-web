@@ -8,8 +8,8 @@ import { History, Pagination, WalletItemProps, CopyTag } from '../../components'
 import { Decimal } from '../../components/Decimal';
 //import { Table, Thead,  Tr, Th, } from 'react-super-responsive-table'
 //import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css'
-import { 
-    localeDate 
+import {
+    localeDate
     // preciseData,
     // setDepositStatusColor,
     // setWithdrawStatusColor,
@@ -148,24 +148,24 @@ export class WalletTable extends React.Component<Props, IState> {
     }
     private getHeaders = () => {
         switch (this.props.type) {
-          case 'deposits':
-              return [
-                  this.props.intl.formatMessage({id: 'page.body.history.deposit.header.date'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.deposit.header.status'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.deposit.header.amount'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.deposit.header.txid'}),
-              ];
-          case 'withdraws':
-              return [
-                  this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.date'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.address'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.status'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.amount'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.withdraw.header.fee'}),
-                  this.props.intl.formatMessage({id: 'page.body.history.deposit.header.txid'}),
-              ];
-          default:
-              return [];
+            case 'deposits':
+                return [
+                    this.props.intl.formatMessage({ id: 'page.body.history.deposit.header.date' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.deposit.header.status' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.deposit.header.amount' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.deposit.header.txid' }),
+                ];
+            case 'withdraws':
+                return [
+                    this.props.intl.formatMessage({ id: 'page.body.history.withdraw.header.date' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.withdraw.header.address' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.withdraw.header.status' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.withdraw.header.amount' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.withdraw.header.fee' }),
+                    this.props.intl.formatMessage({ id: 'page.body.history.deposit.header.txid' }),
+                ];
+            default:
+                return [];
         }
     };
 
@@ -187,9 +187,9 @@ export class WalletTable extends React.Component<Props, IState> {
             wallets,
         } = this.props;
         const { fixed } = wallets.find(w => w.currency === currency) || { fixed: 8 };
-                if (list.length === 0) {
-                    return [[intl.formatMessage({ id: 'page.noDataToShow' }), '', '']];
-                }
+        if (list.length === 0) {
+            return [[intl.formatMessage({ id: 'page.noDataToShow' }), '', '']];
+        }
         switch (type) {
             case 'deposits': {
                 return list.sort((a, b) => {
@@ -208,11 +208,11 @@ export class WalletTable extends React.Component<Props, IState> {
                         <div className="pg-history-elem__hide" key={item.rid}>
                             <CopyTag text={item.txid} />
                             <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
-                                {<LaunchIcon/>}
+                                {<LaunchIcon />}
                             </a>
                         </div>
                     ];
-                });    
+                });
             }
             case 'withdraws': {
                 return list.sort((a, b) => {
@@ -227,14 +227,14 @@ export class WalletTable extends React.Component<Props, IState> {
                     const AddressLink = this.getAddressLink(currency, item.rid);
                     return [
                         localeDate(item.created_at, 'fullDate'),
-                        <div className="pg-history-elem__hide" key={item.rid }><a href={AddressLink} target="_blank" rel="noopener noreferrer">{item.rid}</a></div>,
+                        <div className="pg-history-elem__hide" key={item.rid}><a href={AddressLink} target="_blank" rel="noopener noreferrer">{item.rid}</a></div>,
                         state,
                         <Decimal key={index} fixed={fixed}>{amount}</Decimal>,
                         <Decimal key={index} fixed={fixed}>{item.fee}</Decimal>,
-                        <div className="pg-history-elem__hide" key={item.blockchain_txid }>
+                        <div className="pg-history-elem__hide" key={item.blockchain_txid}>
                             <CopyTag text={item.blockchain_txid} />
                             <a href={blockchainLink} target="_blank" rel="noopener noreferrer">
-                                {<LaunchIcon/>}
+                                {<LaunchIcon />}
                             </a>
                         </div>
                     ];
@@ -259,7 +259,7 @@ export class WalletTable extends React.Component<Props, IState> {
     //     if (list.length === 0) {
     //         return [[intl.formatMessage({ id: 'page.noDataToShow' }), '', '']];
     //     }
-        
+
     //     return list.sort((a, b) => {
     //         return localeDate(a.created_at, 'fullDate') > localeDate(b.created_at, 'fullDate') ? -1 : 1;
     //     }).map((item, index) => {
@@ -268,7 +268,7 @@ export class WalletTable extends React.Component<Props, IState> {
     //         const itemCurrency = currencies && currencies.find(cur => cur.id === currency);
     //         const minConfirmations = itemCurrency && itemCurrency.min_confirmations;
     //         const state = 'state' in item ? this.formatTxState(item.state, confirmations, minConfirmations) : '';
-            
+
     //         const blockchainLink = this.getBlockchainLink(currency, item.txid);
 
     //         return [
@@ -292,7 +292,7 @@ export class WalletTable extends React.Component<Props, IState> {
         }
         return '';
     };
-    private getAddressLink = (currency: string,  rid?: string) => {
+    private getAddressLink = (currency: string, rid?: string) => {
         const { wallets } = this.props;
         const currencyInfo = wallets && wallets.find(wallet => wallet.currency === currency);
         if (currencyInfo) {

@@ -22,20 +22,20 @@ import TableRow from '@material-ui/core/TableRow/TableRow';
 
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import {DropzoneArea} from 'material-ui-dropzone';
+import { DropzoneArea } from 'material-ui-dropzone';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Papa from 'papaparse';
 import { massWithdraws } from '../../apis/withdraw';
 
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
-import { 
-    alertPush, 
-    currenciesFetch, 
-    Currency, 
-    RootState, 
-    selectCurrencies, 
-    selectUserInfo, 
-    User, 
+import {
+    alertPush,
+    currenciesFetch,
+    Currency,
+    RootState,
+    selectCurrencies,
+    selectUserInfo,
+    User,
 } from '../../modules';
 import { CurrencyInfo } from '../../components';
 
@@ -102,7 +102,7 @@ class MasspayComponent extends React.Component<Props> {
         modalOpen: false,
         fileData: [],
         responseData: [],
-        otp:'',
+        otp: '',
         submitted: false,
         formatedData: [],
         massWithdrawProcessing: false,
@@ -120,8 +120,8 @@ class MasspayComponent extends React.Component<Props> {
     }
 
     onFileChange = (files) => {
-        this.setState({uploadedFile: files[0]})
-        this.isFileFormValid();    
+        this.setState({ uploadedFile: files[0] })
+        this.isFileFormValid();
     }
 
     onFileSubmit = async e => {
@@ -132,24 +132,24 @@ class MasspayComponent extends React.Component<Props> {
             header: true,
             download: false,
             skipEmptyLines: true,
-            transformHeader:function(h) {
+            transformHeader: function (h) {
                 let newColumnName = h;
-                if(h === 'BTC_Address') {
+                if (h === 'BTC_Address') {
                     newColumnName = 'address';
                 }
-                if(h === 'Amount') {
+                if (h === 'Amount') {
                     newColumnName = 'amount';
                 }
-                if(h === 'Currency') {
+                if (h === 'Currency') {
                     newColumnName = 'currency';
                 }
-                if(h === 'W_ID') {
+                if (h === 'W_ID') {
                     newColumnName = 'w_id';
                 }
-                if(h === 'B4U_ID') {
+                if (h === 'B4U_ID') {
                     newColumnName = 'b4u_id';
                 }
-                if(h === 'User_Name') {
+                if (h === 'User_Name') {
                     newColumnName = 'name';
                 }
                 return newColumnName;
@@ -165,7 +165,7 @@ class MasspayComponent extends React.Component<Props> {
     };
 
     handleModalOpen = () => {
-        this.setState({modalOpen: true})
+        this.setState({ modalOpen: true })
     }
 
     handleOTPChange(event) {
@@ -176,25 +176,25 @@ class MasspayComponent extends React.Component<Props> {
 
     handleModalClose = () => {
         // this.resetDropzone();
-        this.setState({modalOpen: false})
+        this.setState({ modalOpen: false })
     }
 
     public isFileFormValid = () => {
-        if(this.state.uploadedFile) {
+        if (this.state.uploadedFile) {
             return true;
         }
         return false;
     }
 
     public isRequestFormValid = () => {
-        if(this.state.submitted || !this.state.otp || !Boolean(this.state.otp.length > 5)) {
+        if (this.state.submitted || !this.state.otp || !Boolean(this.state.otp.length > 5)) {
             return true;
         }
         return false;
     }
 
     handleRequestSubmit = async () => {
-        this.setState({submitted: true})
+        this.setState({ submitted: true })
         const formatedData = await this.formateData();
 
         const formatedCurrenciesData = formatedData.filter((row) => {
@@ -207,34 +207,34 @@ class MasspayComponent extends React.Component<Props> {
 
         this.setState({ massWithdrawProcessing: true }, async () => {
             try {
-                
+
                 const response = await massWithdraws({
                     otp: this.state.otp,
                     data: this.state.formatedData
                 });
-                
-                if(response.status < 300) {
+
+                if (response.status < 300) {
                     this.resetDropzone();
-                    this.setState({modalOpen: false, responseData: response.data})
+                    this.setState({ modalOpen: false, responseData: response.data })
                     this.downloadCSV()
-                    this.setState({otp: ''})
-                    this.setState({submitted: false})
-                    this.setState({massWithdrawProcessing: false});
-                    this.props.fetchAlert({message: ['Request processed successfully'], type: 'success'});
+                    this.setState({ otp: '' })
+                    this.setState({ submitted: false })
+                    this.setState({ massWithdrawProcessing: false });
+                    this.props.fetchAlert({ message: ['Request processed successfully'], type: 'success' });
                 } else if (response.status > 300 && response.data.errors) {
-                    this.setState({submitted: false})
-                    this.setState({massWithdrawProcessing: false});
-                    this.props.fetchAlert({message: response.data.errors, type: 'error'});
+                    this.setState({ submitted: false })
+                    this.setState({ massWithdrawProcessing: false });
+                    this.props.fetchAlert({ message: response.data.errors, type: 'error' });
                 } else {
-                    this.setState({submitted: false})
-                    this.setState({massWithdrawProcessing: false});
-                    this.props.fetchAlert({message: ['Incorrect response from server'], type: 'error'});
+                    this.setState({ submitted: false })
+                    this.setState({ massWithdrawProcessing: false });
+                    this.props.fetchAlert({ message: ['Incorrect response from server'], type: 'error' });
                 }
 
             } catch (error) {
-                this.setState({submitted: false})
-                this.setState({massWithdrawProcessing: false});
-                this.props.fetchAlert({message: ['Failed to submit request'], type: 'error'});
+                this.setState({ submitted: false })
+                this.setState({ massWithdrawProcessing: false });
+                this.props.fetchAlert({ message: ['Failed to submit request'], type: 'error' });
             }
         });
 
@@ -242,15 +242,15 @@ class MasspayComponent extends React.Component<Props> {
     }
 
     public resetDropzone = () => {
-         //remove upload file
-         let element: HTMLElement = document.getElementsByClassName('MuiDropzonePreviewList-removeButton')[0] as HTMLElement;
-         if(element) {
-             element.click();
-         }
+        //remove upload file
+        let element: HTMLElement = document.getElementsByClassName('MuiDropzonePreviewList-removeButton')[0] as HTMLElement;
+        if (element) {
+            element.click();
+        }
     }
 
     private formateData = async () => {
-        const {currencies} = this.props;
+        const { currencies } = this.props;
 
         const rows = this.state.fileData;
         return await currencies.map(currency => {
@@ -261,24 +261,24 @@ class MasspayComponent extends React.Component<Props> {
             });
 
             return ({
-                    currency: currency.id,
-                    meta_data: dataInfo
-                });
+                currency: currency.id,
+                meta_data: dataInfo
+            });
         });
     }
 
     private downloadCSV = () => {
         var csv = Papa.unparse(this.state.responseData);
 
-        var csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+        var csvData = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         //@ts-ignore
-        var csvURL 
+        var csvURL
         if (navigator.msSaveBlob) {
             csvURL = navigator.msSaveBlob(csvData, 'download.csv');
         }
         else {
             csvURL = window.URL.createObjectURL(csvData);
-            
+
             var link = document.createElement("a");
             if (link.download !== undefined) { // feature detection
                 // Browsers that support HTML5 download attribute
@@ -314,7 +314,7 @@ class MasspayComponent extends React.Component<Props> {
                     variant="contained"
                     color="primary"
                     fullWidth
-                    style= {{ margin: '24px 0px', width: '50%' }}
+                    style={{ margin: '24px 0px', width: '50%' }}
                 >
                     Enable 2FA
                 </Button>
@@ -325,143 +325,143 @@ class MasspayComponent extends React.Component<Props> {
     private redirectToEnable2fa = () => this.props.history.push('/security/2fa', { enable2fa: true });
 
     render() {
-        const {fileData, otp, massWithdrawProcessing} = this.state;
-        const {currencies, classes} = this.props;
+        const { fileData, otp, massWithdrawProcessing } = this.state;
+        const { currencies, classes } = this.props;
 
         return (
             <>
-            <Container className={classes.container}>
-                <Grid container>
-                    <Grid item md={3}></Grid>
-                    <Grid item xs={12} sm={12} md={6}>
+                <Container className={classes.container}>
+                    <Grid container>
+                        <Grid item md={3}></Grid>
+                        <Grid item xs={12} sm={12} md={6}>
 
-                        <Paper className={classes.paper}>
-                            <div className={classes.paperHeader}>
-                                <Typography component="h1" variant="h5">Mass Withdrawal</Typography>
-                            </div>
-                            <div className={classes.paperBody}>
-                                <form className={classes.form}>
-                                    <FormControl margin="normal" required fullWidth>
-                                        <DropzoneArea
-                                            acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
-                                            clearOnUnmount={true}
-                                            maxFileSize={10000000}
-                                            dropzoneText="Drag and Drop a CSV file or Click Here"
-                                            showFileNamesInPreview={true}
-                                            filesLimit={1}
-                                            onChange={this.onFileChange.bind(this)}
-                                        />
-                                    </FormControl>
+                            <Paper className={classes.paper}>
+                                <div className={classes.paperHeader}>
+                                    <Typography component="h1" variant="h5">Mass Withdrawal</Typography>
+                                </div>
+                                <div className={classes.paperBody}>
+                                    <form className={classes.form}>
+                                        <FormControl margin="normal" required fullWidth>
+                                            <DropzoneArea
+                                                acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
+                                                clearOnUnmount={true}
+                                                maxFileSize={10000000}
+                                                dropzoneText="Drag and Drop a CSV file or Click Here"
+                                                showFileNamesInPreview={true}
+                                                filesLimit={1}
+                                                onChange={this.onFileChange.bind(this)}
+                                            />
+                                        </FormControl>
 
-                                    <Typography variant="h6"
-                                                style={{padding: 10, color: 'red', fontSize: '12px', textAlign: 'center'}}>
-                                    </Typography>
-                                    <FormControl margin="normal" required fullWidth>
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            color="primary"
-                                            className={classes.submit}
-                                            disabled={!this.isFileFormValid()}
-                                            onClick={(e) => {
-                                                this.onFileSubmit(e)
-                                            }}
-                                        >
-                                            Submit
+                                        <Typography variant="h6"
+                                            style={{ padding: 10, color: 'red', fontSize: '12px', textAlign: 'center' }}>
+                                        </Typography>
+                                        <FormControl margin="normal" required fullWidth>
+                                            <Button
+                                                type="submit"
+                                                variant="contained"
+                                                color="primary"
+                                                className={classes.submit}
+                                                disabled={!this.isFileFormValid()}
+                                                onClick={(e) => {
+                                                    this.onFileSubmit(e)
+                                                }}
+                                            >
+                                                Submit
                                         </Button>
-                                    </FormControl>
+                                        </FormControl>
 
-                                </form>
-                                {/* {this.props.user.otp ? 
+                                    </form>
+                                    {/* {this.props.user.otp ? 
                                     <>
                                     </> : 
                                     <>
                                         {this.isOtpDisabled()}
                                     </>
                                 } */}
-                            </div>
-                        </Paper>
+                                </div>
+                            </Paper>
+                        </Grid>
+                        <Grid item md={3}></Grid>
                     </Grid>
-                    <Grid item md={3}></Grid>
-                </Grid>
-            </Container>
+                </Container>
 
 
-            <Dialog open={this.state.modalOpen} onClose={this.handleModalClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Multiple Withdraws</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Followings are the Withdraws which are extracted from your file. Please review it
-                    carefully. Once it is submitted it could not be back
+                <Dialog open={this.state.modalOpen} onClose={this.handleModalClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Multiple Withdraws</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Followings are the Withdraws which are extracted from your file. Please review it
+                            carefully. Once it is submitted it could not be back
                 </DialogContentText>
-                <TextField
-                    label="OTP code"
-                    className={classes.withdrawalAmount}
-                    margin="dense"
-                    autoFocus
-                    fullWidth
-                    variant="outlined"
-                    onChange={event => this.handleOTPChange(event)}
-                    value={otp}
-                />
-                
-                <Table className={classes.table}>
-                    <TableHead style={{alignItems: 'center'}}>
-                        <TableRow>
-                            <this.StyledTableCell padding="none">Currency</this.StyledTableCell>
-                            <this.StyledTableCell padding="none">Address</this.StyledTableCell>
-                            <this.StyledTableCell padding="none">Amount</this.StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            fileData.map((ad, index) =>
-                                <TableRow key={index} className={
-                                    // @ts-ignore
-                                    ad.address ? classes.defaultRow : classes.redRow}>
-                                    
-                                    <this.StyledTableCell padding="none">{
-                                        // @ts-ignore
-                                    ad.currency
-                                    }</this.StyledTableCell>
-                                    <this.StyledTableCell padding="none">{
-                                        // @ts-ignore
-                                    ad.address
-                                    }</this.StyledTableCell>
-                                    
-                                    <this.StyledTableCell padding="none">{
-                                        // @ts-ignore
-                                    ad.amount
-                                    }</this.StyledTableCell>
-                                </TableRow>
-                            )
-                        }
-                    </TableBody>
-                </Table>
-                <Typography component="h1"
-                // @ts-ignore
-                    variant="h5">Total: {fileData.reduce((partial_sum, a) => partial_sum + parseFloat(a.amount), 0)}</Typography>
+                        <TextField
+                            label="OTP code"
+                            className={classes.withdrawalAmount}
+                            margin="dense"
+                            autoFocus
+                            fullWidth
+                            variant="outlined"
+                            onChange={event => this.handleOTPChange(event)}
+                            value={otp}
+                        />
 
-            </DialogContent>
-            <DialogActions>
-                {massWithdrawProcessing ? 
-                        <CircularProgress className={classes.buttonProgress} size={25} /> :
-                    <>
-                        <Button onClick={this.handleModalClose} color="primary">
-                            Cancel
+                        <Table className={classes.table}>
+                            <TableHead style={{ alignItems: 'center' }}>
+                                <TableRow>
+                                    <this.StyledTableCell padding="none">Currency</this.StyledTableCell>
+                                    <this.StyledTableCell padding="none">Address</this.StyledTableCell>
+                                    <this.StyledTableCell padding="none">Amount</this.StyledTableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    fileData.map((ad, index) =>
+                                        <TableRow key={index} className={
+                                            // @ts-ignore
+                                            ad.address ? classes.defaultRow : classes.redRow}>
+
+                                            <this.StyledTableCell padding="none">{
+                                                // @ts-ignore
+                                                ad.currency
+                                            }</this.StyledTableCell>
+                                            <this.StyledTableCell padding="none">{
+                                                // @ts-ignore
+                                                ad.address
+                                            }</this.StyledTableCell>
+
+                                            <this.StyledTableCell padding="none">{
+                                                // @ts-ignore
+                                                ad.amount
+                                            }</this.StyledTableCell>
+                                        </TableRow>
+                                    )
+                                }
+                            </TableBody>
+                        </Table>
+                        <Typography component="h1"
+                            // @ts-ignore
+                            variant="h5">Total: {fileData.reduce((partial_sum, a) => partial_sum + parseFloat(a.amount), 0)}</Typography>
+
+                    </DialogContent>
+                    <DialogActions>
+                        {massWithdrawProcessing ?
+                            <CircularProgress className={classes.buttonProgress} size={25} /> :
+                            <>
+                                <Button onClick={this.handleModalClose} color="primary">
+                                    Cancel
                         </Button>
-                        <Button
-                            onClick={this.handleRequestSubmit}
-                            disabled={this.isRequestFormValid()}
-                            color="primary"
-                        >
-                            Submit
+                                <Button
+                                    onClick={this.handleRequestSubmit}
+                                    disabled={this.isRequestFormValid()}
+                                    color="primary"
+                                >
+                                    Submit
                         </Button>
-                    </>
-                }
-            </DialogActions>
-            </Dialog>
-        </>
+                            </>
+                        }
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 }
