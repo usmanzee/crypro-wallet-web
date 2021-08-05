@@ -4,6 +4,7 @@ export const pgRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => 
     const routes = [
         ['page.header.navbar.trade', '/trading/', `trade${isLight ? 'Light' : ''}`, '/trading'],
         ['page.header.navbar.wallets', '/wallets', `wallets${isLight ? 'Light' : ''}`, '/wallet'],
+        ['P2P Trade', '/p2p-trade', `p2p-trade${isLight ? 'Light' : ''}`, '/p2p-trade'],
         ['page.header.navbar.buy_sell', '/swap', `swap${isLight ? 'Light' : ''}`, '/swap'],
         ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`, '/orders'],
         ['page.header.navbar.history', '/history', `history${isLight ? 'Light' : ''}`, '/history'],

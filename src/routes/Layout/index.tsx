@@ -59,6 +59,7 @@ import {
     SwapScreen,
     MerchantScreen,
     BuyCryptoScreen,
+    P2POffersScreen
 } from '../../screens';
 
 // const ChangeForgottenPasswordScreen = loadable(() => import('../../screens/ChangeForgottenPasswordScreen'));
@@ -247,6 +248,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/confirm" component={ConfirmScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile/:tabName" component={ProfileScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile" component={ProfileScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallets/:tabName" component={WalletsScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallets" component={WalletsScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallet/deposit/crypto/:currency?" component={DepositCryptoScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/wallet/deposit/fiat/:currency?" component={DepositFiatScreen} />
@@ -258,6 +260,9 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <Route path="/fee" component={FeeScreen} />
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/merchant" component={MerchantScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/buy-crypto" component={BuyCryptoScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p-trade" component={P2POffersScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p-trade/:side" component={P2POffersScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p-trade/:side/:currency" component={P2POffersScreen}/>
                             <Route path="**"><Redirect to="/trading/" /></Route>
                         </Switch>
                         {isLoggedIn && <WalletsFetch/>}

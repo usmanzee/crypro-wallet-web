@@ -22,7 +22,7 @@ import {
     walletsFetch
 } from '../../modules';
 
-import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, withStyles, Theme, fade } from '@material-ui/core/styles';
 
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
@@ -39,12 +39,66 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
+// import IconButton from '@material-ui/core/IconButton';
+// import SearchIcon from '@material-ui/icons/Search';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { globalStyle } from '../../screens/materialUIGlobalStyle';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import PeopleIcon from '@material-ui/icons/People';
+import ScatterPlotIcon from '@material-ui/icons/ScatterPlot';
+import ArrowForwardIosTwoToneIcon from '@material-ui/icons/ArrowForwardIosTwoTone';
+
+import InputBase from '@material-ui/core/InputBase';
+import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
+
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+  
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+  
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`full-width-tabpanel-${index}`}
+            aria-labelledby={`full-width-tab-${index}`}
+            {...other}
+        >
+        {value === index && (
+            <Box>
+                {children}
+            </Box>
+        )}
+        </div>
+    );
+}
+  
+function a11yProps(index: any) {
+    return {
+      id: `full-width-tab-${index}`,
+        'aria-controls': `full-width-tabpanel-${index}`,
+    };
+}
+  
+const AntTabs = withStyles({
+    root: {
+      backgroundColor: "white",
+      borderBottom: '0.1rem solid rgb(170, 170, 170)',
+      boxShadow: "none"
+    }
+  })(Tabs);
+
 
 interface ReduxProps {
     user: User;
@@ -65,6 +119,7 @@ interface WalletsState {
     walletsData: WalletItemProps[];
     walletsDataLoading: boolean;
     walletsTableOpen: boolean;
+    tabValue: number;
 }
 
 const useStyles = theme => ({
@@ -79,6 +134,18 @@ const useStyles = theme => ({
             width: "1.5rem",
             height: "1.5rem",
         },
+    },
+    overviewActionLink: {
+        // color: theme.palette.secondary.main,
+        // margin: `0px ${theme.spacing(1)}px`,
+        '&:hover': {
+            color: theme.palette.secondary.main,
+            textDecoration: 'none'
+            
+        },
+        // [theme.breakpoints.only('xs')]: {
+        //     margin: '4px 0px',
+        // },
     },
     actionLink: {
         color: theme.palette.secondary.main,
@@ -101,6 +168,9 @@ const useStyles = theme => ({
     emptyTableText: {
         textAlign: 'center',
         padding: `0px ${theme.spacing(5)}px`,
+    },
+    renderWalletsContent: {
+        marginTop: '8px'
     },
     renderWallets: {
         [theme.breakpoints.only('xs')]: {
@@ -131,9 +201,39 @@ const useStyles = theme => ({
                 display: 'none'
             }
         }
-    }
+    },
+    inputBase: {
+        padding: 10,
+        width: '100%',
+        borderBottom: '1px solid #dfe2e5',
+        '& input': {
+          borderRadius: 4,
+          backgroundColor: theme.palette.common.white,
+          padding: 8,
+          transition: theme.transitions.create(['border-color', 'box-shadow']),
+          border: '1px solid #ced4da',
+          fontSize: 14,
+          '&:focus': {
+            boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+            borderColor: theme.palette.primary.main,
+          },
+        },
+      },
+      input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+      },
+      iconButton: {
+        padding: 10,
+      },
+      divider: {
+        height: 28,
+        margin: 4,
+      },
 
 });
+
+
 
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 
@@ -150,6 +250,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             walletsData: this.props.wallets,
             walletsDataLoading: true,
             walletsTableOpen: false,
+            tabValue: 0
         };
     }
 
@@ -162,7 +263,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
     public componentDidMount() {
         setDocumentTitle('Wallets');
-
+        this.changeTab();
         if (this.props.wallets.length === 0) {
             this.props.fetchWallets();
         }
@@ -186,6 +287,63 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         }
     }
 
+    public componentDidUpdate(prevProps, nextProps) {
+        if (this.props.match.params.tabName !== prevProps.match.params.tabName) {
+            this.changeTab();
+        }
+    }
+
+    public changeTab = () => {
+        const tabName = this.props.match.params.tabName;
+        console.log(tabName);
+        let activeTab = this.state.tabValue;
+        if(tabName === 'overview') {
+            activeTab = 0;
+        }
+        else if(tabName === 'spot') {
+            activeTab = 1
+        }
+        else if(tabName === 'saving') {
+            activeTab = 2
+        }
+        else if(tabName === 'p2p') {
+            activeTab = 3
+        }
+        else {
+            this.props.history.push('/wallets/overview');
+            activeTab = 0
+        }
+        this.setState({
+            tabValue: activeTab
+        });
+    }
+
+    public goBack = () => {
+        this.props.history.goBack();
+    };
+
+    public handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        
+        switch(newValue) {
+            case 0:
+                this.props.history.push('/wallets/overview');
+                return;
+            case 1:
+                this.props.history.push('/wallets/spot');
+                return;
+            case 2:
+                this.props.history.push('/wallets/saving');
+                return;
+            case 3:
+                this.props.history.push('/wallets/p2p');
+                return;
+            default:
+                this.props.history.push('/wallets/overview');
+                return;
+        }
+        
+    };
+
     public render() {
         const { wallets, classes } = this.props;
         const {
@@ -197,8 +355,6 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
             ['page.body.wallets.action.deposit', '/wallet/deposit/crypto'],
             ['page.body.wallets.action.withdraw', '/wallet/withdraw/crypto'],
         ];
-
-        const searchInputPlaceHolder = this.props.intl.formatMessage({ id: 'page.body.wallets.input.search.placeholder' })
         return (
             <React.Fragment>
                 <PageHeader pageTitle={this.pageTitle} actionsLinks={headerActionLinks} />
@@ -206,43 +362,100 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
 
                 <Box className={classes.pageRoot} alignItems="center">
                     <Paper className={classes.pageContent}>
-                        <FormGroup row>
-                            <TextField
-                                placeholder={searchInputPlaceHolder || 'Search'}
-                                name="search"
-                                autoComplete='off'
-                                value={searchedValue}
-                                onChange={this.handleInputSearchChange}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon fontSize="small" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={hideSmallBalances}
-                                        onChange={this.handleHideSmallBalancesCheckboxChange}
-                                        name="hideSmallBalances"
-                                        color="primary"
-                                    />
-                                }
-                                style={{ margin: '0px' }}
-                                label={<FormattedMessage id={'page.body.wallets.checkbox.label.hide_balance'} />}
-                            />
-                        </FormGroup>
-                        <div className={classes.renderWallets}>
-                            {this.renderWalletsTable()}
-                        </div>
-                        <div className={classes.renderMobileWallets}>
-                            {this.renderWalletsMobileTable()}
-                        </div>
+                        <AppBar position="static" color="default" style={{ boxShadow: "none" }}>
+                            <AntTabs 
+                                value={this.state.tabValue} 
+                                onChange={this.handleTabChange} 
+                                indicatorColor="secondary"
+                                textColor="secondary"
+                                // variant="scrollable"
+                                // scrollButtons="on"
+                            >
+                                <Tab component="a" label='Overview' {...a11yProps(0)} />
+                                <Tab component="a" label='Spot' {...a11yProps(1)} />
+                                <Tab component="a" label='Saving' {...a11yProps(3)} />
+                                <Tab component="a" label='P2P' {...a11yProps(2)} />
+                            </AntTabs>
+                        </AppBar>
+                        <TabPanel value={this.state.tabValue} index={0}>
+                            {this.renderOverviewContent('overview')}
+                        </TabPanel>
+                        <TabPanel value={this.state.tabValue} index={1}>
+                            {this.renderWalletContent('spot')}
+                        </TabPanel>
+                        <TabPanel value={this.state.tabValue} index={2}>
+                            {this.renderWalletContent('saving')}
+                        </TabPanel>
+                        <TabPanel value={this.state.tabValue} index={3}>
+                            {this.renderWalletContent('P2P')}
+                        </TabPanel>
                     </Paper>
                 </Box>
             </React.Fragment>
+        );
+    }
+
+    private renderWalletContent = (tabName: string) => {
+        const { wallets, classes } = this.props;
+        const {
+            searchedValue,
+            hideSmallBalances,
+        } = this.state;
+        const searchInputPlaceHolder = this.props.intl.formatMessage({ id: 'page.body.wallets.input.search.placeholder' })
+        return (
+            <div className={classes.renderWalletsContent}>
+                <Paper component="form" style={{ display: 'flex', flexDirection: 'row' }}>
+                    <IconButton aria-label="menu">
+                        <SearchIcon />
+                    </IconButton>
+                    <InputBase
+                        fullWidth={true}
+                        placeholder="Search"
+                        inputProps={{ 'aria-label': 'search' }}
+                        autoComplete='off'
+                        value={searchedValue}
+                        onChange={this.handleInputSearchChange}
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={hideSmallBalances}
+                                onChange={this.handleHideSmallBalancesCheckboxChange}
+                                name="hideSmallBalances"
+                                color="primary"
+                            />
+                        }
+                        style={{ margin: '0px' }}
+                        label={<FormattedMessage id={'page.body.wallets.checkbox.label.hide_balance'} />}
+                    />
+                </Paper>
+                 {/* <TextField
+                        // className={classes.inputBase}
+                        placeholder={searchInputPlaceHolder || 'Search'}
+                        name="search"
+                        autoComplete='off'
+                        value={searchedValue}
+                        onChange={this.handleInputSearchChange}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon fontSize="small" />
+                                </InputAdornment>
+                            ),
+                        }}
+                /> */}
+                
+                
+                <div>
+                    {tabName}
+                </div>
+                <div className={classes.renderWallets}>
+                    {this.renderWalletsTable()}
+                </div>
+                <div className={classes.renderMobileWallets}>
+                    {this.renderWalletsMobileTable()}
+                </div>
+            </div>
         );
     }
 
@@ -259,6 +472,76 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
         }),
     )(TableCell);
 
+    private renderOverviewContent = (tabName: string) => {
+        const { classes } = this.props;
+        return (
+            <>
+                <TableContainer className={classes.tableContainer}>
+                    <Table aria-label="simple table">
+                            <TableBody>
+                                <TableRow hover>
+                                    <this.StyledTableCell>
+                                        <Link to={`/wallets/spot`} className={classes.overviewActionLink}>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <ScatterPlotIcon style={{ fontSize: 25, color: 'grey', marginRight: '8px' }}/>
+                                                    <div>
+                                                        <span style={{ fontSize: 14, color: 'grey' }}>Spot</span>
+                                                        <div style={{ display: 'flex', color: 'black'}}>
+                                                            <span style={{ fontSize: 16, fontWeight: 600 }}>0.00000000</span>
+                                                            <span style={{ fontSize: 14, marginLeft: '4px' }}>BTC</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <ArrowForwardIosTwoToneIcon style={{ fontSize: 20, color: 'grey' }} />
+                                            </div>
+                                        </Link>
+                                    </this.StyledTableCell>
+                                </TableRow>
+                                <TableRow hover>
+                                    <this.StyledTableCell>
+                                    <Link to={`/wallets/saving`} className={classes.overviewActionLink}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <PeopleIcon style={{ fontSize: 25, color: 'grey', marginRight: '8px' }}/>
+                                                <div>
+                                                    <span style={{ fontSize: 14, color: 'grey' }}>Saving</span>
+                                                    <div style={{ display: 'flex', color: 'black'}}>
+                                                        <span style={{ fontSize: 16, fontWeight: 600 }}>0.00000000</span>
+                                                        <span style={{ fontSize: 14, marginLeft: '4px' }}>BTC</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <ArrowForwardIosTwoToneIcon style={{ fontSize: 20, color: 'grey' }} />
+                                        </div>
+                                    </Link>
+                                        </this.StyledTableCell>
+                                    </TableRow>
+                                <TableRow hover>
+                                    <this.StyledTableCell>
+                                    <Link to={`/wallets/p2p`} className={classes.overviewActionLink}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <AccountBalanceWalletIcon style={{ fontSize: 25, color: 'grey', marginRight: '8px' }}/>
+                                                <div>
+                                                    <span style={{ fontSize: 14, color: 'grey' }}>P2P</span>
+                                                    <div style={{ display: 'flex', color: 'black'}}>
+                                                        <span style={{ fontSize: 16, fontWeight: 600 }}>0.00000000</span>
+                                                        <span style={{ fontSize: 14, marginLeft: '4px' }}>BTC</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <ArrowForwardIosTwoToneIcon style={{ fontSize: 20, color: 'grey' }} />
+                                        </div>
+                                    </Link>
+                                    </this.StyledTableCell>
+                                </TableRow>
+                            </TableBody>
+                    </Table>
+                </TableContainer>
+            </>
+        )
+    }
     private renderWalletsTable = () => {
         const { tablePage, tableRowsPerPage, walletsData, walletsDataLoading } = this.state;
         const { classes } = this.props;

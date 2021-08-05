@@ -9,6 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 import { CopyTag } from '../../components';
+import * as PublicDataAPI from '../../apis/public_data';
 
 
 export interface DepositFiatProps {
@@ -65,7 +66,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
 /**
  * Component to display bank account details which can be used for a
  * deposit
@@ -81,6 +81,18 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 		handleOnCopy,
 		depositEnabled
 	} = props;
+
+	const [bankDepositDetails, setBankDepositDetails] = React.useState<any>([]);
+
+	React.useEffect(() => {
+		getBankDetails();
+	},[]);
+
+	const getBankDetails = () => {
+		PublicDataAPI.getBanksDepositDetails().then((responseData) => {
+			setBankDepositDetails(responseData);
+		});
+	}
 
     // const depositTitle = (currency === 'usd' || currency === 'eur') ? 'Deposit using Transferwise' : title;
     // const depositDescription = (currency === 'usd' || currency === 'eur') ? 'Please using following to deposit using TrasferWise' : description;
@@ -163,7 +175,7 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 								</List>
 							</Paper>
 							{/* <Divider className={classes.BanksDivider}/> */}
-							{bankCurrencies.map(renderDetails)}
+							{bankDepositDetails.map(renderDetails)}
 						</> :
 						<>
 							<div style={{ textAlign: 'center' }}>
@@ -183,56 +195,3 @@ const DepositFiat: React.FunctionComponent<DepositFiatProps> = (props: DepositFi
 export {
     DepositFiat,
 };
-
-const bankCurrencies = [
-	{
-		id: '1',
-		title: 'eur',
-		banks: [
-      		{
-				"Bank Name": 'TransferWise',
-				"Account holder": 'B4U Group of Companies, S.L',
-				"IBAN": 'BE79 9670 5851 7133',
-				"SWIFT/BIC": 'TRWIBEB1XXX',
-				"Address": 'TransferWise Europe SA \nAvenue Louise 54, Room S52\n Brussels\n 1050\n Belgium',
-			}
-    	]
-  	},
-	{
-		id: '2',
-		title: 'myr',
-		banks: [
-			{
-				"Bank Name": 'OCBC Bank',
-				"Account holder": 'BRAVO Tech Trading',
-				"Account Number": '704-128-334-9',
-			}
-		]
-	},
-	{
-		id: '3',
-		title: 'usd',
-		banks: [
-			{
-				"Bank Name": 'TransferWise',
-				"Account holder": 'B4U Group of Companies, S.L.',
-				"ACH routing number": '026073150',
-				"Wire routing number": '026073008',
-				"Account number": '8310615550',
-				"Account type": 'Checking',
-				"Address": 'TransferWise 19 W 24th Street \nNew York NY 10010\n United States',
-			}
-		]
-	},
-	{
-		id: '4',
-		title: 'sgd',
-		banks: [
-			{
-				"Account holder": 'BRAVO Tech Trading',
-				"Bank Name": 'OCBC Bank',
-				"Account Number": '704-128-335-7',
-			}
-		]
-	}
-];

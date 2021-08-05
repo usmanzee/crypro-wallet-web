@@ -262,7 +262,7 @@ class BeneficiariesComponent extends React.Component<Props, State> {
             );
         }
 
-        return;
+        return <></>;
     };
 
     private renderDropdownTipFiatDescription = (description: string) => {
@@ -297,7 +297,7 @@ class BeneficiariesComponent extends React.Component<Props, State> {
             );
         }
 
-        return;
+        return <></>;
     };
 
     private renderAddressDropdown = (beneficiaries: Beneficiary[], currentWithdrawalBeneficiary: Beneficiary, type: 'fiat' | 'coin') => {

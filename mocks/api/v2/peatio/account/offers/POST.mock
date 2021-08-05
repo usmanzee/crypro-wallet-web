@@ -1,0 +1,19 @@
+HTTP/2 201
+Content-Type: application/json; charset=utf-8
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, PUT, PATCH, DELETE
+access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, Authorization
+Access-Control-Allow-Headers: *
+
+{
+	"id": 25,
+	"currency": "usd",
+	"name": "Test1 Description",
+	"description": null,
+	"data": {
+		"full_name": "Test1 Name",
+		"account_number": "1234567890",
+		"bank_name": "Test1 Bank Name"
+	},
+	"state": "pending"
+}
