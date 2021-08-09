@@ -33,6 +33,15 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import Select from 'react-select';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
@@ -138,20 +147,34 @@ const useStyles = makeStyles((theme: Theme) =>
     sideGroup: {
         margin: '12px 0px 8px 8px', 
     },
-    filtersRoot: {
-        [theme.breakpoints.only('xl')]: {
-            display: 'flex',
+    paramsFiltersRoot: {
+        display: 'flex',
+        [theme.breakpoints.up('md')]: {
             flexDirection: 'row',
+            alignItems: 'flex-end',
         },
-        [theme.breakpoints.only('lg')]: {
-            display: 'flex',
-            flexDirection: 'row',
-        },
-        [theme.breakpoints.only('md')]: {
+        [theme.breakpoints.down('sm')]: {
             flexDirection: 'column',
-            margin: `${theme.spacing(2)}px 0px ${theme.spacing(2)}px 0px`,
         },
-        [theme.breakpoints.only('sm')]: {
+    },
+    cryptoFiltersRoot: {
+        display: "flex", 
+        overflow: 'auto',
+        whiteSpace: 'nowrap',
+        [theme.breakpoints.up('md')]: {
+            marginLeft: '24px'
+        },
+        [theme.breakpoints.down('sm')]: {
+            marginLeft: '8px',
+            marginTop: '8px'
+        },
+    },
+    filtersRoot: {
+        display: 'flex',
+        [theme.breakpoints.up('md')]: {
+            flexDirection: 'row',
+        },
+        [theme.breakpoints.down('sm')]: {
             flexDirection: 'column',
             margin: `${theme.spacing(2)}px 0px ${theme.spacing(2)}px 0px`,
         },
@@ -256,8 +279,21 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     paymentMethodChip: {
         margin: `${theme.spacing(0.5)}px`,
+        fontSize: '8px',
+        height: theme.spacing(2)
         // color: theme.palette.secondary.main
-    }
+    },
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      paper: {
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+      },
   }),
 );
 
@@ -334,6 +370,8 @@ const P2POffersComponent = (props: Props) => {
     const [paymentMethodAnchorEl, setPaymentMethodAnchorEl] = React.useState<null | HTMLElement>(null);
     const [fiatAnchorEl, setFiatAnchorEl] = React.useState<null | HTMLElement>(null);
 
+    const [open, setOpen] = React.useState(false);
+
     //Use Effects
     React.useEffect(() => {
         history.push(`/p2p-trade/${selectedSide}`);
@@ -387,6 +425,14 @@ const P2POffersComponent = (props: Props) => {
             fiatAnchorEl.focus();
         }
         setFiatAnchorEl(null);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
     };
 
     const paymentMethodPopperOpen = Boolean(paymentMethodAnchorEl);
@@ -549,7 +595,11 @@ const P2POffersComponent = (props: Props) => {
                             <TableRow hover>
                                 <StyledTableCell>
                                     <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                        <span className={classes.advertiserName}>Name here</span>
+                                            <Link to="/advertiserDetail/1" style={{ textDecoration: 'none' }}>
+                                                <span className={classes.advertiserName}>
+                                                    Name here
+                                                </span>
+                                            </Link>
                                         <div style={{ display: 'flex', flexDirection: 'row'}}>
                                             <small style={{ color: 'grey' }}>804 Oders</small>
                                             <small style={{ marginLeft: '8px', color: 'grey' }}>98.89% completion</small>
@@ -586,9 +636,7 @@ const P2POffersComponent = (props: Props) => {
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                    <Link to={`trading`} style={{ textDecoration: 'none' }}>
-                                        <Button variant="contained" style={{ color: 'white', backgroundColor: selectedSide == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', fontSize: 14 }}>{selectedSide}</Button>
-                                    </Link>
+                                    <Button variant="contained" style={{ color: 'white', backgroundColor: selectedSide == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', fontSize: 14 }} onClick={handleOpen}>{selectedSide}</Button>
                                 </StyledTableCell>
                             </TableRow>
                         </TableBody>
@@ -614,7 +662,7 @@ const P2POffersComponent = (props: Props) => {
                             </Typography>
                         </Link>
                     </div>
-                    <Paper elevation={1} style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Paper elevation={1} className={classes.paramsFiltersRoot}>
                         <ToggleButtonGroup
                             size="small"
                             value={selectedSide}
@@ -633,7 +681,7 @@ const P2POffersComponent = (props: Props) => {
                             })}
                         </ToggleButtonGroup>
 
-                        <div style={{ display: "flex", marginLeft: '24px'}}>
+                        <div className={classes.cryptoFiltersRoot}>
                             <div className={ selectedCryptoCurrency == 'USDT' ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange('USDT')}>
                                 <span>
                                     USDT
@@ -703,6 +751,158 @@ const P2POffersComponent = (props: Props) => {
                         
                     </Box>
                     {renderOffers()}
+
+                    {/* <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                        fullWidth={true}
+                        maxWidth="md"
+                    >
+                        <div style={{ padding: '16px', height: '350px' }}>
+                            <div style={{ width: '100%' }}>
+                                <div style={{ width: '59%' }}>
+                                    <div id="transition-modal-title">
+                                        <Typography className={classes.advertiserName} variant="body1" display="inline" style={{ marginRight: '8px' }}>Advertiser Name</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>100.00% completion</Typography>
+                                    </div>
+                                    <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between' }}>
+                                        <div style={{ width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Price</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px', color: '#02C076' }}>167.00 PKR</Typography>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>16 s</Typography>
+                                        </div>
+                                        <div style={{ width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Available</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>465.54 USDT</Typography>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between' }}>
+                                        <div style={{ width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Payment Time Limit</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>15 Minutes</Typography>
+                                        </div>
+                                        <div style={{ display: 'flex', width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Seller’s payment method</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>
+                                            <div style={{ width: '50%' }}>
+                                                <Tooltip title="Payment Method1" arrow>
+                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                                <Tooltip title="Payment Method2" arrow>
+                                                    <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                                <Tooltip title="Payment Method3" arrow>
+                                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                            </div>
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                    <div style={{ marginTop: '24px', width: '48%' }}>
+                                        <Typography variant="h6" display="inline">Terms and conditions</Typography>
+                                        <div style={{ marginTop: '8px' }}>
+                                            <Typography variant="body1" display="inline" paragraph={true} style={{color: 'rgb(112, 122, 138)'}}>
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Divider orientation="vertical" />
+                                <div style={{ width: '40%' }}></div>
+                            </div>
+                        </div>
+                    </Dialog> */}
+                    <Modal
+                        aria-labelledby="transition-modal-title"
+                        aria-describedby="transition-modal-description"
+                        className={classes.modal}
+                        open={open}
+                        onClose={handleClose}
+                        closeAfterTransition
+                        BackdropComponent={Backdrop}
+                        BackdropProps={{
+                        timeout: 500,
+                        }}
+                    >
+                        <Fade in={open}>
+                        <Paper style={{ padding: '16px', height: '350px', width: '50%' }}>
+                            <div style={{ width: '100%' }}>
+                                <div style={{ width: '59%', overflowY: 'auto', height: '350px' }}>
+                                    <div id="transition-modal-title">
+                                        <Typography className={classes.advertiserName} variant="body1" display="inline" style={{ marginRight: '8px' }}>Advertiser Name</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>100.00% completion</Typography>
+                                    </div>
+                                    <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between' }}>
+                                        <div style={{ width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Price</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px', color: '#02C076' }}>167.00 PKR</Typography>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>16 s</Typography>
+                                        </div>
+                                        <div style={{ width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Available</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>465.54 USDT</Typography>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between' }}>
+                                        <div style={{ width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Payment Time Limit</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>15 Minutes</Typography>
+                                        </div>
+                                        <div style={{ display: 'flex', width: '48%' }}>
+                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Seller’s payment method</Typography>
+                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>
+                                            <div style={{ width: '50%' }}>
+                                                <Tooltip title="Payment Method1" arrow>
+                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                                <Tooltip title="Payment Method2" arrow>
+                                                    <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                                <Tooltip title="Payment Method3" arrow>
+                                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                            </div>
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                    <div style={{ marginTop: '24px', width: '80%' }}>
+                                        <Typography variant="h6" display="inline">Terms and conditions</Typography>
+                                        <div style={{ marginTop: '8px' }}>
+                                            <Typography variant="body1" display="inline" paragraph={true} style={{color: 'rgb(112, 122, 138)'}}>
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Divider orientation="vertical" />
+                                <div style={{ width: '40%' }}></div>
+                            </div>
+                        </Paper>
+                        </Fade>
+                    </Modal>
                 </Paper>
             </Box>
         </>
