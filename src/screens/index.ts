@@ -23,3 +23,4 @@ export * from "./SwapScreen";
 export * from "./MerchantScreen";
 export * from "./BuyCryptoScreen";
 export * from "./P2P";
+export * from "./ExpressOfferScreen";

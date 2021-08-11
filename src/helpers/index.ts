@@ -34,3 +34,4 @@ export * from './cleanPositiveFloatInput';
 export * from './getOrderAPI';
 export * from './passwordValidation';
 export * from './urlValidationRegex';
+export * from './buildQueryString';

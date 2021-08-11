@@ -44,6 +44,13 @@ import { merchantKeyReducer  } from './user/merchantKey';
 import { merchantWebsiteReducer  } from './user/merchantWebsite';
 import { merchantPaymentsReducer  } from './user/merchantPayments';
 
+import { p2pReducer } from './public/p2p';
+import { paymentMethodReducer } from './user/paymentMethod';
+import { p2pOffersReducer } from './user/p2pOffers';
+import { p2pTransfersReducer } from './user/p2pTransfers';
+import { p2pOrdersReducer } from './user/p2pOrders';
+import { p2pDisputeReducer } from './user/p2pDispute';
+
 export const publicReducer = combineReducers({
     colorTheme: changeColorThemeReducer,
     configs: configsReducer,
@@ -60,6 +67,8 @@ export const publicReducer = combineReducers({
     alerts: alertReducer,
     rgl: gridLayoutReducer,
     memberLevels: memberLevelsReducer,
+
+    p2p: p2pReducer,
 });
 
 export const userReducer = combineReducers({
@@ -88,4 +97,10 @@ export const userReducer = combineReducers({
     merchantKey: merchantKeyReducer,
     merchantWebsite: merchantWebsiteReducer,
     merchantPayments: merchantPaymentsReducer,
+
+    paymentMethod: paymentMethodReducer,
+    p2pOffers: p2pOffersReducer,
+    p2pTransfers: p2pTransfersReducer,
+    p2pOrders: p2pOrdersReducer,
+    p2pDispute: p2pDisputeReducer,
 });

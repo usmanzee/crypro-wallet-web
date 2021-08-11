@@ -1,19 +1,12 @@
 import * as React from 'react';
-import { fade, makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
+import { Theme, createStyles, withStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Popper from '@material-ui/core/Popper';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import InputBase from '@material-ui/core/InputBase';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import StarIcon from '@material-ui/icons/Star'
-import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import Button  from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 import Table from '@material-ui/core/Table';
@@ -30,19 +23,10 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
-import Select from 'react-select';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
+import FormControl from '@material-ui/core/FormControl';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { Link } from "react-router-dom";
@@ -50,27 +34,28 @@ import { RouterProps } from 'react-router';
 import { connect } from 'react-redux';
 import { Withdraw, WithdrawProps } from '../../../containers';
 import { PageHeader } from '../../../containers/PageHeader';
-import { TotalAmount } from '../../../containers/Wallets/TotalAmount';
-import { ModalWithdrawConfirmation } from '../../../containers/ModalWithdrawConfirmation';
-import { ModalWithdrawSubmit } from '../../../containers/ModalWithdrawSubmit';
-import { WalletItemProps, CryptoIcon } from '../../../components';
-import { globalStyle } from '../../materialUIGlobalStyle';
+import { StyledTableCell } from '../../materialUIGlobalStyle';
+import { useStyles } from './style';
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import {
+    // useDocumentTitle,
+    useP2PCurrenciesFetch,
+    useP2PPaymentMethodsFetch,
+    useUserPaymentMethodsFetch,
+} from '../../../hooks';
 
 import { 
-    selectUserInfo,
-    RootState, 
-    selectWallets, 
-    selectWalletsLoading, 
-    selectWithdrawProcessing,
-    selectWithdrawSuccess, 
-    User, 
-    walletsData, 
-    walletsFetch, 
-    walletsWithdrawCcyFetch,
-    MemberLevels,
-    memberLevelsFetch,
-    selectMemberLevels,
+    Offer,
+    P2POrderCreate,
+    p2pOrdersCreateFetch,
+    selectP2PCreatedOrder,
+    selectP2PCreateOrderSuccess,
+    selectP2PCurrenciesData,
+    selectP2PPaymentMethodsData,
 } from '../../../modules';
+
 import { CommonError } from '../../../modules/types';
 import { WalletHistory } from '../../../containers/Wallets/History';
 import * as PublicDataAPI from '../../../apis/public_data';
@@ -78,237 +63,7 @@ import * as PublicDataAPI from '../../../apis/public_data';
 import {
     useParams,
     useHistory
-  } from "react-router-dom";
-
-interface ReduxProps {
-    user: User;
-    wallets: WalletItemProps[];
-    withdrawProcessing: boolean;
-    withdrawSuccess: boolean;
-    walletsLoading?: boolean;
-    memberLevels?: MemberLevels;
-}
-
-interface DispatchProps {
-    fetchWallets: typeof walletsFetch;
-    clearWallets: () => void;
-    walletsWithdrawCcy: typeof walletsWithdrawCcyFetch;
-    memberLevelsFetch: typeof memberLevelsFetch;
-}
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...globalStyle(theme),
-    activePage: {
-        color: '#000',
-        marginRight: theme.spacing(2),
-        cursor: 'pointer',
-        borderBottom: `2px solid ${theme.palette.secondary.main}`,
-        paddingBottom: '12px',
-        '&:hover': {
-            textDecoration: 'none',
-            color: '#000',
-        },
-    },
-    inActivePage: {
-        color: '#000',
-        marginRight: theme.spacing(2),
-        opacity: '0.6',
-        cursor: 'pointer',
-        '&:hover': {
-            textDecoration: 'none',
-            color: '#000',
-        },
-    },
-    activeCurrency: {
-        color: theme.palette.secondary.main,
-        marginRight: theme.spacing(2),
-        cursor: 'pointer',
-        borderBottom: `2px solid ${theme.palette.secondary.main}`,
-        paddingBottom: '12px',
-        '&:hover': {
-            textDecoration: 'none',
-            color: theme.palette.secondary.main,
-        },
-    },
-    inActiveCurrency: {
-        color: '#000',
-        marginRight: theme.spacing(2),
-        opacity: '0.6',
-        cursor: 'pointer',
-        '&:hover': {
-            textDecoration: 'none',
-            color: '#000',
-        },
-    },
-    advertiserName: {
-        marginBottom: '8px', color: theme.palette.secondary.main
-    },
-    sideGroup: {
-        margin: '12px 0px 8px 8px', 
-    },
-    paramsFiltersRoot: {
-        display: 'flex',
-        [theme.breakpoints.up('md')]: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-        },
-        [theme.breakpoints.down('sm')]: {
-            flexDirection: 'column',
-        },
-    },
-    cryptoFiltersRoot: {
-        display: "flex", 
-        overflow: 'auto',
-        whiteSpace: 'nowrap',
-        [theme.breakpoints.up('md')]: {
-            marginLeft: '24px'
-        },
-        [theme.breakpoints.down('sm')]: {
-            marginLeft: '8px',
-            marginTop: '8px'
-        },
-    },
-    filtersRoot: {
-        display: 'flex',
-        [theme.breakpoints.up('md')]: {
-            flexDirection: 'row',
-        },
-        [theme.breakpoints.down('sm')]: {
-            flexDirection: 'column',
-            margin: `${theme.spacing(2)}px 0px ${theme.spacing(2)}px 0px`,
-        },
-    },
-    filtersDiv: {
-        [theme.breakpoints.only('xl')]: {
-            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-            width: "15%",
-        },
-        [theme.breakpoints.only('lg')]: {
-            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-            width: "15%",
-        },
-        [theme.breakpoints.only('md')]: {
-            width: '100%',
-        },
-        [theme.breakpoints.only('sm')]: {
-            width: '100%',
-        },
-    },
-    inputLabel: {
-        fontWeight: 500,
-        margin: `${theme.spacing(1)}px 0px`
-    },
-    amountSearchInput: {
-        '& input[type=number]': {
-            '-moz-appearance': 'textfield'
-        },
-        '& input[type=number]::-webkit-outer-spin-button': {
-            '-webkit-appearance': 'none',
-            margin: 0
-        },
-        '& input[type=number]::-webkit-inner-spin-button': {
-            '-webkit-appearance': 'none',
-            margin: 0
-        },
-    },
-    amountSearchButton: {
-        // backgroundColor: '#F5F5F5',
-        color: theme.palette.secondary.main
-    },
-    input: {
-        marginLeft: theme.spacing(1),
-        flex: 1,
-    },
-    iconButton: {
-        padding: 10,
-    },
-    selectDropdown: {
-        display: 'flex',
-        cursor: 'pointer',
-        padding: `${theme.spacing(0.5)}px ${theme.spacing(0.5)}px`,
-        borderRadius: '4px',
-        backgroundColor: '#e0e0e0',
-        [theme.breakpoints.only('sm')]: {
-            width: 'auto',
-        },
-        [theme.breakpoints.only('xs')]: {
-            width: 'auto',
-        },
-    },
-    popper: {
-        border: '1px solid rgba(27,31,35,.15)',
-        boxShadow: '0 3px 12px rgba(27,31,35,.15)',
-        borderRadius: 3,
-        zIndex: 1,
-        fontSize: 13,
-        color: '#586069',
-        backgroundColor: '#f6f8fa',
-    },
-    header: {
-        borderBottom: '1px solid #e1e4e8',
-        padding: '8px 10px',
-        fontWeight: 600,
-    },
-    inputBase: {
-        padding: 10,
-        width: '100%',
-        borderBottom: '1px solid #dfe2e5',
-        '& input': {
-            borderRadius: 4,
-            backgroundColor: theme.palette.common.white,
-            padding: 8,
-            transition: theme.transitions.create(['border-color', 'box-shadow']),
-            border: '1px solid #ced4da',
-            fontSize: 14,
-            '&:focus': {
-                boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-                borderColor: theme.palette.primary.main,
-            },
-        },
-    },
-    currencyCode: {
-        margin: '0px 4px'
-    },
-    currencyName: {
-        margin: '2px 1px'
-    },
-    selectDownArrow: {
-        marginLeft: 'auto',
-        marginRight: '0'
-    },
-    paymentMethodChip: {
-        margin: `${theme.spacing(0.5)}px`,
-        fontSize: '8px',
-        height: theme.spacing(2)
-        // color: theme.palette.secondary.main
-    },
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      paper: {
-        backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
-      },
-  }),
-);
-
-const StyledTableCell = withStyles((theme: Theme) =>
-createStyles({
-    head: {
-        backgroundColor: "rgb(228 224 224)",
-        color: theme.palette.common.black,
-        fontSize: 14,
-    },
-    body: {
-        fontSize: 14,
-    },
-}),
-)(TableCell); 
+} from "react-router-dom";
 
 export interface AllFiatCurrency {
     symbol:         string;
@@ -325,30 +80,22 @@ export interface PaymentMethod {
     label: string;
 }
 
-// const paymentMethods = [
-//     { value: 1, label: 'Method 1' },
-//     { value: 2, label: 'Method 2' },
-//     { value: 3, label: 'Method 3' },
-//   ];
-
-type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
+type Props = RouterProps & InjectedIntlProps;
 const P2POffersComponent = (props: Props) => {
     const defaultSide = 'buy';
     const defaultCurrency = 'USDT';
     //Props
     const classes = useStyles();
-
     
     //Params
     let params = useParams();
+    //History
     let history = useHistory();
     let currency: string = params && params['currency'] ? params['currency'] : defaultCurrency;
     let sideName: string = params && params['side'] ? params['side'] : defaultSide;
 
     // States
-    const [cryptoCurrenciesList, setCryptoCurrenciesList] = React.useState([
-        'USDT', 'RSC', 'BTC', 'ETH'
-    ]);
+    const [cryptoCurrenciesList, setCryptoCurrenciesList] = React.useState();
     const [sides, setSides] = React.useState([
         {'title': 'buy', 'selectedBGColor': '#02C076'},
         {'title': 'sell', 'selectedBGColor': 'rgb(248, 73, 96)'},
@@ -372,6 +119,17 @@ const P2POffersComponent = (props: Props) => {
 
     const [open, setOpen] = React.useState(false);
 
+    const dispatch = useDispatch();
+    const currencies = useSelector(selectP2PCurrenciesData);
+    const allPaymentMethods = useSelector(selectP2PPaymentMethodsData);
+
+    useP2PCurrenciesFetch();
+    useP2PPaymentMethodsFetch();
+    useUserPaymentMethodsFetch();
+
+    console.log(currencies);
+    console.log(allPaymentMethods);
+
     //Use Effects
     React.useEffect(() => {
         history.push(`/p2p-trade/${selectedSide}`);
@@ -385,6 +143,16 @@ const P2POffersComponent = (props: Props) => {
             setSelectedFiatCurrency(allFiatCurrencies[0]);
         }
     }, [allFiatCurrencies]);
+
+    React.useEffect(() => {
+        if (currencies.length) {
+            const cryptoCurrencies = currencies.filter(i => i.type === 'coin').map(i => i.id.toUpperCase());
+            if (cryptoCurrencies.length) {
+                // setFiatCurrency(fiatCurrencies[0]);
+            }
+        }
+    }, [currencies]);
+
     //End Use Effects
     
     const handleSideChange = (event, newSide) => {
@@ -434,6 +202,10 @@ const P2POffersComponent = (props: Props) => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const setMaxWithdrawlAmount = () => {
+        
+    }
 
     const paymentMethodPopperOpen = Boolean(paymentMethodAnchorEl);
     const paymentMethodPopperId = paymentMethodPopperOpen ? 'payment_methods' : undefined;
@@ -651,12 +423,12 @@ const P2POffersComponent = (props: Props) => {
             <Box className={classes.pageRoot} alignItems="center">
                 <Paper className={classes.pageContent} >
                     <div className={classes.pageContentHeader}>
-                        <Link to="/" className={classes.activePage}>
+                        <Link to="/p2p-trade" className={classes.activePage}>
                                 <Typography variant="h6" component="div" display="inline" >
                                     P2P
                                 </Typography>
                         </Link>
-                        <Link to="/" className={classes.inActivePage}>
+                        <Link to="/quick-trade" className={classes.inActivePage}>
                             <Typography variant="h6" component="div"  display="inline">
                                 Express
                             </Typography>
@@ -670,7 +442,6 @@ const P2POffersComponent = (props: Props) => {
                             onChange={handleSideChange}
                             aria-label="text alignment"
                             className={classes.sideGroup}
-                            
                         >
                             {sides.map((sideItem) => {
                                 return <ToggleButton value={sideItem['title']} aria-label="buy side" style={{ fontWeight: 600, backgroundColor: selectedSide == sideItem['title'] ? sideItem['selectedBGColor'] : '#ffffff' , color: selectedSide == sideItem['title'] ? '#ffffff' : '#1E2026' }}>
@@ -712,7 +483,7 @@ const P2POffersComponent = (props: Props) => {
                             <div style={{ display: 'flex' }}>
                                 <TextField
                                     type="number"
-                                    className={classes.amountSearchInput}
+                                    className={classes.numberInput}
                                     placeholder='Search'
                                     name="search"
                                     autoComplete='off'
@@ -751,80 +522,6 @@ const P2POffersComponent = (props: Props) => {
                         
                     </Box>
                     {renderOffers()}
-
-                    {/* <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                        fullWidth={true}
-                        maxWidth="md"
-                    >
-                        <div style={{ padding: '16px', height: '350px' }}>
-                            <div style={{ width: '100%' }}>
-                                <div style={{ width: '59%' }}>
-                                    <div id="transition-modal-title">
-                                        <Typography className={classes.advertiserName} variant="body1" display="inline" style={{ marginRight: '8px' }}>Advertiser Name</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>100.00% completion</Typography>
-                                    </div>
-                                    <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between' }}>
-                                        <div style={{ width: '48%' }}>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Price</Typography>
-                                            <Typography variant="button" display="inline" style={{ marginRight: '8px', color: '#02C076' }}>167.00 PKR</Typography>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>16 s</Typography>
-                                        </div>
-                                        <div style={{ width: '48%' }}>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Available</Typography>
-                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>465.54 USDT</Typography>
-                                        </div>
-                                    </div>
-                                    <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between' }}>
-                                        <div style={{ width: '48%' }}>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Payment Time Limit</Typography>
-                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>15 Minutes</Typography>
-                                        </div>
-                                        <div style={{ display: 'flex', width: '48%' }}>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Seller’s payment method</Typography>
-                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>
-                                            <div style={{ width: '50%' }}>
-                                                <Tooltip title="Payment Method1" arrow>
-                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                                </Tooltip>
-                                                <Tooltip title="Payment Method2" arrow>
-                                                    <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                                                </Tooltip>
-                                                <Tooltip title="Payment Method3" arrow>
-                                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                                </Tooltip>
-                                            </div>
-                                            </Typography>
-                                        </div>
-                                    </div>
-                                    <div style={{ marginTop: '24px', width: '48%' }}>
-                                        <Typography variant="h6" display="inline">Terms and conditions</Typography>
-                                        <div style={{ marginTop: '8px' }}>
-                                            <Typography variant="body1" display="inline" paragraph={true} style={{color: 'rgb(112, 122, 138)'}}>
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                                You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.I'm online.Please pay first and then upload the screenshot here.
-                                            </Typography>
-                                        </div>
-                                    </div>
-                                </div>
-                                <Divider orientation="vertical" />
-                                <div style={{ width: '40%' }}></div>
-                            </div>
-                        </div>
-                    </Dialog> */}
                     <Modal
                         aria-labelledby="transition-modal-title"
                         aria-describedby="transition-modal-description"
@@ -838,9 +535,9 @@ const P2POffersComponent = (props: Props) => {
                         }}
                     >
                         <Fade in={open}>
-                        <Paper style={{ padding: '16px', height: '350px', width: '50%' }}>
-                            <div style={{ width: '100%' }}>
-                                <div style={{ width: '59%', overflowY: 'auto', height: '350px' }}>
+                        <Paper style={{ padding: '16px', height: '450px', width: '50%' }}>
+                            <div style={{ display: 'flex' ,width: '100%' }}>
+                                <div style={{ width: '59%', overflowY: 'auto', height: '430px' }}>
                                     <div id="transition-modal-title">
                                         <Typography className={classes.advertiserName} variant="body1" display="inline" style={{ marginRight: '8px' }}>Advertiser Name</Typography>
                                         <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
@@ -898,7 +595,74 @@ const P2POffersComponent = (props: Props) => {
                                     </div>
                                 </div>
                                 <Divider orientation="vertical" />
-                                <div style={{ width: '40%' }}></div>
+                                <div style={{ width: '40%' }}>
+                                    <div style={{ marginBottom: '16px' }}>
+                                        <InputLabel htmlFor="sell" className={classes.inputLabel}>
+                                            I want to pay
+                                        </InputLabel>
+                                        <FormControl variant="outlined" fullWidth>
+                                            <TextField
+                                                className={classes.numberInput}
+                                                id="outlined-full-width"
+                                                // style={{ margin: 8 }}
+                                                placeholder="Placeholder"
+                                                fullWidth
+                                                // margin="normal"
+                                                variant="outlined"
+                                                size="small"
+                                                InputProps={{
+                                                    endAdornment: <InputAdornment position="end">
+                                                        <span className={classes.maxButton} onClick={setMaxWithdrawlAmount}>
+                                                            <FormattedMessage id={'page.body.swap.input.tag.max'} />
+                                                        </span>
+                                                        <Divider className={classes.inputAdornmentDivider} orientation="vertical" style={{ margin: '0px 8px' }} />
+                                                        <Typography variant="button" display="inline" style={{ color: 'rgb(112, 122, 138)' }}>PKR</Typography>
+                                                    </InputAdornment>,
+                                                }}
+                                            />
+                                        </FormControl>
+                                    </div>
+                                    <div style={{ marginBottom: '16px' }}>
+                                        <InputLabel htmlFor="sell" className={classes.inputLabel}>
+                                            I will receive
+                                        </InputLabel>
+                                        <TextField
+                                            className={classes.numberInput}
+                                            id="outlined-full-width"
+                                            // style={{ margin: 8 }}
+                                            placeholder="Placeholder"
+                                            fullWidth
+                                            // margin="normal"
+                                            variant="outlined"
+                                            size="small"
+                                            InputProps={{
+                                                endAdornment: <InputAdornment position="end">
+                                                    <Typography variant="button" display="inline" style={{ color: 'rgb(112, 122, 138)' }}>USDT</Typography>
+                                                </InputAdornment>,
+                                            }}
+                                        />
+                                    </div>
+                                    <div style={{ display: 'flex', marginBottom: '16px' }}>
+                                        <Button
+                                            style={{ width: '40%', marginRight: '8px' }}
+                                            color="primary"
+                                            variant="outlined"
+                                            fullWidth
+                                            onClick={handleClose}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            color="primary"
+                                            variant="contained"
+                                            fullWidth
+                                            // onClick={handleFromSubmit}
+                                            // disabled={isValidForm()}
+                                        >
+                                            Buy USDT
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
                         </Paper>
                         </Fade>
@@ -906,23 +670,7 @@ const P2POffersComponent = (props: Props) => {
                 </Paper>
             </Box>
         </>
-    );
-    
+    );    
 }
 
-const mapStateToProps = (state: RootState): ReduxProps => ({
-    user: selectUserInfo(state),
-    wallets: selectWallets(state),
-    walletsLoading: selectWalletsLoading(state),
-    withdrawProcessing: selectWithdrawProcessing(state),
-    withdrawSuccess: selectWithdrawSuccess(state),
-    memberLevels: selectMemberLevels(state),
-});
-const mapDispatchToProps = dispatch => ({
-    fetchWallets: () => dispatch(walletsFetch()),
-    walletsWithdrawCcy: params => dispatch(walletsWithdrawCcyFetch(params)),
-    clearWallets: () => dispatch(walletsData([])),
-    memberLevelsFetch: () => dispatch(memberLevelsFetch()),
-});
-
-export const P2POffersScreen = injectIntl(connect(mapStateToProps, mapDispatchToProps)(P2POffersComponent))
+export const P2POffersScreen = P2POffersComponent;

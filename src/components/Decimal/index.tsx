@@ -105,7 +105,7 @@ class Decimal extends React.Component<DecimalProps> {
 
     public static getNumberAfterDot(value: DecimalProps['children'], fixed: number, thousSep?: string, floatSep?: string) {
         if (fixed === 0) {
-            return;
+            return null;
         }
 
         const str = Decimal.format(value, fixed);

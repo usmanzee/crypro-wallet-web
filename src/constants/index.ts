@@ -49,10 +49,14 @@ export const VALUATION_PRIMARY_CURRENCY = 'USD';
 export const VALUATION_SECONDARY_CURRENCY = 'BTC';
 export const DEFAULT_WALLET_CURRENCY = 'BTC';
 
+
 export const MOON_PAY_URL = 'https://buy-staging.moonpay.io';
 export const MOON_PAY_PUBLIC_KEY = 'pk_test_4tW5NgbaBAFE8nhJKXt3razQZqVnL1Ul';
 
 export const PASSWORD_ENTROPY_STEP = 6;
+
+export const GLOBAL_PLATFORM_CURRENCY = 'USDT';
+export const DEFAULT_TABLE_PAGE_LIMIT = 25;
 
 export const colors = {
     light: {

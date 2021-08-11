@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
     "sourceMap": false,
-    "sourceRoot": null,
+    // "sourceRoot": null,
     "rootDir": "src",
-    "allowJs": false,
-    "strict": true,
+    "allowJs": true,
+    "strict": false,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
     "suppressImplicitAnyIndexErrors": false,
     "noUnusedLocals": false,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "types": [
       "node",

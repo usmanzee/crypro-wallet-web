@@ -62,7 +62,7 @@ let theme = createMuiTheme({
             },
           },
           outlinedPrimary: {
-            color: "#f58220",
+            color: "rgb(111, 33, 88)",
               "&:hover": {
                 color: 'rgb(111, 33, 88)',
             }
