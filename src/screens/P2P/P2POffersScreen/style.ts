@@ -4,12 +4,20 @@ import { globalStyle } from '../../materialUIGlobalStyle';
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...globalStyle(theme),
+    tabsHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        paddingBottom: theme.spacing(0.5),
+        borderWidth: '0px 0px 1px',
+        borderStyle: 'solid',
+        borderColor: theme.palette.text.disabled
+    },
     activePage: {
         color: '#000',
         marginRight: theme.spacing(2),
         cursor: 'pointer',
         borderBottom: `2px solid ${theme.palette.secondary.main}`,
-        paddingBottom: '12px',
+        paddingBottom: '8px',
         '&:hover': {
             textDecoration: 'none',
             color: '#000',
@@ -23,6 +31,37 @@ export const useStyles = makeStyles((theme: Theme) =>
         '&:hover': {
             textDecoration: 'none',
             color: '#000',
+            opacity: '1.0',
+        },
+    },
+    videoLink: {
+        [theme.breakpoints.up('sm')]: {
+            color: '#000',
+            marginLeft: theme.spacing(2),
+            cursor: 'pointer',
+            '&:hover': {
+                textDecoration: 'none',
+                color: '#000',
+                opacity: '0.6',
+            },
+        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'none'
+        },
+    },
+    mobileVideoLink: {
+        [theme.breakpoints.up('sm')]: {
+           display: 'none'
+        },
+    },
+    moreLink: {
+        color: '#000',
+        marginLeft: theme.spacing(2),
+        cursor: 'pointer',
+        '&:hover': {
+            textDecoration: 'none',
+            color: '#000',
+            opacity: '0.6',
         },
     },
     activeCurrency: {
@@ -30,7 +69,7 @@ export const useStyles = makeStyles((theme: Theme) =>
         marginRight: theme.spacing(2),
         cursor: 'pointer',
         borderBottom: `2px solid ${theme.palette.secondary.main}`,
-        paddingBottom: '12px',
+        paddingBottom: '8px',
         '&:hover': {
             textDecoration: 'none',
             color: theme.palette.secondary.main,
@@ -46,6 +85,7 @@ export const useStyles = makeStyles((theme: Theme) =>
             color: '#000',
         },
     },
+
     advertiserName: {
         marginBottom: '8px', color: theme.palette.secondary.main
     },
@@ -104,6 +144,10 @@ export const useStyles = makeStyles((theme: Theme) =>
         fontWeight: 500,
         margin: `${theme.spacing(1)}px 0px`
     },
+    searchAmountInput: {
+        borderTopRightRadius: '0px',
+        borderBottomRightRadius: '0px',
+    },
     numberInput: {
         '& input[type=number]': {
             '-moz-appearance': 'textfield'
@@ -126,8 +170,8 @@ export const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.primary.main
     },
     amountSearchButton: {
-        // backgroundColor: '#F5F5F5',
-        color: theme.palette.secondary.main
+        borderTopLeftRadius: '0px',
+        borderBottomLeftRadius: '0px',
     },
     input: {
         marginLeft: theme.spacing(1),
@@ -139,9 +183,11 @@ export const useStyles = makeStyles((theme: Theme) =>
     selectDropdown: {
         display: 'flex',
         cursor: 'pointer',
-        padding: `${theme.spacing(0.5)}px ${theme.spacing(0.5)}px`,
+        padding: `0px ${theme.spacing(0.5)}px`,
+        lineHeight: '3.1em',
         borderRadius: '4px',
         backgroundColor: '#e0e0e0',
+        alignItems: 'center',
         [theme.breakpoints.only('sm')]: {
             width: 'auto',
         },
@@ -180,6 +226,25 @@ export const useStyles = makeStyles((theme: Theme) =>
             },
         },
     },
+    renderp2pOffers: {
+        [theme.breakpoints.only('xs')]: {
+            display: 'none',
+        },
+    },
+    renderMobileP2pOffers: {
+        [theme.breakpoints.only('xl')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('lg')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('md')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('sm')]: {
+            display: 'none',
+        },
+    },
     currencyCode: {
         margin: '0px 4px'
     },
@@ -194,7 +259,6 @@ export const useStyles = makeStyles((theme: Theme) =>
         margin: `${theme.spacing(0.5)}px`,
         fontSize: '8px',
         height: theme.spacing(2)
-        // color: theme.palette.secondary.main
     },
     modal: {
         display: 'flex',
@@ -211,6 +275,25 @@ export const useStyles = makeStyles((theme: Theme) =>
         width: '40%', 
         marginRight: '8px',
         color: theme.palette.primary.main,
-    }
+    },
+    renderAdvertisementDetail: {
+        [theme.breakpoints.only('xs')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('sm')]: {
+            display: 'none',
+        },
+    },
+    renderMobileAdvertisementDetail: {
+        [theme.breakpoints.only('xl')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('lg')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('md')]: {
+            display: 'none',
+        },
+    },
   }),
 );

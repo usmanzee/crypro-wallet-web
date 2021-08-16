@@ -44,15 +44,16 @@ const useStyles = (theme: Theme) => ({
           width: drawerWidth,
           flexShrink: 0,
         },
+        [theme.breakpoints.down('sm')]: {
+          display: 'none'
+        },
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
         width: drawerWidth,
     },
     drawerNone: {
-        [theme.breakpoints.up('md')]: {
-            display: 'none'
-        },
+        display: 'none'
     },
     drawerLink: {
         textDecoration: 'none',

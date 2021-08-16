@@ -92,14 +92,68 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...globalStyle(theme),
     pageHeader: {
-        padding: "32px 24px"
+        padding: "32px 24px",
+        
+    },
+    verificationCheckCompleted: {
+        color: '#02C076',
+        marginTop: '4px',
+        marginLeft: '2px'
+    },
+    verificationCheckIncompleted: {
+        color: '#848E9C',
+        marginTop: '4px',
+        marginLeft: '2px'
+    },
+    statsDiv: { 
+        [theme.breakpoints.up('sm')]: {
+            display: 'flex',
+            justifyContent:"space-between",
+            marginTop: '24px', 
+        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex',
+            flexDirection: 'column',
+            marginTop: '24px', 
+        },
+    },
+    statDiv: { 
+        [theme.breakpoints.up('sm')]: {
+            display: 'flex', 
+            flexDirection: 'column'
+        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex', 
+            flexDirection: 'row',
+            justifyContent:"space-between",
+        },
+    },
+    renderp2pOffers: {
+        [theme.breakpoints.only('xs')]: {
+            display: 'none',
+        },
+    },
+    renderMobileP2pOffers: {
+        [theme.breakpoints.only('xl')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('lg')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('md')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.only('sm')]: {
+            display: 'none',
+        },
     },
     advertiserName: {
         marginBottom: '8px', color: theme.palette.secondary.main
     },
     paymentMethodChip: {
         margin: `${theme.spacing(0.5)}px`,
-        // color: theme.palette.secondary.main
+        fontSize: '8px',
+        height: theme.spacing(2)
     }
   }),
 );
@@ -137,79 +191,52 @@ const P2PAdvertiserDetailComponent = (props: Props) => {
     const classes = useStyles();
 
     const pageTitle = 'Advertiser details';
-    const renderBuyOffers = () => {
+
+    const renderMobileOffers = (type: string) => {
         return (
             <>
-                <TableContainer>
-                    <Table aria-label="P2P orders table">
-                        <TableHead>
-                            <TableRow>
-                                <StyledTableCell>
-                                    Coin
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Price
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Limit/Available
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Payment
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Trade
-                                </StyledTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow hover>
-                                <StyledTableCell>
-                                    <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                        <span className={classes.advertiserName}>USDT</span>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                        <span style={{ fontWeight: 600, }}>10</span>
-                                        <span style={{ fontWeight: 400, fontSize: 10, marginLeft: '4px',  color: 'grey' }}>BTC</span>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Available</span>
-                                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 USDT</span>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Limit</span>
-                                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>₨60,000.00-₨713,000.09</span>
-                                        </div>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ width: '50%' }}>
-                                        <Tooltip title="Payment Method1" arrow>
-                                            <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                        <Tooltip title="Payment Method2" arrow>
-                                            <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                        <Tooltip title="Payment Method3" arrow>
-                                            <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <Link to={`trading`} style={{ textDecoration: 'none' }}>
-                                        <Button variant="contained" style={{ color: 'white', backgroundColor: '#02C076', fontSize: 14 }}>Buy</Button>
-                                    </Link>
-                                </StyledTableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <div style={{ display: 'flex', justifyContent: 'space-between'}}>
+                    <span>USDT</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div>
+                        <div>
+                            <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Price</span>
+                            <div style={{ display: 'flex', marginRight: '8px' }}>
+                                <span style={{ fontWeight: 600, fontSize: '20px' }}>10</span>
+                                <span style={{ fontWeight: 400, marginLeft: '4px',  color: 'grey' }}>BTC</span>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex' }}>
+                            <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Available</span>
+                            <div style={{ display: 'flex', marginRight: '8px'}}>
+                                <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 USDT</span>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex' }}>
+                            <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Limit</span>
+                            <div style={{ display: 'flex', marginRight: '8px'}}>
+                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>₨60,000.00-₨713,000.09</span>
+                            </div>
+                        </div>
+                    </div>
+                    <Button variant="contained" style={{ color: 'white',backgroundColor: type == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', fontSize: 14, margin: 'auto 0px' }}>{type}</Button>
+                </div>
+                <div style={{ display: 'flex', marginTop: '8px', flexWrap: 'wrap' }}>
+                    <Tooltip title="Payment Method1" arrow>
+                        <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
+                    </Tooltip>
+                    <Tooltip title="Payment Method2" arrow>
+                        <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
+                    </Tooltip>
+                    <Tooltip title="Payment Method3" arrow>
+                        <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
+                    </Tooltip>
+                </div>
             </>
         );
     }
-    const renderSellOffers = () => {
+    const renderOffers = (type: string) => {
         return (
             <>
                 <TableContainer>
@@ -237,7 +264,7 @@ const P2PAdvertiserDetailComponent = (props: Props) => {
                             <TableRow hover>
                                 <StyledTableCell>
                                     <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                        <span className={classes.advertiserName}>USDT</span>
+                                        <span>USDT</span>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -271,7 +298,7 @@ const P2PAdvertiserDetailComponent = (props: Props) => {
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     <Link to={`trading`} style={{ textDecoration: 'none' }}>
-                                        <Button variant="contained" style={{ color: 'white', backgroundColor: 'rgb(248, 73, 96)', fontSize: 14 }}>Sell</Button>
+                                    <Button variant="contained" style={{ color: 'white',backgroundColor: type == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', fontSize: 14, margin: 'auto 0px' }}>{type}</Button>
                                     </Link>
                                 </StyledTableCell>
                             </TableRow>
@@ -292,37 +319,49 @@ const P2PAdvertiserDetailComponent = (props: Props) => {
                         <Typography variant="h6" display="inline">SARA TRADERS</Typography>
                         <Grid style={{display: 'flex' ,justifyContent:"space-between", borderBottom: '1px solid #EAECEF' }}>
                             <div style={{ marginRight: '24px' }}>
-                                <Typography variant="subtitle1" display="inline">SMS</Typography>
-                                <CheckCircleRoundedIcon style={{ color: '#02C076', marginBottom: '4px' }} />
+                                <Tooltip title="Verified" arrow>
+                                    <div style={{ display: 'flex' }}>
+                                        <Typography variant="subtitle1" display="inline">SMS</Typography>
+                                        <CheckCircleRoundedIcon fontSize='small' className={classes.verificationCheckCompleted} />
+                                    </div>
+                                </Tooltip>
                             </div>
                             <div style={{ marginRight: '24px' }}>
-                                <Typography variant="subtitle1" display="inline">Email</Typography>
-                                <CheckCircleRoundedIcon style={{ color: '#02C076', marginBottom: '4px' }} />
+                                <Tooltip title="Verified" arrow>
+                                <div style={{ display: 'flex' }}>
+                                    <Typography variant="subtitle1" display="inline">Email</Typography>
+                                    <CheckCircleRoundedIcon fontSize='small' className={classes.verificationCheckCompleted} />
+                                </div>
+                                </Tooltip>
                             </div>
                             <div style={{ }}>
-                                <Typography variant="subtitle1" display="inline">ID Verification</Typography>
-                                <CheckCircleRoundedIcon style={{ color: '#02C076', marginBottom: '4px' }} />
+                                <Tooltip title="Verification Required" arrow>
+                                    <div style={{ display: 'flex' }}>
+                                        <Typography variant="subtitle1" display="inline">ID Verification</Typography>
+                                        <CheckCircleRoundedIcon fontSize='small' className={classes.verificationCheckIncompleted} />
+                                    </div>
+                                </Tooltip>
                             </div>
                         </Grid>
                     </Grid>
-                    <Grid container style={{ justifyContent:"space-between", marginTop: '24px', }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Grid container className={classes.statsDiv}>
+                        <div className={classes.statDiv}>
                             <Typography variant="button" display="inline" style={{ color: '#848E9C' }}>Security deposit</Typography>
                             <Typography variant="h6" display="inline">10.00 BUSD</Typography>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className={classes.statDiv}>
                             <Typography variant="button" display="inline" style={{ color: '#848E9C' }}>Total orders</Typography>
                             <Typography variant="h6" display="inline">1156</Typography>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className={classes.statDiv}>
                             <Typography variant="button" display="inline" style={{ color: '#848E9C' }}>30d completion rate</Typography>
                             <Typography variant="h6" display="inline">99.76%</Typography>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className={classes.statDiv}>
                             <Typography variant="button" display="inline" style={{ color: '#848E9C' }}>30d orders</Typography>
                             <Typography variant="h6" display="inline">820</Typography>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className={classes.statDiv}>
                             <Typography variant="button" display="inline" style={{ color: '#848E9C' }}>Avg release time</Typography>
                             <Typography variant="h6" display="inline">2.87 Minutes</Typography>
                         </div>
@@ -332,12 +371,22 @@ const P2PAdvertiserDetailComponent = (props: Props) => {
             <Box className={classes.pageRoot} alignItems="center">
                 <Paper className={classes.pageContent}>
                     <Typography variant="h6" display="inline" style={{ color: '#848E9C', marginBottom: '24px' }}>Buy from the user</Typography>
-                    {renderBuyOffers()}
+                        <div className={classes.renderp2pOffers}>
+                            {renderOffers('buy')}
+                        </div>
+                        <div className={classes.renderMobileP2pOffers}>
+                            {renderMobileOffers('buy')}
+                        </div>
                 </Paper>
                 <div style={{ marginTop: '16px' }}>
                     <Paper className={classes.pageContent}>
                         <Typography variant="h6" display="inline" style={{ color: '#848E9C', marginBottom: '24px' }}>Sell to the user</Typography>
-                        {renderSellOffers()}
+                            <div className={classes.renderp2pOffers}>
+                                {renderOffers('sell')}
+                            </div>
+                            <div className={classes.renderMobileP2pOffers}>
+                                {renderMobileOffers('sell')}
+                            </div>
                     </Paper>
                 </div>
             </Box>

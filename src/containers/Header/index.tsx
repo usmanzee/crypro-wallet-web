@@ -34,13 +34,13 @@ import { withStyles, Theme } from '@material-ui/core/styles';
 const drawerWidth = 240;
 const useStyles = (theme: Theme) => ({
     drawer: {
-        [theme.breakpoints.up('sm')]: {
-            width: drawerWidth,
-            flexShrink: 0,
+        [theme.breakpoints.up('md')]: {
+                width: drawerWidth,
+                flexShrink: 0,
             },
         },
         appBar: {
-            [theme.breakpoints.up('sm')]: {
+            [theme.breakpoints.up('md')]: {
                 width: `calc(100%)`,
                 zIndex: theme.zIndex.drawer + 1
         }
@@ -48,7 +48,7 @@ const useStyles = (theme: Theme) => ({
     },
     menuButton: {
         marginRight: theme.spacing(2),
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
           display: 'none',
         },
     },

@@ -44,6 +44,9 @@ let theme = createMuiTheme({
     overrides: {
         MuiButton: {
           root: {
+            "&:focus": {
+                outline:'none'
+              }
           },
           containedPrimary: {
             color: "#fff",
@@ -65,18 +68,26 @@ let theme = createMuiTheme({
             color: "rgb(111, 33, 88)",
               "&:hover": {
                 color: 'rgb(111, 33, 88)',
-            }
+              },
+            
           },
           outlinedSecondary: {
             color: "#f58220",
               "&:hover": {
                 color: '#f58220',
-            }
+              },
           },
           colorInherit: {
             color: "#fff"
           }
         },
+        MuiButtonBase: {
+          root: {
+            "&:focus": {
+                outline:'none'
+              }
+          },
+        }
       },
       typography: {
         fontSize: 16,

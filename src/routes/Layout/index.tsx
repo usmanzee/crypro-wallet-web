@@ -61,7 +61,8 @@ import {
     BuyCryptoScreen,
     P2POffersScreen,
     P2PAdvertiserDetailScreen,
-    ExpressOfferScreen
+    ExpressOfferScreen,
+    P2PFiatOrderDetailScreen
 } from '../../screens';
 
 // const ChangeForgottenPasswordScreen = loadable(() => import('../../screens/ChangeForgottenPasswordScreen'));
@@ -270,6 +271,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/quick-trade" component={ExpressOfferScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/quick-trade/:side" component={ExpressOfferScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/quick-trade/:side/:currency" component={ExpressOfferScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p-fiat-order/:id" component={P2PFiatOrderDetailScreen}/>
                             <Route path="**"><Redirect to="/trading/" /></Route>
                         </Switch>
                         {isLoggedIn && <WalletsFetch/>}
