@@ -47,6 +47,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -67,6 +71,8 @@ import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useDispatch, useSelector } from 'react-redux';
+
+import { P2PVideoTutorialDialog } from '../../../components/p2p/videoTutorialDialog';
 
 import {
     // useDocumentTitle,
@@ -106,13 +112,16 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
     //History
     let history = useHistory();
 
+    const messagesEndRef = React.useRef(null)
+
     const theme = useTheme();
     const isMobileScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [moreMenuAnchorEl, setMoreMenuAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    const [value, setValue] = React.useState('payment_method1');
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState('payment_method1');
     const [chatDialogopen, setChatDialogOpen] = React.useState(false);
+    const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
 
     const dispatch = useDispatch();
     const currencies = useSelector(selectP2PCurrenciesData);
@@ -122,6 +131,10 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
     useP2PPaymentMethodsFetch();
     useUserPaymentMethodsFetch();
 
+    React.useEffect(() => {
+        scrollToBottom()
+    }, []);
+
     const handleMoreMenuClick = (event: React.MouseEvent<HTMLDivElement>) => {
         setMoreMenuAnchorEl(event.currentTarget);
     };
@@ -130,17 +143,55 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
         setMoreMenuAnchorEl(null);
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue((event.target as HTMLInputElement).value);
+    const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedPaymentMethod((event.target as HTMLInputElement).value);
     };
+
+    const scrollToBottom = () => {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
 
     const handleChatDialogOpen = () => {
         setChatDialogOpen(true);
+        scrollToBottom();
     };
 
     const handleChatDialogClose = () => {
         setChatDialogOpen(false);
     };
+
+    const handleVideoTurorialDialogOpen = () => {
+        setVideoTutorialDialogOpen(true);
+    };
+
+    const handleVideoTurorialDialogClose = () => {
+        setVideoTutorialDialogOpen(false);
+    };
+
+    const renderPaymentMethodDetail = () => {
+        return (
+            <>
+                <div className={classes.paymentMethodDetail}>
+                    <div style={{ marginBottom: '8px' }}>
+                        <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Name</Typography>
+                        <Typography variant="body1" style={{ fontWeight: 700 }}>Muhammad Asim</Typography>
+                    </div>
+                    <div style={{ marginBottom: '8px' }}>
+                        <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Bank Account Number</Typography>
+                        <Typography variant="body1" style={{ fontWeight: 700 }}>12312321332323</Typography>
+                    </div>
+                    <div style={{ marginBottom: '8px' }}>
+                        <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Bank Name</Typography>
+                        <Typography variant="body1" style={{ fontWeight: 700 }}>Askari Bank</Typography>
+                    </div>
+                    <div style={{ marginBottom: '8px' }}>
+                        <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Branch Name</Typography>
+                        <Typography variant="body1" style={{ fontWeight: 700 }}>Model Town Branch</Typography>
+                    </div>
+                </div>
+            </>
+        );
+    }
 
     const renderChatAdvertiserName = () => {
         return (
@@ -262,8 +313,8 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                     <div className={classes.messageRightDiv}>
                         <div className={classes.messageRight}>Hello </div>
                     </div>
+                    <div ref={messagesEndRef} />
                 </div>
-                
             </>
         );
     }
@@ -318,12 +369,12 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                             </Link>
                         </div>
                         <div style={{ display: 'flex' }}>
-                            <Link to="/" className={classes.videoLink}>
+                            <div className={classes.videoLink} onClick={e => handleVideoTurorialDialogOpen()}>
                                 <PlayCircleOutlineRoundedIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
                                 <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
                                     Video Tutorial
                                 </Typography>   
-                            </Link>
+                            </div>
                             <Link to="/" className={classes.moreLink}>
                                 <ReceiptIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
                                 <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
@@ -356,8 +407,8 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                     </div>
                     <div className={classes.contentDiv}>
                         <div className={classes.orderDetailDiv}>
-                            <div style={{ display: 'flex', margin: '24px 0px' }}>
-                                <div style={{ marginRight: '24px' }}>
+                            <div className={classes.orderDetail}>
+                                <div className={classes.orderPriceDetail}>
                                     <Typography variant="h6" style={{ color: 'rgb(174, 180, 188)' }}>
                                         Amount
                                     </Typography>
@@ -365,7 +416,7 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                                         ₨ 5000.00
                                     </Typography>
                                 </div>
-                                <div style={{ marginRight: '24px' }}>
+                                <div className={classes.orderPriceDetail}>
                                     <Typography variant="h6" style={{ color: 'rgb(174, 180, 188)' }}>
                                         Price
                                     </Typography>
@@ -373,7 +424,7 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                                         167.64 PKR
                                     </Typography>
                                 </div>
-                                <div style={{ marginRight: '24px' }}>
+                                <div className={classes.orderPriceDetail}>
                                     <Typography variant="h6" style={{ color: 'rgb(174, 180, 188)' }}>
                                         Quantity
                                     </Typography>
@@ -389,33 +440,42 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                                 <Alert severity="warning" icon={false}>
                                     The following is the sellers' payment info. Please make sure the money is transferred from an account you own, matching your verified name. Money will NOT be transferred automatically by the platform.
                                 </Alert>
-                                <div style={{ display: 'flex' }}>
+                                <div className={classes.paymentMethods}>
                                     <FormControl component="fieldset" style={{ marginTop: '8px' }}>
-                                        <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
-                                            <FormControlLabel value="payment_method1" control={<Radio />} label="Payment Method1" className={ value == 'payment_method1' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
-                                            <FormControlLabel value="payment_method2" control={<Radio />} label="Payment Method2" className={ value == 'payment_method2' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
-                                            <FormControlLabel value="payment_method3" control={<Radio />} label="Payment Method2" className={ value == 'payment_method3' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
-                                            <FormControlLabel value="payment_method4" control={<Radio />} label="Payment Method4" className={ value == 'payment_method4' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
+                                        <RadioGroup aria-label="gender" name="gender1" value={selectedPaymentMethod} onChange={handlePaymentMethodChange}>
+                                            <FormControlLabel value="payment_method1" control={<Radio />} label="Payment Method1" className={ selectedPaymentMethod == 'payment_method1' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
+                                            <FormControlLabel value="payment_method2" control={<Radio />} label="Payment Method2" className={ selectedPaymentMethod == 'payment_method2' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
+                                            <FormControlLabel value="payment_method3" control={<Radio />} label="Payment Method2" className={ selectedPaymentMethod == 'payment_method3' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
+                                            <FormControlLabel value="payment_method4" control={<Radio />} label="Payment Method4" className={ selectedPaymentMethod == 'payment_method4' ? classes.activePaymentMethodTab : classes.paymentMethodTab } />
                                         </RadioGroup>
                                     </FormControl>
-                                    <div style={{ margin: '16px' }}>
-                                        <div style={{ marginBottom: '8px' }}>
-                                            <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Name</Typography>
-                                            <Typography variant="body1" style={{ fontWeight: 700 }}>Muhammad Asim</Typography>
-                                        </div>
-                                        <div style={{ marginBottom: '8px' }}>
-                                            <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Bank Account Number</Typography>
-                                            <Typography variant="body1" style={{ fontWeight: 700 }}>12312321332323</Typography>
-                                        </div>
-                                        <div style={{ marginBottom: '8px' }}>
-                                            <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Bank Name</Typography>
-                                            <Typography variant="body1" style={{ fontWeight: 700 }}>Askari Bank</Typography>
-                                        </div>
-                                        <div style={{ marginBottom: '8px' }}>
-                                            <Typography variant="body1" style={{ color: 'rgb(174, 180, 188)' }}>Branch Name</Typography>
-                                            <Typography variant="body1" style={{ fontWeight: 700 }}>Model Town Branch</Typography>
-                                        </div>
-                                    </div>
+                                    {renderPaymentMethodDetail()}
+                                </div>
+                                <div className={classes.mobilePaymentMethods}>
+                                    <Accordion>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header"
+                                            >
+                                            <Typography>Payment Method1</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            {renderPaymentMethodDetail()}
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel2a-content"
+                                            id="panel2a-header"
+                                            >
+                                            <Typography>Payment Method1</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            {renderPaymentMethodDetail()}
+                                        </AccordionDetails>
+                                    </Accordion>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', margin: '8px 0px 0px 0px' }}>
@@ -449,6 +509,7 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                         </div>
                     </div>
                 </Paper>
+                <P2PVideoTutorialDialog open={videoTutorialDialogOpen} handleClose={handleVideoTurorialDialogClose} />
             </Box>
         </>
     );    

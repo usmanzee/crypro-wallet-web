@@ -277,23 +277,32 @@ export const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.primary.main,
     },
     renderAdvertisementDetail: {
-        [theme.breakpoints.only('xs')]: {
-            display: 'none',
-        },
-        [theme.breakpoints.only('sm')]: {
+        [theme.breakpoints.down('sm')]: {
             display: 'none',
         },
     },
     renderMobileAdvertisementDetail: {
-        [theme.breakpoints.only('xl')]: {
+        [theme.breakpoints.up('sm')]: {
             display: 'none',
+        }
+    },
+    advantagesQuestionsDiv: {
+        [theme.breakpoints.up('sm')]: {
+            display: 'flex', 
+            justifyContent: 'space-between'
         },
-        [theme.breakpoints.only('lg')]: {
-            display: 'none',
-        },
-        [theme.breakpoints.only('md')]: {
-            display: 'none',
+        [theme.breakpoints.down('sm')]: {
+            
         },
     },
+    questionsDetail: {
+        [theme.breakpoints.up('sm')]: {
+            flexDirection: 'column',
+            width: '23%'
+        },
+        [theme.breakpoints.down('sm')]: {
+            flexDirection: 'column',
+        },
+    }
   }),
 );

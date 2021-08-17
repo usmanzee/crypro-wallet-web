@@ -80,6 +80,25 @@ export const useStyles = makeStyles((theme: Theme) =>
             width: "100%"
         },
     },
+    orderDetail: {
+        [theme.breakpoints.up('sm')]: {
+            display: 'flex', 
+            margin: '24px 0px',
+        },
+        [theme.breakpoints.down('sm')]: {
+            margin: '12px 0px',
+            display: 'flex', 
+            justifyContent: 'space-between'
+        },
+    },
+    orderPriceDetail: {
+        [theme.breakpoints.up('sm')]: {
+            marginRight: '24px',
+        },
+        [theme.breakpoints.down('sm')]: {
+            margin: '0px 4px',
+        },
+    },
     paymentMethodTab: {
         margin: '0px',
         padding: '8px 8px 8px 0px',
@@ -92,6 +111,31 @@ export const useStyles = makeStyles((theme: Theme) =>
         padding: '8px 8px 8px 0px',
         border: '1px solid rgb(230, 232, 234)',
         cursor: 'pointer'
+    },
+    paymentMethods: {
+        [theme.breakpoints.up('sm')]: {
+            display: 'flex',
+        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'none'
+        },
+    },
+    mobilePaymentMethods: {
+        [theme.breakpoints.up('sm')]: {
+            display: 'none',
+        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex', 
+            flexDirection: 'column'
+        },
+    },
+    paymentMethodDetail: {
+        [theme.breakpoints.up('sm')]: {
+            margin: '16px',
+        },
+        [theme.breakpoints.down('sm')]: {
+            margin: '0px',
+        },
     },
     paymentTimer: {
         fontWeight: 700,

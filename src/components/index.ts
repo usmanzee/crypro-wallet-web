@@ -39,3 +39,6 @@ export * from './WalletItem';
 export * from './WalletList';
 export * from './WalletsDropdown';
 export * from './CopyTag';
+
+//P2P
+export * from './p2p/videoTutorialDialog';

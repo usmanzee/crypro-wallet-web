@@ -1,60 +1,57 @@
 import * as React from 'react';
-import Box from '@material-ui/core/Box';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Popper from '@material-ui/core/Popper';
-import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import Button  from '@material-ui/core/Button';
-import Chip from '@material-ui/core/Chip';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import Tooltip, { TooltipProps } from '@material-ui/core/Tooltip';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import FormControl from '@material-ui/core/FormControl';
-import clsx from  'clsx';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { useTheme } from '@material-ui/core/styles';
+import { 
+    Box, 
+    Paper,
+    Typography,
+    Popper,
+    InputBase,
+    Divider,
+    Button,
+    Chip,
+    Table,
+    TableBody,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Tooltip,
+    InputLabel,
+    TextField,
+    InputAdornment,
+    FormControl,
+    Menu,
+    MenuItem,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton,
+    useMediaQuery
+} from '@material-ui/core';
+
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import PlayCircleOutlineRoundedIcon from '@material-ui/icons/PlayCircleOutlineRounded';
-
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
+import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import clsx from  'clsx';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
+
+//Local imports
 import { PageHeader } from '../../../containers/PageHeader';
+import { P2PVideoTutorialDialog } from '../../../components/p2p/videoTutorialDialog';
 import { StyledTableCell } from '../../materialUIGlobalStyle';
 import { useStyles } from './style';
 
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
     // useDocumentTitle,
@@ -140,6 +137,7 @@ const P2POffersComponent = (props: Props) => {
     const [paymentMethodAnchorEl, setPaymentMethodAnchorEl] = React.useState<null | HTMLElement>(null);
     const [fiatAnchorEl, setFiatAnchorEl] = React.useState<null | HTMLElement>(null);
     const [open, setOpen] = React.useState(false);
+    const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
 
     const dispatch = useDispatch();
     const currencies = useSelector(selectP2PCurrenciesData);
@@ -177,8 +175,9 @@ const P2POffersComponent = (props: Props) => {
         setMoreMenuAnchorEl(event.currentTarget);
     };
     
-    const handleMoreMenuClose = () => {
+    const handleMoreMenuClose = (url: string) => {
         setMoreMenuAnchorEl(null);
+        history.push(url);
     };
     
     const handleSideChange = (event, newSide) => {
@@ -227,6 +226,14 @@ const P2POffersComponent = (props: Props) => {
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleVideoTurorialDialogOpen = () => {
+        setVideoTutorialDialogOpen(true);
+    };
+
+    const handleVideoTurorialDialogClose = () => {
+        setVideoTutorialDialogOpen(false);
     };
 
     const setMaxWithdrawlAmount = () => {
@@ -820,12 +827,12 @@ const P2POffersComponent = (props: Props) => {
                             </Link>
                         </div>
                         <div style={{ display: 'flex' }}>
-                            <Link to="/" className={classes.videoLink}>
+                            <div className={classes.videoLink} onClick={e => handleVideoTurorialDialogOpen()}>
                                 <PlayCircleOutlineRoundedIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
                                 <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
                                     Video Tutorial
                                 </Typography>   
-                            </Link>
+                            </div>
                             <Link to="/" className={classes.moreLink}>
                                 <ReceiptIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
                                 <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
@@ -847,12 +854,12 @@ const P2POffersComponent = (props: Props) => {
                                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                                 transformOrigin={{ vertical: "top", horizontal: "center" }}
                             >
-                                <MenuItem onClick={handleMoreMenuClose}>Paymant Settings</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>Post new Ad</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>My Ads</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>Become a Merchant</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose} className={classes.mobileVideoLink}>Video Tutorial</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>P2P Trading FAQ</MenuItem>
+                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>Paymant Settings</MenuItem>
+                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>Post new Ad</MenuItem>
+                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>My Ads</MenuItem>
+                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>Become a Merchant</MenuItem>
+                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')} className={classes.mobileVideoLink}>Video Tutorial</MenuItem>
+                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>P2P Trading FAQ</MenuItem>
                             </Menu>
                         </div>
                     </div>
@@ -960,25 +967,26 @@ const P2POffersComponent = (props: Props) => {
                 </Paper>
                 <Paper style={{ marginTop: '16px', padding: '16px', backgroundColor: '#FAFAFA' }}>
                     <Typography variant="h4" style={{ margin: '16px 0px', fontWeight: 700 }}>Advantages of P2P Exchange</Typography>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div style={{ flexDirection: 'column', width: '23%' }}>
+                    <div className={classes.advantagesQuestionsDiv}>
+                        <div className={classes.questionsDetail}>
                             <Typography variant="h6" style={{ margin: '16px 0px', fontWeight: 700 }}>Low cost transaction fees</Typography>
                             <Typography variant="body2" style={{ margin: '16px 0px', whiteSpace: 'pre-line', }}>{`As P2P exchange is a simple platform, the overhead costs are negligible for buyers and sellers.\n\nOn Binance P2P, takers are charged zero trading fees, while makers are charged a small amount of transaction fees upon every completed order. We pledge to apply the lowest P2P transaction fees in all markets.`}</Typography>
                         </div>
-                        <div style={{ flexDirection: 'column', width: '23%' }}>
+                        <div className={classes.questionsDetail}>
                             <Typography variant="h6" style={{ margin: '16px 0px', fontWeight: 700 }}>Flexible payment methods</Typography>
                             <Typography variant="body2" style={{ margin: '16px 0px', whiteSpace: 'pre-line', }}>{`As P2P exchange is a simple platform, the overhead costs are negligible for buyers and sellers.\n\nOn Binance P2P, takers are charged zero trading fees, while makers are charged a small amount of transaction fees upon every completed order. We pledge to apply the lowest P2P transaction fees in all markets.`}</Typography>
                         </div>
-                        <div style={{ flexDirection: 'column', width: '23%' }}>
+                        <div className={classes.questionsDetail}>
                             <Typography variant="h6" style={{ margin: '16px 0px', fontWeight: 700 }}>Trade at your preferred prices</Typography>
                             <Typography variant="body2" style={{ margin: '16px 0px', whiteSpace: 'pre-line', }}>{`As P2P exchange is a simple platform, the overhead costs are negligible for buyers and sellers.\n\nOn Binance P2P, takers are charged zero trading fees, while makers are charged a small amount of transaction fees upon every completed order. We pledge to apply the lowest P2P transaction fees in all markets.`}</Typography>
                         </div>
-                        <div style={{ flexDirection: 'column', width: '23%' }}>
+                        <div className={classes.questionsDetail}>
                             <Typography variant="h6" style={{ margin: '16px 0px', fontWeight: 700 }}>Protection for your privacy</Typography>
                             <Typography variant="body2" style={{ margin: '16px 0px', whiteSpace: 'pre-line', }}>{`As P2P exchange is a simple platform, the overhead costs are negligible for buyers and sellers.\n\nOn Binance P2P, takers are charged zero trading fees, while makers are charged a small amount of transaction fees upon every completed order. We pledge to apply the lowest P2P transaction fees in all markets.`}</Typography>
                         </div>
                     </div>
                 </Paper>
+                <P2PVideoTutorialDialog open={videoTutorialDialogOpen} handleClose={handleVideoTurorialDialogClose} />
             </Box>
         </>
     );    
