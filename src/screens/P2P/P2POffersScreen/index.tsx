@@ -255,7 +255,8 @@ const P2POffersComponent = (props: Props) => {
                 <div className={classes.selectDropdown} onClick={handleFiatCurrencySelectClick}>
                     {selectedFiatCurrency ?
                         (<>
-                            <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
+                            <Chip color="secondary" size="small" label={selectedFiatCurrency.symbol_native.toUpperCase()} className={classes.currencyCode} />
+                            <Typography variant="subtitle1" component="div" className={classes.currencyName}>
                                 {selectedFiatCurrency.code.toUpperCase()}
                             </Typography>
                             <div className={classes.selectDownArrow}>
@@ -287,7 +288,7 @@ const P2POffersComponent = (props: Props) => {
                         renderOption={(option: AllFiatCurrency) => {
                             return <React.Fragment>
                                 <div style={{ display: 'flex' }}>
-                                    <Chip label={option ? option.code.toUpperCase() : ''} className={classes.currencyCode} />
+                                    <Chip color="secondary" size="small" label={option ? option.symbol_native.toUpperCase() : ''} className={classes.currencyCode} />
                                     <Typography variant="subtitle2" component="div" className={classes.currencyName}>
                                         {option ? option.name : ''}
                                     </Typography>

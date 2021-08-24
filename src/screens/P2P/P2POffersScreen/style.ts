@@ -150,16 +150,36 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     numberInput: {
         '& input[type=number]': {
-            '-moz-appearance': 'textfield'
-        },
-        '& input[type=number]::-webkit-outer-spin-button': {
-            '-webkit-appearance': 'none',
-            margin: 0
-        },
-        '& input[type=number]::-webkit-inner-spin-button': {
-            '-webkit-appearance': 'none',
-            margin: 0
-        },
+          '-moz-appearance': 'textfield'
+      },
+      '& input[type=number]::-webkit-outer-spin-button': {
+          '-webkit-appearance': 'none',
+          margin: 0
+      },
+      '& input[type=number]::-webkit-inner-spin-button': {
+          '-webkit-appearance': 'none',
+          margin: 0
+      },
+      '& .MuiOutlinedInput-root': { 
+          '& fieldset': {           
+            borderLeft: `1px solid rgba(0, 0, 0, 0.12)`,
+            borderTop: `1px solid rgba(0, 0, 0, 0.12)`,
+            borderBottom: `1px solid rgba(0, 0, 0, 0.12)`,
+            borderRight: `1px solid #0000`,
+          },
+          '&:hover fieldset': {
+              borderLeft: `1px solid ${theme.palette.secondary.main}`,
+              borderTop: `1px solid ${theme.palette.secondary.main}`,
+              borderBottom: `1px solid ${theme.palette.secondary.main}`,
+              borderRight: `1px solid #0000`,
+          },
+          '&.Mui-focused fieldset': {
+            borderLeft: `1px solid ${theme.palette.secondary.main}`,
+            borderTop: `1px solid ${theme.palette.secondary.main}`,
+            borderBottom: `1px solid ${theme.palette.secondary.main}`,
+            borderRight: `1px solid #0000`,
+          },
+      },
     },
     inputAdornmentDivider: {
         height: '16px',

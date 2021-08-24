@@ -16,7 +16,9 @@ import {
     Paper,
     Typography,
     Switch,
+    Button,
 } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -28,12 +30,20 @@ import { profileTabs } from '../../constants';
 
 const useStyles = (theme: Theme) => ({
     ...globalStyle(theme),
+    tabsHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        paddingBottom: theme.spacing(0.5),
+        borderWidth: '0px 0px 1px',
+        borderStyle: 'solid',
+        borderColor: theme.palette.text.disabled
+    },
     activePage: {
         color: '#000',
         marginRight: theme.spacing(5),
         cursor: 'pointer',
         borderBottom: `2px solid ${theme.palette.secondary.main}`,
-        paddingBottom: '10px',
+        paddingBottom: '8px',
         '&:hover': {
             textDecoration: 'none',
             color: '#000',
@@ -122,20 +132,23 @@ class ProfileComponent extends React.Component<Props, IState> {
     public changeTab = () => {
         const tabName = this.props.match.params.tabName;
         let activeTab = this.state.tabValue;
-        if(tabName === 'security') {
+        if(tabName === 'payment') {
             activeTab = 0;
         }
-        else if(tabName === 'identification') {
-            activeTab = 1
+        if(tabName === 'security') {
+            activeTab = 1;
         }
-        else if(tabName === 'referral') {
+        else if(tabName === 'identification') {
             activeTab = 2
         }
-        else if(tabName === 'api_management') {
+        else if(tabName === 'referral') {
             activeTab = 3
         }
-        else if(tabName === 'activities') {
+        else if(tabName === 'api_management') {
             activeTab = 4
+        }
+        else if(tabName === 'activities') {
+            activeTab = 5
         }
         else {
             activeTab = 0
@@ -156,6 +169,58 @@ class ProfileComponent extends React.Component<Props, IState> {
     };
 
     public translate = (id: string) => this.props.intl.formatMessage({ id });
+
+    public renderPaymentTab = () => {
+        const { classes } = this.props;
+        return (
+            <>
+                <div className={classes.tabsHeader} style={{ margin: '16px 0px' }}>
+                    <div>
+                        <Link to="/profile/payment/p2p" className={classes.activePage}>
+                                <Typography variant="h6" component="div" display="inline">
+                                    P2P
+                                </Typography>
+                        </Link>
+                        {/* <Link to="/quick-trade" className={classes.inActivePage}>
+                            <Typography variant="h6" component="div"  display="inline">
+                                Express
+                            </Typography>   
+                        </Link> */}
+                    </div>
+                </div>
+                <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="body1" style={{ width: '60%' }}>P2P payment methods: When you sell cryptocurrencies, the payment method added will be displayed to buyer as options to accept payment, please ensure that the account owner’s name is consistent with your verified name on Binance. You can add up to 20 payment methods.</Typography>
+                        <Button
+                            variant="contained"
+                            startIcon={<AddIcon fontSize="small"/>}
+                        >
+                            Add a payment method
+                        </Button>
+                    </div>
+                    <Paper style={{ margin: '16px 0px' }}>
+                        <div style={{ display: 'flex', backgroundColor: 'rgb(250, 250, 250)', padding: '16px', justifyContent: 'space-between' }}>
+                            <Typography variant="h6" style={{ fontWeight: 700 }}>Jazzcash</Typography>
+                            <div>
+                                <Button>Edit</Button>
+                                <Button>Delete</Button>
+                            </div>
+                        </div>
+                        <div style={{ marginTop: '16px', padding: '16px', }} >
+                            <div style={{ display: 'flex' }}>
+                                <Typography style={{ color: 'rgb(94, 102, 115)', }}>Full Name</Typography>
+                                <Typography style={{ marginLeft: '24px', fontWeight: 700 }}>Muhammad Usman</Typography>
+                            </div>
+                            <div style={{ display: 'flex' }}>
+                                <Typography style={{ color: 'rgb(94, 102, 115)', }}>Mobile Number</Typography>
+                                <Typography style={{ marginLeft: '24px', fontWeight: 700 }}>03478451114</Typography>
+                            </div>
+                        </div>
+                    </Paper>
+                </div>
+            </>
+        );
+    }
     
     public render() {
         const { classes } = this.props;
@@ -175,26 +240,30 @@ class ProfileComponent extends React.Component<Props, IState> {
                                 variant="scrollable"
                                 scrollButtons="on"
                             >
-                                <Tab component="a" label={this.translate('page.body.profile.tabs.security')} {...a11yProps(0)} />
-                                <Tab component="a" label={this.translate('page.body.profile.tabs.identification')} {...a11yProps(1)} />
-                                <Tab component="a" label={this.translate('page.body.profile.tabs.referral')} {...a11yProps(2)} />
-                                <Tab component="a" label={this.translate('page.body.profile.tabs.api_management')} {...a11yProps(3)} />
-                                <Tab component="a" label={this.translate('page.body.profile.tabs.activity')} {...a11yProps(4)} />
+                                <Tab component="a" label={this.translate('Payment')} {...a11yProps(0)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.security')} {...a11yProps(1)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.identification')} {...a11yProps(2)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.referral')} {...a11yProps(3)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.api_management')} {...a11yProps(4)} />
+                                <Tab component="a" label={this.translate('page.body.profile.tabs.activity')} {...a11yProps(5)} />
                             </AntTabs>
 						</AppBar>
                         <TabPanel value={this.state.tabValue} index={0}>
-                            <ProfileAuthDetails/>
+                            {this.renderPaymentTab()}
                         </TabPanel>
                         <TabPanel value={this.state.tabValue} index={1}>
-                            <ProfileVerification/>
+                            <ProfileAuthDetails/>
                         </TabPanel>
                         <TabPanel value={this.state.tabValue} index={2}>
-                            <ReferralProgram/>
+                            <ProfileVerification/>
                         </TabPanel>
                         <TabPanel value={this.state.tabValue} index={3}>
-                            <ProfileApiKeys/>
+                            <ReferralProgram/>
                         </TabPanel>
                         <TabPanel value={this.state.tabValue} index={4}>
+                            <ProfileApiKeys/>
+                        </TabPanel>
+                        <TabPanel value={this.state.tabValue} index={5}>
                             <ProfileAccountActivity/>
                         </TabPanel>
                     </Paper>
@@ -231,27 +300,6 @@ class ProfileComponent extends React.Component<Props, IState> {
                         </div>
                     </div>
                 </div> */}
-            </>
-        );
-    }
-
-    public renderTabs = (address: string) => (values: string[], index: number) => {
-        const { classes } = this.props;
-        const [name, url] = values;
-
-        const isActive =  address === url;
-        const menuStyle = classnames({
-            [classes.activePage] : isActive,
-            [classes.inActivePage] : !isActive
-        })
-        return (
-            <>
-                <Link to={url} className={menuStyle}>
-                    <Typography variant="h6" component="div" >
-                        {/* <FormattedMessage id={'page.body.deposit.tabs.crypto'} /> */}
-                        {name}
-                    </Typography>
-                </Link>
             </>
         );
     }

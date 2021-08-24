@@ -87,7 +87,12 @@ let theme = createMuiTheme({
                 outline:'none'
               }
           },
-        }
+        },
+        MuiTooltip: {
+          tooltip: {
+              fontSize: "14px",
+          },
+        },
       },
       typography: {
         fontSize: 16,
@@ -95,7 +100,8 @@ let theme = createMuiTheme({
         fontWeightRegular: 400,
         fontWeightMedium: 500,
         htmlFontSize: 16
-      }
+      },
+      
   });
 theme = responsiveFontSizes(theme);
 
