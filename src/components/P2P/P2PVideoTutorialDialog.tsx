@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTheme } from '@material-ui/core/styles';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { makeStyles, Theme, createStyles, withStyles} from '@material-ui/core/styles';
 
@@ -7,6 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CloseIcon from '@material-ui/icons/Close';
 
 export interface VideoTutorialDialogProps {
@@ -27,12 +29,16 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = VideoTutorialDialogProps & InjectedIntlProps;
 
 const P2PVideoTutorialDialogComponent = (props: Props) => {
+    const theme = useTheme();
+    const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
     const {
         open,
         handleClose
     } = props;
+
     return (
         <Dialog
+            fullScreen={fullScreenDialog}
 						fullWidth={true}
 						maxWidth='md'
             open={open}
@@ -46,7 +52,7 @@ const P2PVideoTutorialDialogComponent = (props: Props) => {
           </div>
         </DialogTitle>
         <DialogContent>
-            <iframe width="100%" height="350" src="https://www.youtube.com/embed/gYRR3c_S4F0" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+            <iframe width="100%" height={fullScreenDialog ? "90%" : "350"} src="https://www.youtube.com/embed/gYRR3c_S4F0" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
         </DialogContent>
       </Dialog>
     );

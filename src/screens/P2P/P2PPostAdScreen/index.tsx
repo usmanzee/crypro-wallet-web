@@ -62,7 +62,7 @@ import { RouterProps } from 'react-router';
 
 //Local imports
 import { PageHeader } from '../../../containers/PageHeader';
-import { P2PVideoTutorialDialog } from '../../../components/p2p/videoTutorialDialog';
+import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
 import { StyledTableCell } from '../../materialUIGlobalStyle';
 import { useStyles } from './style';
 
@@ -399,7 +399,7 @@ const P2PPostAdComponent = (props: Props) => {
                     <DialogTitle>
                         <Typography variant="h6">Select payment method</Typography>
                         <IconButton aria-label="close" className={classes.closeButton} onClick={handlePaymentMethodDialogClose}>
-                        <CloseIcon />
+                            <CloseIcon />
                         </IconButton>
                     </DialogTitle>
                     <Divider />

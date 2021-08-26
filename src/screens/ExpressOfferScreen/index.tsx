@@ -124,10 +124,10 @@ const ExpressOfferComponent = (props: Props) => {
     useUserPaymentMethodsFetch();
 
     //Use Effects
-    React.useEffect(() => {
-        history.push(`/quick-trade/${selectedSide}`);
-        history.push(`/quick-trade/${selectedSide}/${selectedCryptoCurrency}`);
-    }, []);
+    // React.useEffect(() => {
+    //     history.push(`/quick-trade/${selectedSide}`);
+    //     history.push(`/quick-trade/${selectedSide}/${selectedCryptoCurrency}`);
+    // }, []);
 
     React.useEffect(() => {
         if(!allFiatCurrencies.length) {
@@ -151,13 +151,13 @@ const ExpressOfferComponent = (props: Props) => {
     const handleSideChange = (newSide) => {
         if (newSide !== null && selectedSide != newSide) {
             setSelectedSide(newSide);
-            history.push(`/quick-trade/${newSide}/${selectedCryptoCurrency}`);
+            // history.push(`/quick-trade/${newSide}/${selectedCryptoCurrency}`);
         }
     };
 
     const onCryptoCurrencyChange = (currency: string) => {
         setSelectedCryptoCurrency(currency);
-        history.push(`/quick-trade/${selectedSide}/${currency}`);
+        // history.push(`/quick-trade/${selectedSide}/${currency}`);
     };
 
     const getAllFiatCurrencies = () => {
@@ -339,12 +339,12 @@ const ExpressOfferComponent = (props: Props) => {
             <Box className={classes.pageRoot} alignItems="center">
                 <Paper className={classes.pageContent} >
                     <div className={classes.pageContentHeader}>
-                        <Link to="/p2p-trade" className={classes.inActivePage}>
+                        <Link to="/p2p/offers" className={classes.inActivePage}>
                                 <Typography variant="h6" component="div" display="inline" >
                                     P2P
                                 </Typography>
                         </Link>
-                        <Link to="/quick-trade" className={classes.activePage}>
+                        <Link to="/p2p/quick-trade" className={classes.activePage}>
                             <Typography variant="h6" component="div"  display="inline">
                                 Express
                             </Typography>
@@ -364,12 +364,10 @@ const ExpressOfferComponent = (props: Props) => {
                                 <TextField
                                     className={classes.numberInput}
                                     id="outlined-full-width"
-                                    // style={{ margin: 8 }}
                                     placeholder="Placeholder"
                                     fullWidth
-                                    // margin="normal"
                                     variant="outlined"
-                                    // size="small"
+                                    size="small"
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">
                                             <span className={classes.maxButton} onClick={setMaxWithdrawlAmount}>
@@ -389,12 +387,10 @@ const ExpressOfferComponent = (props: Props) => {
                             <TextField
                                 className={classes.numberInput}
                                 id="outlined-full-width"
-                                // style={{ margin: 8 }}
                                 placeholder="Placeholder"
                                 fullWidth
-                                // margin="normal"
                                 variant="outlined"
-                                // size="small"
+                                size="small"
                                 InputProps={{
                                     endAdornment: <InputAdornment position="end">
                                         <Typography variant="button" display="inline" style={{ color: 'rgb(112, 122, 138)' }}>USDT</Typography>

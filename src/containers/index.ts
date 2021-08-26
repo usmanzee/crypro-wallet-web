@@ -25,6 +25,7 @@ export * from './ProfileApiKeys';
 export * from './ProfileAuthDetails';
 export * from './ProfileTwoFactorAuth';
 export * from './ProfileVerification';
+export * from './ProfileP2PPaymentMethod';
 export * from './RecentTrades';
 export * from './ReferralProgram';
 export * from './Sidebar';

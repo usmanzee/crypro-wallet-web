@@ -95,11 +95,11 @@ let theme = createMuiTheme({
         },
       },
       typography: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeightLight: 300,
         fontWeightRegular: 400,
         fontWeightMedium: 500,
-        htmlFontSize: 16
+        htmlFontSize: 14
       },
       
   });

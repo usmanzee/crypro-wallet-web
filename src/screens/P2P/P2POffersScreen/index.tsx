@@ -22,11 +22,8 @@ import {
     Menu,
     MenuItem,
     Dialog,
-    DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
-    IconButton,
     useMediaQuery
 } from '@material-ui/core';
 
@@ -48,7 +45,8 @@ import { RouterProps } from 'react-router';
 
 //Local imports
 import { PageHeader } from '../../../containers/PageHeader';
-import { P2PVideoTutorialDialog } from '../../../components/p2p/videoTutorialDialog';
+import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
+import { P2PLinks } from '../../../components/P2P/P2PLinks';
 import { StyledTableCell } from '../../materialUIGlobalStyle';
 import { useStyles } from './style';
 
@@ -113,8 +111,6 @@ const P2POffersComponent = (props: Props) => {
 
     // States
 
-    const [moreMenuAnchorEl, setMoreMenuAnchorEl] = React.useState<null | HTMLElement>(null);
-
     const [cryptoCurrenciesList, setCryptoCurrenciesList] = React.useState();
     const [sides, setSides] = React.useState([
         {'title': 'buy', 'selectedBGColor': '#02C076'},
@@ -148,10 +144,10 @@ const P2POffersComponent = (props: Props) => {
     useUserPaymentMethodsFetch();
 
     //Use Effects
-    React.useEffect(() => {
-        history.push(`/p2p-trade/${selectedSide}`);
-        history.push(`/p2p-trade/${selectedSide}/${selectedCryptoCurrency}`);
-    }, []);
+    // React.useEffect(() => {
+    //     history.push(`/p2p/offers/${selectedSide}`);
+    //     history.push(`/p2p/offers/${selectedSide}/${selectedCryptoCurrency}`);
+    // }, []);
 
     React.useEffect(() => {
         if(!allFiatCurrencies.length) {
@@ -171,25 +167,16 @@ const P2POffersComponent = (props: Props) => {
     }, [currencies]);
     //End Use Effects
 
-    const handleMoreMenuClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        setMoreMenuAnchorEl(event.currentTarget);
-    };
-    
-    const handleMoreMenuClose = (url: string) => {
-        setMoreMenuAnchorEl(null);
-        history.push(url);
-    };
-    
     const handleSideChange = (event, newSide) => {
         if (newSide !== null) {
             setSelectedSide(newSide);
-            history.push(`/p2p-trade/${newSide}/${selectedCryptoCurrency}`);
+            // history.push(`/p2p/offers/${newSide}/${selectedCryptoCurrency}`);
         }
     };
 
     const onCryptoCurrencyChange = (currency: string) => {
         setSelectedCryptoCurrency(currency);
-        history.push(`/p2p-trade/${selectedSide}/${currency}`);
+        // history.push(`/p2p/offers/${selectedSide}/${currency}`);
     };
 
     const getAllFiatCurrencies = () => {
@@ -816,53 +803,18 @@ const P2POffersComponent = (props: Props) => {
                 <Paper className={classes.pageContent} >
                     <div className={classes.tabsHeader}>
                         <div>
-                            <Link to="/p2p-trade" className={classes.activePage}>
+                            <Link to="/p2p/offers" className={classes.activePage}>
                                     <Typography variant="h6" component="div" display="inline">
                                         P2P
                                     </Typography>
                             </Link>
-                            <Link to="/quick-trade" className={classes.inActivePage}>
+                            <Link to="/p2p/quick-trade" className={classes.inActivePage}>
                                 <Typography variant="h6" component="div"  display="inline">
                                     Express
                                 </Typography>   
                             </Link>
                         </div>
-                        <div style={{ display: 'flex' }}>
-                            <div className={classes.videoLink} onClick={e => handleVideoTurorialDialogOpen()}>
-                                <PlayCircleOutlineRoundedIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
-                                <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
-                                    Video Tutorial
-                                </Typography>   
-                            </div>
-                            <Link to="/" className={classes.moreLink}>
-                                <ReceiptIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
-                                <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
-                                    Orders
-                                </Typography>   
-                            </Link>
-                            <div className={classes.moreLink} onClick={e => handleMoreMenuClick(e)}>
-                                <MoreVertIcon style={{ marginBottom: '4px' }}/>
-                                <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
-                                    More
-                                </Typography>   
-                            </div>
-                            <Menu
-                                id="more-menu"
-                                anchorEl={moreMenuAnchorEl}
-                                keepMounted
-                                open={Boolean(moreMenuAnchorEl)}
-                                onClose={handleMoreMenuClose}
-                                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                transformOrigin={{ vertical: "top", horizontal: "center" }}
-                            >
-                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>Paymant Settings</MenuItem>
-                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>Post new Ad</MenuItem>
-                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>My Ads</MenuItem>
-                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>Become a Merchant</MenuItem>
-                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')} className={classes.mobileVideoLink}>Video Tutorial</MenuItem>
-                                <MenuItem onClick={e => handleMoreMenuClose('/p2p-post-ad')}>P2P Trading FAQ</MenuItem>
-                            </Menu>
-                        </div>
+                        <P2PLinks handleVideoDialogOpen={handleVideoTurorialDialogOpen} />
                     </div>
                     <Paper elevation={1} className={classes.paramsFiltersRoot}>
                         <ToggleButtonGroup

@@ -216,7 +216,7 @@ export const useStyles = makeStyles((theme: Theme) =>
     sidesDiv: {
         display: "flex",
         width: '100%',
-        lineHeight: '64px',
+        lineHeight: '48px',
         border: '1px solid rgb(174, 180, 188)',
         borderRadius: '5px',
         marginBottom: '16px',

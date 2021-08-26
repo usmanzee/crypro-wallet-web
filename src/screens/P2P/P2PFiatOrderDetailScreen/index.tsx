@@ -72,7 +72,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { P2PVideoTutorialDialog } from '../../../components/p2p/videoTutorialDialog';
+import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
+import { P2PLinks } from '../../../components/P2P/P2PLinks';
 
 import {
     // useDocumentTitle,
@@ -117,8 +118,6 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
     const theme = useTheme();
     const isMobileScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [moreMenuAnchorEl, setMoreMenuAnchorEl] = React.useState<null | HTMLElement>(null);
-
     const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState('payment_method1');
     const [chatDialogopen, setChatDialogOpen] = React.useState(false);
     const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
@@ -134,14 +133,6 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
     React.useEffect(() => {
         scrollToBottom()
     }, []);
-
-    const handleMoreMenuClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        setMoreMenuAnchorEl(event.currentTarget);
-    };
-    
-    const handleMoreMenuClose = () => {
-        setMoreMenuAnchorEl(null);
-    };
 
     const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedPaymentMethod((event.target as HTMLInputElement).value);
@@ -368,42 +359,7 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
                                 </Typography>   
                             </Link>
                         </div>
-                        <div style={{ display: 'flex' }}>
-                            <div className={classes.videoLink} onClick={e => handleVideoTurorialDialogOpen()}>
-                                <PlayCircleOutlineRoundedIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
-                                <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
-                                    Video Tutorial
-                                </Typography>   
-                            </div>
-                            <Link to="/" className={classes.moreLink}>
-                                <ReceiptIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
-                                <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
-                                    Orders
-                                </Typography>   
-                            </Link>
-                            <div className={classes.moreLink} onClick={e => handleMoreMenuClick(e)}>
-                                <MoreVertIcon style={{ marginBottom: '4px' }}/>
-                                <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
-                                    More
-                                </Typography>   
-                            </div>
-                            <Menu
-                                id="more-menu"
-                                anchorEl={moreMenuAnchorEl}
-                                keepMounted
-                                open={Boolean(moreMenuAnchorEl)}
-                                onClose={handleMoreMenuClose}
-                                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                transformOrigin={{ vertical: "top", horizontal: "center" }}
-                            >
-                                <MenuItem onClick={handleMoreMenuClose}>Paymant Settings</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>Post new Ad</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>My Ads</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>Become a Merchant</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose} className={classes.mobileVideoLink}>Video Tutorial</MenuItem>
-                                <MenuItem onClick={handleMoreMenuClose}>P2P Trading FAQ</MenuItem>
-                            </Menu>
-                        </div>
+                        <P2PLinks handleVideoDialogOpen={handleVideoTurorialDialogOpen} />
                     </div>
                     <div className={classes.contentDiv}>
                         <div className={classes.orderDetailDiv}>
