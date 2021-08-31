@@ -137,7 +137,7 @@ const P2PLinksComponent = (props: Props) => {
             >
                 <MenuItem onClick={e => handleMoreMenuClose('/profile/payment/p2p')}>Payment Settings</MenuItem>
                 <MenuItem onClick={e => handleMoreMenuClose('/p2p/post-ad')}>Post new Ad</MenuItem>
-                <MenuItem onClick={e => handleMoreMenuClose('/p2p/post-ad')}>My Ads</MenuItem>
+                <MenuItem onClick={e => handleMoreMenuClose('/p2p/my-ads')}>My Ads</MenuItem>
                 <MenuItem onClick={e => handleMoreMenuClose('/p2p/post-ad')}>Become a Merchant</MenuItem>
                 <MenuItem onClick={e => handleVideoDialogOpen()} className={classes.mobileVideoLink}>Video Tutorial</MenuItem>
                 <MenuItem onClick={e => handleMoreMenuClose('/p2p/post-ad')}>P2P Trading FAQ</MenuItem>

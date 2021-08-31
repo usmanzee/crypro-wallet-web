@@ -15,13 +15,16 @@ export const useStyles = makeStyles((theme: Theme) =>
     contentDiv: {
       maxWidth: '30%',
       margin: 'auto',
+      [theme.breakpoints.down('md')]: {
+        maxWidth: '40%',
+      },
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100%',
       },
     },
-    paymentMethodsDiv: {
+    paymentMethodColor: {
         width: '4px', 
-        height: '14px', 
+        height: '16px', 
         borderRadius: '4px', 
         backgroundColor: theme.palette.primary.main,
         margin: '4px 4px 0px 0px'

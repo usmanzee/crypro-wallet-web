@@ -364,7 +364,7 @@ const P2POffersComponent = (props: Props) => {
         return (
             <>
                  <div style={{ display: 'flex', justifyContent: 'space-between'}}>
-                    <Link to="/advertiserDetail/1" style={{ textDecoration: 'none' }}>
+                    <Link to="/p2p/advertiserDetail/1" style={{ textDecoration: 'none' }}>
                         <span className={classes.advertiserName}>
                             Name here
                         </span>
@@ -449,7 +449,7 @@ const P2POffersComponent = (props: Props) => {
                             <TableRow hover>
                                 <StyledTableCell>
                                     <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                            <Link to="/advertiserDetail/1" style={{ textDecoration: 'none' }}>
+                                            <Link to="/p2p/advertiserDetail/1" style={{ textDecoration: 'none' }}>
                                                 <span className={classes.advertiserName}>
                                                     Name here
                                                 </span>

@@ -64,7 +64,7 @@ import {
     ExpressOfferScreen,
     P2PFiatOrderDetailScreen,
     P2PPostAdScreen,
-    P2PPaymentMethodScreen,
+    AddP2PPaymentMethodScreen,
     P2PMyAdsScreen
 } from '../../screens';
 
@@ -252,7 +252,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/orders" component={OrdersTabScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/history" component={HistoryScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/confirm" component={ConfirmScreen} />
-                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile/:tabName/:paymentName/:paymentMethodId" component={P2PPaymentMethodScreen} />
+                            <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile/:tabName/:paymentName/:paymentMethodId" component={AddP2PPaymentMethodScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile/:tabName/:paymentName" component={ProfileScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile/:tabName" component={ProfileScreen} />
                             <PrivateRoute loading={userLoading} isLogged={isLoggedIn} path="/profile" component={ProfileScreen} />

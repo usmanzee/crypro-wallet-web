@@ -24,4 +24,4 @@ export * from "./MerchantScreen";
 export * from "./BuyCryptoScreen";
 export * from "./P2P";
 export * from "./ExpressOfferScreen";
-export * from "./P2PPaymentMethodScreen";
+export * from "./AddP2PPaymentMethodScreen";

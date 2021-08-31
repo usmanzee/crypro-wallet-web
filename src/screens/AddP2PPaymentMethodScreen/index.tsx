@@ -49,7 +49,7 @@ import {
 
   
 type Props = RouterProps & InjectedIntlProps;
-const P2PPaymentMethodComponent = (props: Props) => {
+const AddP2PPaymentMethodComponent = (props: Props) => {
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
     const [priceTypes, setPriceTypes] = React.useState([
@@ -94,8 +94,8 @@ const P2PPaymentMethodComponent = (props: Props) => {
                 <Paper className={clsx(classes.pageContent)} >
                     <div className={classes.contentDiv}>
                         <div style={{ display: 'flex' }}>
-                            <div className={classes.paymentMethodsDiv}></div>
-                            <Typography>Payment Method1</Typography>
+                            <div className={classes.paymentMethodColor}></div>
+                            <Typography variant="body1" style={{ fontWeight: 700, fontSize: '16px' }}>Payment Method1</Typography>
                         </div>
                         <div style={{ marginTop: '40px' }}>
                            <div>
@@ -162,4 +162,4 @@ const P2PPaymentMethodComponent = (props: Props) => {
     );    
 }
 
-export const P2PPaymentMethodScreen = P2PPaymentMethodComponent;
+export const AddP2PPaymentMethodScreen = AddP2PPaymentMethodComponent;
