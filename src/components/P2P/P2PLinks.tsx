@@ -42,6 +42,7 @@ import {
 } from "react-router-dom";
 
 export interface P2PLinksProps {
+    activeOrdersLink: boolean;
     handleVideoDialogOpen: () => void;
 }
 
@@ -77,6 +78,16 @@ const useStyles = makeStyles((theme: Theme) =>
             opacity: '0.6',
         },
     },
+    activeMoreLink: {
+        marginLeft: theme.spacing(2),
+        cursor: 'pointer',
+        color: theme.palette.secondary.main,
+        '&:hover': {
+            textDecoration: 'none',
+            color: '#000',
+            opacity: '0.6',
+        },
+    },
   }),
 );
 
@@ -103,7 +114,8 @@ const P2PLinksComponent = (props: Props) => {
     };
 
     const {
-        handleVideoDialogOpen
+        activeOrdersLink,
+        handleVideoDialogOpen,
     } = props;
 
     return (
@@ -114,7 +126,7 @@ const P2PLinksComponent = (props: Props) => {
                     Video Tutorial
                 </Typography>   
             </div>
-            <Link to="/" className={classes.moreLink}>
+            <Link to="/p2p/my-orders" className={activeOrdersLink ? classes.activeMoreLink : classes.moreLink}>
                 <ReceiptIcon style={{ marginBottom: '4px', marginRight: '4px' }}/>
                 <Typography variant="h6" component="div"  display="inline" style={{ fontSize: '14px' }}>
                     Orders

@@ -49,6 +49,7 @@ import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorial
 import { P2PLinks } from '../../../components/P2P/P2PLinks';
 import { StyledTableCell } from '../../materialUIGlobalStyle';
 import { useStyles } from './style';
+import { setDocumentTitle } from '../../../helpers';
 
 
 import {
@@ -149,6 +150,9 @@ const P2POffersComponent = (props: Props) => {
     //     history.push(`/p2p/offers/${selectedSide}/${selectedCryptoCurrency}`);
     // }, []);
 
+    React.useEffect(() => {
+        setDocumentTitle('Buy and Sell Crypto on P2P');
+    }, []);
     React.useEffect(() => {
         if(!allFiatCurrencies.length) {
             getAllFiatCurrencies();

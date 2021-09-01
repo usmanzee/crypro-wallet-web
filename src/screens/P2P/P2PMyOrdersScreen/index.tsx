@@ -72,16 +72,14 @@ import {
 
   
 type Props = RouterProps & InjectedIntlProps;
-const P2PMyAdsComponent = (props: Props) => {
+const P2PMyOrdersComponent = (props: Props) => {
     const classes = useStyles();
     const theme = useTheme();
     const fullScreenPaymentDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = React.useState(false);
     const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
-    const [assetAnchorEl, setAssetAnchorEl] = React.useState<null | HTMLElement>(null);
     const [paymentMethodAnchorEl, setPaymentMethodAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [statusAnchorEl, setStatusAnchorEl] = React.useState<null | HTMLElement>(null);
     const [value, setValue] = React.useState<DateRange<Date>>([null, null]);
 
     React.useEffect(() => {
@@ -97,17 +95,6 @@ const P2PMyAdsComponent = (props: Props) => {
         setVideoTutorialDialogOpen(false);
     };
 
-    const handleAssetSelectClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAssetAnchorEl(event.currentTarget);
-    };
-
-    const handleAssetSelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
-        if (assetAnchorEl) {
-            assetAnchorEl.focus();
-        }
-        setAssetAnchorEl(null);
-    };
-
     const handlePaymentMethodSelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setPaymentMethodAnchorEl(event.currentTarget);
     };
@@ -119,87 +106,10 @@ const P2PMyAdsComponent = (props: Props) => {
         setPaymentMethodAnchorEl(null);
     };
 
-    const handleStatusSelectClick = (event: React.MouseEvent<HTMLElement>) => {
-        setStatusAnchorEl(event.currentTarget);
-    };
-
-    const handleStatusSelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
-        if (statusAnchorEl) {
-            statusAnchorEl.focus();
-        }
-        setStatusAnchorEl(null);
-    };
-
-    const assetsPopperOpen = Boolean(assetAnchorEl);
-    const assetsPopperId = assetsPopperOpen ? 'assets' : undefined;
-
     const paymentMethodPopperOpen = Boolean(paymentMethodAnchorEl);
     const paymentMethodPopperId = paymentMethodPopperOpen ? 'payment_methods' : undefined;
 
-    const statusPopperOpen = Boolean(statusAnchorEl);
-    const statusPopperId = statusPopperOpen ? 'status' : undefined;
 
-
-    const renderAssetsDrowdown = () => {
-
-        return (
-            <> 
-                <div className={classes.selectDropdown} onClick={handleAssetSelectClick}>
-                    
-            
-                    <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                        
-                    </Typography>
-                    <div className={classes.selectDownArrow}>
-                        <ArrowDropDownIcon />
-                    </div>
-                     
-                    
-                </div>
-                <Popper
-                    id={assetsPopperId}
-                    open={assetsPopperOpen}
-                    anchorEl={assetAnchorEl}
-                    placement="bottom-start"
-                    className={classes.popper}
-                >
-                    <div className={classes.header}>
-                        Select
-                    </div>
-                    <Autocomplete
-                        open
-                        onClose={handleAssetSelectClose}
-                        disableCloseOnSelect={false}
-                        // value={selectedPaymentMethod}
-                        onChange={(event: any, selectedOption: string | null) => {
-                            // setSelectedPaymentMethod(selectedOption);
-                        }}
-                        noOptionsText="No Records Found"
-                        renderOption={(option: string) => {
-                            return <React.Fragment>
-                                <div style={{ display: 'flex' }}>
-                                    <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        {option}
-                                    </Typography>
-
-                                </div>
-                            </React.Fragment>
-                        }}
-                        options={['USDT', 'BTC', 'RSC']}
-                        getOptionLabel={(option: string) => option}
-                        renderInput={(params) => (
-                            <InputBase
-                                ref={params.InputProps.ref}
-                                inputProps={params.inputProps}
-                                autoFocus
-                                className={classes.inputBase}
-                            />
-                        )}
-                    />
-                </Popper>
-            </>
-        );
-    }
     const renderPaymentMethodDrowdown = () => {
 
         return (
@@ -260,68 +170,8 @@ const P2PMyAdsComponent = (props: Props) => {
             </>
         );
     }
-    const renderStatusDrowdown = () => {
 
-        return (
-            <> 
-                <div className={classes.selectDropdown} onClick={handleStatusSelectClick}>
-                    
-            
-                    <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                        
-                    </Typography>
-                    <div className={classes.selectDownArrow}>
-                        <ArrowDropDownIcon />
-                    </div>
-                     
-                    
-                </div>
-                <Popper
-                    id={statusPopperId}
-                    open={statusPopperOpen}
-                    anchorEl={statusAnchorEl}
-                    placement="bottom-start"
-                    className={classes.popper}
-                >
-                    <div className={classes.header}>
-                        Select
-                    </div>
-                    <Autocomplete
-                        open
-                        onClose={handleStatusSelectClose}
-                        disableCloseOnSelect={false}
-                        // value={selectedPaymentMethod}
-                        onChange={(event: any, selectedOption: string | null) => {
-                            // setSelectedPaymentMethod(selectedOption);
-                        }}
-                        noOptionsText="No Records Found"
-                        renderOption={(option: string) => {
-                            return <React.Fragment>
-                                <div style={{ display: 'flex' }}>
-                                    <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        {option}
-                                    </Typography>
-
-                                </div>
-                            </React.Fragment>
-                        }}
-                        options={['USDT', 'BTC', 'RSC']}
-                        getOptionLabel={(option: string) => option}
-                        renderInput={(params) => (
-                            <InputBase
-                                ref={params.InputProps.ref}
-                                inputProps={params.inputProps}
-                                autoFocus
-                                className={classes.inputBase}
-                            />
-                        )}
-                    />
-                </Popper>
-            </>
-        );
-    }
-
-    const renderAds = () => {
+    const renderOrders = () => {
         return (
             <>
                 <TableContainer>
@@ -329,22 +179,22 @@ const P2PMyAdsComponent = (props: Props) => {
                         <TableHead>
                             <TableRow>
                                 <StyledTableCell>
-                                    {`Ad Number\n Type\n Asset/Fiat`}
+                                    {`Side \n\nAsset/type`}
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                    {`Total Amount\n Completed Trade QTY.\n Limit`}
+                                    {`Amount`}
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                    {`Price\n Exchange Rate`}
+                                    {`Price & Quantity`}
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                    Payment Method
+                                    Counterparty
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                    {`Last Updated\n Create Time`}
+                                    {`Created at`}
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                    Status
+                                    {`Status`}
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     Actions
@@ -355,46 +205,34 @@ const P2PMyAdsComponent = (props: Props) => {
                             <TableRow hover>
                                 <StyledTableCell>
                                     <div style={{ }}>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>1232354542346</Typography>
                                         <Typography variant='body1' component="div" style={{ fontWeight: 700, color: 'rgb(248, 73, 96)' }}>SELL</Typography>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <Typography variant='body1' style={{ color: 'grey' }}>USDT</Typography>
-                                            <Typography variant='body1' style={{ color: 'grey' }}>/</Typography>
-                                            <Typography variant='body1' style={{ marginLeft: '8px', color: 'grey' }}>PKR</Typography>
-                                        </div>
+                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, fontSize: '16px' }}>USDT</Typography>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     <div style={{ }}>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>170.00</Typography>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>0.00</Typography>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <Typography variant='body1' style={{ color: 'grey' }}>1500.00-150,0000.00 PKR</Typography>
-                                        </div>
+                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, fontSize: '18px' }}>1500.00</Typography>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     <div style={{ }}>
                                         <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>198.00</Typography>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, }}>--</Typography>
+                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, }}>7.56</Typography>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     <div style={{ width: '50%' }}>
-                                        <Tooltip title="Payment Method1" arrow>
-                                            <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
+                                            <Typography variant="body1">Advertiser name</Typography>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     <div style={{ }}>
                                         <Typography variant='body1' component="div">2021-08-30 03:40:23</Typography>
-                                        <Typography variant='body1' component="div">2021-08-30 03:40:23</Typography>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     <div style={{ }}>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, color: '#02C076' }}>Published</Typography>
+                                        <Typography variant='body1' component="div" style={{ }}>Cancelled</Typography>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -427,7 +265,7 @@ const P2PMyAdsComponent = (props: Props) => {
    
     return (
         <>
-            <PageHeader pageTitle={'My Ads'} />
+            <PageHeader pageTitle={'Orders'} />
             <Box className={classes.pageRoot} alignItems="center">
                 <Paper className={classes.pageContent} >
                     <div className={classes.tabsHeader}>
@@ -443,14 +281,14 @@ const P2PMyAdsComponent = (props: Props) => {
                                 </Typography>   
                             </Link>
                         </div>
-                        <P2PLinks handleVideoDialogOpen={handleVideoTurorialDialogOpen} />
+                        <P2PLinks activeOrdersLink={true} handleVideoDialogOpen={handleVideoTurorialDialogOpen} />
                     </div>
                     <Box className={classes.paramsFiltersRoot}>
                         <div className={classes.filtersDiv}>
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
                                 Asset/type
                             </InputLabel>
-                            {renderAssetsDrowdown()}
+                            {renderPaymentMethodDrowdown()}
                         </div>
                         <div className={classes.filtersDiv}>
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
@@ -462,43 +300,11 @@ const P2PMyAdsComponent = (props: Props) => {
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
                                 Status
                             </InputLabel>
-                            {renderStatusDrowdown()}
+                            {renderPaymentMethodDrowdown()}
                         </div>
-                        <div className={classes.dateFiltersDiv}>
-                            <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
-                                Created Date
-                            </InputLabel>
-                            <LocalizationProvider dateAdapter={DateFnsUtils}>
-                                <DateRangePicker
-                                    startText=""
-                                    endText=""
-                                    value={value}
-                                    onChange={(newValue) => setValue(newValue)}
-                                    renderInput={(startProps, endProps) => (
-                                        <React.Fragment>
-                                            <TextField variant="standard" size='small' {...startProps} helperText={null} />
-                                            <DateRangeDelimiter> to </DateRangeDelimiter>
-                                            <TextField variant="standard" size='small' {...endProps} helperText={null} />
-                                        </React.Fragment>
-                                    )}
-                                />
-                            </LocalizationProvider>
-                           
-                        </div>
-                        <div className={classes.filtersDiv}>
-                            <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
-                               
-                            </InputLabel>
-                            <Button variant="outlined" color="secondary">
-                                Filter
-                            </Button>
-                            <Button style={{ marginLeft: '8px' }}>Reset</Button>
-                        </div>
-
-                       
                     </Box>
                     <div style={{ margin: '8px' }}>
-                        {renderAds()}
+                        {renderOrders()}
                     </div>
                 </Paper>
                 <P2PVideoTutorialDialog open={videoTutorialDialogOpen} handleClose={handleVideoTurorialDialogClose} />
@@ -507,4 +313,4 @@ const P2PMyAdsComponent = (props: Props) => {
     );    
 }
 
-export const P2PMyAdsScreen = P2PMyAdsComponent;
+export const P2PMyOrdersScreen = P2PMyOrdersComponent;

@@ -47,6 +47,7 @@ import { ModalWithdrawConfirmation } from '../../../containers/ModalWithdrawConf
 import { ModalWithdrawSubmit } from '../../../containers/ModalWithdrawSubmit';
 import { WalletItemProps, CryptoIcon } from '../../../components';
 import { globalStyle } from '../../materialUIGlobalStyle';
+import { setDocumentTitle } from '../../../helpers';
 
 import { 
     selectUserInfo,
@@ -189,6 +190,10 @@ createStyles({
 type Props = ReduxProps & DispatchProps & RouterProps & InjectedIntlProps;
 const P2PAdvertiserDetailComponent = (props: Props) => {
     const classes = useStyles();
+
+    React.useEffect(() => {
+        setDocumentTitle('Buy and Sell Crypto on P2P');
+    }, []);
 
     const pageTitle = 'Advertiser details';
 

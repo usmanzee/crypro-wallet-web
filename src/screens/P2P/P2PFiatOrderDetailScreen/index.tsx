@@ -74,6 +74,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
 import { P2PLinks } from '../../../components/P2P/P2PLinks';
+import { setDocumentTitle } from '../../../helpers';
 
 import {
     // useDocumentTitle,
@@ -131,7 +132,8 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
     useUserPaymentMethodsFetch();
 
     React.useEffect(() => {
-        scrollToBottom()
+        setDocumentTitle('Buy and Sell Crypto on P2P');
+        scrollToBottom();
     }, []);
 
     const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {

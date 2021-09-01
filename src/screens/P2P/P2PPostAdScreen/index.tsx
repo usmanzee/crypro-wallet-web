@@ -60,11 +60,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 
-//Local imports
 import { PageHeader } from '../../../containers/PageHeader';
 import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
 import { StyledTableCell } from '../../materialUIGlobalStyle';
 import { useStyles } from './style';
+import { setDocumentTitle } from '../../../helpers';
 
 
 import {
@@ -108,6 +108,11 @@ const P2PPostAdComponent = (props: Props) => {
     const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = React.useState(false);
     const theme = useTheme();
     const fullScreenPaymentDialog = useMediaQuery(theme.breakpoints.down('sm'));
+
+    React.useEffect(() => {
+        setDocumentTitle('Buy and Sell Crypto on P2P');
+    }, []);
+
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);

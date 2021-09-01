@@ -131,7 +131,7 @@ export const useStyles = makeStyles((theme: Theme) =>
         },
         [theme.breakpoints.only('lg')]: {
             margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-            width: "15%",
+            width: "20%",
         },
         [theme.breakpoints.only('md')]: {
             width: '100%',

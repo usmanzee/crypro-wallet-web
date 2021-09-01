@@ -32,6 +32,7 @@ import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 import { StyledTableCell } from '../materialUIGlobalStyle';
 import { useStyles } from './style';
+import { setDocumentTitle } from '../../helpers';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -122,6 +123,10 @@ const ExpressOfferComponent = (props: Props) => {
     useP2PCurrenciesFetch();
     useP2PPaymentMethodsFetch();
     useUserPaymentMethodsFetch();
+
+    React.useEffect(() => {
+        setDocumentTitle('Buy and Sell Crypto on P2P');
+    }, []);
 
     //Use Effects
     // React.useEffect(() => {
