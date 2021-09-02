@@ -78,9 +78,7 @@ const useStyles = (theme: Theme) => ({
             display: 'none'
         }
     },
-    emptySpaceInHeader: {
-        flexGrow: 1,
-    },
+   
 });
 
 
@@ -197,7 +195,6 @@ class Head extends React.Component<Props, IState> {
                                     <Link to="/" className={classes.logoLink}>
                                         <img src={logoLight} alt="logo" style={{ width: '50px', marginRight: '24px' }}/>
                                     </Link>
-                                    <div className={classes.emptySpaceInHeader}></div>
                                     <NavBar />
                                 </Toolbar>
                             </AppBar>

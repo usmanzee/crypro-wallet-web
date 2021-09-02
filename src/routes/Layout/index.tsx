@@ -66,7 +66,8 @@ import {
     P2PPostAdScreen,
     AddP2PPaymentMethodScreen,
     P2PMyAdsScreen,
-    P2PMyOrdersScreen
+    P2PMyOrdersScreen,
+    SavingsOffersScreen
 } from '../../screens';
 
 // const ChangeForgottenPasswordScreen = loadable(() => import('../../screens/ChangeForgottenPasswordScreen'));
@@ -269,18 +270,19 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <Route path="/fee" component={FeeScreen} />
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/merchant" component={MerchantScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/buy-crypto" component={BuyCryptoScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/offers" component={P2POffersScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/offers/:side" component={P2POffersScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/offers/:side/:currency" component={P2POffersScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/advertiserDetail/:id" component={P2PAdvertiserDetailScreen}/>
+                            <Route exact path="/p2p/offers" component={P2POffersScreen}/>
+                            <Route exact path="/p2p/offers/:side" component={P2POffersScreen}/>
+                            <Route exact path="/p2p/offers/:side/:currency" component={P2POffersScreen}/>
+                            <Route exact path="/p2p/advertiserDetail/:id" component={P2PAdvertiserDetailScreen}/>
 
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/quick-trade" component={ExpressOfferScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/quick-trade/:side" component={ExpressOfferScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/quick-trade/:side/:currency" component={ExpressOfferScreen}/>
+                            <Route exact path="/p2p/quick-trade" component={ExpressOfferScreen}/>
+                            <Route exact path="/p2p/quick-trade/:side" component={ExpressOfferScreen}/>
+                            <Route exact path="/p2p/quick-trade/:side/:currency" component={ExpressOfferScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/fiat-order/:id" component={P2PFiatOrderDetailScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/post-ad" component={P2PPostAdScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-ads" component={P2PMyAdsScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-orders" component={P2PMyOrdersScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/savings" component={SavingsOffersScreen}/>
                             <Route path="**"><Redirect to="/trading/" /></Route>
                         </Switch>
                         {isLoggedIn && <WalletsFetch/>}

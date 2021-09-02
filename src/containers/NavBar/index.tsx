@@ -48,6 +48,7 @@ import PermIdentityIcon from '@material-ui/icons/PermIdentity';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SettingsInputHdmiIcon from '@material-ui/icons/SettingsInputHdmi';
 import LocalActivityIcon from '@material-ui/icons/LocalActivity';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import {
     changeColorTheme,
@@ -96,6 +97,19 @@ export interface OwnProps {
 }
 
 const useStyles = (theme: Theme) => ({
+    headerLinksDiv: {
+        display: 'flex', 
+        marginLeft: '144px',
+        [theme.breakpoints.down('sm')]: {
+            display: 'none'
+        },
+    },
+    emptySpaceInHeader: {
+        flexGrow: 1,
+        // [theme.breakpoints.down('sm')]: {
+        //     display: 'none'
+        // },
+    },
     headerLink: {
         color: "#fff",
         whiteSpace: 'pre',
@@ -117,9 +131,9 @@ const useStyles = (theme: Theme) => ({
         backgroundColor: 'rgba(255, 255, 255, 0.15)',
     },
     notificationContainer: {
-        [theme.breakpoints.only('xs')]: {
-            display: 'none'
-        },
+        // [theme.breakpoints.only('xs')]: {
+        //     display: 'none'
+        // },
     },
     notificationHeader: {
         // borderBottom: `1px solid ${theme.palette.text.secondary}`,
@@ -248,9 +262,10 @@ class NavBarComponent extends React.Component<Props, IState> {
         const { isLoggedIn, classes } = this.props;
         return (
             <>
-                <List style={{ display: 'flex' }}>
+                <List className={classes.headerLinksDiv}>
                     {headerRoutes(isLoggedIn).map(this.renderNavLinks())}
                 </List>
+                <div className={classes.emptySpaceInHeader}></div>
                 {isLoggedIn &&
                     <>
                         {this.renderProfile()}
@@ -273,8 +288,11 @@ class NavBarComponent extends React.Component<Props, IState> {
         const [name, url] = values;
         return (
             <React.Fragment>
-                <ListItem className={classes.headerLink} button component={Link} to={url}>
-                    <ListItemText primary={userLoading ? <Skeleton width={50} className={classes.headerContentLoader}/> : this.translate(name)} />
+                <ListItem className={classes.headerLink} component={Link} to={url}>
+                    <ListItemText primary={userLoading ? <Skeleton width={50} className={classes.headerContentLoader}/> : <Typography variant="body1">{this.translate(name)}</Typography> } />
+                    {/* <ListItemIcon>
+                        <ExpandMoreIcon />
+                    </ListItemIcon> */}
                 </ListItem>
             </React.Fragment>
         );
@@ -317,7 +335,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                             <Paper>
                                 <List disablePadding>
                                     {this.renderProfileLinks()}
-                                    <ListItem className={classes.dropdownLink} button onClick={this.handleLogoutClick}>
+                                    <ListItem className={classes.dropdownLink} onClick={this.handleLogoutClick}>
                                         <ListItemIcon>
                                             <ExitToAppIcon />
                                         </ListItemIcon>
@@ -370,7 +388,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                 {profileLinks.map((profileLink) => {
                     return (
                         <>
-                            <ListItem button className={classes.dropdownLink} component={Link} to={profileLink.url} onClick={this.handleProfilePanelClose}>
+                            <ListItem className={classes.dropdownLink} component={Link} to={profileLink.url} onClick={this.handleProfilePanelClose}>
                                 <ListItemIcon>
                                     {profileLink.iconComponent}
                                 </ListItemIcon>
@@ -443,8 +461,7 @@ class NavBarComponent extends React.Component<Props, IState> {
                     return (
                         <>
                             <ListItem 
-                                className={classes.dropdownLink} 
-                                button 
+                                className={classes.dropdownLink}  
                                 onClick={e => this.handleChangeLanguage(language)}
                                 selected={language === lang}
                             >

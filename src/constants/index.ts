@@ -5,6 +5,7 @@ export const pgRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => 
         ['page.header.navbar.trade', '/trading/', `trade${isLight ? 'Light' : ''}`, '/trading'],
         ['page.header.navbar.wallets', '/wallets', `wallets${isLight ? 'Light' : ''}`, '/wallet'],
         ['P2P Trade', '/p2p/offers', `p2p-trade${isLight ? 'Light' : ''}`, '/p2p/offers'],
+        ['Savings', '/savings', `savings${isLight ? 'Light' : ''}`, '/savings'],
         ['page.header.navbar.buy_sell', '/swap', `swap${isLight ? 'Light' : ''}`, '/swap'],
         ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`, '/orders'],
         ['page.header.navbar.history', '/history', `history${isLight ? 'Light' : ''}`, '/history'],
@@ -13,21 +14,24 @@ export const pgRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => 
         ['page.header.navbar.signIn', '/signin', `signin${isLight ? 'Light' : ''}`],
         ['page.header.signUp', '/signup', `signup${isLight ? 'Light' : ''}`],
         ['page.header.navbar.trade', '/trading/', `trade${isLight ? 'Light' : ''}`],
+        ['P2P Trade', '/p2p/offers', `p2p-trade${isLight ? 'Light' : ''}`, '/p2p/offers'],
     ];
 
     return isLoggedIn ? routes : routesUnloggedIn;
 };
 export const headerRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][] => {
-    const loggedOutroutes = [
+    const loggedinRoutes = [
+        ['P2P Trade', '/p2p/offers', `p2p${isLight ? 'P2P' : ''}`],
         ['page.header.navbar.wallets', '/wallets', `wallets${isLight ? 'Light' : ''}`],
         ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`],
     ];
     const loggedoutRoutes = [
+        ['P2P Trade', '/p2p/offers', `p2p${isLight ? 'P2P' : ''}`],
         ['page.header.navbar.signIn', '/signin', `signIn${isLight ? 'Light' : ''}`],
-        ['page.header.signUp', '/signup', `signUp${isLight ? 'Light' : ''}`],
+        // ['page.header.signUp', '/signup', `signUp${isLight ? 'Light' : ''}`],
     ];
 
-    return isLoggedIn ? loggedOutroutes : loggedoutRoutes;
+    return isLoggedIn ? loggedinRoutes : loggedoutRoutes;
 };
 
 export const profileTabs = (): string[][] => {
