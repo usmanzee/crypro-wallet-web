@@ -13,7 +13,7 @@ export const useStyles = makeStyles((theme: Theme) =>
         borderColor: theme.palette.text.disabled
     },
     contentDiv: {
-      maxWidth: '70%',
+      maxWidth: '90%',
       margin: 'auto',
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100%',

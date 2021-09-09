@@ -12,6 +12,16 @@ import {
     WALLETS_WITHDRAW_CCY_DATA,
     WALLETS_WITHDRAW_CCY_ERROR,
     WALLETS_WITHDRAW_CCY_FETCH,
+
+    SAVINGS_WALLETS_FETCH,
+    SAVINGS_WALLETS_DATA,
+    SAVINGS_WALLETS_DATA_WS,
+    SAVINGS_WALLETS_ERROR,
+
+    P2P_WALLETS_FETCH,
+    P2P_WALLETS_DATA,
+    P2P_WALLETS_DATA_WS,
+    P2P_WALLETS_ERROR,
 } from './constants';
 import {
     Wallet,
@@ -43,6 +53,50 @@ export interface WalletsError {
 
 export interface WalletsReset {
     type: typeof WALLETS_RESET;
+}
+
+export interface SavingsWalletsFetch {
+    type: typeof SAVINGS_WALLETS_FETCH;
+}
+
+export interface SavingsWalletsData {
+    type: typeof SAVINGS_WALLETS_DATA;
+    payload: Wallet[];
+}
+
+export interface SavingsWalletsDataByRanger {
+    type: typeof SAVINGS_WALLETS_DATA_WS;
+    payload: {
+        ws: boolean;
+        balances;
+    };
+}
+
+export interface SavingsWalletsError {
+    type: typeof SAVINGS_WALLETS_ERROR;
+    payload: CommonError;
+}
+
+export interface P2PWalletsFetch {
+    type: typeof P2P_WALLETS_FETCH;
+}
+
+export interface P2PWalletsData {
+    type: typeof P2P_WALLETS_DATA;
+    payload: Wallet[];
+}
+
+export interface P2PWalletsDataByRanger {
+    type: typeof P2P_WALLETS_DATA_WS;
+    payload: {
+        ws: boolean;
+        balances;
+    };
+}
+
+export interface P2PWalletsError {
+    type: typeof P2P_WALLETS_ERROR;
+    payload: CommonError;
 }
 
 export interface WalletsAddressFetch {
@@ -85,6 +139,14 @@ export type WalletsAction = WalletsFetch
     | WalletsData
     | WalletsDataByRanger
     | WalletsError
+    | SavingsWalletsFetch
+    |SavingsWalletsData
+    |SavingsWalletsDataByRanger
+    |SavingsWalletsError
+    |P2PWalletsFetch
+    |P2PWalletsData
+    |P2PWalletsDataByRanger
+    |P2PWalletsError
     | WalletsAddressFetch
     | WalletsAddressData
     | WalletsAddressError
@@ -110,6 +172,44 @@ export const updateWalletsDataByRanger = (payload: WalletsDataByRanger['payload'
 
 export const walletsError = (payload: WalletsError['payload']): WalletsError => ({
     type: WALLETS_ERROR,
+    payload,
+});
+
+export const savingsWalletsFetch = (): SavingsWalletsFetch => ({
+    type: SAVINGS_WALLETS_FETCH,
+});
+
+export const savingsWalletsData = (payload: SavingsWalletsData['payload']): SavingsWalletsData => ({
+    type: SAVINGS_WALLETS_DATA,
+    payload,
+});
+
+export const updateSavingsWalletsDataByRanger = (payload: SavingsWalletsDataByRanger['payload']): SavingsWalletsDataByRanger => ({
+    type: SAVINGS_WALLETS_DATA_WS,
+    payload,
+});
+
+export const savingsWalletsError = (payload: SavingsWalletsError['payload']): SavingsWalletsError => ({
+    type: SAVINGS_WALLETS_ERROR,
+    payload,
+});
+
+export const p2pWalletsFetch = (): P2PWalletsFetch => ({
+    type: P2P_WALLETS_FETCH,
+});
+
+export const p2pWalletsData = (payload: P2PWalletsData['payload']): P2PWalletsData => ({
+    type: P2P_WALLETS_DATA,
+    payload,
+});
+
+export const updateP2PWalletsDataByRanger = (payload: P2PWalletsDataByRanger['payload']): P2PWalletsDataByRanger => ({
+    type: P2P_WALLETS_DATA_WS,
+    payload,
+});
+
+export const p2pWalletsError = (payload: P2PWalletsError['payload']): P2PWalletsError => ({
+    type: P2P_WALLETS_ERROR,
     payload,
 });
 

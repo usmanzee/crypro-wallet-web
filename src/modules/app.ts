@@ -3,6 +3,8 @@ import { alertReducer  } from './public/alert';
 import { changeColorThemeReducer  } from './public/colorTheme';
 import { configsReducer } from './public/configs';
 import { currenciesReducer } from './public/currencies';
+import { fiatCurrenciesReducer } from './public/fiatCurrencies';
+import { paymentMethodsReducer } from './public/paymentMethods';
 import { customizationReducer } from './public/customization';
 import { gridLayoutReducer } from './public/gridLayout/reducer';
 import { changeLanguageReducer  } from './public/i18n';
@@ -50,11 +52,14 @@ import { p2pOffersReducer } from './user/p2pOffers';
 import { p2pTransfersReducer } from './user/p2pTransfers';
 import { p2pOrdersReducer } from './user/p2pOrders';
 import { p2pDisputeReducer } from './user/p2pDispute';
+import { savingsPlansReducer } from './public/savings';
 
 export const publicReducer = combineReducers({
     colorTheme: changeColorThemeReducer,
     configs: configsReducer,
     currencies: currenciesReducer,
+    fiatCurrencies: fiatCurrenciesReducer,
+    paymentMethods: paymentMethodsReducer,
     customization: customizationReducer,
     recentTrades: recentTradesReducer,
     markets: marketsReducer,
@@ -67,8 +72,8 @@ export const publicReducer = combineReducers({
     alerts: alertReducer,
     rgl: gridLayoutReducer,
     memberLevels: memberLevelsReducer,
-
     p2p: p2pReducer,
+    savingsPlans: savingsPlansReducer,
 });
 
 export const userReducer = combineReducers({

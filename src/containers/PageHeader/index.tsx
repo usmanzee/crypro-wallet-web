@@ -41,7 +41,7 @@ const PageHeaderComponent = (props: Props) => {
         const [name, url,] = values;
         return (
             <>
-                <Link to={url} className={classes.actionLink} style={{ textDecoration: 'none' }}>
+                <Link to={url} target="blank" className={classes.actionLink} style={{ textDecoration: 'none' }}>
                     <Button variant="outlined" color="secondary" size="small">
                         {translate(name)}
                     </Button>

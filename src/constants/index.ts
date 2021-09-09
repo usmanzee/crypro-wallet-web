@@ -26,6 +26,7 @@ export const headerRoutes = (isLoggedIn: boolean, isLight?: boolean): string[][]
         ['page.header.navbar.openOrders', '/orders', `orders${isLight ? 'Light' : ''}`],
     ];
     const loggedoutRoutes = [
+        ['Earn', '/savings', `savings${isLight ? 'Savings' : ''}`],
         ['P2P Trade', '/p2p/offers', `p2p${isLight ? 'P2P' : ''}`],
         ['page.header.navbar.signIn', '/signin', `signIn${isLight ? 'Light' : ''}`],
         // ['page.header.signUp', '/signup', `signUp${isLight ? 'Light' : ''}`],

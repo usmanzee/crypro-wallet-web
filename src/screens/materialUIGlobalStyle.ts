@@ -20,6 +20,13 @@ export const globalStyle = theme => ({
         borderStyle: 'solid',
         borderColor: theme.palette.text.disabled
     },
+    hrefLink: {
+        color: theme.palette.secondary.main,
+        textDecoration: 'none',
+        '&:hover': {
+            textDecoration: 'none',
+        },
+    }
 });
 
 export const StyledTableCell = withStyles((theme: Theme) =>

@@ -14,7 +14,7 @@ const currenciesOptions: RequestOptions = {
 
 export function* walletsSaga() {
     try {
-        const accounts = yield call(API.get(walletsOptions), '/account/balances');
+        const accounts = yield call(API.get(walletsOptions), '/account/balances?account_type=spot');
         const currencies = yield call(API.get(currenciesOptions), '/public/currencies');
 
         const accountsByCurrencies = currencies.map(currency => {
@@ -28,6 +28,7 @@ export function* walletsSaga() {
 
             return ({
                 ...walletInfo,
+                walletType: walletInfo.account_type,
                 name: currency.name,
                 explorerTransaction: currency!.explorer_transaction,
                 explorerAddress: currency!.explorer_address,

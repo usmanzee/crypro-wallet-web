@@ -6,6 +6,8 @@ import { AlertState, rootHandleAlertSaga } from './public/alert';
 import { ColorThemeState } from './public/colorTheme';
 import { ConfigsState, rootConfigsSaga } from './public/configs';
 import { CurrenciesState, rootCurrenciesSaga } from './public/currencies';
+import { FiatCurrenciesState, rootFiatCurrenciesSaga } from './public/fiatCurrencies';
+import { PaymentMethodsState, rootPaymentMethodsSaga } from './public/paymentMethods';
 import { CustomizationState, rootCustomizationSaga } from './public/customization';
 import { GridLayoutState } from './public/gridLayout';
 import { LanguageState } from './public/i18n';
@@ -47,7 +49,8 @@ import { MerchantKeyState, rootMerchantKeySaga } from './user/merchantKey';
 import { MerchantWebsiteState, rootMerchantWebsiteSaga } from './user/merchantWebsite';
 import { MerchantPaymentsState, rootMerchantPaymentsSaga } from './user/merchantPayments';
 
-import { P2PState, rootP2PSaga } from './public/p2p';
+import { P2PState, PaymentMethod, rootP2PSaga } from './public/p2p';
+import { SavingsPlansState, rootSavingPlansSaga } from './public/savings';
 import { PaymentMethodState, rootPaymentMethodSaga } from './user/paymentMethod';
 import { P2POffersState, rootP2POffersSaga } from './user/p2pOffers';
 import { P2PTransfersState, rootP2PTransfersSaga } from './user/p2pTransfers';
@@ -59,10 +62,14 @@ export * from './public/orderBook';
 export * from './public/colorTheme';
 export * from './public/configs';
 export * from './public/currencies';
+export * from './public/fiatCurrencies';
+export * from './public/paymentMethods';
 export * from './public/customization';
 export * from './public/i18n';
 export * from './public/kline';
 export * from './public/alert';
+export * from './public/savings';
+
 export * from './user/apiKeys';
 export * from './user/auth';
 export * from './user/beneficiaries';
@@ -100,6 +107,8 @@ export interface RootState {
         colorTheme: ColorThemeState;
         configs: ConfigsState;
         currencies: CurrenciesState;
+        fiatCurrencies: FiatCurrenciesState;
+        paymentMethods: PaymentMethodsState;
         customization: CustomizationState;
         recentTrades: RecentTradesState;
         markets: MarketsState;
@@ -112,8 +121,8 @@ export interface RootState {
         kline: KlineState;
         rgl: GridLayoutState;
         memberLevels: MemberLevelsState;
-
         p2p: P2PState;
+        savingsPlans: SavingsPlansState;
     };
     user: {
         auth: AuthState;
@@ -162,6 +171,7 @@ export function* rootSaga() {
         call(rootBeneficiariesSaga),
         call(rootConfigsSaga),
         call(rootCurrenciesSaga),
+        call(rootFiatCurrenciesSaga),
         call(rootCustomizationSaga),
         call(rootCustomizationUpdateSaga),
         call(rootEmailVerificationSaga),
@@ -198,5 +208,7 @@ export function* rootSaga() {
         call(rootP2POrdersSaga),
         call(rootP2PTransfersSaga),
         call(rootP2PDisputeSaga),
+
+        call(rootSavingPlansSaga),
     ]);
 }

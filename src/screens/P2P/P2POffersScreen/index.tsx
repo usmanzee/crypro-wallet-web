@@ -24,7 +24,8 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    useMediaQuery
+    useMediaQuery,
+    CircularProgress
 } from '@material-ui/core';
 
 import ReceiptIcon from '@material-ui/icons/Receipt';
@@ -60,13 +61,19 @@ import {
 } from '../../../hooks';
 
 import { 
+    Currency,
+    FiatCurrency,
+    selectCurrenciesLoading,
+    selectCurrencies,
+    currenciesFetch,
+    selectFiatCurrenciesLoading,
+    selectFiatCurrencies,
+    fiatCurrenciesFetch,
     Offer,
     P2POrderCreate,
     p2pOrdersCreateFetch,
     selectP2PCreatedOrder,
     selectP2PCreateOrderSuccess,
-    selectP2PCurrenciesData,
-    selectP2PPaymentMethodsData,
 } from '../../../modules';
 
 import { CommonError } from '../../../modules/types';
@@ -77,16 +84,6 @@ import {
     useParams,
     useHistory
 } from "react-router-dom";
-
-export interface AllFiatCurrency {
-    symbol:         string;
-    name:           string;
-    symbol_native:  string;
-    decimal_digits: number;
-    rounding:       number;
-    code:           string;
-    name_plural:    string;
-}
 
 export interface PaymentMethod {
     value: number;
@@ -112,17 +109,16 @@ const P2POffersComponent = (props: Props) => {
 
     // States
 
-    const [cryptoCurrenciesList, setCryptoCurrenciesList] = React.useState();
     const [sides, setSides] = React.useState([
         {'title': 'buy', 'selectedBGColor': '#02C076'},
         {'title': 'sell', 'selectedBGColor': 'rgb(248, 73, 96)'},
     ]);
-
-    const [selectedCryptoCurrency, setSelectedCryptoCurrency] = React.useState<string>(currency);
     const [selectedSide, setSelectedSide] = React.useState(sideName);
+    const [cryptoCurrencies, setCryptoCurrencies] = React.useState<Currency[]>([]);
+    const [loadingCryptoCurrencies, setLoadingCryptoCurrencies] = React.useState<boolean>(false);
+    const [selectedCryptoCurrencyName, setSelectedCryptoCurrencyName] = React.useState<string>(currency);
 
-    const [allFiatCurrencies, setAllFiatCurrencies] = React.useState<AllFiatCurrency[] | []>([]);
-    const [selectedFiatCurrency, setSelectedFiatCurrency] = React.useState<AllFiatCurrency | null>();
+    const [selectedFiatCurrency, setSelectedFiatCurrency] = React.useState<FiatCurrency>(null);
 
     const [paymentMethods, setPaymentMethods] = React.useState<PaymentMethod[] | []>([
         { value: 1, label: 'Method 1' },
@@ -137,8 +133,12 @@ const P2POffersComponent = (props: Props) => {
     const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
 
     const dispatch = useDispatch();
-    const currencies = useSelector(selectP2PCurrenciesData);
-    const allPaymentMethods = useSelector(selectP2PPaymentMethodsData);
+    // const currencies = useSelector(selectP2PCurrenciesData);
+    // const allPaymentMethods = useSelector(selectP2PPaymentMethodsData);
+    const currencies = useSelector(selectCurrencies);
+    const currenciesLoading = useSelector(selectCurrenciesLoading);
+    const fiatCurrencies = useSelector(selectFiatCurrencies);
+    const fiatCurrenciesLoading = useSelector(selectFiatCurrenciesLoading);
 
     useP2PCurrenciesFetch();
     useP2PPaymentMethodsFetch();
@@ -153,23 +153,36 @@ const P2POffersComponent = (props: Props) => {
     React.useEffect(() => {
         setDocumentTitle('Buy and Sell Crypto on P2P');
     }, []);
-    React.useEffect(() => {
-        if(!allFiatCurrencies.length) {
-            getAllFiatCurrencies();
-        } else {
-            setSelectedFiatCurrency(allFiatCurrencies[0]);
-        }
-    }, [allFiatCurrencies]);
 
     React.useEffect(() => {
-        if (currencies.length) {
-            const cryptoCurrencies = currencies.filter(i => i.type === 'coin').map(i => i.id.toUpperCase());
-            if (cryptoCurrencies.length) {
-                // setFiatCurrency(fiatCurrencies[0]);
-            }
+        if(!currencies.length) {
+            dispatch(currenciesFetch());
+        } else {
+            filterCryptoCurrencies();
         }
     }, [currencies]);
+
+    React.useEffect(() => {
+        if(!fiatCurrencies.length) {
+            dispatch(fiatCurrenciesFetch());
+        } else {
+            setSelectedFiatCurrency(fiatCurrencies[0]);
+        }
+    }, [fiatCurrencies]);
+
+    React.useEffect(() => {
+        if(cryptoCurrencies.length) {
+            setSelectedCryptoCurrencyName(cryptoCurrencies[0].id);
+        }
+    }, [cryptoCurrencies]);
     //End Use Effects
+
+    const filterCryptoCurrencies = () => {
+        const filteredCurrencies = currencies.filter((currency) => {
+            return currency.type == 'coin';
+        });
+        setCryptoCurrencies(filteredCurrencies);
+    }
 
     const handleSideChange = (event, newSide) => {
         if (newSide !== null) {
@@ -179,15 +192,9 @@ const P2POffersComponent = (props: Props) => {
     };
 
     const onCryptoCurrencyChange = (currency: string) => {
-        setSelectedCryptoCurrency(currency);
+        setSelectedCryptoCurrencyName(currency);
         // history.push(`/p2p/offers/${selectedSide}/${currency}`);
     };
-
-    const getAllFiatCurrencies = () => {
-        PublicDataAPI.getAllFiatCurrencies().then((responseData) => {
-            setAllFiatCurrencies(responseData);
-		});
-	}
 
     const handlePaymentMethodSelectClick = (event: React.MouseEvent<HTMLElement>) => {
         setPaymentMethodAnchorEl(event.currentTarget);
@@ -272,11 +279,11 @@ const P2POffersComponent = (props: Props) => {
                         onClose={handleFiatCurrencySelectClose}
                         disableCloseOnSelect={false}
                         value={selectedFiatCurrency}
-                        onChange={(event: any, selectedOption: AllFiatCurrency | null) => {
+                        onChange={(event: any, selectedOption: FiatCurrency | null) => {
                             setSelectedFiatCurrency(selectedOption);
                         }}
                         noOptionsText="No Records Found"
-                        renderOption={(option: AllFiatCurrency) => {
+                        renderOption={(option: FiatCurrency) => {
                             return <React.Fragment>
                                 <div style={{ display: 'flex' }}>
                                     <Chip color="secondary" size="small" label={option ? option.symbol_native.toUpperCase() : ''} className={classes.currencyCode} />
@@ -287,8 +294,8 @@ const P2POffersComponent = (props: Props) => {
                                 </div>
                             </React.Fragment>
                         }}
-                        options={allFiatCurrencies}
-                        getOptionLabel={(option: AllFiatCurrency) => option ? option.name : ''}
+                        options={fiatCurrencies}
+                        getOptionLabel={(option: FiatCurrency) => option ? option.name : ''}
                         renderInput={(params) => (
                             <InputBase
                                 ref={params.InputProps.ref}
@@ -390,7 +397,7 @@ const P2POffersComponent = (props: Props) => {
                     <div style={{ display: 'flex' }}>
                         <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Available</span>
                         <div style={{ display: 'flex', marginRight: '8px'}}>
-                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 {selectedCryptoCurrency}</span>
+                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 {selectedCryptoCurrencyName}</span>
                         </div>
                     </div>
                     <div style={{ display: 'flex' }}>
@@ -472,7 +479,7 @@ const P2POffersComponent = (props: Props) => {
                                     <div style={{ display: 'flex', flexDirection: 'column'}}>
                                         <div style={{ display: 'flex', flexDirection: 'row'}}>
                                             <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Available</span>
-                                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 {selectedCryptoCurrency}</span>
+                                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 {selectedCryptoCurrencyName}</span>
                                         </div>
                                         <div style={{ display: 'flex', flexDirection: 'row'}}>
                                             <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Limit</span>
@@ -838,28 +845,19 @@ const P2POffersComponent = (props: Props) => {
                             })}
                         </ToggleButtonGroup>
 
-                        <div className={classes.cryptoFiltersRoot}>
-                            <div className={ selectedCryptoCurrency == 'USDT' ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange('USDT')}>
-                                <span>
-                                    USDT
-                                </span> 
-                            </div>
-                            <div className={selectedCryptoCurrency == 'BTC' ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange('BTC')}>
-                                <span>
-                                    BTC
-                                </span> 
-                            </div>
-                            <div className={selectedCryptoCurrency == 'RSC' ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange('RSC')}>
-                                <span>
-                                    RSC
-                                </span> 
-                            </div>
-                            <div className={selectedCryptoCurrency == 'ETH' ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange('ETH')}>
-                                <span>
-                                    ETH
-                                </span> 
-                            </div>
-                        </div>
+                        {cryptoCurrencies.length ? 
+                            <div className={classes.cryptoFiltersRoot}>
+                                {cryptoCurrencies.map((cryptoCurrency) => {
+                                    return (
+                                        <div className={ selectedCryptoCurrencyName.toLowerCase() == cryptoCurrency.id.toLowerCase() ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange(cryptoCurrency.id.toLowerCase())}>
+                                            <span>
+                                                {cryptoCurrency.id.toUpperCase()}
+                                            </span> 
+                                        </div>
+                                    );
+                                })}
+                            </div> : <CircularProgress size={20} />
+                        }
                     </Paper>
                     <Box className={classes.filtersRoot}>
                         <div className={classes.filtersDiv}>

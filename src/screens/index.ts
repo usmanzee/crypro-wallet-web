@@ -26,3 +26,4 @@ export * from "./P2P";
 export * from "./ExpressOfferScreen";
 export * from "./AddP2PPaymentMethodScreen";
 export * from "./SavingsOffersScreen";
+export * from "./SavingsHistoryScreen";

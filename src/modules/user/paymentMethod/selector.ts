@@ -15,11 +15,11 @@ export const selectPaymentMethodSuccess = (state: RootState): PaymentMethodState
 export const selectPaymentMethodLoading = (state: RootState): PaymentMethodState['loading'] =>
     state.user.paymentMethod.loading;
 
-export const selectPaymentMethodsLoading = (state: RootState): PaymentMethodState['listLoading'] =>
+export const selectPaymentMethodsfetching = (state: RootState): PaymentMethodState['listLoading'] =>
     state.user.paymentMethod.listLoading;
 
 export const selectPaymentMethodsTimestamp = (state: RootState): number | undefined =>
     state.user.paymentMethod.timestamp;
 
 export const selectShouldFetchPaymentMethods = (state: RootState): boolean =>
-    !selectPaymentMethodsTimestamp(state) && !selectPaymentMethodsLoading(state);
+    !selectPaymentMethodsTimestamp(state) && !selectPaymentMethodsfetching(state);

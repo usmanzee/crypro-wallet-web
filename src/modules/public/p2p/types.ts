@@ -24,16 +24,3 @@ export interface Offer {
     };
     orders_count?: number;
 }
-
-export interface P2PCurrency {
-    id: string;
-    type: string;
-    enabled: boolean;
-}
-
-export interface PaymentMethod {
-    id: number;
-    type: string;
-    name: string;
-    options?: any;
-}

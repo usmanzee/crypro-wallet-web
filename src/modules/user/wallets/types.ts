@@ -2,6 +2,7 @@ export interface Wallet {
     balance?: string;
     currency: string;
     name: string;
+    walletType: string;
     type: 'fiat' | 'coin';
     fee: number;
     address?: string;

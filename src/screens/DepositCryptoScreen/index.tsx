@@ -191,12 +191,13 @@ const DepositWalletCrypto = (props: Props) => {
     const [selectedWalletOption, setSelectedWalletOption] = React.useState<WalletItemProps | null | undefined>(null);
     const [walletAddress, setWalletAddress] = React.useState<string>('');
 
+    console.log(typeof wallets);
     //UseEffect
     React.useEffect(() => {
         if (!wallets.length) {
             fetchWallets();
         }
-    }, [wallets, fetchWallets]);
+    }, [wallets]);
 
     React.useEffect(() => {
         if (cryptoWallets.length === 0 && wallets.length > 0) {

@@ -610,7 +610,7 @@ class WalletsComponent extends React.Component<Props, WalletsState> {
                                 {walletsDataLoading ?
                                     <>
                                         <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
-                                            <CircularProgress size={20} /> :
+                                            <CircularProgress size={20} />
                                         </caption>
                                     </> :
                                     <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
