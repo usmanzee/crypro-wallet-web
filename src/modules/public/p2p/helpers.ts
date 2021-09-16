@@ -1,4 +1,4 @@
-import { Offer } from "../../../modules/public/p2p";
+import { Offer } from "../p2p";
 
 export const insertOrUpdate = (
     list: Offer[],
@@ -22,8 +22,8 @@ export const insertOrUpdate = (
 
     if (index === -1
         && side === offer.side
-        && base === offer.base
-        && quote === offer.quote
+        && base === offer.base_unit
+        && quote === offer.quote_unit
     ) {
         return [{...offer}, ...list];
     }

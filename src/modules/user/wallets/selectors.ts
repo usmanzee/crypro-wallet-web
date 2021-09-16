@@ -5,14 +5,20 @@ import { Wallet } from './types';
 export const selectWallets = (state: RootState): Wallet[] =>
     state.user.wallets.wallets.list;
 
+export const selectWalletsLoading = (state: RootState): boolean =>
+    state.user.wallets.wallets.loading;
+
 export const selectSavingsWallets = (state: RootState): Wallet[] =>
     state.user.wallets.wallets.savings;
+
+export const selectSavingWalletsLoading = (state: RootState): boolean =>
+    state.user.wallets.wallets.loadingSavingsWallets;
 
 export const selectP2PsWallets = (state: RootState): Wallet[] =>
     state.user.wallets.wallets.p2p;
 
-export const selectWalletsLoading = (state: RootState): boolean =>
-    state.user.wallets.wallets.loading;
+export const selectP2PWalletsLoading = (state: RootState): boolean =>
+    state.user.wallets.wallets.loadingP2PWallets;
 
 export const selectWithdrawProcessing = (state: RootState): boolean =>
     state.user.wallets.wallets.withdrawProcessing;

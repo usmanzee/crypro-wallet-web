@@ -1,7 +1,7 @@
 import { CommonError } from '../../types';
 import * as actions from './actions';
 import { p2pReducer, initialP2PState } from './reducer';
-import { Offer, P2PCurrency, PaymentMethod } from './types';
+import { Offer, PaymentMethod } from './types';
 
 describe('P2P reducer', () => {
     const fakeOffersArray: Offer[] = [
@@ -46,20 +46,7 @@ describe('P2P reducer', () => {
             },
         },
     ];
-
-    const fakeP2PCurrenciesArray: P2PCurrency[] = [
-        {
-            id: 'usdt',
-            type: 'coin',
-            enabled: true,
-        },
-        {
-            id: 'usdt',
-            type: 'coin',
-            enabled: true,
-        },
-    ];
-
+    
     const fakeP2PPaymentMethods: PaymentMethod[] = [
         {
             id: 1,

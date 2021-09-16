@@ -1,9 +1,6 @@
 import { CommonError } from '../../types';
 import * as actions from './actions';
 import {
-    P2P_CURRENCIES_DATA,
-    P2P_CURRENCIES_ERROR,
-    P2P_CURRENCIES_FETCH,
     P2P_OFFERS_DATA,
     P2P_OFFERS_ERROR,
     P2P_OFFERS_FETCH,
@@ -11,7 +8,7 @@ import {
     P2P_PAYMENT_METHODS_ERROR,
     P2P_PAYMENT_METHODS_FETCH,
 } from './constants';
-import { Offer, P2PCurrency, PaymentMethod } from './types';
+import { Offer, PaymentMethod } from './types';
 
 describe('P2P actions', () => {
     const fakeOffersArray: Offer[] = [
@@ -61,19 +58,6 @@ describe('P2P actions', () => {
         },
     ];
 
-    const fakeP2PCurrenciesArray: P2PCurrency[] = [
-        {
-            id: 'usdt',
-            type: 'coin',
-            enabled: true,
-        },
-        {
-            id: 'usdt',
-            type: 'coin',
-            enabled: true,
-        },
-    ];
-
     const fakeP2PPaymentMethods: PaymentMethod[] = [
         {
             id: 1,
@@ -108,22 +92,6 @@ describe('P2P actions', () => {
     it('should check offersError action creator', () => {
         const expectedAction = { type: P2P_OFFERS_ERROR, error: fakeError };
         expect(actions.offersError(fakeError)).toEqual(expectedAction);
-    });
-
-    it('should check p2pCurrenciesFetch action creator', () => {
-        const expectedAction = { type: P2P_CURRENCIES_FETCH };
-        expect(actions.p2pCurrenciesFetch()).toEqual(expectedAction);
-    });
-
-    it('should check p2pCurrenciesData action creator', () => {
-        const payload = fakeP2PCurrenciesArray;
-        const expectedAction = { type: P2P_CURRENCIES_DATA, payload };
-        expect(actions.p2pCurrenciesData(payload)).toEqual(expectedAction);
-    });
-
-    it('should check P2PCurrenciesError action creator', () => {
-        const expectedAction = { type: P2P_CURRENCIES_ERROR, error: fakeError };
-        expect(actions.p2pCurrenciesError(fakeError)).toEqual(expectedAction);
     });
 
     it('should check p2pPaymentMethodsFetch action creator', () => {

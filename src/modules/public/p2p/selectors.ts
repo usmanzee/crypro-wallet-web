@@ -1,6 +1,6 @@
 import { RootState } from '../..';
 import { CommonError } from '../../types';
-import { Offer } from './types';
+import { Offer, PaymentMethod } from './types';
 
 /* P2P Offers fetch */
 export const selectP2POffers = (state: RootState): Offer[] =>
@@ -44,3 +44,21 @@ export const selectP2POffersLastElemIndex = (state: RootState, limit: number): n
 export const selectP2POffersNextPageExists = (state: RootState, limit: number): boolean =>
     (state.public.p2p.offers.page + 1) < selectP2POffersPageCount(state, limit);
 
+/* P2P Payment Methods */
+export const selectP2PPaymentMethodsData = (state: RootState): PaymentMethod[] =>
+state.public.p2p.paymentMethods.data;
+
+export const selectP2PPaymentMethodsLoading = (state: RootState): boolean =>
+state.public.p2p.paymentMethods.fetching;
+
+export const selectP2PPaymentMethodsSuccess = (state: RootState): boolean =>
+state.public.p2p.paymentMethods.success;
+
+export const selectP2PPaymentMethodsError = (state: RootState): CommonError | undefined =>
+state.public.p2p.paymentMethods.error;
+
+export const selectP2PPaymentMethodsTimestamp = (state: RootState): number | undefined =>
+    state.public.p2p.paymentMethods.timestamp;
+
+export const selectShouldFetchP2PPaymentMethods = (state: RootState): boolean =>
+    !selectP2PPaymentMethodsTimestamp(state) && !selectP2PPaymentMethodsLoading(state);

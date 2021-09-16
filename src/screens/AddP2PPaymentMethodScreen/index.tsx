@@ -21,8 +21,6 @@ import { useStyles } from './style';
 
 
 import {
-    // useDocumentTitle,
-    useP2PCurrenciesFetch,
     useP2PPaymentMethodsFetch,
     useUserPaymentMethodsFetch,
 } from '../../hooks';
@@ -33,7 +31,6 @@ import {
     p2pOrdersCreateFetch,
     selectP2PCreatedOrder,
     selectP2PCreateOrderSuccess,
-    selectP2PCurrenciesData,
     selectP2PPaymentMethodsData,
 } from '../../modules';
 

@@ -4,7 +4,6 @@ import { changeColorThemeReducer  } from './public/colorTheme';
 import { configsReducer } from './public/configs';
 import { currenciesReducer } from './public/currencies';
 import { fiatCurrenciesReducer } from './public/fiatCurrencies';
-import { paymentMethodsReducer } from './public/paymentMethods';
 import { customizationReducer } from './public/customization';
 import { gridLayoutReducer } from './public/gridLayout/reducer';
 import { changeLanguageReducer  } from './public/i18n';
@@ -59,7 +58,6 @@ export const publicReducer = combineReducers({
     configs: configsReducer,
     currencies: currenciesReducer,
     fiatCurrencies: fiatCurrenciesReducer,
-    paymentMethods: paymentMethodsReducer,
     customization: customizationReducer,
     recentTrades: recentTradesReducer,
     markets: marketsReducer,

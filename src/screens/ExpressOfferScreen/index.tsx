@@ -38,7 +38,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
     // useDocumentTitle,
-    useP2PCurrenciesFetch,
     useP2PPaymentMethodsFetch,
     useUserPaymentMethodsFetch,
 } from '../../hooks';
@@ -49,7 +48,6 @@ import {
     p2pOrdersCreateFetch,
     selectP2PCreatedOrder,
     selectP2PCreateOrderSuccess,
-    selectP2PCurrenciesData,
     selectP2PPaymentMethodsData,
 } from '../../modules';
 
@@ -117,10 +115,8 @@ const ExpressOfferComponent = (props: Props) => {
     const [open, setOpen] = React.useState(false);
 
     const dispatch = useDispatch();
-    const currencies = useSelector(selectP2PCurrenciesData);
     const allPaymentMethods = useSelector(selectP2PPaymentMethodsData);
 
-    useP2PCurrenciesFetch();
     useP2PPaymentMethodsFetch();
     useUserPaymentMethodsFetch();
 
@@ -141,15 +137,6 @@ const ExpressOfferComponent = (props: Props) => {
             setSelectedFiatCurrency(allFiatCurrencies[0]);
         }
     }, [allFiatCurrencies]);
-
-    React.useEffect(() => {
-        if (currencies.length) {
-            const cryptoCurrencies = currencies.filter(i => i.type === 'coin').map(i => i.id.toUpperCase());
-            if (cryptoCurrencies.length) {
-                // setFiatCurrency(fiatCurrencies[0]);
-            }
-        }
-    }, [currencies]);
 
     //End Use Effects
     

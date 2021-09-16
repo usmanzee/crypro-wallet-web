@@ -68,7 +68,7 @@ export const useStyles = makeStyles((theme: Theme) =>
         height: '14px', 
         borderRadius: '4px', 
         backgroundColor: theme.palette.primary.main,
-        margin: '4px 4px 0px 0px'
+        margin: '0px 4px 0px 0px'
     },
     paymentMethodLink: {
         textDecoration: 'none', 

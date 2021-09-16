@@ -25,8 +25,11 @@ import {
     DialogContent,
     DialogTitle,
     useMediaQuery,
-    CircularProgress
+    CircularProgress,
+    TablePagination
 } from '@material-ui/core';
+
+import { DEFAULT_CCY_PRECISION, DEFAULT_TABLE_PAGE_LIMIT } from '../../../constants';
 
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -37,6 +40,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import clsx from  'clsx';
@@ -48,19 +52,13 @@ import { RouterProps } from 'react-router';
 import { PageHeader } from '../../../containers/PageHeader';
 import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
 import { P2PLinks } from '../../../components/P2P/P2PLinks';
+import { P2POffers } from '../../../components/P2P/P2POffers';
 import { StyledTableCell } from '../../materialUIGlobalStyle';
 import { useStyles } from './style';
 import { setDocumentTitle } from '../../../helpers';
 
-
-import {
-    // useDocumentTitle,
-    useP2PCurrenciesFetch,
-    useP2PPaymentMethodsFetch,
-    useUserPaymentMethodsFetch,
-} from '../../../hooks';
-
 import { 
+    selectUserLoggedIn, 
     Currency,
     FiatCurrency,
     selectCurrenciesLoading,
@@ -70,10 +68,16 @@ import {
     selectFiatCurrencies,
     fiatCurrenciesFetch,
     Offer,
-    P2POrderCreate,
-    p2pOrdersCreateFetch,
-    selectP2PCreatedOrder,
-    selectP2PCreateOrderSuccess,
+    selectP2POffersFetchLoading,
+    selectP2POffers,
+    offersFetch,
+    selectP2PPaymentMethodsData,
+    PaymentMethod,
+    selectP2PPaymentMethodsLoading,
+    p2pPaymentMethodsFetch,
+    selectP2PWalletsLoading,
+    selectP2PsWallets,
+    p2pWalletsFetch,
 } from '../../../modules';
 
 import { CommonError } from '../../../modules/types';
@@ -85,15 +89,10 @@ import {
     useHistory
 } from "react-router-dom";
 
-export interface PaymentMethod {
-    value: number;
-    label: string;
-}
-
 type Props = RouterProps & InjectedIntlProps;
 const P2POffersComponent = (props: Props) => {
     const defaultSide = 'buy';
-    const defaultCurrency = 'USDT';
+    const defaultCurrency = 'btc';
     //Props
     const classes = useStyles();
     
@@ -115,40 +114,33 @@ const P2POffersComponent = (props: Props) => {
     ]);
     const [selectedSide, setSelectedSide] = React.useState(sideName);
     const [cryptoCurrencies, setCryptoCurrencies] = React.useState<Currency[]>([]);
-    const [loadingCryptoCurrencies, setLoadingCryptoCurrencies] = React.useState<boolean>(false);
-    const [selectedCryptoCurrencyName, setSelectedCryptoCurrencyName] = React.useState<string>(currency);
+    const [loadingCryptoCurrencies, setLoadingCryptoCurrencies] = React.useState<boolean>(true);
+    const [selectedCryptoCurrency, setSelectedCryptoCurrency] = React.useState<Currency>(null);
 
     const [selectedFiatCurrency, setSelectedFiatCurrency] = React.useState<FiatCurrency>(null);
 
-    const [paymentMethods, setPaymentMethods] = React.useState<PaymentMethod[] | []>([
-        { value: 1, label: 'Method 1' },
-        { value: 2, label: 'Method 2' },
-        { value: 3, label: 'Method 3' },
-    ]);
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState<PaymentMethod | null>({ value: 1, label: 'Method 1' });
+    const [selectedP2PPaymentMethod, setSelectedP2PPaymentMethod] = React.useState<PaymentMethod>(null);
 
     const [paymentMethodAnchorEl, setPaymentMethodAnchorEl] = React.useState<null | HTMLElement>(null);
     const [fiatAnchorEl, setFiatAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [open, setOpen] = React.useState(false);
     const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
 
+    const [tablePage, setTablePage] = React.useState(0);
+    const [tableRowsPerPage, setTableRowsPerPage] = React.useState(25);
+
     const dispatch = useDispatch();
-    // const currencies = useSelector(selectP2PCurrenciesData);
-    // const allPaymentMethods = useSelector(selectP2PPaymentMethodsData);
+    const loggedIn = useSelector(selectUserLoggedIn);
     const currencies = useSelector(selectCurrencies);
     const currenciesLoading = useSelector(selectCurrenciesLoading);
     const fiatCurrencies = useSelector(selectFiatCurrencies);
     const fiatCurrenciesLoading = useSelector(selectFiatCurrenciesLoading);
+    const p2pPaymentMethodsLoading = useSelector(selectP2PPaymentMethodsLoading);
+    const p2pPaymentMethods = useSelector(selectP2PPaymentMethodsData);
+    const p2pOffersLoading = useSelector(selectP2POffersFetchLoading);
+    const p2pOffers = useSelector(selectP2POffers);
 
-    useP2PCurrenciesFetch();
-    useP2PPaymentMethodsFetch();
-    useUserPaymentMethodsFetch();
-
-    //Use Effects
-    // React.useEffect(() => {
-    //     history.push(`/p2p/offers/${selectedSide}`);
-    //     history.push(`/p2p/offers/${selectedSide}/${selectedCryptoCurrency}`);
-    // }, []);
+    const P2PWallets = useSelector(selectP2PsWallets);
+    const P2PWalletsLoading = useSelector(selectP2PWalletsLoading);
 
     React.useEffect(() => {
         setDocumentTitle('Buy and Sell Crypto on P2P');
@@ -172,10 +164,57 @@ const P2POffersComponent = (props: Props) => {
 
     React.useEffect(() => {
         if(cryptoCurrencies.length) {
-            setSelectedCryptoCurrencyName(cryptoCurrencies[0].id);
+            setSelectedCryptoCurrency(cryptoCurrencies[0]);
+            setLoadingCryptoCurrencies(false);
         }
     }, [cryptoCurrencies]);
+
+    React.useEffect(() => {
+        if(!p2pPaymentMethods.length) {
+            dispatch(p2pPaymentMethodsFetch());
+        } else {
+            if(p2pPaymentMethods[0].id != 0) {
+                let allPaymentsOption = {} as PaymentMethod;
+                allPaymentsOption.id = 0;
+                allPaymentsOption.name = 'All Payments';
+                p2pPaymentMethods.unshift(allPaymentsOption);
+            }
+            setSelectedP2PPaymentMethod(p2pPaymentMethods[0]);
+        }
+    }, [p2pPaymentMethods]);
+
+    React.useEffect(() => {
+        if(selectedSide && selectedCryptoCurrency && selectedFiatCurrency && selectedP2PPaymentMethod) {
+            if(selectedP2PPaymentMethod.id == 0) {
+                fetchP2POffers(selectedSide, selectedCryptoCurrency.id, selectedFiatCurrency.code);
+            } else {
+                fetchP2POffers(selectedSide, selectedCryptoCurrency.id, selectedFiatCurrency.code, selectedP2PPaymentMethod.id);
+            }
+        }
+    }, [selectedSide, selectedCryptoCurrency, selectedFiatCurrency, selectedP2PPaymentMethod]);
+
+     React.useEffect(() => {
+        if(!P2PWallets.length) {
+            dispatch(p2pWalletsFetch());
+        }
+    }, [P2PWallets]);
     //End Use Effects
+
+    const fetchP2POffers = (side: string, baseUnit: string, quoteUnit: string, paymentMethodId?: Number) => {
+        var requestObject = {
+            side: side.toLowerCase(),
+            base: baseUnit.toLowerCase(),
+            quote: quoteUnit.toLowerCase(),
+            page: 0,
+            limit: DEFAULT_TABLE_PAGE_LIMIT
+        };
+        if(paymentMethodId) {
+            requestObject['payment_method_id'] = paymentMethodId;
+        }
+        dispatch(
+            offersFetch(requestObject),
+        );
+    }
 
     const filterCryptoCurrencies = () => {
         const filteredCurrencies = currencies.filter((currency) => {
@@ -187,13 +226,11 @@ const P2POffersComponent = (props: Props) => {
     const handleSideChange = (event, newSide) => {
         if (newSide !== null) {
             setSelectedSide(newSide);
-            // history.push(`/p2p/offers/${newSide}/${selectedCryptoCurrency}`);
         }
     };
 
-    const onCryptoCurrencyChange = (currency: string) => {
-        setSelectedCryptoCurrencyName(currency);
-        // history.push(`/p2p/offers/${selectedSide}/${currency}`);
+    const onCryptoCurrencyChange = (currency: Currency) => {
+        setSelectedCryptoCurrency(currency);
     };
 
     const handlePaymentMethodSelectClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -218,12 +255,13 @@ const P2POffersComponent = (props: Props) => {
         setFiatAnchorEl(null);
     };
 
-    const handleOpen = () => {
-        setOpen(true);
+    const handleTablePageChange = (event: unknown, newPage: number) => {
+        setTablePage(newPage);
     };
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleTableRowsChangePerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTableRowsPerPage(+event.target.value);
+        setTablePage(0);
     };
 
     const handleVideoTurorialDialogOpen = () => {
@@ -233,10 +271,6 @@ const P2POffersComponent = (props: Props) => {
     const handleVideoTurorialDialogClose = () => {
         setVideoTutorialDialogOpen(false);
     };
-
-    const setMaxWithdrawlAmount = () => {
-        
-    }
 
     const paymentMethodPopperOpen = Boolean(paymentMethodAnchorEl);
     const paymentMethodPopperId = paymentMethodPopperOpen ? 'payment_methods' : undefined;
@@ -251,18 +285,15 @@ const P2POffersComponent = (props: Props) => {
         return (
             <> 
                 <div className={classes.selectDropdown} onClick={handleFiatCurrencySelectClick}>
-                    {selectedFiatCurrency ?
-                        (<>
-                            <Chip color="secondary" size="small" label={selectedFiatCurrency.symbol_native.toUpperCase()} className={classes.currencyCode} />
+                        <>
+                            <Chip color="secondary" size="small" label={selectedFiatCurrency ? selectedFiatCurrency.symbol_native.toUpperCase() : ''} className={classes.currencyCode} />
                             <Typography variant="subtitle1" component="div" className={classes.currencyName}>
-                                {selectedFiatCurrency.code.toUpperCase()}
+                                {selectedFiatCurrency ? selectedFiatCurrency.code.toUpperCase() : ''}
                             </Typography>
                             <div className={classes.selectDownArrow}>
                                 <ArrowDropDownIcon />
                             </div>
-                        </>) :
-                        ""
-                    }
+                        </>
                 </div>
                 <Popper
                     id={fiatPopperId}
@@ -315,17 +346,14 @@ const P2POffersComponent = (props: Props) => {
         return (
             <> 
                 <div className={classes.selectDropdown} onClick={handlePaymentMethodSelectClick}>
-                    {selectedPaymentMethod ?
-                        (<>
+                        <>
                             <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                                {selectedPaymentMethod.label}
+                                {selectedP2PPaymentMethod ? selectedP2PPaymentMethod.name : ''}
                             </Typography>
                             <div className={classes.selectDownArrow}>
                                 <ArrowDropDownIcon />
                             </div>
-                        </>) :
-                        ""
-                    }
+                        </>
                 </div>
                 <Popper
                     id={paymentMethodPopperId}
@@ -341,23 +369,23 @@ const P2POffersComponent = (props: Props) => {
                         open
                         onClose={handlePaymentMethodSelectClose}
                         disableCloseOnSelect={false}
-                        value={selectedPaymentMethod}
+                        value={selectedP2PPaymentMethod}
                         onChange={(event: any, selectedOption: PaymentMethod | null) => {
-                            setSelectedPaymentMethod(selectedOption);
+                            setSelectedP2PPaymentMethod(selectedOption);
                         }}
                         noOptionsText="No Records Found"
                         renderOption={(option: PaymentMethod) => {
                             return <React.Fragment>
                                 <div style={{ display: 'flex' }}>
                                     <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        {option ? option.label : ''}
+                                        {option ? option.name : ''}
                                     </Typography>
 
                                 </div>
                             </React.Fragment>
                         }}
-                        options={paymentMethods}
-                        getOptionLabel={(option: PaymentMethod) => option ? option.label : ''}
+                        options={p2pPaymentMethods}
+                        getOptionLabel={(option: PaymentMethod) => option ? option.name : ''}
                         renderInput={(params) => (
                             <InputBase
                                 ref={params.InputProps.ref}
@@ -368,442 +396,6 @@ const P2POffersComponent = (props: Props) => {
                         )}
                     />
                 </Popper>
-            </>
-        );
-    }
-    const renderMobileOffers = () => {
-        return (
-            <>
-                 <div style={{ display: 'flex', justifyContent: 'space-between'}}>
-                    <Link to="/p2p/advertiserDetail/1" style={{ textDecoration: 'none' }}>
-                        <span className={classes.advertiserName}>
-                            Name here
-                        </span>
-                    </Link>
-                <div style={{ display: 'flex',}}>
-                    <small style={{ color: 'grey' }}>804 Oders</small>
-                    <small style={{ marginLeft: '8px', color: 'grey' }}>98.89% completion</small>
-                </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                    <div>
-                        <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Price</span>
-                        <div style={{ display: 'flex', marginRight: '8px' }}>
-                            <span style={{ fontWeight: 600, fontSize: '20px' }}>10</span>
-                            <span style={{ fontWeight: 400, fontSize: 10, marginLeft: '4px',  color: 'grey' }}>BTC</span>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                        <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Available</span>
-                        <div style={{ display: 'flex', marginRight: '8px'}}>
-                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 {selectedCryptoCurrencyName}</span>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                        <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Limit</span>
-                        <div style={{ display: 'flex', marginRight: '8px'}}>
-                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>{selectedFiatCurrency ? selectedFiatCurrency.symbol_native: ''}60,000.00-{selectedFiatCurrency ? selectedFiatCurrency.symbol_native: ''}713,000.09</span>
-                        </div>
-                    </div>
-                </div>
-                <Button variant="contained" style={{ color: 'white', backgroundColor: selectedSide == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', fontSize: 14, margin: 'auto 0px' }} onClick={handleOpen}>{selectedSide}</Button>
-            </div>
-            <div style={{ display: 'flex', marginTop: '8px', flexWrap: 'wrap' }}>
-                <Tooltip title="Payment Method1" arrow>
-                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                </Tooltip>
-                <Tooltip title="Payment Method2" arrow>
-                    <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                </Tooltip>
-                <Tooltip title="Payment Method3" arrow>
-                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                </Tooltip>
-                <Tooltip title="Payment Method3" arrow>
-                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                </Tooltip>
-                <Tooltip title="Payment Method3" arrow>
-                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                </Tooltip>
-                <Tooltip title="Payment Method3" arrow>
-                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                </Tooltip>
-            </div>
-            </>
-        );
-    }
-    const renderOffers = () => {
-        return (
-            <>
-                <TableContainer>
-                    <Table aria-label="P2P orders table">
-                        <TableHead>
-                            <TableRow>
-                                <StyledTableCell>
-                                    Advertisers
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Price
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Limit/Available
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Payment
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    Trade
-                                </StyledTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow hover>
-                                <StyledTableCell>
-                                    <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                            <Link to="/p2p/advertiserDetail/1" style={{ textDecoration: 'none' }}>
-                                                <span className={classes.advertiserName}>
-                                                    Name here
-                                                </span>
-                                            </Link>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <small style={{ color: 'grey' }}>804 Oders</small>
-                                            <small style={{ marginLeft: '8px', color: 'grey' }}>98.89% completion</small>
-                                        </div>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                        <span style={{ fontWeight: 600, }}>10</span>
-                                        <span style={{ fontWeight: 400, fontSize: 10, marginLeft: '4px',  color: 'grey' }}>BTC</span>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Available</span>
-                                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>110,542.65 {selectedCryptoCurrencyName}</span>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <span style={{ fontWeight: 400, fontSize: 12, color: 'grey'}}>Limit</span>
-                                            <span style={{ fontWeight: 600,  marginLeft: '8px' }}>{selectedFiatCurrency ? selectedFiatCurrency.symbol_native: ''}60,000.00-{selectedFiatCurrency ? selectedFiatCurrency.symbol_native: ''}713,000.09</span>
-                                        </div>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ width: '50%' }}>
-                                        <Tooltip title="Payment Method1" arrow>
-                                            <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                        <Tooltip title="Payment Method2" arrow>
-                                            <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                        <Tooltip title="Payment Method3" arrow>
-                                            <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <Button variant="contained" style={{ color: 'white', backgroundColor: selectedSide == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', fontSize: 14 }} onClick={handleOpen}>{selectedSide}</Button>
-                                </StyledTableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </>
-        );
-    }
-
-    const advertisementDetailDialog = () => {
-        return (
-            <>
-                <Dialog
-                    fullWidth={true}
-                    maxWidth='md'
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="h6">Buy USDT</Typography>
-                            <CloseIcon onClick={e => handleClose()} style={{ cursor: 'pointer', }}/>
-                        </div>
-                    </DialogTitle>
-                    <DialogContent>
-                        <Box style={{ height: '450px',}}>
-                            <div style={{ display: 'flex' ,width: '100%' }}>
-                                <div style={{ width: '55%', overflowY: 'auto', height: '440px', paddingRight: '16px' }}>
-                                    <div id="transition-modal-title">
-                                        <Typography className={classes.advertiserName} variant="body1" display="inline" style={{ marginRight: '8px' }}>Advertiser Name</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>100.00% completion</Typography>
-                                    </div>
-                                    <div style={{ display: 'flex', marginTop: '12px', justifyContent: 'space-between' }}>
-                                        <div style={{  }}>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Price</Typography>
-                                            <Typography variant="button" display="inline" style={{ marginRight: '8px', color: '#02C076' }}>167.00 PKR</Typography>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>16 s</Typography>
-                                        </div>
-                                        <div style={{  }}>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Available</Typography>
-                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>465.54 USDT</Typography>
-                                        </div>
-                                    </div>
-                                    <div style={{ display: 'flex', marginTop: '12px', justifyContent: 'space-between' }}>
-                                        <div style={{  }}>
-                                            <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Payment Time Limit</Typography>
-                                            <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>15 Minutes</Typography>
-                                        </div>
-                                    </div>
-                                    <div style={{ marginTop: '12px'}}>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Seller’s payment method</Typography>
-                                        <div>
-                                            <Tooltip title="Payment Method1" arrow>
-                                                <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                            </Tooltip>
-                                            <Tooltip title="Payment Method2" arrow>
-                                                <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                                            </Tooltip>
-                                            <Tooltip title="Payment Method3" arrow>
-                                                <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                            </Tooltip>
-                                        </div>
-                                    </div>
-                                    <div style={{ marginTop: '12px' }}>
-                                        <Typography variant="h6" display="inline">Terms and conditions</Typography>
-                                        <div style={{ marginTop: '8px' }}>
-                                            <Typography variant="body1" display="inline" paragraph={true} style={{color: 'rgb(112, 122, 138)', whiteSpace: 'pre-line'}}>
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                                {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            </Typography>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style={{ width: '45%', paddingLeft: '16px' }}>
-                                    <div style={{ marginBottom: '16px' }}>
-                                        <InputLabel htmlFor="sell" className={classes.inputLabel}>
-                                            I want to pay
-                                        </InputLabel>
-                                        <FormControl variant="outlined" fullWidth>
-                                            <TextField
-                                                className={classes.numberInput}
-                                                id="outlined-full-width"
-                                                // style={{ margin: 8 }}
-                                                placeholder="Placeholder"
-                                                fullWidth
-                                                // margin="normal"
-                                                variant="outlined"
-                                                size="small"
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">
-                                                        <span className={classes.maxButton} onClick={setMaxWithdrawlAmount}>
-                                                            <FormattedMessage id={'page.body.swap.input.tag.max'} />
-                                                        </span>
-                                                        <Divider className={classes.inputAdornmentDivider} orientation="vertical" style={{ margin: '0px 8px' }} />
-                                                        <Typography variant="button" display="inline" style={{ color: 'rgb(112, 122, 138)' }}>PKR</Typography>
-                                                    </InputAdornment>,
-                                                }}
-                                            />
-                                        </FormControl>
-                                    </div>
-                                    <div style={{ marginBottom: '16px' }}>
-                                        <InputLabel htmlFor="sell" className={classes.inputLabel}>
-                                            I will receive
-                                        </InputLabel>
-                                        <TextField
-                                            className={classes.numberInput}
-                                            id="outlined-full-width"
-                                            // style={{ margin: 8 }}
-                                            placeholder="Placeholder"
-                                            fullWidth
-                                            // margin="normal"
-                                            variant="outlined"
-                                            size="small"
-                                            InputProps={{
-                                                endAdornment: <InputAdornment position="end">
-                                                    <Typography variant="button" display="inline" style={{ color: 'rgb(112, 122, 138)' }}>USDT</Typography>
-                                                </InputAdornment>,
-                                            }}
-                                        />
-                                    </div>
-                                    <div style={{ display: 'flex', marginBottom: '16px' }}>
-                                        <Button
-                                            style={{ width: '40%', marginRight: '8px' }}
-                                            color="primary"
-                                            variant="outlined"
-                                            fullWidth
-                                            onClick={handleClose}
-                                        >
-                                            Cancel
-                                        </Button>
-                                        <Button
-                                            color="primary"
-                                            variant="contained"
-                                            fullWidth
-                                            // onClick={handleFromSubmit}
-                                            // disabled={isValidForm()}
-                                        >
-                                            Buy USDT
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        </Box>
-                    </DialogContent>
-                </Dialog>
-            </>
-        );
-    }
-
-    const mobileAdvertisementDetailDialog = () => {
-        return (
-            <>
-                <Dialog
-                    fullScreen
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="h6">Buy USDT</Typography>
-                            <CloseIcon onClick={e => handleClose()} style={{ cursor: 'pointer', }}/>
-                        </div>
-                    </DialogTitle>
-                    <DialogContent>
-                        <Box>
-                            <div style={{ width: '100%' }}>
-                                <div style={{}}>
-                                    <Typography className={classes.advertiserName} variant="body1" display="inline" style={{ marginRight: '8px' }}>Advertiser Name</Typography>
-                                    <div id="transition-modal-title">
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>100.00% completion</Typography>
-                                    </div>
-                                    <div style={{ display: 'flex', marginTop: '8px',}}>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Price</Typography>
-                                        <Typography variant="button" display="inline" style={{ marginRight: '8px', color: '#02C076' }}>167.00 PKR</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>16 s</Typography>
-                                    </div>
-                                    <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between'}}>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Available</Typography>
-                                        <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>465.54 USDT</Typography>
-                                    </div>
-                                </div>
-                                <div style={{ marginTop: '12px' }}>
-                                    <div style={{ marginBottom: '16px' }}>
-                                        <InputLabel htmlFor="sell" className={classes.inputLabel}>
-                                            I want to pay
-                                        </InputLabel>
-                                        <FormControl variant="outlined" fullWidth>
-                                            <TextField
-                                                className={classes.numberInput}
-                                                id="outlined-full-width"
-                                                // style={{ margin: 8 }}
-                                                placeholder="Placeholder"
-                                                fullWidth
-                                                // margin="normal"
-                                                variant="outlined"
-                                                size="small"
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">
-                                                        <span className={classes.maxButton} onClick={setMaxWithdrawlAmount}>
-                                                            <FormattedMessage id={'page.body.swap.input.tag.max'} />
-                                                        </span>
-                                                        <Divider className={classes.inputAdornmentDivider} orientation="vertical" style={{ margin: '0px 8px' }} />
-                                                        <Typography variant="button" display="inline" style={{ color: 'rgb(112, 122, 138)' }}>PKR</Typography>
-                                                    </InputAdornment>,
-                                                }}
-                                            />
-                                        </FormControl>
-                                    </div>
-                                    <div style={{ marginBottom: '16px' }}>
-                                        <InputLabel htmlFor="sell" className={classes.inputLabel}>
-                                            I will receive
-                                        </InputLabel>
-                                        <TextField
-                                            className={classes.numberInput}
-                                            id="outlined-full-width"
-                                            // style={{ margin: 8 }}
-                                            placeholder="Placeholder"
-                                            fullWidth
-                                            // margin="normal"
-                                            variant="outlined"
-                                            size="small"
-                                            InputProps={{
-                                                endAdornment: <InputAdornment position="end">
-                                                    <Typography variant="button" display="inline" style={{ color: 'rgb(112, 122, 138)' }}>USDT</Typography>
-                                                </InputAdornment>,
-                                            }}
-                                        />
-                                    </div>
-                                    <div style={{ display: 'flex', marginBottom: '16px' }}>
-                                        <Button
-                                            style={{ width: '40%', marginRight: '8px' }}
-                                            color="primary"
-                                            variant="outlined"
-                                            fullWidth
-                                            onClick={handleClose}
-                                        >
-                                            Cancel
-                                        </Button>
-                                        <Button
-                                            color="primary"
-                                            variant="contained"
-                                            fullWidth
-                                            // onClick={handleFromSubmit}
-                                            // disabled={isValidForm()}
-                                        >
-                                            Buy USDT
-                                        </Button>
-                                    </div>
-                                </div>
-                                <div style={{ display: 'flex', marginTop: '8px', justifyContent: 'space-between' }}>
-                                    <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Payment Time Limit</Typography>
-                                    <Typography variant="button" display="inline" style={{ marginRight: '8px' }}>15 Minutes</Typography>
-                                </div>
-                                <div style={{ marginTop: '8px'}}>
-                                    <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Seller’s payment method</Typography>
-                                    <div>
-                                        <Tooltip title="Payment Method1" arrow>
-                                            <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                        <Tooltip title="Payment Method2" arrow>
-                                            <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                        <Tooltip title="Payment Method3" arrow>
-                                            <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                    </div>
-                                </div>
-                                <div style={{ marginTop: '8px' }}>
-                                    <Typography variant="h6" display="inline">Terms and conditions</Typography>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <Typography variant="body1" display="inline" paragraph={true} style={{color: 'rgb(112, 122, 138)', whiteSpace: 'pre-line'}}>
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                            {`You can contact on +923358613060 for good rates with no minimum limit.Face to Face deal also available.\n\nI'm online.Please pay first and then upload the screenshot here.\n\n\n`}                                                
-                                        </Typography>
-                                    </div>
-                                </div>
-                            </div>
-                        </Box>
-                    </DialogContent>
-                </Dialog>
             </>
         );
     }
@@ -825,7 +417,7 @@ const P2POffersComponent = (props: Props) => {
                                 </Typography>   
                             </Link>
                         </div>
-                        <P2PLinks handleVideoDialogOpen={handleVideoTurorialDialogOpen} />
+                        {loggedIn ? <P2PLinks handleVideoDialogOpen={handleVideoTurorialDialogOpen} /> : ''}
                     </div>
                     <Paper elevation={1} className={classes.paramsFiltersRoot}>
                         <ToggleButtonGroup
@@ -837,7 +429,7 @@ const P2POffersComponent = (props: Props) => {
                             className={classes.sideGroup}
                         >
                             {sides.map((sideItem) => {
-                                return <ToggleButton value={sideItem['title']} aria-label="buy side" style={{ fontWeight: 600, backgroundColor: selectedSide == sideItem['title'] ? sideItem['selectedBGColor'] : '#ffffff' , color: selectedSide == sideItem['title'] ? '#ffffff' : '#1E2026' }}>
+                                return <ToggleButton value={sideItem['title']} disabled={p2pOffersLoading} aria-label="buy side" style={{ fontWeight: 600, backgroundColor: selectedSide == sideItem['title'] ? sideItem['selectedBGColor'] : '#ffffff' , color: selectedSide == sideItem['title'] ? '#ffffff' : '#1E2026' }}>
                                     <span>
                                         {sideItem['title']}
                                     </span> 
@@ -849,14 +441,36 @@ const P2POffersComponent = (props: Props) => {
                             <div className={classes.cryptoFiltersRoot}>
                                 {cryptoCurrencies.map((cryptoCurrency) => {
                                     return (
-                                        <div className={ selectedCryptoCurrencyName.toLowerCase() == cryptoCurrency.id.toLowerCase() ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange(cryptoCurrency.id.toLowerCase())}>
+                                        selectedCryptoCurrency ?
+                                        <div className={ selectedCryptoCurrency.id.toLowerCase() == cryptoCurrency.id.toLowerCase() ? classes.activeCurrency : classes.inActiveCurrency} onClick={e => onCryptoCurrencyChange(cryptoCurrency)}>
                                             <span>
                                                 {cryptoCurrency.id.toUpperCase()}
                                             </span> 
-                                        </div>
+                                        </div> : ''
                                     );
                                 })}
-                            </div> : <CircularProgress size={20} />
+                            </div> : <div style={{ display: 'flex', marginLeft: '8px' }}>
+                                <div style={{  }}>
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                </div>
+                                <div style={{  }}>
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                </div>
+                                <div style={{  }}>
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                </div>
+                                <div style={{  }}>
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                </div>
+                                <div style={{  }}>
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} />
+                                </div>
+                            </div>
                         }
                     </Paper>
                     <Box className={classes.filtersRoot}>
@@ -912,13 +526,17 @@ const P2POffersComponent = (props: Props) => {
                         </div>
                         
                     </Box>
-                    <div className={classes.renderp2pOffers}>
-                        {renderOffers()}
-                    </div>
-                    <div className={classes.renderMobileP2pOffers}>
-                        {renderMobileOffers()}
-                    </div>
-                    {isMobileScreen ? mobileAdvertisementDetailDialog() : advertisementDetailDialog()}
+                    { loadingCryptoCurrencies && fiatCurrenciesLoading && p2pPaymentMethodsLoading ? <CircularProgress /> : 
+                        <P2POffers 
+                            offersLoading={p2pOffersLoading} 
+                            offers={p2pOffers} 
+                            tablePage= {tablePage}
+                            tableRowsPerPage= {tableRowsPerPage}
+                            handleTablePageChange={handleTablePageChange}
+                            handleTableRowsChangePerPage={handleTableRowsChangePerPage}
+                            wallets={P2PWallets}
+                        />
+                    }
                 </Paper>
                 <Paper style={{ marginTop: '16px', padding: '16px', backgroundColor: '#FAFAFA' }}>
                     <Typography variant="h4" style={{ margin: '16px 0px', fontWeight: 700 }}>Advantages of P2P Exchange</Typography>

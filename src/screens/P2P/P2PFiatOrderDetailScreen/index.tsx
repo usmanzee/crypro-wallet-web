@@ -78,7 +78,6 @@ import { setDocumentTitle } from '../../../helpers';
 
 import {
     // useDocumentTitle,
-    useP2PCurrenciesFetch,
     useP2PPaymentMethodsFetch,
     useUserPaymentMethodsFetch,
 } from '../../../hooks';
@@ -89,7 +88,6 @@ import {
     p2pOrdersCreateFetch,
     selectP2PCreatedOrder,
     selectP2PCreateOrderSuccess,
-    selectP2PCurrenciesData,
     selectP2PPaymentMethodsData,
 } from '../../../modules';
 
@@ -124,10 +122,8 @@ const P2PFiatOrderDetailComponent = (props: Props) => {
     const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
 
     const dispatch = useDispatch();
-    const currencies = useSelector(selectP2PCurrenciesData);
     const allPaymentMethods = useSelector(selectP2PPaymentMethodsData);
 
-    useP2PCurrenciesFetch();
     useP2PPaymentMethodsFetch();
     useUserPaymentMethodsFetch();
 

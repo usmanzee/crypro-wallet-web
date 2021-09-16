@@ -8,10 +8,20 @@ import {
     P2P_OFFERS_ERROR,
     P2P_OFFERS_FETCH,
     P2P_OFFERS_UPDATE,
+    P2P_PAYMENT_METHODS_DATA,
+    P2P_PAYMENT_METHODS_ERROR,
+    P2P_PAYMENT_METHODS_FETCH,
 } from './constants';
-import { Offer } from './types';
+import { Offer, PaymentMethod } from './types';
 
-export interface P2PState {
+export interface P2PState {    
+    paymentMethods: {
+        data: PaymentMethod[];
+        fetching: boolean;
+        success: boolean;
+        timestamp?: number;
+        error?: CommonError;
+    };
     offers: {
         page: number;
         total: number;
@@ -28,6 +38,11 @@ export interface P2PState {
 }
 
 export const initialP2PState: P2PState = {
+    paymentMethods: {
+        data: [],
+        fetching: false,
+        success: false,
+    },
     offers: {
         page: 0,
         total: 0,
@@ -57,7 +72,7 @@ export const p2pOffersFetchReducer = (state: P2PState['offers'], action: P2PActi
                 side: action.payload.side,
                 base: action.payload.base,
                 quote: action.payload.quote,
-                payment_method: action.payload.payment_method,
+                payment_method: action.payload.payment_method_id,
                 fetching: false,
                 success: true,
                 error: undefined,
@@ -94,9 +109,46 @@ export const p2pOffersFetchReducer = (state: P2PState['offers'], action: P2PActi
     }
 };
 
+const p2pPaymentMethodsReducer = (state: P2PState['paymentMethods'], action: P2PActions) => {
+    switch (action.type) {
+        case P2P_PAYMENT_METHODS_FETCH:
+            return {
+                ...state,
+                fetching: true,
+                timestamp: Math.floor(Date.now() / 1000),
+            };
+        case P2P_PAYMENT_METHODS_DATA:
+            return {
+                ...state,
+                data: action.payload,
+                fetching: false,
+                success: true,
+                error: undefined,
+            };
+        case P2P_PAYMENT_METHODS_ERROR:
+            return {
+                ...state,
+                fetching: false,
+                success: false,
+                error: action.error,
+            };
+        default:
+            return state;
+    }
+};
+
 export const p2pReducer = (state = initialP2PState, action: P2PActions) => {
     switch (action.type) {
-      
+
+        case P2P_PAYMENT_METHODS_FETCH:
+        case P2P_PAYMENT_METHODS_DATA:
+        case P2P_PAYMENT_METHODS_ERROR:
+            const p2pPaymentMethodsState = { ...state.paymentMethods };
+
+            return {
+                ...state,
+                paymentMethods: p2pPaymentMethodsReducer(p2pPaymentMethodsState, action),
+            };
         case P2P_OFFERS_FETCH:
         case P2P_OFFERS_DATA:
         case P2P_OFFERS_ERROR:
@@ -107,7 +159,6 @@ export const p2pReducer = (state = initialP2PState, action: P2PActions) => {
                 ...state,
                 offers: p2pOffersFetchReducer(p2pOffersFetchState, action),
             };
-      
         default:
             return state;
     }

@@ -123,145 +123,145 @@ const ProfileP2PPaymentMethodComponent = (props: Props) => {
                 <DialogContent style={{ height: '392px', overflow: 'auto' }}>
                     <div style={{ marginTop: '16px' }}>
                         <GridList cellHeight={40} cols={fullScreenDialog ? 1 : 2}>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method1</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography>Payment Method2</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method3</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>
                                 </Link>
                             </div>
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div className={classes.paymentMethodsDiv}></div>
                                 <Link to="/profile/payment/p2p/1" className={classes.paymentMethodLink}>
                                     <Typography >Payment Method4</Typography>

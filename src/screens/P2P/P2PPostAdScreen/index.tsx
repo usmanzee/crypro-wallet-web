@@ -53,12 +53,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import Autocomplete, { AutocompleteCloseReason } from '@material-ui/lab/Autocomplete';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import clsx from  'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
+import { fetchRate, getExchangeHistory, postExchange } from '../../../apis/exchange';
 
 import { PageHeader } from '../../../containers/PageHeader';
 import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
@@ -66,27 +68,27 @@ import { StyledTableCell } from '../../materialUIGlobalStyle';
 import { useStyles } from './style';
 import { setDocumentTitle } from '../../../helpers';
 
-
-import {
-    // useDocumentTitle,
-    useP2PCurrenciesFetch,
-    useP2PPaymentMethodsFetch,
-    useUserPaymentMethodsFetch,
-} from '../../../hooks';
-
 import { 
+    Currency,
+    FiatCurrency,
+    selectCurrenciesLoading,
+    selectCurrencies,
+    currenciesFetch,
+    selectFiatCurrenciesLoading,
+    selectFiatCurrencies,
+    fiatCurrenciesFetch,
     Offer,
-    P2POrderCreate,
-    p2pOrdersCreateFetch,
-    selectP2PCreatedOrder,
-    selectP2PCreateOrderSuccess,
-    selectP2PCurrenciesData,
+    selectP2POffersFetchLoading,
+    selectP2POffers,
+    offersFetch,
     selectP2PPaymentMethodsData,
+    PaymentMethod,
+    selectP2PPaymentMethodsLoading,
+    p2pPaymentMethodsFetch,
+    selectP2PWalletsLoading,
+    selectP2PsWallets,
+    p2pWalletsFetch,
 } from '../../../modules';
-
-import { CommonError } from '../../../modules/types';
-import { WalletHistory } from '../../../containers/Wallets/History';
-import * as PublicDataAPI from '../../../apis/public_data';
 
 import {
     useParams,
@@ -98,6 +100,23 @@ import {
 type Props = RouterProps & InjectedIntlProps;
 const P2PPostAdComponent = (props: Props) => {
     const classes = useStyles();
+
+    const theme = useTheme();
+    const fullScreenPaymentDialog = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const [cryptoCurrencies, setCryptoCurrencies] = React.useState<Currency[]>([]);
+    const [loadingCryptoCurrencies, setLoadingCryptoCurrencies] = React.useState<boolean>(true);
+    const [selectedCryptoCurrency, setSelectedCryptoCurrency] = React.useState<Currency>(null);
+
+    const [selectedFiatCurrency, setSelectedFiatCurrency] = React.useState<FiatCurrency>(null);
+
+    const [fiatAnchorEl, setFiatAnchorEl] = React.useState<null | HTMLElement>(null);
+
+    const [sides, setSides] = React.useState([
+        {'name': 'Buy','title': 'I want to buy', 'value': 'buy'},
+        {'name': 'Sell','title': 'I want to sell', 'value': 'sell'},
+    ]);
+    const [selectedSideName, setSelectedSideName] = React.useState('buy');
     const [activeStep, setActiveStep] = React.useState(0);
     const [priceTypes, setPriceTypes] = React.useState([
         {'name': 'Fixed', 'value': 'fixed'},
@@ -106,13 +125,77 @@ const P2PPostAdComponent = (props: Props) => {
 
     const [selectedPriceType, setSelectedPriceType] = React.useState('fixed');
     const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = React.useState(false);
-    const theme = useTheme();
-    const fullScreenPaymentDialog = useMediaQuery(theme.breakpoints.down('sm'));
+    const [fetchingRate, setFetchingRate] = React.useState(false);
+
+    const dispatch = useDispatch();
+    const currencies = useSelector(selectCurrencies);
+    const currenciesLoading = useSelector(selectCurrenciesLoading);
+    const fiatCurrencies = useSelector(selectFiatCurrencies);
+    const fiatCurrenciesLoading = useSelector(selectFiatCurrenciesLoading);
+
+    const P2PWallets = useSelector(selectP2PsWallets);
+    const P2PWalletsLoading = useSelector(selectP2PWalletsLoading);
 
     React.useEffect(() => {
         setDocumentTitle('Buy and Sell Crypto on P2P');
     }, []);
 
+    React.useEffect(() => {
+        if(!currencies.length) {
+            dispatch(currenciesFetch());
+        } else {
+            filterCryptoCurrencies();
+        }
+    }, [currencies]);
+
+    React.useEffect(() => {
+        if(!fiatCurrencies.length) {
+            dispatch(fiatCurrenciesFetch());
+        } else {
+            setSelectedFiatCurrency(fiatCurrencies[0]);
+        }
+    }, [fiatCurrencies]);
+
+    React.useEffect(() => {
+        if(cryptoCurrencies.length) {
+            setSelectedCryptoCurrency(cryptoCurrencies[0]);
+            setLoadingCryptoCurrencies(false);
+        }
+    }, [cryptoCurrencies]);
+
+    const filterCryptoCurrencies = () => {
+        const filteredCurrencies = currencies.filter((currency) => {
+            return currency.type == 'coin';
+        });
+        setCryptoCurrencies(filteredCurrencies);
+    }
+
+    const handleSideChange = (newSide: string) => {
+        if (newSide !== null && selectedSideName != newSide) {
+            setSelectedSideName(newSide);
+        }
+    };
+
+    const handleFiatCurrencySelectClick = (event: React.MouseEvent<HTMLElement>) => {
+        setFiatAnchorEl(event.currentTarget);
+    };
+
+    const handleFiatCurrencySelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
+        if (fiatAnchorEl) {
+            fiatAnchorEl.focus();
+        }
+        setFiatAnchorEl(null);
+    };
+
+    const getExchangeRates = async () => {
+            setFetchingRate(true);
+            // setWalletsToAmount('');
+            const response = await fetchRate(selectedCryptoCurrency.id.toLowerCase(), selectedFiatCurrency.code.toLowerCase(), 1);
+            if (response.data) {
+                setFetchingRate(false);
+                // setWalletsToAmount(response.data);
+            }
+    }
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -132,18 +215,19 @@ const P2PPostAdComponent = (props: Props) => {
 
     const handlePaymentMethodDialogClickOpen = () => {
         setPaymentMethodDialogOpen(true);
-      };
+    };
     
-      const handlePaymentMethodDialogClose = () => {
+    const handlePaymentMethodDialogClose = () => {
         setPaymentMethodDialogOpen(false);
-      };
+    };
 
     const getSides = () => {
         return(
             <>
             <div className={classes.sidesDiv}>
-                <div className={classes.activeSide}>I want to buy</div>
-                <div className={classes.inActiveSide}>I want to sell</div>
+                {sides.map((sideItem) => {
+                    return <div className={selectedSideName == sideItem['value'] ? classes.activeSide : classes.inActiveSide} onClick={e => handleSideChange(sideItem['value'])}>{sideItem['title']}</div>
+                })}
             </div>
             </>
         );
@@ -166,64 +250,126 @@ const P2PPostAdComponent = (props: Props) => {
         }
     }
 
+    const fiatPopperOpen = Boolean(fiatAnchorEl);
+    const fiatPopperId = fiatPopperOpen ? 'fiat-currencies' : undefined;
+
+    const renderFiatCurrencyDrowdown = () => {
+
+        return (
+            <> 
+                <div className={classes.selectDropdown} onClick={handleFiatCurrencySelectClick}>
+                        <>
+                            <Chip color="secondary" size="small" label={selectedFiatCurrency ? selectedFiatCurrency.symbol_native.toUpperCase() : ''} className={classes.currencyCode} />
+                            <Typography variant="subtitle1" component="div" className={classes.currencyName}>
+                                {selectedFiatCurrency ? selectedFiatCurrency.code.toUpperCase() : ''}
+                            </Typography>
+                            <div className={classes.selectDownArrow}>
+                                <ArrowDropDownIcon />
+                            </div>
+                        </>
+                </div>
+                <Popper
+                    id={fiatPopperId}
+                    open={fiatPopperOpen}
+                    anchorEl={fiatAnchorEl}
+                    placement="bottom-start"
+                    className={classes.popper}
+                >
+                    <div className={classes.header}>
+                        Select
+                    </div>
+                    <Autocomplete
+                        open
+                        onClose={handleFiatCurrencySelectClose}
+                        disableCloseOnSelect={false}
+                        value={selectedFiatCurrency}
+                        onChange={(event: any, selectedOption: FiatCurrency | null) => {
+                            setSelectedFiatCurrency(selectedOption);
+                        }}
+                        noOptionsText="No Records Found"
+                        renderOption={(option: FiatCurrency) => {
+                            return <React.Fragment>
+                                <div style={{ display: 'flex' }}>
+                                    <Chip color="secondary" size="small" label={option ? option.symbol_native.toUpperCase() : ''} className={classes.currencyCode} />
+                                    <Typography variant="subtitle2" component="div" className={classes.currencyName}>
+                                        {option ? option.name : ''}
+                                    </Typography>
+
+                                </div>
+                            </React.Fragment>
+                        }}
+                        options={fiatCurrencies}
+                        getOptionLabel={(option: FiatCurrency) => option ? option.code : ''}
+                        renderInput={(params) => (
+                            <InputBase
+                                ref={params.InputProps.ref}
+                                inputProps={params.inputProps}
+                                autoFocus
+                                className={classes.inputBase}
+                            />
+                        )}
+                    />
+                </Popper>
+            </>
+        );
+    }
+
     const getFirstStep = () => {
         return (
             <>
                 <div>
                     <FormControl component="fieldset">
                         <FormLabel component="legend">Asset</FormLabel>
-                        <RadioGroup row aria-label="position" name="position" defaultValue="top">
-                            <FormControlLabel
-                                value="top"
-                                control={<Radio color="secondary" />}
-                                label="Top"
-                            />
-                            <FormControlLabel
-                                value="start"
-                                control={<Radio color="secondary" />}
-                                label="Start"
-                            />
-                            <FormControlLabel
-                                value="bottom"
-                                control={<Radio color="secondary" />}
-                                label="Bottom"
-                            />
-                            <FormControlLabel 
-                                value="end" 
-                                control={<Radio color="secondary" />} 
-                                label="End" 
-                            />
-                        </RadioGroup>
+                            {loadingCryptoCurrencies && !selectedCryptoCurrency ?  
+                                <div style={{ display: 'flex' }}>
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} /> 
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} /> 
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} /> 
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} /> 
+                                    <Skeleton width={50} style={{ marginLeft: '8px' }} /> 
+                                </div>
+                            : 
+                            <RadioGroup row aria-label="position" name="position" defaultValue={selectedCryptoCurrency.id}>
+                                {cryptoCurrencies.map((cryptoCurrency, index) => {
+                                    return (
+                                        <>
+                                            <FormControlLabel
+                                                value={cryptoCurrency.id}
+                                                control={<Radio color="secondary" />}
+                                                label={cryptoCurrency.id.toUpperCase()}
+                                            />
+                                        </>
+                                    );
+                                })}
+                            </RadioGroup>
+                            }
                     </FormControl>
                 </div>
-                <div style={{ marginTop: '16px' }}>
-                    <FormControl component="fieldset">
+                <div style={{  }}>
+                    <FormControl component="fieldset" className={classes.filtersDiv}>
                         <FormLabel component="legend" className={classes.linkLabel}>
                             <span style={{ marginRight: '4px' }}>With Cash</span>
                             <InfoOutlinedIcon fontSize="small"/>
                         </FormLabel>
-                        <RadioGroup row aria-label="position" name="position" defaultValue="top">
-                            <FormControlLabel
-                                value="top"
-                                control={<Radio color="secondary" />}
-                                label="Top"
-                            />
-                            <FormControlLabel
-                                value="start"
-                                control={<Radio color="secondary" />}
-                                label="Start"
-                            />
-                            <FormControlLabel
-                                value="bottom"
-                                control={<Radio color="secondary" />}
-                                label="Bottom"
-                            />
-                            <FormControlLabel 
-                                value="end" 
-                                control={<Radio color="secondary" />} 
-                                label="End" 
-                            />
-                        </RadioGroup>
+                        {renderFiatCurrencyDrowdown()}
+                        {/* {fiatCurrenciesLoading && !selectedFiatCurrency ?  
+                                <Skeleton width={50} style={{ marginLeft: '8px' }} /> 
+                            : 
+                            <RadioGroup row aria-label="position" name="position" defaultValue={selectedFiatCurrency ? selectedFiatCurrency.code: ''}>
+                                {fiatCurrencies.map((fiatCurrency, index) => {
+                                    console.log(selectedFiatCurrency);
+                                    return (
+                                        <>
+                                            <FormControlLabel
+                                                value={fiatCurrency.code}
+                                                control={<Radio color="secondary" />}
+                                                label={fiatCurrency.code.toUpperCase()}
+                                            />
+                                        </>
+                                    );
+                                })}
+                            </RadioGroup>
+                            } */}
                     </FormControl>
                 </div>
                 <Divider style={{ borderTop: '1px dashed rgba(0, 0, 0, 0.12)', backgroundColor: '#0000', margin: '8px 0px 24px 0px' }} />

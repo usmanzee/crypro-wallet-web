@@ -271,9 +271,9 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <Route path="/fee" component={FeeScreen} />
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/merchant" component={MerchantScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/buy-crypto" component={BuyCryptoScreen}/>
-                            <Route exact path="/p2p/offers" component={P2POffersScreen}/>
-                            <Route exact path="/p2p/offers/:side" component={P2POffersScreen}/>
                             <Route exact path="/p2p/offers/:side/:currency" component={P2POffersScreen}/>
+                            <Route exact path="/p2p/offers/:side" component={P2POffersScreen}/>
+                            <Route exact path="/p2p/offers" component={P2POffersScreen}/>
                             <Route exact path="/p2p/advertiserDetail/:id" component={P2PAdvertiserDetailScreen}/>
 
                             <Route exact path="/p2p/quick-trade" component={ExpressOfferScreen}/>
