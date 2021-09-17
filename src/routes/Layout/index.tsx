@@ -66,6 +66,7 @@ import {
     P2PPostAdScreen,
     AddP2PPaymentMethodScreen,
     P2PMyAdsScreen,
+    P2PEditAdScreen,
     P2PMyOrdersScreen,
     SavingsOffersScreen,
     SavingsHistoryScreen
@@ -280,8 +281,9 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <Route exact path="/p2p/quick-trade/:side" component={ExpressOfferScreen}/>
                             <Route exact path="/p2p/quick-trade/:side/:currency" component={ExpressOfferScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/fiat-order/:id" component={P2PFiatOrderDetailScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/post-ad" component={P2PPostAdScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-ads" component={P2PMyAdsScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/post-offer" component={P2PPostAdScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-offers" component={P2PMyAdsScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-offers/edit/:offerId" component={P2PEditAdScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-orders" component={P2PMyOrdersScreen}/>
                             <Route exact path="/savings" component={SavingsOffersScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/savings/history" component={SavingsHistoryScreen}/>

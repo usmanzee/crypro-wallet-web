@@ -18,6 +18,9 @@ import {
     P2P_CANCEL_OFFER_DATA,
     P2P_CANCEL_OFFER_ERROR,
     P2P_CANCEL_OFFER_FETCH,
+    P2P_USER_OFFER_DETAIL_FETCH,
+    P2P_USER_OFFER_DETAIL_DATA,
+    P2P_USER_OFFER_DETAIL_ERROR
 } from './constants';
 
 export interface P2POffersState {
@@ -50,6 +53,11 @@ export interface P2POffersState {
         timestamp?: number;
         error?: CommonError;
     };
+    offerDetail: {
+        fetchingOfferDetail: boolean;
+        data: Offer;
+        error?:CommonError 
+    }
 }
 
 export const initialP2POffersState: P2POffersState = {
@@ -74,6 +82,10 @@ export const initialP2POffersState: P2POffersState = {
         fetching: false,
         success: false,
     },
+    offerDetail: {
+        fetchingOfferDetail: false,
+        data: null,
+    }
 };
 
 export const offersFetchReducer = (state: P2POffersState['offers'], action: P2POffersActions) => {
@@ -199,6 +211,30 @@ const cancelOfferReducer = (state: P2POffersState['cancelOffer'], action: P2POff
     }
 };
 
+export const offerDetailFetchReducer = (state: P2POffersState['offerDetail'], action: P2POffersActions) => {
+    switch (action.type) {
+        case P2P_USER_OFFER_DETAIL_FETCH:
+            return {
+                ...state,
+                fetchingOfferDetail: true,
+            };
+        case P2P_USER_OFFER_DETAIL_DATA:
+            return {
+                ...state,
+                data: action.payload,
+                fetchingOfferDetail: false,
+            };
+        case P2P_USER_OFFER_DETAIL_ERROR:
+            return {
+                ...state,
+                fetchingOfferDetail: false,
+                error: action.error,
+            };
+        default:
+            return state;
+    }
+};
+
 export const p2pOffersReducer = (state = initialP2POffersState, action: P2POffersActions) => {
     switch (action.type) {
         case P2P_CREATE_OFFER_FETCH:
@@ -237,6 +273,16 @@ export const p2pOffersReducer = (state = initialP2POffersState, action: P2POffer
             return {
                 ...state,
                 offerOrders: offerOrdersFetchReducer(userOfferOrdersFetchState, action),
+            };
+
+        case P2P_USER_OFFER_DETAIL_FETCH:
+        case P2P_USER_OFFER_DETAIL_DATA:
+        case P2P_USER_OFFER_DETAIL_ERROR:
+            const getUserOfferDetail = { ...state.offerDetail };
+
+            return {
+                ...state,
+                offerDetail: offerDetailFetchReducer(getUserOfferDetail, action),
             };
         default:
             return state;

@@ -17,7 +17,8 @@ import {
     TableRow,
     Tooltip,
     Chip,
-    IconButton
+    IconButton,
+    CircularProgress
 } from '@material-ui/core';
 import { StyledTableCell } from '../../materialUIGlobalStyle';
 
@@ -36,25 +37,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import { RouterProps } from 'react-router';
 
+import { DEFAULT_CCY_PRECISION, DEFAULT_TABLE_PAGE_LIMIT } from '../../../constants';
 import { P2PVideoTutorialDialog } from '../../../components/P2P/P2PVideoTutorialDialog';
 import { P2PLinks } from '../../../components/P2P/P2PLinks';
+import { ConfirmDialog } from '../../../components/confirmDialog';
 import { setDocumentTitle } from '../../../helpers';
 import { PageHeader } from '../../../containers/PageHeader';
 import { useStyles } from './style';
 
-
-import {
-    useP2PPaymentMethodsFetch,
-    useUserPaymentMethodsFetch,
-} from '../../../hooks';
-
 import { 
+    Currency,
+    selectCurrenciesLoading,
+    selectCurrencies,
+    currenciesFetch,
     Offer,
-    P2POrderCreate,
-    p2pOrdersCreateFetch,
-    selectP2PCreatedOrder,
-    selectP2PCreateOrderSuccess,
-    selectP2PPaymentMethodsData,
+    selectP2PUserOffersFetchLoading,
+    selectP2PUserOffers,
+    userOffersFetch,
+    selectP2PCancelOfferLoading,
+    cancelOffer
 } from '../../../modules';
 
 import { CommonError } from '../../../modules/types';
@@ -72,19 +73,80 @@ type Props = RouterProps & InjectedIntlProps;
 const P2PMyAdsComponent = (props: Props) => {
     const classes = useStyles();
     const theme = useTheme();
+    const history = useHistory();
     const fullScreenPaymentDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = React.useState(false);
+    const [sides, setSides] = React.useState([
+        {'title': 'All Types', 'value': ''},
+        {'title': 'Buy', 'value': 'buy'},
+        {'title': 'Sell', 'value': 'sell'},
+    ]);
+
+    const [states, setStates] = React.useState([
+        {'title': 'All States', 'value': ''},
+        {'title': 'Active', 'value': 'active'},
+        {'title': 'Offline', 'value': 'offline'},
+    ]);
+    const [selectedSide, setSelectedSide] = React.useState(null);
+    const [selectedState, setSelectedState] = React.useState(null);
+    const [cryptoCurrencies, setCryptoCurrencies] = React.useState<Currency[]>([]);
+    const [loadingCryptoCurrencies, setLoadingCryptoCurrencies] = React.useState<boolean>(true);
+    const [selectedCryptoCurrency, setSelectedCryptoCurrency] = React.useState<Currency>(null);
+    const [selectedUserOffer, setSelectedUserOffer] = React.useState<Offer>(null);
+
     const [videoTutorialDialogOpen, setVideoTutorialDialogOpen] = React.useState(false);
     const [assetAnchorEl, setAssetAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [paymentMethodAnchorEl, setPaymentMethodAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [statusAnchorEl, setStatusAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [typeAnchorEl, setTypeAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [stateAnchorEl, setStateAnchorEl] = React.useState<null | HTMLElement>(null);
     const [value, setValue] = React.useState<DateRange<Date>>([null, null]);
+    const [tablePage, setTablePage] = React.useState(0);
+    const [tableRowsPerPage, setTableRowsPerPage] = React.useState(25);
+
+    const [offlineDialogOpen, setOfflineDialogOpen] = React.useState(false);
+    const [closeOfferDialogOpen, setCloseOfferDialogOpen] = React.useState(false);
+
+    const dispatch = useDispatch();
+    const currencies = useSelector(selectCurrencies);
+    const currenciesLoading = useSelector(selectCurrenciesLoading);
+    const userOffersLoading = useSelector(selectP2PUserOffersFetchLoading);
+    const userOffers = useSelector(selectP2PUserOffers);
+    const cancelOfferLoading = useSelector(selectP2PCancelOfferLoading);
 
     React.useEffect(() => {
         setDocumentTitle('Buy and Sell Crypto on P2P');
+        setSelectedSide(sides[0]);
+        setSelectedState(states[0]);
     }, []);
 
+    React.useEffect(() => {
+        if(!currencies.length) {
+            dispatch(currenciesFetch());
+        } else {
+            filterCryptoCurrencies();
+        }
+    }, [currencies]);
+
+    React.useEffect(() => {
+        if(cryptoCurrencies.length) {
+            if(cryptoCurrencies[0].name != '') {
+                let firstCurrencyOption = {} as Currency;
+                firstCurrencyOption.id = 'All Assets';
+                firstCurrencyOption.name = '';
+                cryptoCurrencies.unshift(firstCurrencyOption);
+            }
+            setSelectedCryptoCurrency(cryptoCurrencies[0]);
+            setLoadingCryptoCurrencies(false);
+        }
+    }, [cryptoCurrencies]);
+
+    React.useEffect(() => {
+        if(!userOffers.length) {
+            dispatch(userOffersFetch({
+                page: 0,
+                limit: DEFAULT_TABLE_PAGE_LIMIT
+            }));
+        }
+    }, [userOffers]);
 
     const handleVideoTurorialDialogOpen = () => {
         setVideoTutorialDialogOpen(true);
@@ -105,36 +167,115 @@ const P2PMyAdsComponent = (props: Props) => {
         setAssetAnchorEl(null);
     };
 
-    const handlePaymentMethodSelectClick = (event: React.MouseEvent<HTMLElement>) => {
-        setPaymentMethodAnchorEl(event.currentTarget);
+    const handleTypeSelectClick = (event: React.MouseEvent<HTMLElement>) => {
+        setTypeAnchorEl(event.currentTarget);
     };
 
-    const handlePaymentMethodSelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
-        if (paymentMethodAnchorEl) {
-            paymentMethodAnchorEl.focus();
+    const handleTypeSelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
+        if (typeAnchorEl) {
+            typeAnchorEl.focus();
         }
-        setPaymentMethodAnchorEl(null);
+        setTypeAnchorEl(null);
     };
 
-    const handleStatusSelectClick = (event: React.MouseEvent<HTMLElement>) => {
-        setStatusAnchorEl(event.currentTarget);
+    const handleStateSelectClick = (event: React.MouseEvent<HTMLElement>) => {
+        setStateAnchorEl(event.currentTarget);
     };
 
-    const handleStatusSelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
-        if (statusAnchorEl) {
-            statusAnchorEl.focus();
+    const handleStateSelectClose = (event: React.ChangeEvent<{}>, reason: AutocompleteCloseReason) => {
+        if (stateAnchorEl) {
+            stateAnchorEl.focus();
         }
-        setStatusAnchorEl(null);
+        setStateAnchorEl(null);
     };
+
+    const filterCryptoCurrencies = () => {
+        const filteredCurrencies = currencies.filter((currency) => {
+            return currency.type == 'coin';
+        });
+        setCryptoCurrencies(filteredCurrencies);
+    }
+
+    const handleTablePageChange = (event: unknown, newPage: number) => {
+        setTablePage(newPage);
+    };
+
+    const handleTableRowsChangePerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTableRowsPerPage(+event.target.value);
+        setTablePage(0);
+    };
+
+    const applyFilters = () => {
+        var filters = {
+            page: 0,
+            limit: DEFAULT_TABLE_PAGE_LIMIT
+        };
+        if(selectedCryptoCurrency.name != '') {
+            filters['baseUnit'] = selectedCryptoCurrency.id.toLowerCase();
+        }
+        if(selectedSide.value != '') {
+            filters['side'] = selectedSide.value.toLowerCase();
+        }
+        if(selectedState.value != '') {
+            filters['state'] = selectedState.value.toLowerCase();
+        }
+        dispatch(userOffersFetch(filters));
+    }
+
+    const resetFilters = () => {
+        setSelectedCryptoCurrency(cryptoCurrencies[0]);
+        setSelectedSide(sides[0]);
+        setSelectedState(states[0]);
+        dispatch(userOffersFetch({
+            page: 0,
+            limit: DEFAULT_TABLE_PAGE_LIMIT
+        }));
+    }
+
+    const handleSetOfferOfflineDialogOpen = (offer: Offer) => {
+        setSelectedUserOffer(offer);
+        setOfflineDialogOpen(true);
+    };
+
+    const handleSetOfferOfflineDialogClose = () => {
+        setOfflineDialogOpen(false);
+    };
+
+    const handleCloseOfferDialogOpen = (offer: Offer) => {
+        setSelectedUserOffer(offer);
+        setCloseOfferDialogOpen(true);
+    };
+
+    const handleCloseOfferDialogClose = () => {
+        setCloseOfferDialogOpen(false);
+    };
+    
+
+    const setOfferStatetoOffline = () => {
+        selectedUserOffer.state = 'offline';
+        dispatch(cancelOffer(selectedUserOffer));
+        setOfflineDialogOpen(false);
+    }
+
+    const closeOffer = () => {
+        selectedUserOffer.state = 'close';
+        dispatch(cancelOffer(selectedUserOffer));
+        setCloseOfferDialogOpen(false);
+    }
+
+    const onEditOfferClick = (offer: Offer) => {
+        history.push(`/p2p/my-offers/edit/${offer.id}`);
+    }
+
 
     const assetsPopperOpen = Boolean(assetAnchorEl);
     const assetsPopperId = assetsPopperOpen ? 'assets' : undefined;
 
-    const paymentMethodPopperOpen = Boolean(paymentMethodAnchorEl);
-    const paymentMethodPopperId = paymentMethodPopperOpen ? 'payment_methods' : undefined;
+    const typePopperOpen = Boolean(typeAnchorEl);
+    const typePopperId = typePopperOpen ? 'types' : undefined;
 
-    const statusPopperOpen = Boolean(statusAnchorEl);
-    const statusPopperId = statusPopperOpen ? 'status' : undefined;
+    const StatePopperOpen = Boolean(stateAnchorEl);
+    const statePopperId = StatePopperOpen ? 'States' : undefined;
 
 
     const renderAssetsDrowdown = () => {
@@ -145,7 +286,7 @@ const P2PMyAdsComponent = (props: Props) => {
                     
             
                     <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                        
+                        {selectedCryptoCurrency ? selectedCryptoCurrency.name == '' ? selectedCryptoCurrency.id : selectedCryptoCurrency.id.toUpperCase() : ''}
                     </Typography>
                     <div className={classes.selectDownArrow}>
                         <ArrowDropDownIcon />
@@ -167,23 +308,23 @@ const P2PMyAdsComponent = (props: Props) => {
                         open
                         onClose={handleAssetSelectClose}
                         disableCloseOnSelect={false}
-                        // value={selectedPaymentMethod}
-                        onChange={(event: any, selectedOption: string | null) => {
-                            // setSelectedPaymentMethod(selectedOption);
+                        value={selectedCryptoCurrency}
+                        onChange={(event: any, selectedOption: Currency | null) => {
+                            setSelectedCryptoCurrency(selectedOption);
                         }}
                         noOptionsText="No Records Found"
-                        renderOption={(option: string) => {
+                        renderOption={(option: Currency) => {
                             return <React.Fragment>
                                 <div style={{ display: 'flex' }}>
                                     <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        {option}
+                                        {option ? option.id.toUpperCase() : ''}
                                     </Typography>
 
                                 </div>
                             </React.Fragment>
                         }}
-                        options={['USDT', 'BTC', 'RSC']}
-                        getOptionLabel={(option: string) => option}
+                        options={cryptoCurrencies}
+                        getOptionLabel={(option: Currency) => option ? option.id.toUpperCase() : ''}
                         renderInput={(params) => (
                             <InputBase
                                 ref={params.InputProps.ref}
@@ -197,26 +338,24 @@ const P2PMyAdsComponent = (props: Props) => {
             </>
         );
     }
-    const renderPaymentMethodDrowdown = () => {
+    const renderTypesDrowdown = () => {
 
         return (
             <> 
-                <div className={classes.selectDropdown} onClick={handlePaymentMethodSelectClick}>
-                    
+                <div className={classes.selectDropdown} onClick={handleTypeSelectClick}>
             
                     <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                        
+                        {selectedSide ? selectedSide.title : ''}
                     </Typography>
                     <div className={classes.selectDownArrow}>
                         <ArrowDropDownIcon />
                     </div>
-                     
                     
                 </div>
                 <Popper
-                    id={paymentMethodPopperId}
-                    open={paymentMethodPopperOpen}
-                    anchorEl={paymentMethodAnchorEl}
+                    id={typePopperId}
+                    open={typePopperOpen}
+                    anchorEl={typeAnchorEl}
                     placement="bottom-start"
                     className={classes.popper}
                 >
@@ -225,25 +364,25 @@ const P2PMyAdsComponent = (props: Props) => {
                     </div>
                     <Autocomplete
                         open
-                        onClose={handlePaymentMethodSelectClose}
+                        onClose={handleTypeSelectClose}
                         disableCloseOnSelect={false}
-                        // value={selectedPaymentMethod}
-                        onChange={(event: any, selectedOption: string | null) => {
-                            // setSelectedPaymentMethod(selectedOption);
+                        value={selectedSide}
+                        onChange={(event: any, selectedOption: any | null) => {
+                            setSelectedSide(selectedOption);
                         }}
                         noOptionsText="No Records Found"
-                        renderOption={(option: string) => {
+                        renderOption={(option: any) => {
                             return <React.Fragment>
                                 <div style={{ display: 'flex' }}>
                                     <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        {option}
+                                        {option ? option.title : ''}
                                     </Typography>
 
                                 </div>
                             </React.Fragment>
                         }}
-                        options={['USDT', 'BTC', 'RSC']}
-                        getOptionLabel={(option: string) => option}
+                        options={sides}
+                        getOptionLabel={(option: any) => option ? option.title : ''}
                         renderInput={(params) => (
                             <InputBase
                                 ref={params.InputProps.ref}
@@ -257,26 +396,23 @@ const P2PMyAdsComponent = (props: Props) => {
             </>
         );
     }
-    const renderStatusDrowdown = () => {
+    const renderStatesDrowdown = () => {
 
         return (
             <> 
-                <div className={classes.selectDropdown} onClick={handleStatusSelectClick}>
-                    
-            
+                <div className={classes.selectDropdown} onClick={handleStateSelectClick}>
                     <Typography variant="subtitle1" component="div" className={classes.currencyCode}>
-                        
+                        {selectedState ? selectedState.title : ''}
                     </Typography>
                     <div className={classes.selectDownArrow}>
                         <ArrowDropDownIcon />
                     </div>
-                     
                     
                 </div>
                 <Popper
-                    id={statusPopperId}
-                    open={statusPopperOpen}
-                    anchorEl={statusAnchorEl}
+                    id={statePopperId}
+                    open={StatePopperOpen}
+                    anchorEl={stateAnchorEl}
                     placement="bottom-start"
                     className={classes.popper}
                 >
@@ -285,25 +421,25 @@ const P2PMyAdsComponent = (props: Props) => {
                     </div>
                     <Autocomplete
                         open
-                        onClose={handleStatusSelectClose}
+                        onClose={handleStateSelectClose}
                         disableCloseOnSelect={false}
-                        // value={selectedPaymentMethod}
-                        onChange={(event: any, selectedOption: string | null) => {
-                            // setSelectedPaymentMethod(selectedOption);
+                        value={selectedState}
+                        onChange={(event: any, selectedOption: any | null) => {
+                            setSelectedState(selectedOption);
                         }}
                         noOptionsText="No Records Found"
-                        renderOption={(option: string) => {
+                        renderOption={(option: any) => {
                             return <React.Fragment>
                                 <div style={{ display: 'flex' }}>
                                     <Typography variant="subtitle2" component="div" className={classes.currencyName}>
-                                        {option}
+                                        {option ? option.title: ''}
                                     </Typography>
 
                                 </div>
                             </React.Fragment>
                         }}
-                        options={['USDT', 'BTC', 'RSC']}
-                        getOptionLabel={(option: string) => option}
+                        options={states}
+                        getOptionLabel={(option: any) => option ? option.title: ''}
                         renderInput={(params) => (
                             <InputBase
                                 ref={params.InputProps.ref}
@@ -341,80 +477,102 @@ const P2PMyAdsComponent = (props: Props) => {
                                     {`Last Updated\n Create Time`}
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                    Status
+                                    State
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     Actions
                                 </StyledTableCell>
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            <TableRow hover>
-                                <StyledTableCell>
-                                    <div style={{ }}>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>1232354542346</Typography>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, color: 'rgb(248, 73, 96)' }}>SELL</Typography>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <Typography variant='body1' style={{ color: 'grey' }}>USDT</Typography>
-                                            <Typography variant='body1' style={{ color: 'grey' }}>/</Typography>
-                                            <Typography variant='body1' style={{ marginLeft: '8px', color: 'grey' }}>PKR</Typography>
-                                        </div>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ }}>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>170.00</Typography>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>0.00</Typography>
-                                        <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                            <Typography variant='body1' style={{ color: 'grey' }}>1500.00-150,0000.00 PKR</Typography>
-                                        </div>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ }}>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>198.00</Typography>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, }}>--</Typography>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ width: '50%' }}>
-                                        <Tooltip title="Payment Method1" arrow>
-                                            <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                        </Tooltip>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ }}>
-                                        <Typography variant='body1' component="div">2021-08-30 03:40:23</Typography>
-                                        <Typography variant='body1' component="div">2021-08-30 03:40:23</Typography>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ }}>
-                                        <Typography variant='body1' component="div" style={{ fontWeight: 700, color: '#02C076' }}>Published</Typography>
-                                    </div>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <div style={{ display: 'flex' }}>
-                                        <Tooltip title="Download" arrow>
-                                            <IconButton aria-label="download">
-                                                <SystemUpdateAltOutlinedIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Edit" arrow>
-                                            <IconButton aria-label="edit">
-                                                <EditIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Delete" arrow>
-                                            <IconButton aria-label="delete">
-                                                <CancelOutlinedIcon fontSize="small" color="error" />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </div>
-                                </StyledTableCell>
-                            </TableRow>
-                        </TableBody>
+                        {userOffersLoading ? 
+                            <>
+                                 <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
+                                    <CircularProgress size={20} />
+                                </caption>
+                            </> :
+                            userOffers.length ?
+                                <TableBody>
+                                    {userOffers.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((offer, index) => {
+                                    return <TableRow hover>
+                                        <StyledTableCell>
+                                            <div style={{ }}>
+                                                <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>{offer.id}</Typography>
+                                                <Typography variant='body1' component="div" style={{ fontWeight: 700, color: offer.side == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', }}>{offer.side.toUpperCase()}</Typography>
+                                                <div style={{ display: 'flex', flexDirection: 'row'}}>
+                                                    <Typography variant='body1' style={{ color: 'grey' }}>{`${offer.base_unit.toUpperCase()}/${offer.quote_unit.toUpperCase()}`}</Typography>
+                                                </div>
+                                            </div>
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <div style={{ }}>
+                                                {/* <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>{offer.to}</Typography> */}
+                                                <div style={{ display: 'flex', flexDirection: 'row'}}>
+                                                    <Typography variant='body1' style={{ color: 'grey' }}>{`${offer.min_order_amount}/${offer.max_order_amount} ${offer.quote_unit.toUpperCase()}`}</Typography>
+                                                </div>
+                                            </div>
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <div style={{ }}>
+                                                <Typography variant='body1' component="div" style={{ fontWeight: 700 }}>{offer.price}</Typography>
+                                                {/* <Typography variant='body1' component="div" style={{ fontWeight: 700, }}>--</Typography> */}
+                                            </div>
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <div style={{ width: '50%' }}>
+                                                <Tooltip title="Payment Method1" arrow>
+                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                                <Tooltip title="Payment Method1" arrow>
+                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                                <Tooltip title="Payment Method1" arrow>
+                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                                <Tooltip title="Payment Method1" arrow>
+                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
+                                                </Tooltip>
+                                            </div>
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <div style={{ }}>
+                                                <Typography variant='body1' component="div">2021-08-30 03:40:23</Typography>
+                                                <Typography variant='body1' component="div">2021-08-30 03:40:23</Typography>
+                                            </div>
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <div style={{ }}>
+                                                <Typography variant='body1' component="div" style={{ fontWeight: 700, color: '#02C076' }}>{offer.state.toUpperCase()}</Typography>
+                                            </div>
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <div style={{ display: 'flex' }}>
+                                                <Tooltip title="Offline" arrow>
+                                                    <IconButton aria-label="offline" onClick={() => handleSetOfferOfflineDialogOpen(offer)}>
+                                                        <SystemUpdateAltOutlinedIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Edit" arrow>
+                                                    <IconButton aria-label="edit" onClick={() => onEditOfferClick(offer)}>
+                                                        <EditIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Close" arrow>
+                                                    <IconButton aria-label="close" onClick={() => handleCloseOfferDialogOpen(offer)}>
+                                                        <CancelOutlinedIcon fontSize="small" color="error" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </div>
+                                        </StyledTableCell>
+                                    </TableRow>
+                                    })}
+                                </TableBody>
+                                :
+                                <>
+                                    <caption style={{ textAlign: 'center', padding: '40px 0px', fontSize: '14px' }}>
+                                        <FormattedMessage id={'no.record.found'} />
+                                    </caption>
+                                </>
+                        }
                     </Table>
                 </TableContainer>
             </>
@@ -453,15 +611,15 @@ const P2PMyAdsComponent = (props: Props) => {
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
                                 Type
                             </InputLabel>
-                            {renderPaymentMethodDrowdown()}
+                            {renderTypesDrowdown()}
                         </div>
                         <div className={classes.filtersDiv}>
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
-                                Status
+                                State
                             </InputLabel>
-                            {renderStatusDrowdown()}
+                            {renderStatesDrowdown()}
                         </div>
-                        <div className={classes.dateFiltersDiv}>
+                        {/* <div className={classes.dateFiltersDiv}>
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
                                 Created Date
                             </InputLabel>
@@ -481,15 +639,14 @@ const P2PMyAdsComponent = (props: Props) => {
                                 />
                             </LocalizationProvider>
                            
-                        </div>
-                        <div className={classes.filtersDiv}>
+                        </div> */}
+                        <div className={classes.filterButton}>
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
-                               
                             </InputLabel>
-                            <Button variant="outlined" color="secondary">
+                            <Button variant="outlined" color="secondary" onClick={() => applyFilters()}>
                                 Filter
                             </Button>
-                            <Button style={{ marginLeft: '8px' }}>Reset</Button>
+                            <Button style={{ marginLeft: '8px' }} onClick={() => resetFilters()}>Reset</Button>
                         </div>
 
                        
@@ -499,6 +656,8 @@ const P2PMyAdsComponent = (props: Props) => {
                     </div>
                 </Paper>
                 <P2PVideoTutorialDialog open={videoTutorialDialogOpen} handleClose={handleVideoTurorialDialogClose} />
+                <ConfirmDialog title='Confirm to take the Ad offline' body= 'Once taken offline, the Ad will not be able to take in orders from users' confimButtonText="Offline" cancelButtonText="Cancel" open={offlineDialogOpen} handleClose={handleSetOfferOfflineDialogClose} handleConfirmClick={setOfferStatetoOffline} />
+                <ConfirmDialog title='Confirm Closing the Ad?' body= 'Once closed, you can not edit this ad.' confimButtonText="Close" cancelButtonText="Cancel" open={closeOfferDialogOpen} handleClose={handleCloseOfferDialogClose} handleConfirmClick={closeOffer} />
             </Box>
         </>
     );    

@@ -94,3 +94,13 @@ export const selectP2PCancelOfferTimestamp = (state: RootState): number | undefi
 
 export const selectShouldFetchP2PCancelOffer = (state: RootState): boolean =>
     !selectP2PCancelOfferTimestamp(state) && !selectP2PCancelOfferLoading(state);
+
+/* P2P Offer Detail Methods */
+export const selectP2PUserOfferDetail = (state: RootState): Offer =>
+    state.user.p2pOffers.offerDetail.data;
+
+export const selectP2PUserOfferDetailLoading = (state: RootState): boolean =>
+    state.user.p2pOffers.offerDetail.fetchingOfferDetail;
+
+export const selectP2PUserOfferDetailError = (state: RootState): CommonError | undefined =>
+    state.user.p2pOffers.offerDetail.error;

@@ -15,7 +15,7 @@ export function* cancelOfferSaga(action: CancelOfferFetch) {
     try {
         const { id } = action.payload;
 
-        yield call(API.post(cancelOptions(getCsrfToken())), `/private/offers/${id}/cancel`, action.payload);
+        yield call(API.post(cancelOptions(getCsrfToken())), `/account/offers/${id}`, action.payload);
 
         yield put(alertPush({ message: ['success.offer.cancelling'], type: 'success'}));
     } catch (error) {

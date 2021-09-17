@@ -14,6 +14,9 @@ import {
     P2P_CANCEL_OFFER_DATA,
     P2P_CANCEL_OFFER_ERROR,
     P2P_CANCEL_OFFER_FETCH,
+    P2P_USER_OFFER_DETAIL_FETCH,
+    P2P_USER_OFFER_DETAIL_DATA,
+    P2P_USER_OFFER_DETAIL_ERROR
 } from './constants';
 
 export interface OfferNestedOrders extends Offer {
@@ -23,9 +26,12 @@ export interface OfferNestedOrders extends Offer {
 export interface UserOffersFetch {
     type: typeof P2P_USER_OFFERS_FETCH;
     payload: {
+        side?: string;
+        baseUnit?: string;
+        quoteUnit?: string;
+        state?: string;
         page: number;
         limit: number;
-        state: string;
     };
 }
 
@@ -94,6 +100,11 @@ export interface CancelOfferFetch {
     type: typeof P2P_CANCEL_OFFER_FETCH;
     payload: {
         id: number;
+        origin_amount: string;
+        price: string;
+        base_unit: string;
+        quote_unit: string;
+        state: string;
     }
 }
 
@@ -107,8 +118,25 @@ export interface CancelOfferError {
     error: CommonError;
 }
 
+export interface UserOfferDetailFetch {
+    type: typeof P2P_USER_OFFER_DETAIL_FETCH;
+    payload: {
+        id: number;
+    }
+}
+
+export interface UserOfferDetailData {
+    type: typeof P2P_USER_OFFER_DETAIL_DATA;
+    payload: Offer;
+}
+
+export interface UserOfferDetailError {
+    type: typeof P2P_USER_OFFER_DETAIL_ERROR;
+    error: CommonError;
+}
+
 export type P2POffersActions =
-    | UserOffersFetch
+    UserOffersFetch
     | UserOffersData
     | UserOffersError
     | UserOfferOrdersFetch
@@ -120,7 +148,10 @@ export type P2POffersActions =
     | CancelOfferFetch
     | CancelOfferData
     | CancelOfferError
-    | P2PUserOffersUpdate;
+    | P2PUserOffersUpdate
+    | UserOfferDetailFetch
+    | UserOfferDetailData
+    | UserOfferDetailError;
 
 export const userOffersFetch = (payload?: UserOffersFetch['payload']): UserOffersFetch => ({
     type: P2P_USER_OFFERS_FETCH,
@@ -183,6 +214,21 @@ export const cancelOfferData = (payload: CancelOfferData['payload']): CancelOffe
 
 export const cancelOfferError = (error: CommonError): CancelOfferError => ({
     type: P2P_CANCEL_OFFER_ERROR,
+    error,
+});
+
+export const userOfferDetailFetch = (payload?: UserOfferDetailFetch['payload']): UserOfferDetailFetch => ({
+    type: P2P_USER_OFFER_DETAIL_FETCH,
+    payload
+});
+
+export const userOfferDetailData = (payload: UserOfferDetailData['payload']): UserOfferDetailData => ({
+    type: P2P_USER_OFFER_DETAIL_DATA,
+    payload,
+});
+
+export const userOfferDetailError = (error: CommonError): UserOfferDetailError => ({
+    type: P2P_USER_OFFER_DETAIL_ERROR,
     error,
 });
 

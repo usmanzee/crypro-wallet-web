@@ -15,3 +15,7 @@ export const P2P_CREATE_OFFER_ERROR = 'p2p_create_offer/ERROR';
 export const P2P_CANCEL_OFFER_FETCH = 'p2p_cancel_offer/FETCH';
 export const P2P_CANCEL_OFFER_DATA  = 'p2p_cancel_offer/DATA';
 export const P2P_CANCEL_OFFER_ERROR = 'p2p_cancel_offer/ERROR';
+
+export const P2P_USER_OFFER_DETAIL_FETCH = 'p2p_user_offer_detail/FETCH';
+export const P2P_USER_OFFER_DETAIL_DATA  = 'p2p_user_offer_detail/DATA';
+export const P2P_USER_OFFER_DETAIL_ERROR = 'p2p_user_offer_detail/ERROR';

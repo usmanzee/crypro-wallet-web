@@ -132,6 +132,18 @@ export const useStyles = makeStyles((theme: Theme) =>
         [theme.breakpoints.only('sm')]: {
         },
     },
+    filterButton: {
+        [theme.breakpoints.only('xl')]: {
+            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
+        },
+        [theme.breakpoints.only('lg')]: {
+            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
+        },
+        [theme.breakpoints.only('md')]: {
+        },
+        [theme.breakpoints.only('sm')]: {
+        },
+    },
     inputLabel: {
         fontWeight: 500,
         margin: `${theme.spacing(1)}px 0px`

@@ -44,4 +44,5 @@ export * from './CopyTag';
 export * from './P2P/P2PVideoTutorialDialog';
 export * from './P2P/P2PLinks';
 export * from './InfoDialog';
+export * from './confirmDialog';
 export * from './P2P/P2POffers';
