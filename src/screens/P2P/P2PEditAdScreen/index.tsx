@@ -193,13 +193,13 @@ const P2PEditAdComponent = (props: Props) => {
     };
 
     const getExchangeRates = async () => {
-            setFetchingRate(true);
-            // setWalletsToAmount('');
-            const response = await fetchRate(selectedCryptoCurrency.id.toLowerCase(), selectedFiatCurrency.code.toLowerCase(), 1);
-            if (response.data) {
-                setFetchingRate(false);
-                // setWalletsToAmount(response.data);
-            }
+        setFetchingRate(true);
+        // setWalletsToAmount('');
+        const response = await fetchRate(selectedCryptoCurrency.id.toLowerCase(), selectedFiatCurrency.code.toLowerCase(), 1);
+        if (response.data) {
+            setFetchingRate(false);
+            // setWalletsToAmount(response.data);
+        }
     }
 
     const handleNext = () => {

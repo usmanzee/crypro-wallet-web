@@ -59,7 +59,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('md')]: {
           width: '100%',
       }
-  },
+    },
     selectDropdown: {
       display: 'flex',
       cursor: 'pointer',
@@ -168,6 +168,17 @@ export const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('md')]: {
           width: '100%',
       }
+    },
+    maxButton: {
+      cursor: 'pointer',
+      color: theme.palette.primary.main
+    },
+    inputAdornmentDivider: {
+      height: '16px',
+      margin: '4px'
+    },
+    paymentMethodError: {
+      color: theme.palette.error.main,
     },
     registerDaysInput: {
       textAlign: 'center',

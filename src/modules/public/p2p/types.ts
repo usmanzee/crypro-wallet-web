@@ -40,9 +40,8 @@ export interface AdvertiserDetail {
 // }
 
 export interface PaymentMethod {
-    id:     number;
     name:   string;
-    fields: Field[];
+    slug:   string;
 }
 
 export interface Field {

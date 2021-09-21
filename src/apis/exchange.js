@@ -24,6 +24,7 @@ export const getExchangeHistory = () => {
     return axiosInstance.get(`account/exchanges/history`)
         .then(response => response.data);
 };
+
 export const getNotifications = () => {
     return axiosInstance.get(`account/notifications`)
 };

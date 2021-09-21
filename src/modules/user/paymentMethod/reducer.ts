@@ -23,10 +23,8 @@ export interface PaymentMethodStateModal {
 }
 
 export interface UserPaymentMethod {
-    id: number;
-    payment_method_id: number;
-    data: any;
-    payment_method: PaymentMethod;
+    user_payment_detail: string;
+    payment_method:      PaymentMethod;
 }
 
 export interface PaymentMethodState {

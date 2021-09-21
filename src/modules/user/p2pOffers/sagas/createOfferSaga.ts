@@ -13,7 +13,7 @@ const executeOptions = (csrfToken?: string): RequestOptions => {
 
 export function* createOfferSaga(action: CreateOfferFetch) {
     try {
-        yield call(API.post(executeOptions(getCsrfToken())), '/private/offers', action.payload);
+        yield call(API.post(executeOptions(getCsrfToken())), '/account/offers', action.payload);
 
         yield put(createOfferData());
         yield put(alertPush({ message: ['success.offer.created'], type: 'success'}));

@@ -5,70 +5,13 @@ Access-Control-Allow-Methods: GET, POST, DELETE, PUT, PATCH, OPTIONS, HEAD
 Access-Control-Max-Age: 3600
 Access-Control-Allow-Credentials: true
 
-[{
-		"id": 1,
-		"name": "Bank Transfer",
-		"fields": [{
-			"fieldName": "Name",
-			"type": "TEXT",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": true,
-			"hintText": "Please enter your name"
-		}, {
-			"fieldName": "Bank account number",
-			"type": "NUMBER",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": true,
-			"hintText": "Please enter your bank account number"
-		}, {
-			"fieldName": "Bank name",
-			"type": "TEXT",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": true,
-			"hintText": "Enter the name of your bank name"
-		}, {
-			"fieldName": "Account opening branch",
-			"type": "TEXT",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": false,
-			"hintText": "Enter bank branch information"
-		}]
-	},
-	{
-		"id": 2,
-		"name": "Jazz Cash",
-		"fields": [{
-			"fieldName": "Name",
-			"type": "TEXT",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": true,
-			"hintText": "Please enter your name"
-		}, {
-			"fieldName": "Jazz Cash Mobile account",
-			"type": "NUMBER",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": true,
-			"hintText": "Please enter your jazz cash account number"
-		}, {
-			"fieldName": "Other payment details (for international transfer)",
-			"type": "TEXT",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": false,
-			"hintText": null
-		}, {
-			"fieldName": "Receive QR code",
-			"type": "QR",
-			"multiLine": false,
-			"lengthLimit": 100,
-			"isRequired": false,
-			"hintText": null
-		}]
-	}
+[
+    {
+        "name": "Western Union",
+        "slug": "western-union"
+    },
+    {
+        "name": "Amazon Gift Card",
+        "slug": "amazon-gift-card"
+    }
 ]

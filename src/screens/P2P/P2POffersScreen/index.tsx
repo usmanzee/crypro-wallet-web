@@ -173,9 +173,9 @@ const P2POffersComponent = (props: Props) => {
         if(!p2pPaymentMethods.length) {
             dispatch(p2pPaymentMethodsFetch());
         } else {
-            if(p2pPaymentMethods[0].id != 0) {
+            if(p2pPaymentMethods[0].slug != '') {
                 let allPaymentsOption = {} as PaymentMethod;
-                allPaymentsOption.id = 0;
+                allPaymentsOption.slug = '';
                 allPaymentsOption.name = 'All Payments';
                 p2pPaymentMethods.unshift(allPaymentsOption);
             }
@@ -185,10 +185,10 @@ const P2POffersComponent = (props: Props) => {
 
     React.useEffect(() => {
         if(selectedSide && selectedCryptoCurrency && selectedFiatCurrency && selectedP2PPaymentMethod) {
-            if(selectedP2PPaymentMethod.id == 0) {
+            if(selectedP2PPaymentMethod.slug == '') {
                 fetchP2POffers(selectedSide, selectedCryptoCurrency.id, selectedFiatCurrency.code);
             } else {
-                fetchP2POffers(selectedSide, selectedCryptoCurrency.id, selectedFiatCurrency.code, selectedP2PPaymentMethod.id);
+                fetchP2POffers(selectedSide, selectedCryptoCurrency.id, selectedFiatCurrency.code, selectedP2PPaymentMethod.slug);
             }
         }
     }, [selectedSide, selectedCryptoCurrency, selectedFiatCurrency, selectedP2PPaymentMethod]);
@@ -200,7 +200,7 @@ const P2POffersComponent = (props: Props) => {
     }, [P2PWallets]);
     //End Use Effects
 
-    const fetchP2POffers = (side: string, baseUnit: string, quoteUnit: string, paymentMethodId?: Number) => {
+    const fetchP2POffers = (side: string, baseUnit: string, quoteUnit: string, paymentMethodId?: string) => {
         var requestObject = {
             side: side.toLowerCase(),
             base: baseUnit.toLowerCase(),

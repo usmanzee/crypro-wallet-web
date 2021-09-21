@@ -1,0 +1,12 @@
+HTTP/2 200
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, DELETE, PUT, PATCH, OPTIONS, HEAD
+Access-Control-Max-Age: 3600
+Access-Control-Allow-Credentials: true
+
+{
+    "name": "Western Union",
+    "slug": "western-union",
+    "options": "[{\"fieldName\":\"Name\",\"type\":\"TEXT\",\"multiLine\":false,\"lengthLimit\":100,\"isRequired\":true,\"hintText\":\"Enter you Account name\"},{\"fieldName\":\"Payment Details\",\"type\":\"TEXT\",\"multiLine\":true,\"lengthLimit\":100,\"isRequired\":true,\"hintText\":\"Enter your Payment Details\"}]"
+}
