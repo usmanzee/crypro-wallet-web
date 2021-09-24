@@ -16,8 +16,9 @@ import {
     P2P_ORDERS_APPEND,
     P2P_ORDER_RESET_SUCCESS,
     P2P_REMOVE_ORDER_ALERT,
+    P2P_CHAT_APPEND
 } from "./constants";
-import { P2POrderCreate, P2POrder } from "./types";
+import { P2POrderCreate, P2POrder, P2PChat } from "./types";
 
 export interface P2POrdersCreateFetch {
     type: typeof P2P_ORDERS_CREATE_FETCH;
@@ -76,8 +77,7 @@ export interface P2POrdersUpdateFetch {
     type: typeof P2P_ORDERS_UPDATE_FETCH;
     payload: {
         id: number;
-        action: string;
-        payment_method_id?: number;
+        status: string;
     };
 }
 
@@ -112,6 +112,11 @@ export interface P2POrderRemoveAlert {
     }
 }
 
+export interface P2PChatAppend {
+    type: typeof P2P_CHAT_APPEND;
+    payload: P2PChat;
+}
+
 export type P2POrdersActions =
     P2POrdersCreateFetch
     | P2POrdersCreateData
@@ -128,7 +133,8 @@ export type P2POrdersActions =
     | P2POrdersDataWS
     | P2POrdersAppend
     | P2POrderResetSuccess
-    | P2POrderRemoveAlert;
+    | P2POrderRemoveAlert
+    | P2PChatAppend;
 
 export const p2pOrdersCreateFetch = (payload: P2POrderCreate): P2POrdersCreateFetch => ({
     type: P2P_ORDERS_CREATE_FETCH,
@@ -206,5 +212,10 @@ export const p2pOrderResetSuccess = (): P2POrderResetSuccess => ({
 
 export const p2pOrderRemoveAlert = (payload: P2POrderRemoveAlert['payload']): P2POrderRemoveAlert => ({
     type: P2P_REMOVE_ORDER_ALERT,
+    payload,
+});
+
+export const p2pChatAppend = (payload: P2PChatAppend['payload']): P2PChatAppend => ({
+    type: P2P_CHAT_APPEND,
     payload,
 });

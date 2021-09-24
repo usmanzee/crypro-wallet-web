@@ -1,4 +1,4 @@
-import { RootState } from '../..';
+import { P2PChat, RootState } from '../..';
 import { CommonError } from '../../types';
 import { P2POrder } from './types';
 
@@ -55,3 +55,7 @@ export const selectP2PUpdateOrderSuccess = (state: RootState): boolean =>
 // P2P Orders Alert list
 export const selectP2POrderAlerts = (state: RootState): P2POrder[] =>
     state.user.p2pOrders.alertList.list;
+
+// P2P Orders Alert list
+export const selectP2PChat = (state: RootState): P2PChat[] =>
+    state.user.p2pOrders.chat.list;

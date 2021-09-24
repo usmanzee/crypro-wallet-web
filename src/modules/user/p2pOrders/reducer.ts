@@ -2,7 +2,7 @@ import { defaultStorageLimit } from '../../../api';
 import { sliceArray } from '../../../helpers';
 import { CommonError } from '../../types';
 
-import { insertIfNotExisted, insertOrUpdate } from "./helpers";
+import { insertIfNotExisted, insertOrUpdate, insertChatIfNotExisted } from "./helpers";
 import { P2POrdersActions } from "./actions";
 import {
     P2P_ORDER_DATA,
@@ -21,8 +21,9 @@ import {
     P2P_ORDERS_APPEND,
     P2P_ORDER_RESET_SUCCESS,
     P2P_REMOVE_ORDER_ALERT,
+    P2P_CHAT_APPEND
 } from "./constants";
-import { P2POrder } from "./types";
+import { P2POrder, P2PChat } from "./types";
 
 export interface P2POrdersState {
     order: {
@@ -44,6 +45,12 @@ export interface P2POrdersState {
     alertList: {
         list: P2POrder[];
     };
+    chat: {
+        list: P2PChat[],
+        sendingMessage: boolean;
+        successSendingMessage: boolean;
+        errorSendingMessage?: CommonError
+    }
 }
 
 export const initialP2POrdersState: P2POrdersState = {
@@ -63,6 +70,11 @@ export const initialP2POrdersState: P2POrdersState = {
     alertList: {
         list: [],
     },
+    chat: {
+        list: [],
+        sendingMessage: false,
+        successSendingMessage: false
+    }
 };
 
 const orderReducer = (state: P2POrdersState['order'], action: P2POrdersActions) => {
@@ -197,6 +209,23 @@ const tradesHistoryReducer = (state: P2POrdersState['tradesHistory'], action: P2
     }
 };
 
+const chatReducer = (state: P2POrdersState, action: P2POrdersActions) => {
+    switch (action.type) {
+        case P2P_CHAT_APPEND:
+            const chatAppendState = {
+                ...state.chat,
+                list: insertChatIfNotExisted(state.chat.list, action.payload)
+            };
+
+            return {
+                ...state,
+                chat: chatAppendState,
+            };
+        default:
+            return state;
+    }
+};
+
 export const p2pOrdersReducer = (state = initialP2POrdersState, action: P2POrdersActions) => {
     switch (action.type) {
         case P2P_ORDERS_CREATE_FETCH:
@@ -229,6 +258,10 @@ export const p2pOrdersReducer = (state = initialP2POrdersState, action: P2POrder
         case P2P_REMOVE_ORDER_ALERT:
             return {
                 ...p2pOrdersWebsocketReducer(state, action),
+            };
+        case P2P_CHAT_APPEND:
+            return {
+                ...chatReducer(state, action),
             };
         default:
             return state;

@@ -1,22 +1,27 @@
 import { UserPaymentMethod } from "../../user/paymentMethod";
 
 export interface Offer {
-    id:                number;
-    origin_amount:     string;
-    min_order_amount:  string;
-    max_order_amount:  string;
-    available_amount:  string;
-    price:             string;
-    base_unit:         string;
-    quote_unit:        string;
-    side:              string;
-    state:             string;
-    time_limit:        null;
-    note:              string;
-    payment_method_id: number;
-    member:            AdvertiserDetail;
-    created_at:        Date;
-    updated_at:        Date;
+    id:                    number;
+    price:                 string;
+    available_amount:      string;
+    origin_amount:         string;
+    min_order_amount:      string;
+    max_order_amount:      string;
+    base_unit:             string;
+    quote_unit:            string;
+    side:                  string;
+    time_limit:            string;
+    note:                  string;
+    created_at:            Date;
+    updated_at:            Date;
+    name:                  string;
+    total_trades:          number;
+    trades_30_day:         number;
+    tradecompletion_30day: number;
+    rating:                string;
+    profile_id:            number;
+    state:                 string;
+    payment_methods:       PaymentMethod[];
 }
 
 export interface AdvertiserDetail {

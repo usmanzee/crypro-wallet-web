@@ -18,6 +18,7 @@ export function* createOfferSaga(action: CreateOfferFetch) {
         yield put(createOfferData());
         yield put(alertPush({ message: ['success.offer.created'], type: 'success'}));
     } catch (error) {
+        yield put(createOfferError(error));
         yield put(alertPush({message: error.message, code: error.code, type: 'error'}));
     }
 }

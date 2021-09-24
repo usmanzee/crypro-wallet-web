@@ -4,6 +4,7 @@ import { all, call, cancel, fork, put, race, select, take, takeEvery } from 'red
 import { isFinexEnabled, rangerUrl } from '../../../../api';
 import { store } from '../../../../store';
 import { pushHistoryEmit } from '../../../user/history';
+import { p2pChatAppend } from '../../../user/p2pOrders';
 import { selectOpenOrdersList, userOpenOrdersUpdate } from '../../../user/openOrders';
 import { userOrdersHistoryRangerData} from '../../../user/ordersHistory';
 import { updateWalletsDataByRanger } from '../../../user/wallets';
@@ -198,6 +199,12 @@ const initRanger = (
                         // private
                         case 'trade':
                             emitter(pushHistoryEmit(event));
+
+                            return;
+
+                        // private
+                        case 'p2p.chat':
+                            emitter(p2pChatAppend(event));
 
                             return;
 

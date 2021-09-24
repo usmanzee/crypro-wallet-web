@@ -19,3 +19,7 @@ export const P2P_ORDERS_APPEND = 'p2p_orders/APPEND';
 
 export const P2P_ORDER_RESET_SUCCESS = 'p2p_order/RESET_SUCCESS';
 export const P2P_REMOVE_ORDER_ALERT = 'p2p_order/REMOVE_ALERT';
+
+export const P2P_CHAT_FETCH = 'p2p_chat/FETCH';
+export const P2P_CHAT_SEND = 'p2p_chat/SEND';
+export const P2P_CHAT_APPEND = 'p2p_chat/APPEND';

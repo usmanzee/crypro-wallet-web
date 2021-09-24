@@ -117,7 +117,7 @@ export const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
         },
         [theme.breakpoints.down('sm')]: {
-            display: 'none'
+            display: 'block',
         },
     },
     mobilePaymentMethods: {
@@ -131,10 +131,10 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     paymentMethodDetail: {
         [theme.breakpoints.up('sm')]: {
-            margin: '16px',
+            margin: '8px 16px',
         },
         [theme.breakpoints.down('sm')]: {
-            margin: '0px',
+            marginTop: '8px',
         },
     },
     paymentTimer: {
@@ -207,7 +207,13 @@ export const useStyles = makeStyles((theme: Theme) =>
         position: 'relative',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginBottom: '16px !important',
+    },
+    imgLeftDiv: {
+        display: 'flex',
+        position: 'relative',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginTop: '8px'
     },
     messageLeft: {
         borderRadius: "8px 0px 8px 8px",
@@ -215,7 +221,6 @@ export const useStyles = makeStyles((theme: Theme) =>
         background: "rgba(240, 185, 11, 0.18)",
         lineHeight: "24px",
         padding: "10px 16px",
-        marginLeft: "8px",
         whiteSpace: "pre-wrap",
         wordBreak: "break-word",
         fontSize: "14px"
@@ -225,7 +230,13 @@ export const useStyles = makeStyles((theme: Theme) =>
         position: 'relative',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        marginBottom: '16px !important',
+    },
+    imgRightDiv: {
+        display: 'flex',
+        position: 'relative',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginTop: '8px'
     },
     messageRight: {
         borderRadius: "8px 0px 8px 8px",
@@ -233,7 +244,6 @@ export const useStyles = makeStyles((theme: Theme) =>
         background: "rgb(255, 255, 255)",
         lineHeight: "24px",
         padding: "10px 16px",
-        marginLeft: "8px",
         whiteSpace: "pre-wrap",
         wordBreak: "break-word",
         fontSize: "14px"
@@ -257,6 +267,12 @@ export const useStyles = makeStyles((theme: Theme) =>
         border: '1px solid rgb(234, 236, 239)',
         boxSizing: 'border-box',
         borderRadius: '4px',
-    }
+    },
+    dialogCloseButton: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
+      },
   }),
 );

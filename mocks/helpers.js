@@ -63,6 +63,17 @@ const Helpers = {
             "usd":  [getBalanceValue("1000", 2), getLockedValue("100", 2)]
         }
     },
+    getP2PChat: () => {
+        const chatId = Math.floor(Math.random() * 11);
+        return {
+            "id": chatId < 1 ? 1 : chatId,
+            "order_id": 1,
+            "sender_uid":  chatId < 5 ? "ID0D2741FBCA" : "IDE7A75295F7",
+            "receiver_uid": 2,
+            "message": chatId < 5 ? "This is your message" : "Counter party message",
+            "attachment_url": chatId == 3 || chatId == 8 ? "https://images.pexels.com/photos/20787/pexels-photo.jpg" : "",
+        }
+    },
     getDepth: (sequence) => {
         const delta = 2 * (1 + Math.cos(2 * Math.PI * Date.now() / 1000 / 3600))
         const fV = (volume) => String(parseFloat(volume) + delta * 10);

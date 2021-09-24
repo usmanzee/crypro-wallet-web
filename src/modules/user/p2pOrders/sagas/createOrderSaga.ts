@@ -13,7 +13,7 @@ const executeOptions = (csrfToken?: string): RequestOptions => {
 
 export function* createOrderSaga(action: P2POrdersCreateFetch) {
     try {
-        const order = yield call(API.post(executeOptions(getCsrfToken())), '/private/orders', action.payload);
+        const order = yield call(API.post(executeOptions(getCsrfToken())), '/account/p2p/orders', action.payload);
         yield put(p2pOrdersCreateData(order));
         yield put(p2pOrdersAppend(order));
         yield put(alertPush({ message: ['success.order.created'], type: 'success'}));

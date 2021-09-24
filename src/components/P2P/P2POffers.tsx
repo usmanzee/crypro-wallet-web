@@ -42,6 +42,9 @@ import {
 import { 
     selectUserLoggedIn,
     Offer,
+    p2pOrdersCreateFetch,
+    selectP2PCreatedOrder,
+    selectP2PCreateOrderSuccess,
 } from '../../modules';
 
 import {
@@ -143,7 +146,10 @@ const P2POffersComponent = (props: Props) => {
     
     const [receivableSellAmountErrorMessage, setReceivableSellAmountErrorMessage] = React.useState<string>('');
 
+    const dispatch = useDispatch();
     const loggedIn = useSelector(selectUserLoggedIn);
+    const P2PCreateOrderSuccess = useSelector(selectP2PCreateOrderSuccess);
+    const P2PCreatedOrder = useSelector(selectP2PCreatedOrder);
 
     React.useEffect(() => {
         calculateBuyReceivableOnAmountChange(buyAmount);
@@ -165,6 +171,12 @@ const P2POffersComponent = (props: Props) => {
         calculateSellAmountOnReceivableChange(receivableSellAmount);
         handleSellReceivableAmountError(receivableSellAmount);
     }, [receivableSellAmount]);
+
+    React.useEffect(() => {
+        if(P2PCreatedOrder && P2PCreateOrderSuccess) {
+            history.push('/p2p/fiat-order/'+P2PCreatedOrder.id);
+        }
+    }, [P2PCreatedOrder, P2PCreateOrderSuccess]);
     
 
     const handleOfferClick = (offer: Offer) => {
@@ -305,11 +317,17 @@ const P2POffersComponent = (props: Props) => {
     }
 
     const handleBuyFormSubmit = () => {
-
+        dispatch(p2pOrdersCreateFetch({
+            offer_id: selectedOffer.id,
+            amount: buyAmount
+        }));
     }
 
     const handleSellFormSubmit = () => {
-
+        dispatch(p2pOrdersCreateFetch({
+            offer_id: selectedOffer.id,
+            amount: sellAmount
+        }));
     }
 
     const renderMobileOffers = () => {
@@ -323,14 +341,14 @@ const P2POffersComponent = (props: Props) => {
                     offers.slice(tablePage * tableRowsPerPage, tablePage * tableRowsPerPage + tableRowsPerPage).map((offer, index) => {
                         return <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between'}}>
-                                    <Link target="_blank" to={`/p2p/advertiserDetail/${offer.member.uid}`} style={{ textDecoration: 'none' }}>
+                                    <Link target="_blank" to={`/p2p/advertiserDetail/${offer.profile_id}`} style={{ textDecoration: 'none' }}>
                                         <span className={classes.advertiserName}>
-                                            {offer.member.uid}
+                                            {offer.name.toUpperCase()}
                                         </span>
                                     </Link>
                                 <div style={{ display: 'flex',}}>
-                                    <small style={{ color: 'grey' }}>804 Oders</small>
-                                    <small style={{ marginLeft: '8px', color: 'grey' }}>98.89% completion</small>
+                                    <small style={{ color: 'grey' }}>{offer.total_trades} Oders</small>
+                                    <small style={{ marginLeft: '8px', color: 'grey' }}>{offer.rating}% completion</small>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -359,24 +377,11 @@ const P2POffersComponent = (props: Props) => {
                                 <Button variant="contained" style={{ color: 'white', backgroundColor: offer.side == 'buy' ? '#02C076' : 'rgb(248, 73, 96)', fontSize: 14, margin: 'auto 0px' }} onClick={() => handleOfferClick(offer)}>{offer.side}</Button>
                             </div>
                             <div style={{ display: 'flex', marginTop: '8px', flexWrap: 'wrap' }}>
-                                <Tooltip title="Payment Method1" arrow>
-                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                </Tooltip>
-                                <Tooltip title="Payment Method2" arrow>
-                                    <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                                </Tooltip>
-                                <Tooltip title="Payment Method3" arrow>
-                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                </Tooltip>
-                                <Tooltip title="Payment Method3" arrow>
-                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                </Tooltip>
-                                <Tooltip title="Payment Method3" arrow>
-                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                </Tooltip>
-                                <Tooltip title="Payment Method3" arrow>
-                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                </Tooltip>
+                                {offer.payment_methods.map((method) => {
+                                    return <Tooltip title={method.name} arrow>
+                                            <Chip size="small" label={method.name} className={classes.paymentMethodChip}/>
+                                        </Tooltip>
+                                })}
                             </div>
                             <Divider style={{ margin: '16px 0px' }} />
                         </div>
@@ -438,14 +443,14 @@ const P2POffersComponent = (props: Props) => {
                                     return <TableRow hover>
                                         <StyledTableCell>
                                             <div style={{ display: 'flex', flexDirection: 'column'}}>
-                                                    <Link target="_blank" to={`/p2p/advertiserDetail/${offer.member.uid}`} style={{ textDecoration: 'none' }}>
+                                                    <Link target="_blank" to={`/p2p/advertiserDetail/${offer.profile_id}`} style={{ textDecoration: 'none' }}>
                                                         <span className={classes.advertiserName}>
-                                                            {offer.member.uid}
+                                                            {offer.name.toUpperCase()}
                                                         </span>
                                                     </Link>
                                                 <div style={{ display: 'flex', flexDirection: 'row'}}>
-                                                    <small style={{ color: 'grey' }}>804 Oders</small>
-                                                    <small style={{ marginLeft: '8px', color: 'grey' }}>98.89% completion</small>
+                                                    <small style={{ color: 'grey' }}>{offer.total_trades} Oders</small>
+                                                    <small style={{ marginLeft: '8px', color: 'grey' }}>{offer.rating}% completion</small>
                                                 </div>
                                             </div>
                                         </StyledTableCell>
@@ -467,15 +472,11 @@ const P2POffersComponent = (props: Props) => {
                                         </StyledTableCell>
                                         <StyledTableCell>
                                             <div style={{ }}>
-                                                <Tooltip title="Payment Method1" arrow>
-                                                    <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                                                </Tooltip>
-                                                <Tooltip title="Payment Method2" arrow>
-                                                    <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                                                </Tooltip>
-                                                <Tooltip title="Payment Method3" arrow>
-                                                    <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                                                </Tooltip>
+                                                {offer.payment_methods.map((method) => {
+                                                    return <Tooltip title={method.name} arrow>
+                                                            <Chip size="small" label={method.name} className={classes.paymentMethodChip}/>
+                                                        </Tooltip>
+                                                })}
                                             </div>
                                         </StyledTableCell>
                                         <StyledTableCell>
@@ -675,11 +676,11 @@ const P2POffersComponent = (props: Props) => {
                         Cancel
                     </Button>
                     <Button
-                        disabled={isSellFormInvalid()}
                         color="primary"
                         variant="contained"
                         fullWidth
-                        // onClick={handleFromSubmit}
+                        disabled={isSellFormInvalid()}
+                        onClick={handleSellFormSubmit}
                     >
                         {`Sell ${selectedOffer.base_unit.toUpperCase()}`}
                     </Button>
@@ -694,15 +695,11 @@ const P2POffersComponent = (props: Props) => {
                 <div style={{ marginTop: '12px'}}>
                     <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Seller’s payment method</Typography>
                     <div>
-                        <Tooltip title="Payment Method1" arrow>
-                            <Chip size="small" label="Payment Method1" className={classes.paymentMethodChip}/>
-                        </Tooltip>
-                        <Tooltip title="Payment Method2" arrow>
-                            <Chip size="small" label="Payment Method2" className={classes.paymentMethodChip}/>
-                        </Tooltip>
-                        <Tooltip title="Payment Method3" arrow>
-                            <Chip size="small" label="Payment Method3" className={classes.paymentMethodChip}/>
-                        </Tooltip>
+                        {selectedOffer.payment_methods.map((method) => {
+                            return <Tooltip title={method.name} arrow>
+                                    <Chip size="small" label={method.name} className={classes.paymentMethodChip}/>
+                                </Tooltip>
+                        })}
                     </div>
                 </div>
             </>
@@ -743,13 +740,13 @@ const P2POffersComponent = (props: Props) => {
                             <div style={{ display: 'flex' ,width: '100%' }}>
                                 <div style={{ width: '55%', overflowY: 'auto', height: '440px', paddingRight: '16px' }}>
                                     <div id="transition-modal-title">
-                                        <Link target="_blank" to={`/p2p/advertiserDetail/${selectedOffer.member.uid}`} style={{ textDecoration: 'none', marginRight: '8px' }}>
+                                        <Link target="_blank" to={`/p2p/advertiserDetail/${selectedOffer.profile_id}`} style={{ textDecoration: 'none', marginRight: '8px' }}>
                                             <span className={classes.advertiserName}>
-                                                {selectedOffer.member.uid}
+                                                {selectedOffer.name.toUpperCase()}
                                             </span>
                                         </Link>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>100.00% completion</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>{selectedOffer.total_trades} orders</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>{selectedOffer.rating}% completion</Typography>
                                     </div>
                                     <div style={{ display: 'flex', marginTop: '12px', justifyContent: 'space-between' }}>
                                         <div style={{  }}>
@@ -799,14 +796,14 @@ const P2POffersComponent = (props: Props) => {
                         <Box>
                             <div style={{ width: '100%' }}>
                                 <div style={{}}>
-                                    <Link target="_blank" to={`/p2p/advertiserDetail/${selectedOffer.member.uid}`} style={{ textDecoration: 'none', marginRight: '8px' }}>
+                                    <Link target="_blank" to={`/p2p/advertiserDetail/${selectedOffer.profile_id}`} style={{ textDecoration: 'none', marginRight: '8px' }}>
                                             <span className={classes.advertiserName}>
-                                                {selectedOffer.member.uid}
+                                                {selectedOffer.name.toUpperCase()}
                                             </span>
                                         </Link>
                                     <div id="transition-modal-title">
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>105 orders</Typography>
-                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>100.00% completion</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>{selectedOffer.total_trades} orders</Typography>
+                                        <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>{selectedOffer.rating}% completion</Typography>
                                     </div>
                                     <div style={{ display: 'flex', marginTop: '8px',}}>
                                         <Typography variant="body2" display="inline" style={{ marginRight: '8px', color: 'rgb(112, 122, 138)' }}>Price</Typography>

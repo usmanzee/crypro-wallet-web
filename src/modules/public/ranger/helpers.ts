@@ -44,6 +44,7 @@ export const streamsBuilder = (withAuth: boolean, prevSubscriptions: string[], m
             ...streams,
             'order',
             'trade',
+            'p2p.chat'
         ];
 
         if (isFinexEnabled()) {

@@ -91,6 +91,10 @@ import {
     selectP2PWalletsLoading,
     selectP2PsWallets,
     p2pWalletsFetch,
+    selectP2PCreateOffersLoading,
+    selectP2PCreateOffersSuccess,
+    selectP2PCreateOffersError,
+    createOffer
 } from '../../../modules';
 
 import {
@@ -105,6 +109,7 @@ const P2PPostAdComponent = (props: Props) => {
     const classes = useStyles();
 
     const theme = useTheme();
+    const history = useHistory();
     const fullScreenPaymentDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [cryptoCurrencies, setCryptoCurrencies] = React.useState<Currency[]>([]);
@@ -172,6 +177,9 @@ const P2PPostAdComponent = (props: Props) => {
 
     const P2PWallets = useSelector(selectP2PsWallets);
     const P2PWalletsLoading = useSelector(selectP2PWalletsLoading);
+    const P2POfferCreateLoading = useSelector(selectP2PCreateOffersLoading);
+    const P2POfferCreateSuccess = useSelector(selectP2PCreateOffersSuccess);
+    const P2POfferCreateError = useSelector(selectP2PCreateOffersError);
 
     React.useEffect(() => {
         setDocumentTitle('Buy and Sell Crypto on P2P');
@@ -260,6 +268,12 @@ const P2PPostAdComponent = (props: Props) => {
             handlePaymentMethodsError();
         }
     }, [selectedPaymentMethods.length]);
+
+    React.useEffect(() => {
+        if(P2POfferCreateSuccess) {
+            history.push('/p2p/my-offers');
+        }
+    }, [P2POfferCreateSuccess]);
 
     const filterCryptoCurrencies = () => {
         const filteredCurrencies = currencies.filter((currency) => {
@@ -539,8 +553,31 @@ const P2PPostAdComponent = (props: Props) => {
             if(isSecondStepValid()) {
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
             }
+        } else if(activeStep == 2) {
+            var offerPaymentMethods = [];
+            selectedPaymentMethods.map((method) => {
+                offerPaymentMethods.push({
+                    name: method.payment_method.slug
+                })
+            });
+            var requestObject = {
+                base_unit: selectedCryptoCurrency.id.toLowerCase(),
+                quote_unit: selectedFiatCurrency.code.toLowerCase(),
+                side: selectedSideName.toLowerCase(),
+                price: finalPrice,
+                origin_amount: totalAmount,
+                min_order_amount: minOrderAmount,
+                max_order_amount: maxOrderAmount,
+                time_limit: selectedPaymentTimeLimit,
+                margin: floatingPercentage,
+                payment_methods: offerPaymentMethods
+            };
+            requestObject['note'] = notes;
+            requestObject['auto_reply'] = autoReply;
+            console.log(requestObject);
+            dispatch(createOffer(requestObject));
         } else {
-            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            
         }
     };
 
@@ -548,11 +585,6 @@ const P2PPostAdComponent = (props: Props) => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleReset = () => {
-        setActiveStep(0);
-    };
-
-    
     const getSides = () => {
         return(
             <>
@@ -1108,32 +1140,24 @@ const P2PPostAdComponent = (props: Props) => {
                     </Stepper>
                     <div>
                         {getSides()}
-                        {activeStep === getSteps().length ? (
-                        <div>
-                            <Typography>
-                                All steps completed - you&apos;re finished
-                            </Typography>
-                            <Button onClick={handleReset}>
-                            Reset
-                            </Button>
-                        </div>
-                        ) : (
+                        
                         <div>
                             {getStepContent(activeStep)}
                             <div className={classes.stepsButtonsDiv}>
-                                <Button disabled={activeStep === 0} onClick={handleBack}>
+                                <Button disabled={activeStep === 0 || P2POfferCreateLoading} onClick={handleBack}>
                                     Back
                                 </Button>
                                 <Button
+                                    disabled={P2POfferCreateLoading}
                                     variant="contained"
                                     color="primary"
                                     onClick={handleNext}
                                 >
-                                    {activeStep === getSteps().length - 1 ? 'Finish' : 'Next'}
+                                    {activeStep === getSteps().length - 1 ? P2POfferCreateLoading ? <CircularProgress size={20} /> : 'Finish' : 'Next'}
                                 </Button>
                             </div>
                         </div>
-                        )}
+                        
                     </div>
                 </Paper>
             </Box>

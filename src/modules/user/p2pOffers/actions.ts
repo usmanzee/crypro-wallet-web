@@ -73,17 +73,18 @@ export interface P2PUserOffersUpdate {
 export interface CreateOfferFetch {
     type: typeof P2P_CREATE_OFFER_FETCH;
     payload: {
-        base: string;
-        quote: string;
+        base_unit: string;
+        quote_unit: string;
         side: string;
         price: string | number;
-        amount: string | number;
+        origin_amount: string | number;
         min_order_amount: string | number;
         max_order_amount: string | number;
-        upm_id: number[];
         time_limit: string | number;
-        description?: string;
-        reply_message?: string;
+        margin?: string | number;
+        note?: string;
+        auto_reply?: string;
+        payment_methods: any;
     };
 }
 

@@ -9,7 +9,7 @@ const config: RequestOptions = {
 
 export function* getOrderSaga(action: P2POrderFetch) {
     try {
-        const data = yield call(API.get(config), `/private/orders/${action.payload.id}`);
+        const data = yield call(API.get(config), `/account/p2p/orders/${action.payload.id}`);
 
         yield put(p2pOrderData(data));
     } catch (error) {

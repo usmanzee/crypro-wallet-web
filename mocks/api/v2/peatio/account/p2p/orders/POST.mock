@@ -1,0 +1,54 @@
+HTTP/2 201
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, DELETE, PUT, PATCH, OPTIONS, HEAD
+Access-Control-Max-Age: 3600
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: content-type, x-csrf-token
+
+{
+	"id": 1,
+	"amount": "250",
+	"created_at": "2018-12-14T11:18:20+01:00",
+	"status": "ACTIVE",
+	"offer": {
+		"id": 30,
+		"price": "30776.87",
+		"available_amount": "120.0",
+		"origin_amount": "120.0",
+		"min_order_amount": "0.5",
+		"max_order_amount": "120.0",
+		"base_unit": "usd",
+		"quote_unit": "btc",
+		"side": "buy",
+		"time_limit": "15",
+		"note": "not refundable after traded executaion.",
+		"created_at": "2021-09-21T12:53:14.000Z",
+		"updated_at": "2021-09-21T12:53:14.000Z",
+		"name": "fast-trader",
+		"total_trades": 500,
+		"trades_30_day": 40,
+		"tradecompletion_30day": 90,
+		"rating": "90",
+		"profile_id": 1,
+		"payment_methods": [{
+			"name": "Western Union",
+			"slug": "western-union"
+		}]
+	},
+	"payment_methods": [{
+			"user_payment_detail": "{\"Full Name\":\"Muhammad Usman\",\"Payment Details\":\"123456789\"}",
+			"payment_method": {
+				"name": "Western Union",
+				"slug": "western-union"
+			}
+		},
+		{
+			"user_payment_detail": "{\"Full Name\":\"Asim Jawad\",\"Payment Details\":\"123456789\"}",
+			"payment_method": {
+				"name": "Jazz Cash",
+				"slug": "jazz-cash"
+			}
+		}
+	]
+}
