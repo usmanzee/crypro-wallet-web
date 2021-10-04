@@ -107,11 +107,11 @@ export const useStyles = makeStyles((theme: Theme) =>
     filtersDiv: {
         [theme.breakpoints.only('xl')]: {
             margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-            width: "10%",
+            width: "20.5%",
         },
         [theme.breakpoints.only('lg')]: {
             margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-            width: "10%",
+            width: "20.5%",
         },
         [theme.breakpoints.only('md')]: {
             width: '100%',
@@ -119,6 +119,23 @@ export const useStyles = makeStyles((theme: Theme) =>
         [theme.breakpoints.only('sm')]: {
             width: '100%',
         },
+    },
+    filterButtonsDiv: {
+        [theme.breakpoints.up('sm')]: {
+            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
+        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex',
+            margin: `${theme.spacing(1)}px 0px`,
+        }
+    },
+    filterButton: {
+        [theme.breakpoints.up('sm')]: {
+            
+        },
+        [theme.breakpoints.down('sm')]: {
+            width: '100%'
+        }
     },
     dateFiltersDiv: {
         [theme.breakpoints.only('xl')]: {
@@ -144,7 +161,14 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     actionsMargin: {
         margin: theme.spacing(1),
-      },
+    },
+    actionLink: {
+        color: theme.palette.secondary.main,
+        margin: `0px ${theme.spacing(1)}px`,
+        '&:hover': {
+            color: theme.palette.secondary.main,
+        },
+    }
    
   }),
 );

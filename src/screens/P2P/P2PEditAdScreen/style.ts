@@ -169,6 +169,14 @@ export const useStyles = makeStyles((theme: Theme) =>
           width: '100%',
       }
     },
+    maxButton: {
+      cursor: 'pointer',
+      color: theme.palette.primary.main
+    },
+    inputAdornmentDivider: {
+      height: '16px',
+      margin: '4px'
+    },
     registerDaysInput: {
       textAlign: 'center',
       marginTop: '-8px',
@@ -207,6 +215,9 @@ export const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         textDecoration: 'none',
       },
-    }
+    },
+    paymentMethodError: {
+      color: theme.palette.error.main,
+    },
   }),
 );

@@ -54,8 +54,8 @@ import {
     selectP2PUserOffersFetchLoading,
     selectP2PUserOffers,
     userOffersFetch,
-    selectP2PCancelOfferLoading,
-    cancelOffer
+    selectP2PUpdateOfferLoading,
+    updateOffer
 } from '../../../modules';
 
 import { CommonError } from '../../../modules/types';
@@ -98,7 +98,6 @@ const P2PMyAdsComponent = (props: Props) => {
     const [assetAnchorEl, setAssetAnchorEl] = React.useState<null | HTMLElement>(null);
     const [typeAnchorEl, setTypeAnchorEl] = React.useState<null | HTMLElement>(null);
     const [stateAnchorEl, setStateAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [value, setValue] = React.useState<DateRange<Date>>([null, null]);
     const [tablePage, setTablePage] = React.useState(0);
     const [tableRowsPerPage, setTableRowsPerPage] = React.useState(25);
 
@@ -110,7 +109,7 @@ const P2PMyAdsComponent = (props: Props) => {
     const currenciesLoading = useSelector(selectCurrenciesLoading);
     const userOffersLoading = useSelector(selectP2PUserOffersFetchLoading);
     const userOffers = useSelector(selectP2PUserOffers);
-    const cancelOfferLoading = useSelector(selectP2PCancelOfferLoading);
+    const updateOfferLoading = useSelector(selectP2PUpdateOfferLoading);
 
     React.useEffect(() => {
         setDocumentTitle('Buy and Sell Crypto on P2P');
@@ -253,13 +252,13 @@ const P2PMyAdsComponent = (props: Props) => {
 
     const setOfferStatetoOffline = () => {
         selectedUserOffer.state = 'offline';
-        dispatch(cancelOffer(selectedUserOffer));
+        dispatch(updateOffer(selectedUserOffer));
         setOfflineDialogOpen(false);
     }
 
     const closeOffer = () => {
         selectedUserOffer.state = 'close';
-        dispatch(cancelOffer(selectedUserOffer));
+        dispatch(updateOffer(selectedUserOffer));
         setCloseOfferDialogOpen(false);
     }
 
@@ -640,13 +639,15 @@ const P2PMyAdsComponent = (props: Props) => {
                             </LocalizationProvider>
                            
                         </div> */}
-                        <div className={classes.filterButton}>
+                        <div className={classes.filterButtonsDiv}>
                             <InputLabel htmlFor="fiat_currency" className={classes.inputLabel}>
                             </InputLabel>
-                            <Button variant="outlined" color="secondary" onClick={() => applyFilters()}>
+                            <Button variant="outlined" color="secondary" onClick={() => applyFilters()} className={classes.filterButton}>
                                 Filter
                             </Button>
-                            <Button style={{ marginLeft: '8px' }} onClick={() => resetFilters()}>Reset</Button>
+                            <Button variant="outlined" style={{ marginLeft: '8px' }} onClick={() => resetFilters()} className={classes.filterButton}>
+                                Reset
+                            </Button>
                         </div>
 
                        

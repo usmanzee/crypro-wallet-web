@@ -107,11 +107,11 @@ export const useStyles = makeStyles((theme: Theme) =>
     filtersDiv: {
         [theme.breakpoints.only('xl')]: {
             margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-            width: "10%",
+            width: "20.5%",
         },
         [theme.breakpoints.only('lg')]: {
             margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-            width: "10%",
+            width: "20.5%",
         },
         [theme.breakpoints.only('md')]: {
             width: '100%',
@@ -132,17 +132,22 @@ export const useStyles = makeStyles((theme: Theme) =>
         [theme.breakpoints.only('sm')]: {
         },
     },
+    filterButtonsDiv: {
+        [theme.breakpoints.up('sm')]: {
+            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
+        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex',
+            margin: `${theme.spacing(1)}px 0px`,
+        }
+    },
     filterButton: {
-        [theme.breakpoints.only('xl')]: {
-            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
+        [theme.breakpoints.up('sm')]: {
+            
         },
-        [theme.breakpoints.only('lg')]: {
-            margin: `${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(1)}px 0px`,
-        },
-        [theme.breakpoints.only('md')]: {
-        },
-        [theme.breakpoints.only('sm')]: {
-        },
+        [theme.breakpoints.down('sm')]: {
+            width: '100%'
+        }
     },
     inputLabel: {
         fontWeight: 500,

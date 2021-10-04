@@ -76,24 +76,24 @@ export const selectP2PCreateOffersError = (state: RootState): CommonError | unde
     state.user.p2pOffers.createOffer.error;
 
 
-/* P2P Cancel Order Methods */
-export const selectP2PCancelOfferData = (state: RootState): Offer[] =>
-state.user.p2pOffers.cancelOffer.list;
+/* P2P Update Offer Methods */
+export const selectP2PUpdateOfferData = (state: RootState): Offer[] =>
+state.user.p2pOffers.updateOffer.list;
 
-export const selectP2PCancelOfferLoading = (state: RootState): boolean =>
-state.user.p2pOffers.cancelOffer.loading;
+export const selectP2PUpdateOfferLoading = (state: RootState): boolean =>
+state.user.p2pOffers.updateOffer.loading;
 
-export const selectP2PCancelOfferSuccess = (state: RootState): boolean =>
-state.user.p2pOffers.cancelOffer.success;
+export const selectP2PUpdateOfferSuccess = (state: RootState): boolean =>
+state.user.p2pOffers.updateOffer.success;
 
-export const selectP2PCancelOfferError = (state: RootState): CommonError | undefined =>
-state.user.p2pOffers.cancelOffer.error;
+export const selectP2PUpdateOfferError = (state: RootState): CommonError | undefined =>
+state.user.p2pOffers.updateOffer.error;
 
-export const selectP2PCancelOfferTimestamp = (state: RootState): number | undefined =>
-    state.user.p2pOffers.cancelOffer.timestamp;
+export const selectP2PUpdateOfferTimestamp = (state: RootState): number | undefined =>
+    state.user.p2pOffers.updateOffer.timestamp;
 
-export const selectShouldFetchP2PCancelOffer = (state: RootState): boolean =>
-    !selectP2PCancelOfferTimestamp(state) && !selectP2PCancelOfferLoading(state);
+export const selectShouldFetchP2PUpdateOffer = (state: RootState): boolean =>
+    !selectP2PUpdateOfferTimestamp(state) && !selectP2PUpdateOfferLoading(state);
 
 /* P2P Offer Detail Methods */
 export const selectP2PUserOfferDetail = (state: RootState): Offer =>

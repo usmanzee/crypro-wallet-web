@@ -15,9 +15,9 @@ import {
     P2P_USER_OFFERS_ERROR,
     P2P_USER_OFFERS_FETCH,
     P2P_USER_OFFERS_UPDATE,
-    P2P_CANCEL_OFFER_DATA,
-    P2P_CANCEL_OFFER_ERROR,
-    P2P_CANCEL_OFFER_FETCH,
+    P2P_UPDATE_OFFER_DATA,
+    P2P_UPDATE_OFFER_ERROR,
+    P2P_UPDATE_OFFER_FETCH,
     P2P_USER_OFFER_DETAIL_FETCH,
     P2P_USER_OFFER_DETAIL_DATA,
     P2P_USER_OFFER_DETAIL_ERROR
@@ -29,7 +29,7 @@ export interface P2POffersState {
         success: boolean;
         error?: CommonError;
     };
-    cancelOffer: {
+    updateOffer: {
         list: Offer[];
         loading: boolean;
         success: boolean;
@@ -65,7 +65,7 @@ export const initialP2POffersState: P2POffersState = {
         loading: false,
         success: false,
     },
-    cancelOffer: {
+    updateOffer: {
         list: [],
         loading: false,
         success: false,
@@ -183,15 +183,15 @@ const createOfferReducer = (state: P2POffersState['createOffer'], action: P2POff
     }
 };
 
-const cancelOfferReducer = (state: P2POffersState['cancelOffer'], action: P2POffersActions) => {
+const updateOfferReducer = (state: P2POffersState['updateOffer'], action: P2POffersActions) => {
     switch (action.type) {
-        case P2P_CANCEL_OFFER_FETCH:
+        case P2P_UPDATE_OFFER_FETCH:
             return {
                 ...state,
                 loading: true,
                 timestamp: Math.floor(Date.now() / 1000),
             };
-        case P2P_CANCEL_OFFER_DATA:
+        case P2P_UPDATE_OFFER_DATA:
             return {
                 ...state,
                 list: action.payload,
@@ -199,7 +199,7 @@ const cancelOfferReducer = (state: P2POffersState['cancelOffer'], action: P2POff
                 success: true,
                 error: undefined,
             };
-        case P2P_CANCEL_OFFER_ERROR:
+        case P2P_UPDATE_OFFER_ERROR:
             return {
                 ...state,
                 loading: false,
@@ -246,14 +246,14 @@ export const p2pOffersReducer = (state = initialP2POffersState, action: P2POffer
                 ...state,
                 createOffer: createOfferReducer(createOfferState, action),
             };
-        case P2P_CANCEL_OFFER_FETCH:
-        case P2P_CANCEL_OFFER_DATA:
-        case P2P_CANCEL_OFFER_ERROR:
-            const cancelOfferState = { ...state.cancelOffer };
+        case P2P_UPDATE_OFFER_FETCH:
+        case P2P_UPDATE_OFFER_DATA:
+        case P2P_UPDATE_OFFER_ERROR:
+            const cancelOfferState = { ...state.updateOffer };
 
             return {
                 ...state,
-                cancelOffer: cancelOfferReducer(cancelOfferState, action),
+                cancelOffer: updateOfferReducer(cancelOfferState, action),
             };
         case P2P_USER_OFFERS_FETCH:
         case P2P_USER_OFFERS_DATA:

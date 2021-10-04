@@ -283,7 +283,7 @@ class LayoutComponent extends React.Component<LayoutProps, LayoutState> {
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/fiat-order/:id" component={P2PFiatOrderDetailScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/post-offer" component={P2PPostAdScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-offers" component={P2PMyAdsScreen}/>
-                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-offers/edit/:offerId" component={P2PEditAdScreen}/>
+                            <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-offers/edit/:id" component={P2PEditAdScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/p2p/my-orders" component={P2PMyOrdersScreen}/>
                             <Route exact path="/savings" component={SavingsOffersScreen}/>
                             <PrivateRoute exact loading={userLoading} isLogged={isLoggedIn} path="/savings/history" component={SavingsHistoryScreen}/>

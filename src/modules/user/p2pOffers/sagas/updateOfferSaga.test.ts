@@ -2,9 +2,9 @@ import MockAdapter from 'axios-mock-adapter';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import cancelSagaMiddleware, { SagaMiddleware } from 'redux-saga';
 import { mockNetworkError, setupMockAxios, setupMockStore } from '../../../../helpers/jest';
-import { rootSaga, sendError } from '../../..';
+import { rootSaga } from '../../..';
 import { CommonError } from '../../../types';
-import { cancelOfferError, cancelOffer } from '../actions';
+import { UpdateOfferError, updateOffer } from '../actions';
 
 describe('P2P CancelOffer', () => {
     let store: MockStoreEnhanced;

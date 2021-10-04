@@ -8,6 +8,7 @@ export interface P2POrderCreate {
 
 export interface P2POrder {
     id: number;
+    side: string;
     offer: Offer;
     amount: number|string;
     created_at: string;

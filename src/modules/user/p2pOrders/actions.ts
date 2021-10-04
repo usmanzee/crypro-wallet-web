@@ -41,6 +41,8 @@ export interface P2PTradesHistoryFetch {
         page: number;
         limit: number;
         side?: string;
+        baseUnit?: string;
+        status?: string;
     };
 }
 export interface P2PTradesHistoryData {

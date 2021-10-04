@@ -11,9 +11,9 @@ import {
     P2P_USER_OFFERS_ERROR,
     P2P_USER_OFFERS_FETCH,
     P2P_USER_OFFERS_UPDATE,
-    P2P_CANCEL_OFFER_DATA,
-    P2P_CANCEL_OFFER_ERROR,
-    P2P_CANCEL_OFFER_FETCH,
+    P2P_UPDATE_OFFER_DATA,
+    P2P_UPDATE_OFFER_ERROR,
+    P2P_UPDATE_OFFER_FETCH,
     P2P_USER_OFFER_DETAIL_FETCH,
     P2P_USER_OFFER_DETAIL_DATA,
     P2P_USER_OFFER_DETAIL_ERROR
@@ -97,8 +97,8 @@ export interface CreateOfferError {
     error: CommonError;
 }
 
-export interface CancelOfferFetch {
-    type: typeof P2P_CANCEL_OFFER_FETCH;
+export interface UpdateOfferFetch {
+    type: typeof P2P_UPDATE_OFFER_FETCH;
     payload: {
         id: number;
         origin_amount: string;
@@ -109,13 +109,13 @@ export interface CancelOfferFetch {
     }
 }
 
-export interface CancelOfferData {
-    type: typeof P2P_CANCEL_OFFER_DATA;
+export interface UpdateOfferData {
+    type: typeof P2P_UPDATE_OFFER_DATA;
     payload: Offer[];
 }
 
-export interface CancelOfferError {
-    type: typeof P2P_CANCEL_OFFER_ERROR;
+export interface UpdateOfferError {
+    type: typeof P2P_UPDATE_OFFER_ERROR;
     error: CommonError;
 }
 
@@ -146,9 +146,9 @@ export type P2POffersActions =
     | CreateOfferFetch
     | CreateOfferData
     | CreateOfferError
-    | CancelOfferFetch
-    | CancelOfferData
-    | CancelOfferError
+    | UpdateOfferFetch
+    | UpdateOfferData
+    | UpdateOfferError
     | P2PUserOffersUpdate
     | UserOfferDetailFetch
     | UserOfferDetailData
@@ -203,18 +203,18 @@ export const createOfferError = (error: CommonError): CreateOfferError => ({
     error,
 });
 
-export const cancelOffer = (payload: CancelOfferFetch['payload']): CancelOfferFetch => ({
-    type: P2P_CANCEL_OFFER_FETCH,
+export const updateOffer = (payload: UpdateOfferFetch['payload']): UpdateOfferFetch => ({
+    type: P2P_UPDATE_OFFER_FETCH,
     payload,
 });
 
-export const cancelOfferData = (payload: CancelOfferData['payload']): CancelOfferData => ({
-    type: P2P_CANCEL_OFFER_DATA,
+export const updateOfferData = (payload: UpdateOfferData['payload']): UpdateOfferData => ({
+    type: P2P_UPDATE_OFFER_DATA,
     payload,
 });
 
-export const cancelOfferError = (error: CommonError): CancelOfferError => ({
-    type: P2P_CANCEL_OFFER_ERROR,
+export const updateOfferError = (error: CommonError): UpdateOfferError => ({
+    type: P2P_UPDATE_OFFER_ERROR,
     error,
 });
 
